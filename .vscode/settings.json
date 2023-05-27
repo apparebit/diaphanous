@@ -12,6 +12,7 @@
         "nextin",
         "nlevels",
         "nunique",
+        "Plotly",
         "Quora"
     ]
 }
