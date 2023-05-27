@@ -1,0 +1,374 @@
+{
+  "@": {
+    "!": "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+            "author": "Robert Grimm",
+             "title": "Social Media CSAM Disclosures",
+           "version": "1.0",
+              "date": "May 2023",
+               "doi": "",
+               "url": "https://github.com/apparebit/intransparent",
+    "|": "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  },
+  "Automattic": {
+    "sources": [
+      "https://transparency.automattic.com"
+    ],
+    "brands": ["Tumblr", "Wordpress"]
+  },
+  "Facebook": {
+    "sources": [
+      "https://transparency.fb.com/sr/community-standards/"
+    ],
+    "row_index": "period",
+    "columns": [
+      "pieces (Child Nudity & Sexual Exploitation)",
+      "pieces (Child Endangerment: Nudity and Physical Abuse)",
+      "pieces (Child Endangerment: Sexual Exploitation)",
+      "appeals (Child Nudity & Sexual Exploitation)",
+      "appeals (Child Endangerment: Nudity and Physical Abuse)",
+      "appeals (Child Endangerment: Sexual Exploitation)",
+      "reversals (Child Nudity & Sexual Exploitation)",
+      "reversals (Child Endangerment: Nudity and Physical Abuse)",
+      "reversals (Child Endangerment: Sexual Exploitation)",
+      "reversals w/o appeal (Child Nudity & Sexual Exploitation)",
+      "reversals w/o appeal (Child Endangerment: Nudity and Physical Abuse)",
+      "reversals w/o appeal (Child Endangerment: Sexual Exploitation)"
+    ],
+    "rows": [
+      {"2022 Q4": [null, 2500000, 25100000, null, 94700, 23000, null, 13600, 2600, null, 541700, 75800]},
+      {"2022 Q3": [null, 2300000, 30100000, null, 85000, 414200, null, 14600, 4000, null, 29900, 205300]},
+      {"2022 Q2": [null, 1900000, 20400000, null, 61700, 404000, null, 11300, 1400, null, 18700, 15900]},
+      {"2022 Q1": [null, 2100000, 16500000, null, 4000, 800, null, 700, 100, null, 21200, 687800]},
+      {"2021 Q4": [null, 1800000, 19800000, null, 3700, 800, null, 800, 70, null, 19200, 180500]},
+      {"2021 Q3": [null, 1800000, 21200000, null, 2300, 700, null, 700, 30, null, 167200, 2800]},
+      {"2021 Q2": [null, 2300000, 25600000, null, 3000, 1000, null, 800, 50, null, 21100, 2800]},
+      {"2021 Q1": [5000000, null, null, 3800, null, null, 300, null, null, 46600, null, null]},
+      {"2020 Q4": [5300000, null, null, 4600, null, null, 100, null, null, 3200, null, null]},
+      {"2020 Q3": [12400000, null, null, 300, null, null, 0, null, null, 1200, null, null]},
+      {"2020 Q2": [9400000, null, null, 40, null, null, 0, null, null, 50, null, null]},
+      {"2020 Q1": [8500000, null, null, 55000, null, null, 3700, null, null, 500, null, null]},
+      {"2019 Q4": [13300000, null, null, 72900, null, null, 4400, null, null, 2500, null, null]},
+      {"2019 Q3": [11400000, null, null, 128800, null, null, 13300, null, null, 3400, null, null]},
+      {"2019 Q2": [6900000, null, null, 145000, null, null, 14200, null, null, 1500, null, null]},
+      {"2019 Q1": [5800000, null, null, 27400, null, null, 800, null, null, 5300, null, null]},
+      {"2018 Q4": [7200000, null, null, null, null, null, null, null, null, null, null, null]},
+      {"2018 Q3": [9000000, null, null, null, null, null, null, null, null, null, null, null]}
+    ]
+  },
+  "Google": {
+    "sources": [
+      "https://transparencyreport.google.com/child-sexual-abuse-material/"
+    ],
+    "row_index": "period",
+    "columns": [
+      "pieces",
+      "reports",
+      "accounts",
+      "urls"
+    ],
+    "rows": [
+      {"2022 H2": [6344753, 891215, 365428, 437020]},
+      {"2022 H1": [6426749, 826667, 270487, 484573]},
+      {"2021 H2": [3147307, 334215, 140868, 580380]},
+      {"2021 H1": [3280632, 287368, 129174, 596710]},
+      {"2020 H2": [2804726, 246325, 97958, 210756]},
+      {"2020 H1": [1461582, 112595, 77940, 331865]}
+    ]
+  },
+  "Instagram": {
+    "sources": [
+      "https://transparency.fb.com/sr/community-standards/"
+    ],
+    "row_index": "period",
+    "columns": [
+      "pieces (Child Nudity & Sexual Exploitation)",
+      "pieces (Child Endangerment: Nudity and Physical Abuse)",
+      "pieces (Child Endangerment: Sexual Exploitation)",
+      "appeals (Child Nudity & Sexual Exploitation)",
+      "appeals (Child Endangerment: Nudity and Physical Abuse)",
+      "appeals (Child Endangerment: Sexual Exploitation)",
+      "reversals (Child Nudity & Sexual Exploitation)",
+      "reversals (Child Endangerment: Nudity and Physical Abuse)",
+      "reversals (Child Endangerment: Sexual Exploitation)",
+      "reversals w/o appeal (Child Nudity & Sexual Exploitation)",
+      "reversals w/o appeal (Child Endangerment: Nudity and Physical Abuse)",
+      "reversals w/o appeal (Child Endangerment: Sexual Exploitation)"
+    ],
+    "rows": [
+      {"2022 Q4": [null, 620700, 9700000, null, 16000, 5800, null, 2000, 100, null, 4900, 2400]},
+      {"2022 Q3": [null, 1000000, 1300000, null, 36000, 3500, null, 4100, 200, null, 6400, 7100]},
+      {"2022 Q2": [null, 480500, 1200000, null, 29200, 4100, null, 3800, 200, null, 5900, 400]},
+      {"2022 Q1": [null, 600700, 1500000, null, 0, 0, null, 0, 20, null, 10700, 154200]},
+      {"2021 Q4": [null, 983400, 2600000, null, 0, 0, null, 0, 0, null, 13600, 1600]},
+      {"2021 Q3": [null, 526500, 1600000, null, 0, 0, null, 0, 0, null, 168300, 300]},
+      {"2021 Q2": [null, 458300, 1400000, null, 0, 0, null, 0, 0, null, 4500, 300]},
+      {"2021 Q1": [812400, null, null, 0, null, null, 0, null, null, 3500, null, null]},
+      {"2020 Q4": [809400, null, null, 0, null, null, 0, null, null, 2900, null, null]},
+      {"2020 Q3": [1000000, null, null, 0, null, null, 10, null, null, 700, null, null]},
+      {"2020 Q2": [481400, null, null, 0, null, null, 0, null, null, 30, null, null]},
+      {"2020 Q1": [1000000, null, null, 53400, null, null, 16100, null, null, 200, null, null]},
+      {"2019 Q4": [686400, null, null, null, null, null, null, null, null, null, null, null]},
+      {"2019 Q3": [755800, null, null, null, null, null, null, null, null, null, null, null]},
+      {"2019 Q2": [526200, null, null, null, null, null, null, null, null, null, null, null]}
+    ]
+  },
+  "LinkedIn": {
+    "sources": [
+      "https://about.linkedin.com/transparency/community-report"
+    ],
+    "comments": [
+      "numbers disclosed under 'content removed', hence pieces"
+    ],
+    "row_index": "period",
+    "columns": [
+      "pieces"
+    ],
+    "rows": [
+      {"2022 H2": [274]},
+      {"2022 H1": [1663]},
+      {"2021 H2": [125]},
+      {"2021 H1": [101]},
+      {"2020 H2": [50]},
+      {"2020 H1": [153]},
+      {"2019 H2": [167]},
+      {"2019 H1": [22]}
+    ]
+  },
+  "Meta": {
+    "brands": ["Facebook", "Instagram", "WhatsApp"]
+  },
+  "Pinterest": {
+    "sources": [
+      "https://policy.pinterest.com/en/transparency-report",
+      "https://help.pinterest.com/en/guide/transparency-report-archive"
+    ],
+    "comments": [
+      "Pin is lingo for a media card with picture, hence pin with CSAM is piece.",
+      "Pinterest's disclosure language explains 2nd through 5th columns:",
+      "We deactivated a distinct images, which comprised b Pins, for violating",
+      "our CSE policy. Of these, we determined that c distinct images, which",
+      "comprised d Pins, were illegal CSAM, and we reported them to NCMEC."
+    ],
+    "row_index": "period",
+    "columns": [
+      "reports",
+      "distinct images",
+      "pins",
+      "distinct images CSAM",
+      "pieces",
+      "boards",
+      "accounts",
+      "account appeals",
+      "account reversals",
+      "% pins reached 0",
+      "% pins reached 1-9",
+      "% pins reached 10-100",
+      "% pins reached >100"
+    ],
+    "rows": [
+      {"2022 Q2": [null, 9085, 712295, 2038, 4988, 1162, 37694, 7467, 5971, 61, 30, 6, 2]},
+      {"2022 Q1": [null, 2499, 300003, 184, 542, 492, 10743, 2164, 1169, 63, 28, 6, 3]},
+      {"2022 H1": [4969, null, null, null, null, null, null, null, null, null, null, null, null]},
+      {"2021 Q4": [null, 2545, 104029, 228, 627, 578, 17423, 3110, 2120, 83, 13, 3, 2]},
+      {"2021 Q3": [null, 2362, 262164, 295, 981, 862, 28289, 5718, 4305, 72, 21, 4, 2]},
+      {"2021 H2": [1794, null, null, null, null, null, null, null, null, null, null, null, null]},
+      {"2021 H1": [890, null, null, null, null, null, null, null, null, null, null, null, null]},
+      {"2020 H2": [1794, null, null, null, null, null, null, null, null, null, null, null, null]},
+      {"2020 H1": [1638, null, null, null, null, null, null, null, null, null, null, null, null]}
+    ]
+  },
+  "Quora": {
+    "sources": [
+      "https://help.quora.com/hc/en-us/articles/13294268051732-DSA-Transparency"
+    ],
+    "comments": [
+      "Quora's first and only transparency report so far, with user numbers only"
+    ]
+  },
+  "Reddit": {
+    "sources": [
+      "https://www.redditinc.com/policies/2022-transparency-report",
+      "https://www.redditinc.com/policies/mid-year-transparency-report-2022-2",
+      "https://www.redditinc.com/policies/transparency-report-2021",
+      "https://www.redditinc.com/policies/transparency-report-2020",
+      "https://www.redditinc.com/policies/transparency-report-2019-1",
+      "https://www.redditinc.com/policies/transparency"
+    ],
+    "row_index": "period",
+    "columns": [
+      "pieces",
+      "reports",
+      "temporary account suspensions",
+      "accounts"
+    ],
+    "rows": [
+      {"2022 H2": [31574, 40243, null, null], "redundant": true},
+      {"2022 H1": [null, 12349, null, null], "redundant": true},
+      {"2022": [80888, 52592, null, null]},
+      {"2021": [9258, 10059, 0, 4659]},
+      {"2020": [null, 2233, null, null]},
+      {"2019": [null, 724, null, null]}
+    ]
+  },
+  "Snap": {
+    "sources": [
+      "https://values.snap.com/privacy/transparency",
+      "https://www.snap.com/en-US/privacy/transparency/2021-12-31",
+      "https://www.snap.com/en-US/privacy/transparency/2021-6-30",
+      "https://www.snap.com/en-US/privacy/transparency/2020-12-31",
+      "https://www.snap.com/en-US/privacy/transparency/2020-6-30",
+      "https://www.snap.com/en-US/privacy/transparency/2019-12-31"
+    ],
+    "row_index": "period",
+    "columns": [
+      "pieces",
+      "accounts",
+      "reports"
+    ],
+    "nonintegers": [
+      "accounts"
+    ],
+    "rows": [
+      {"2022 H1": [746051, 201527, 285470]},
+      {"2021 H2": [null, 198109, null]},
+      {"2021 H1": [null, "5.43 / 100 * 2,510,798", null], "redundant": true},
+      {"2021 H1": [null, 119134, null]},
+      {"2020 H2": [null, "2.99 / 100 * 2,100,124", null], "redundant": true},
+      {"2020 H2": [null, 47550, null]},
+      {"2020 H1": [null, "2.99 / 100 * 1,578,985", null], "redundant": true},
+      {"2020 H1": [null, 47136, null]},
+      {"2019 H2": [null, "2.51 / 100 * 1,355,163", null], "redundant": true},
+      {"2019 H2": [null, 34830, null]}
+    ],
+    "comments": [
+      "For 2019 H2, a coarse continental breakdown is available:",
+      "* CSAM accounts enforced EU 10,667; NorthAm 12,397; RestWorld 11,766",
+      "* total accounts enforced EU 366,609; NorthAm 730,147; RestWorld 258,407"
+    ]
+  },
+  "Telegram": null,
+  "TikTok": {
+    "sources": [
+      "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-4/",
+      "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-3/",
+      "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-2/",
+      "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-1/"
+    ],
+    "comments": [
+      "category: minor safety; subcategory: sexual exploitation of minors",
+      "no further data for category vs total numbers for humans vs automation"
+    ],
+    "row_index": "period",
+    "columns": [
+      "pieces (human moderation)",
+      "CSAM share of minor safety (human moderation)",
+      "minor safety share of total",
+      "total videos removed",
+      "total videos removed (automation)"
+    ],
+    "nonintegers": [
+      "CSAM share of minor safety (human moderation)",
+      "minor safety share of total"
+    ],
+    "rows": [
+      {"2022 Q4": [415278, 0.033000, 0.333000, 85680819, 46836047]},
+      {"2022 Q3": [792473, 0.033000, 0.429000, 110954663, 53287839]},
+      {"2022 Q2": [null, 0.024000, 0.437000, 113809300, 48011571]},
+      {"2022 Q1": [null, 0.019000, 0.417000, 102305516, 34726592]}
+    ]
+  },
+  "Tumblr": {
+    "sources": [
+      "https://www.tumblr.com/transparency"
+    ]
+  },
+  "Twitter": {
+    "sources": [
+      "https://transparency.twitter.com",
+      "https://blog.twitter.com/en_us/topics/company/2023/an-update-on-twitter-transparency-reporting"
+    ],
+    "comments": [
+      "'child sexual exploitation' is reported to NCMEC, hence CSAM"
+    ],
+    "row_index": "period",
+    "columns": [
+      "accounts actioned",
+      "accounts suspended",
+      "distinct pieces"
+    ],
+    "rows": [
+      {"2022 H1": [696015, 691704, 11927]},
+      {"2021 H2": [599523, 596997, 6796]},
+      {"2021 H1": [456146, 453754, 6087]},
+      {"2020 H2": [469439, 464804, 9178]},
+      {"2020 H1": [444781, 438809, 10343]},
+      {"2019 H2": [264625, 257768, 11026]},
+      {"2019 H1": [246642, 245341, 2751]},
+      {"2018 H2": [457231, 455651, 2777]}
+    ]
+  },
+  "WhatsApp": {
+    "sources": [
+      "https://www.whatsapp.com/legal/california-privacy-notice/transparency-report/"
+    ],
+    "comments": [
+      "That appears to be the only transparency report WhatsApp ever released, as in 1."
+    ]
+  },
+  "Wordpress": {
+    "sources": [
+      "https://transparency.automattic.com"
+    ]
+  },
+  "YouTube": {
+    "sources": [
+      "https://transparencyreport.google.com/child-sexual-abuse-material/"
+    ],
+    "row_index": "period",
+    "columns": [
+      "pieces",
+      "reports"
+    ],
+    "rows": [
+      {"2022 H2": [359931, 238827]},
+      {"2022 H1": [271452, 217610]},
+      {"2021 H2": [135517, 123963]},
+      {"2021 H1": [133041, 124773]},
+      {"2020 H2": [99591, 118994]},
+      {"2020 H1": [71954, 69961]}
+    ]
+  },
+  "NCMEC": {
+    "sources": [
+      "https://www.missingkids.org/content/dam/missingkids/pdfs/2019-reports-by-esp.pdf",
+      "https://www.missingkids.org/content/dam/missingkids/pdfs/2020-reports-by-esp.pdf",
+      "https://www.missingkids.org/content/dam/missingkids/pdfs/2021-reports-by-esp.pdf",
+      "https://www.missingkids.org/content/dam/missingkids/pdfs/2022-reports-by-esp.pdf"
+    ],
+    "row_index": "platform",
+    "columns": [
+      "2022",
+      "2021",
+      "2020",
+      "2019"
+    ],
+    "rows": [
+      {"Total": [31802525, 29157083, 21447786, 16836694]},
+      {"Automattic": [null, null, 9130, 10443]},
+      {"Facebook": [21165208, 22118952, null, null]},
+      {"Google/YouTube": [2174548, 875783, 546704, 449283]},
+      {"Instagram": [5007902, 3393654, null, null]},
+      {"LinkedIn": [201, 110, 60, 88]},
+      {"Meta": [null, null, 20307216, 15884511]},
+      {"Pinterest": [34310, 2283, 3432, 7360]},
+      {"Quora": [2242, 25, 2, 1]},
+      {"Reddit": [52592, 10059, 2233, 724]},
+      {"Snap": [551086, 512522, 144095, 82030]},
+      {"TikTok": [288125, 154618, 22692, 596]},
+      {"Tumblr": [4845, 4511, null, null]},
+      {"Twitter": [98050, 86666, 65062, 45726]},
+      {"WhatsApp": [1017555, 1372696, null, null]},
+      {"Wordpress": [190, 310, null, null]}
+    ]
+  }
+}
