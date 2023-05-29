@@ -15,6 +15,7 @@ def _annualize(df: pd.DataFrame) -> pd.DataFrame:
 
     df = df[~df['redundant']] if has_redundant else df.copy()
     df.index = df.index.map(lambda p: pd.Period(p.start_time.year, freq="Y"))
+    df.index.name = 'year'
     result = df.groupby(df.index).sum(min_count=1)
     return result.drop(['redundant'], axis=1) if has_redundant else result
 
@@ -39,7 +40,7 @@ def _combine(
             if combined is None:
                 combined = table
             else:
-                combined = combined + table
+                combined += table
         else:
             new_disclosures[platform] = table
 
