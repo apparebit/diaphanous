@@ -1,11 +1,8 @@
 from functools import partial
 import itertools as it
-import linecache
 import math
-import re
-import sys
 import textwrap
-from typing import Any, Callable, cast
+from typing import cast
 
 from IPython.display import display, HTML
 import pandas as pd
@@ -19,6 +16,8 @@ def _sgr(code: str) -> str:
 
 
 def _format_title(title: str, *, delta_percent: str) -> str:
+    title = title.replace('_pct', ' percent')
+    title = title.replace('_', ' ')
     if title == 'Δ%':
         return delta_percent
     if 'a' <= title[0] <= 'z':
@@ -43,17 +42,27 @@ def _format_period(value: object) -> str:
         return str(period.year)
 
 
-def _formatter_for(column: pd.Series, not_available: str) -> Callable[[Any], str]:
+def _format_column(column: pd.Series, not_available: str) -> pd.Series:
     if pd.api.types.is_bool_dtype(column.dtype):
-        fmt_value = lambda v: 'true' if v else 'false'
+        return column.apply(lambda v: 'true' if v else 'false')
     elif pd.api.types.is_period_dtype(column.dtype):
-        fmt_value = _format_period
+        return column.apply(_format_period)
     elif pd.api.types.is_integer_dtype(column.dtype):
-        fmt_value = lambda v: f'{v:,d}'
+        return column.apply(lambda v: not_available if pd.isna(v) else f'{v:,d}')
+    elif pd.api.types.is_float_dtype(column.dtype):
+        # Pick a precision so that at least three significant digits are displayed
+        minval = column.abs().pipe(lambda c: c[c > 0].min())
+        logmin = 2 if pd.isna(minval) else math.ceil(math.log10(minval))
+        precision = max(1, 3 - logmin)
+        return column.apply(
+            lambda v: not_available if pd.isna(v) else f'{v:.{precision}f}')
     else:
-        fmt_value = lambda v: f'{v:.2f}'
-
-    return lambda v: not_available if pd.isna(v) else fmt_value(v)
+        c = column.astype(str)
+        # d = c.copy()
+        # d.loc[c.str.len() > 15] = c.str.slice(stop=12)
+        # d.loc[c.str.len() > 15] = (
+        #     d + pd.Series(['...']).repeat(c.shape[0]).reset_index(drop=True))
+        return c
 
 
 def _pad_columns(data: pd.DataFrame, widths: pd.Series) -> pd.DataFrame:
@@ -142,7 +151,6 @@ def _highlight_outliers_css(data: pd.DataFrame) -> pd.DataFrame:
 
 
 def format_text(
-    platform: str,
     df: pd.DataFrame,
     *,
     not_available: str = '⋯⋯',
@@ -151,9 +159,10 @@ def format_text(
     delta_percent: str = 'Δ%',
     header_terminator: str = '',
     use_sgr: bool = False,
+    highlights: None | str | list[str] = None,
 ) -> str:
-    # Make index part of table.
-    df = df.sort_index().reset_index(names='Year')
+    # Make index part of frame.
+    df = df.reset_index()
 
     # Determine titles and their minimum widths, i.e., longest words.
     titles = df.columns.to_series().apply(
@@ -161,23 +170,30 @@ def format_text(
     widths = titles.str.split().apply(lambda words: max(len(w) for w in words))
 
     # Format columns, determine theirs widths, and combine with title widths.
-    body = df.apply(lambda column: column.apply(_formatter_for(column, not_available)))
+    body = df.apply(lambda column: _format_column(column, not_available))
     widths = body.apply(lambda column: column.str.len().max()).combine(widths, max)
 
-    # Text-wrap titles to their widths, normalize number of lines by prepending
-    # empty lines, and convert to a dataframe with the same columns as body.
+    # Text-wrap each title to its column width.
     titles = pd.Series(
         (textwrap.wrap(title, width) for title, width in zip(titles, widths)),
         index=titles.index)
+    # Normalize number of lines for each title and combine into dataframe.
     line_count = titles.apply(lambda lines: len(lines)).max()
     header = pd.DataFrame(
         [[*it.repeat('', line_count - len(lines)), *lines] for lines in titles],
         index=titles.index,
     ).transpose()
 
-    # Normalize the cell width for each column.
+    # Normalize the cell width for each column
     header = _pad_columns(header, widths)
     body = _pad_columns(body, widths)
+
+    # Maybe highlight columns.
+    if use_sgr and highlights is not None:
+        if isinstance(highlights, str):
+            highlights = [highlights]
+        for column in highlights:
+            body[column] = _sgr('48;5;230') + body[column] + _sgr('49')
 
     # Maybe highlight outliers.
     if use_sgr and _maybe_has_outliers(df):
@@ -196,10 +212,9 @@ def format_text(
     )
 
 
-def format_latex(platform: str, df: pd.DataFrame) -> str:
+def format_latex(df: pd.DataFrame) -> str:
     alignment = "r" * (len(df.columns) + 1)
     body = format_text(
-        platform,
         df,
         not_available='$\cdots$',
         column_separator='  &  ',
@@ -215,89 +230,29 @@ def format_latex(platform: str, df: pd.DataFrame) -> str:
 
 
 def show_html(text: None | str = None, **kwargs: str) -> None:
+    s = ''
+    if text is not None:
+        s += f'<p>{text}</p>'
     if len(kwargs) > 0:
-        assert text is None
-        s = ''.join(f'<{tag}>{content}</{tag}>' for tag, content in kwargs.items())
-    elif text is not None:
-        s = f'<p>{text}</p>'
-    else:
-        s = ''
-
+        s += ''.join(f'<{tag}>{content}</{tag}>' for tag, content in kwargs.items())
     display(HTML(s))
-
-
-# --------------------------------------------------------------------------------------
-
-
-def _do_not_log(**kwargs: object) -> None:
-    pass
-
-def _do_log(**kwargs: object) -> None:
-    for key, value in kwargs.items():
-        print(f'>>> {key}:', value)
-
-# When I needed instrumentation in _get_table_name() for 2nd time, I made it permanent.
-_logger = _do_not_log
-
-
-def _get_table_name(invocation: str) -> None | str:
-    # Try locating source code through stack frame
-    frame = sys._getframe(2)
-    _logger(frame=frame)
-
-    lines = linecache.getlines(frame.f_code.co_filename, frame.f_globals)
-    lineno = frame.f_lineno - 1
-    _logger(len_lines=len(lines), lineno=lineno)
-    if len(lines) <= lineno:
-        return None
-
-    # Find start of invocation in source code.
-    text = ''.join(lines[lineno:])
-    start = text.find(invocation)
-    _logger(invocation=invocation, start=start)
-    if start == -1:
-        return None
-
-    # Find end of first argument, stopping at next comma or closing parenthesis.
-    start = start + len(invocation)
-    stop1 = text.find(',', start)
-    stop2 = text.find(')', start)
-    stop = stop1 if start <= stop1 < stop2 else stop2
-    _logger(stop=stop)
-    if stop == -1:
-        return None
-
-    # Given the above, very simplistic scan, make sure that the result is usable.
-    name = text[start : stop].strip()
-    _logger(raw_name=name)
-    if not name.isidentifier():
-        return None
-
-    # Drop tech appearance when rendering name.
-    name = name.replace('_', ' ')
-    _logger(name=name)
-    return name
 
 
 def show_info(
     table: pd.DataFrame,
     *,
-    table_name: None | str = None,
-    extra: None | str = None,
-    invocation: None | str = None,
+    title: None | str = None,
+    description: None | str = None,
+    highlights: None | str | list[str] = None,  # unused
 ) -> None:
     fragments = ['<p>Table']
 
-    if table_name is None:
-        if invocation is None:
-            invocation = 'show_info('
-        table_name = _get_table_name(invocation)
-    if table_name is not None:
-        fragments.append(f' <strong>{table_name}</strong>')
+    if title is not None:
+        fragments.append(f' <strong>{title}</strong>')
 
     rows = len(table)
     fragments.append(f' with {rows:,d} rows')
-    fragments.append('' if extra is None else extra)
+    fragments.append('' if description is None else f' {description}')
     fragments.append(':</p><ul>')
 
     if table.index.nlevels == 1:
@@ -325,8 +280,10 @@ def show_info(
 def show_table(
     table: pd.Series | pd.DataFrame,
     *,
-    table_name: None | str = None,
-    highlight: None | str | list[str] = None,
+    title: None | str = None,
+    description: None | str = None,  # unused
+    highlights: None | str | list[str] = None,
+    first_index_rules: bool = False
 ) -> None:
     if isinstance(table, pd.Series):
         table = table.to_frame()
@@ -334,10 +291,8 @@ def show_table(
     style = table.style
 
     # Add table name as caption
-    if table_name is None:
-        table_name = _get_table_name('show_table(')
-    if table_name is not None:
-        style.set_caption(table_name)
+    if title is not None:
+        style.set_caption(title)
         style.set_table_styles([
             {
                 'selector': 'caption',
@@ -352,7 +307,7 @@ def show_table(
         # Improve presentation of periods.
         if all(_is_period(value) for value in table.index.values):
             style.format_index(_format_period, axis=0)
-    else:
+    elif first_index_rules:
         # Improve presentation of tables with multi-indices.
         level_name = table.index.names[0]
         if level_name is not None:
@@ -370,15 +325,18 @@ def show_table(
                         overwrite=False,
                         axis=1)
 
+    # Highlight column(s) as requested.
+    if highlights is not None:
+        if isinstance(highlights, str):
+            highlights = [highlights]
+        style.set_properties(
+            **{'background-color': '#ffffb3'},
+            subset=highlights,
+        )
+
     # Highlight outliers when comparing CSAM report counts.
     if _maybe_has_outliers(table):
         style.apply(_highlight_outliers_css, axis=None)
-
-    # Highlight column(s) as requested.
-    if highlight is not None:
-        if isinstance(highlight, str):
-            highlight = [highlight]
-        style.set_properties(**{'background-color': '#ffffb3'}, subset=highlight)
 
     # Ready to render...
     display(HTML(style.to_html()))
