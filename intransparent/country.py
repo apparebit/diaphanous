@@ -1,8 +1,10 @@
 from pathlib import Path
-from typing import NamedTuple, Protocol
+from typing import Any, Iterator, NamedTuple
 
 import pandas as pd
 import geopandas as geo # type: ignore
+
+from .frame_logger import FrameLogger, silent_logger
 
 
 MIN_YEAR = 2019
@@ -21,10 +23,10 @@ _PROBLEMATIC_GEOMETRIES = set(['France', 'Kosovo', 'N. Cyprus', 'Norway', 'Somal
 
 
 def read_reports(path: str | Path) -> pd.DataFrame:
-    # Read table.
+    # Read data
     reports = pd.read_csv(path, thousands=',').drop(columns='country')
 
-    # Validate table data.
+    # Validate data
     actual = reports.shape[0]
     if actual != 250:
         raise AssertionError(f'{actual:,d} instead of 250 rows in "{path}"')
@@ -41,7 +43,7 @@ def read_reports(path: str | Path) -> pd.DataFrame:
                 'with no reports'
             )
 
-    # Clean up and reorganize the table data.
+    # Clean up and reorganize data
     reports = (
         reports
         # NCMEC includes a line for reports without country in each disclosure
@@ -239,14 +241,8 @@ def merge_reports_per_country(
     return df
 
 
-class Logger(Protocol):
-    def __call__(self, table: pd.DataFrame, *, extra: None | str = None) -> None: ...
-
-
 class ReportsPerCountry(NamedTuple):
-    # The merged table in the pole position
-    reports_per_country: pd.DataFrame
-    # The source tables
+    reports_per_capita: pd.DataFrame
     reports: pd.DataFrame
     populations: pd.DataFrame
     countries: pd.DataFrame
@@ -257,35 +253,52 @@ class ReportsPerCountry(NamedTuple):
 def ingest_reports_per_country(
     path: str | Path,
     *,
-    logger: None | Logger = None,
+    logger: None | FrameLogger = None,
 ) -> ReportsPerCountry:
     path = Path(path)
 
+    if logger is None:
+        logger = silent_logger
+
     reports = read_reports(path / 'csam-reports-per-country.csv')
-    if logger is not None:
-        logger(reports, extra=f' covering {reports.shape[0] / 4:.0f} countries')
+    description = f'covers {reports.shape[0] / 4:.0f} countries'
+    logger(reports, title='reports', description=description)
 
     populations = read_populations(path / 'populations.csv')
-    if logger is not None:
-        logger(populations, extra=f' covering {populations.shape[0] / 4:.0f} countries')
+    description = f'covers {populations.shape[0] / 4:.0f} countries'
+    logger(populations, title='populations', description=description)
 
     countries = read_countries(path / 'countries.csv')
-    if logger is not None:
-        logger(countries)
+    logger(countries, title='countries')
 
     regions = read_regions(path / 'regions.csv')
-    if logger is not None:
-        logger(regions)
+    logger(regions, title='regions')
 
     geometries = read_geometries(path / 'naturalearth/ne_110m_admin_0_countries.shp')
-    if logger is not None:
-        logger(geometries)
+    logger(geometries, title='geometries')
 
-    reports_per_country = (
+    reports_per_capita = (
         merge_reports_per_country(reports, populations, countries, regions))
-    if logger is not None:
-        logger(reports_per_country)
+    logger(reports_per_capita, title='reports per capita per country')
 
     return ReportsPerCountry(
-        reports_per_country, reports, populations, countries, regions, geometries
+        reports_per_capita, reports, populations, countries, regions, geometries
     )
+
+
+def reports_per_capita_country_year(
+    reports_per_country: ReportsPerCountry
+) -> Iterator[Any]:
+    sorted_and_grouped = (
+        reports_per_country.reports_per_capita
+        .drop(columns=['region', 'superregion', 'continent'])
+        .sort_values('reports_per_capita', ascending=False)
+        .groupby('year')
+    )
+
+    for year, group in sorted_and_grouped:
+        group = group.reset_index()
+        group.index = group.index + 1
+        group.index.name = 'rank'
+
+        yield year, group
