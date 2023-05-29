@@ -155,21 +155,20 @@ _TABLE_FIELD = set(["row_index", "columns", "rows", "nonintegers"])
 def ingest_reports_per_platform(
     raw_data: DisclosureCollectionType,
     include_redundant: bool = False,
-    verbose: bool = False,
+    logger: None | Callable[..., None] = None
 ) -> dict[str, pd.DataFrame]:
     # Define verbose logger.
-    def log(msg: str, *args: object, **kwargs) -> None:
-        if verbose:
-            print(msg.format(*args, **kwargs), file=sys.stderr)
+    if logger is None:
+        logger = lambda *args, **kwargs: None
 
     disclosures = {}
     for platform, record in raw_data.items():
         # Skip metadata and platforms without disclosure record.
         if platform == "@":
-            log("Skipping metadata")
+            logger("Skipping metadata")
             continue
         if record is None:
-            log("Skipping {}: no transparency disclosures", platform)
+            logger("Skipping {}: no transparency disclosures", platform)
             continue
 
         # Check that disclosure record has either no or all required table properties.
@@ -180,14 +179,14 @@ def ingest_reports_per_platform(
                 missing.append(field)
 
         if len(missing) == len(_TABLE_FIELD):
-            log("Skipping {}: no CSAM disclosures", platform)
+            logger("Skipping {}: no CSAM data", platform)
             continue
         if len(missing) > 1 or (len(missing) == 1 and missing[0] != "nonintegers"):
             s = ", ".join(set(missing) - set(["noninteger"]))
             raise ValueError(f"{platform}'s disclosure record lacks field(s) {s}")
 
         # Ingest table with platform's CSAM disclosures.
-        log("Ingesting {}", platform)
+        logger("Ingesting CSAM data for {}", platform)
         redundant = include_redundant
         if record['row_index'] != 'period':
             redundant = False
