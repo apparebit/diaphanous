@@ -1,4 +1,3 @@
-import os.path
 import sys
 
 if sys.version_info < (3, 10):
@@ -8,12 +7,19 @@ if sys.version_info < (3, 10):
 from collections.abc import Sequence
 from argparse import ArgumentParser, BooleanOptionalAction
 import os
+from pathlib import Path
+
+import pandas as pd
 
 from intransparent import (
+    ingest_reports_per_country,
+    reports_per_capita_country_year,
+
     REPORTS_PER_PLATFORM,
     ingest_reports_per_platform,
-    export_reports_per_platform,
+    dumps_reports_per_platform,
     compare_all_platform_reports,
+
     format_latex,
     format_text,
 )
@@ -22,39 +28,17 @@ from intransparent import (
 def create_parser() -> ArgumentParser:
     parser = ArgumentParser(__package__)
     parser.add_argument(
-        "--export-json",
+        "--export-platform-data",
         action="store_true",
-        help="export original data in JSON",
+        help="Export platform data to \"data/csam-reports-per-platform.json\""
     )
-    parser.add_argument(
-        "--include-redundant",
-        action="store_true",
-        help="include redundant data rows",
-    )
-    parser.add_argument(
-        "--print-dataset",
-        action="store_true",
-        help="print the full dataset after ingestion",
-    )
-    parser.add_argument("--latex", action="store_true", help="emit LaTeX")
-    parser.add_argument(
-        "--color",
-        action=BooleanOptionalAction,
-        help="do not colorize output",
-    )
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument(
-        "-q",
-        "--quiet",
-        action="store_true",
-        help="enable quiet mode",
-    )
-    group.add_argument(
-        "-v",
-        "--verbose",
-        action="store_true",
-        help="enable verbose mode",
-    )
+    format = parser.add_argument_group("output format")
+    format.add_argument(
+        "--latex", action="store_true", help="emit LaTeX instead of text")
+    format.add_argument(
+        "--color", action=BooleanOptionalAction, help="force (no) color in output")
+    format.add_argument(
+        "-v", "--verbose", action="store_true", help="enable verbose mode")
     return parser
 
 
@@ -62,49 +46,60 @@ def main(args: Sequence[str]) -> None:
     parser = create_parser()
     options = parser.parse_args(args[1:])
 
-    isatty = sys.stderr.isatty()
-    if options.color is None:
-        options.color = isatty
+    if options.latex:
+        term_width = 140
+        heavy_rule = f"% {'=' * (term_width - 2)}"
+        light_rule = f"% {'-' * (term_width - 2)}"
 
-    if options.export_json:
-        path = "./data/csam-reports-per-platform.json"
-        if options.verbose:
-            print('Writing dataset to "{path}"', file=sys.stderr)
-        with open(path, mode="w", encoding="utf") as file:
-            file.write(export_reports_per_platform(REPORTS_PER_PLATFORM))
+        def print_table(
+            table: pd.DataFrame, *, title: str, highlights: None | str = None
+        ) -> None:
+            print(heavy_rule)
+            print("%", title)
+            print(light_rule)
+            print(format_latex(table))
+            print()
 
-    term_width, _ = os.get_terminal_size() if isatty else (80, None)
-    heavy_rule = "━" * term_width
-    light_rule = "─" * term_width
+    else:
+        isatty = sys.stderr.isatty()
+        if options.color is None:
+            options.color = isatty
+        term_width, _ = os.get_terminal_size() if isatty else (80, None)
+        heavy_rule = "━" * term_width
+        light_rule = "─" * term_width
 
-    def print_platform(name: str) -> None:
-        if not options.color:
-            print(("% " if options.latex else "# ") + name + ":", file=sys.stderr)
-        else:
-            print(heavy_rule, file=sys.stderr)
-            print(name, file=sys.stderr)
-            print(light_rule, file=sys.stderr)
+        def print_table(
+            table: pd.DataFrame, *, title: str, highlights: None |str = None
+        ) -> None:
+            print(heavy_rule)
+            print(title)
+            print(light_rule)
+            print(format_text(table, use_sgr=options.color, highlights=highlights))
+            print()
+
+    if options.export_platform_data:
+        target = Path('data/csam-reports-per-platform.json')
+        source = target.with_suffix('.tmp.json')
+        with open(source, mode='w', encoding='utf') as file:
+            file.write(dumps_reports_per_platform(REPORTS_PER_PLATFORM))
+        source.replace(target)
 
     disclosures = ingest_reports_per_platform(
         REPORTS_PER_PLATFORM,
-        verbose=options.verbose
-    )
-    if options.print_dataset:
-        for platform, data in disclosures.items():
-            print_platform(platform)
-            print(data, file=sys.stderr)
-            print(file=sys.stderr)
 
+    )
     comparisons = compare_all_platform_reports(disclosures)
-    if not options.quiet:
-        for platform, data in comparisons.items():
-            print_platform(platform)
-            if options.latex:
-                fmt = format_latex
-            else:
-                fmt = lambda p, d: format_text(p, d, use_sgr=options.color)
-            print(fmt(platform, data), file=sys.stderr)
-            print(file=sys.stderr)
+
+    for platform, data in comparisons.items():
+        print_table(data, title=platform)
+
+    country_data = ingest_reports_per_country('data')
+    for year, data in reports_per_capita_country_year(country_data):
+        print_table(
+            data.head(20),
+            title=f'CSAM reports per capita per country {year}',
+            highlights='reports_per_capita',
+        )
 
 
 if __name__ == "__main__":
