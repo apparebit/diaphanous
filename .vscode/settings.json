@@ -14,5 +14,6 @@
         "nunique",
         "Plotly",
         "Quora"
-    ]
+    ],
+    "python.defaultInterpreterPath": ".venv/bin/python"
 }
