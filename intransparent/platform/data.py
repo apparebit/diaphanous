@@ -6,8 +6,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
         "author": "Robert Grimm",
         "title": "Social Media CSAM Disclosures",
         "version": "1.0",
-        "date": "May 2023",
-        "doi": "",
+        "date": "2023-05-28",
         "url": "https://github.com/apparebit/intransparent",
         # ──────────────────────────────────────────────────────────────
     },
@@ -243,6 +242,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-3/",
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-2/",
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-1/",
+            "https://sf16-va.tiktokcdn.com/obj/eden-va2/nuvlojeh7ryht/Transparency_CGE_2022Q4/2022Q4_raw_data_cger_English.csv",
+            "https://sf16-va.tiktokcdn.com/obj/eden-va2/nuvlojeh7ryht/Transparency_CGE_2022Q3/English_CGE_2022Q3.xlsx",
         ),
         "comments": (
             "category: minor safety; subcategory: sexual exploitation of minors",
