@@ -3,7 +3,7 @@ from typing import cast
 
 from .type import (
     CellType,
-    CitationType,
+    MetadataType,
     DisclosureCollectionType,
     DisclosureType,
     RowType,
@@ -35,8 +35,8 @@ def _format_row_json(row: RowType) -> str:
     return line
 
 
-def _format_citation(citation: CitationType):
-    keys, values = zip(*citation.items())
+def _format_citation(metadata: MetadataType):
+    keys, values = zip(*metadata.items())
     key_width = max(len(key) for key in keys)
     rule_width = key_width + max(len(value) for value in values) + 10
     rule = "━" * rule_width
@@ -52,16 +52,16 @@ def _format_citation(citation: CitationType):
     return lines
 
 
-def export_reports_per_platform(disclosure_collection: DisclosureCollectionType) -> str:
+def dumps_reports_per_platform(platform_disclosures: DisclosureCollectionType) -> str:
     lines = ["{"]
 
     def append_comma_if_not(flag: bool) -> bool:
         if not flag:
-            lines[-1] = lines[-1] + ","
+            lines[-1] += ","
         return False
 
     first_platform = True
-    for platform, platform_object in disclosure_collection.items():
+    for platform, platform_object in platform_disclosures.items():
         first_platform = append_comma_if_not(first_platform)
 
         if platform_object is None:
@@ -70,7 +70,7 @@ def export_reports_per_platform(disclosure_collection: DisclosureCollectionType)
 
         lines.append(f"  {json.dumps(platform)}: {{")
         if platform == "@":
-            lines.extend(_format_citation(cast(CitationType, platform_object)))
+            lines.extend(_format_citation(cast(MetadataType, platform_object)))
             continue
 
         first_property = True
