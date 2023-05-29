@@ -5,14 +5,13 @@ CellType = None | int | float | str
 RowType = dict[str, bool | Sequence[CellType]]
 
 
-class CitationType(TypedDict):
+class MetadataType(TypedDict):
     """A dictionary with metadata about the dataset."""
 
     author: str
     title: str
     version: str
     date: str
-    doi: str
     url: str
 
 
@@ -34,7 +33,7 @@ class DisclosureType(TypedDict, total=False):
 DisclosureCollectionType = TypedDict(
     "DisclosureCollectionType",
     {
-        "@": "CitationType",
+        "@": "MetadataType",
         "Automattic": "DisclosureType",
         "Facebook": "DisclosureType",
         "Google": "DisclosureType",
