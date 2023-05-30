@@ -1,3 +1,5 @@
+from collections.abc import Sequence
+from enum import auto, StrEnum
 from functools import partial
 import itertools as it
 import math
@@ -11,7 +13,7 @@ import pandas as pd
 # ======================================================================================
 
 
-def _sgr(code: str) -> str:
+def sgr(code: int | str) -> str:
     return f"\x1b[{code}m"
 
 
@@ -42,37 +44,39 @@ def _format_period(value: object) -> str:
         return str(period.year)
 
 
-def _format_column(column: pd.Series, not_available: str) -> pd.Series:
+class _ColumnFormat(StrEnum):
+    BOOLEAN = auto()
+    PERIOD = auto()
+    INTEGER = auto()
+    FLOAT = auto()
+    STRING = auto()
+
+_CF = _ColumnFormat
+
+def _format_column(column: pd.Series, na: str) -> tuple[_ColumnFormat, pd.Series]:
     if pd.api.types.is_bool_dtype(column.dtype):
-        return column.apply(lambda v: 'true' if v else 'false')
+        return _CF.BOOLEAN, column.apply(lambda v: 'true' if v else 'false')
     elif pd.api.types.is_period_dtype(column.dtype):
-        return column.apply(_format_period)
+        return _CF.PERIOD, column.apply(_format_period)
     elif pd.api.types.is_integer_dtype(column.dtype):
-        return column.apply(lambda v: not_available if pd.isna(v) else f'{v:,d}')
+        return _CF.INTEGER, column.apply(lambda v: na if pd.isna(v) else f'{v:,d}')
     elif pd.api.types.is_float_dtype(column.dtype):
-        # Pick a precision so that at least three significant digits are displayed
+        # Pick a precision so that there is at least one digit after the decimal
+        # and at least three significant digits are shown.
         minval = column.abs().pipe(lambda c: c[c > 0].min())
         logmin = 2 if pd.isna(minval) else math.ceil(math.log10(minval))
         precision = max(1, 3 - logmin)
-        return column.apply(
-            lambda v: not_available if pd.isna(v) else f'{v:.{precision}f}')
+        return (
+            _CF.FLOAT,
+            column.apply(lambda v: na if pd.isna(v) else f'{v:.{precision}f}')
+        )
     else:
         c = column.astype(str)
         # d = c.copy()
         # d.loc[c.str.len() > 15] = c.str.slice(stop=12)
         # d.loc[c.str.len() > 15] = (
         #     d + pd.Series(['...']).repeat(c.shape[0]).reset_index(drop=True))
-        return c
-
-
-def _pad_columns(data: pd.DataFrame, widths: pd.Series) -> pd.DataFrame:
-    return data.apply(lambda column: column.str.rjust(widths[column.name]))
-
-
-def _join_cells(data: pd.DataFrame, column_separator: str, row_terminator: str) -> str:
-    return row_terminator.join(
-        data.apply(lambda row: column_separator.join(row), axis=1)
-    )
+        return _CF.STRING, c
 
 
 # ======================================================================================
@@ -125,8 +129,8 @@ def _highlight_outliers_sgr(percentages: pd.Series, data: pd.DataFrame) -> pd.Da
         if codes is None:
             continue
 
-        data.at[row, 'reports'] = _sgr(codes[0]) + data.at[row, 'reports']
-        data.at[row, 'NCMEC'] = data.at[row, 'NCMEC'] + _sgr(codes[1])
+        data.at[row, 'reports'] = sgr(codes[0]) + data.at[row, 'reports']
+        data.at[row, 'NCMEC'] = data.at[row, 'NCMEC'] + sgr(codes[1])
 
     return data
 
@@ -150,6 +154,64 @@ def _highlight_outliers_css(data: pd.DataFrame) -> pd.DataFrame:
 # ======================================================================================
 
 
+def _add_background_colors(
+    header: pd.DataFrame,
+    body: pd.DataFrame,
+    use_rowshade: bool,
+    highlights: None | str | Sequence[str]
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    # Normalize highlights.
+    if highlights is None:
+        highlights = []
+    elif isinstance(highlights, str):
+        highlights = [highlights]
+
+    # Process header.
+    if use_rowshade:
+        header[header.columns[0]] = sgr('48;5;253') + header[header.columns[0]]
+        header[header.columns[-1]] = header[header.columns[-1]] + sgr('49')
+
+    # Process body.
+    previous_column: None | str = None
+    previous_highlight = False
+
+    for column in body.columns:
+        current_highlight = column in highlights
+
+        if not previous_highlight and current_highlight:
+            # Enable highlight, which also disables rowshade for all rows.
+            body[column] = sgr('48;5;229') + body[column]
+
+        elif previous_highlight and not current_highlight:
+            # Disable highlight for all rows in previous column.
+            assert previous_column is not None
+            body[previous_column] = body[previous_column] + sgr('49')
+            if use_rowshade:
+                # Enable rowshade in previous column, so that it covers column gap.
+                body.loc[1::2, previous_column] = (
+                    body[previous_column] + sgr('48;5;255'))
+
+        elif previous_column is None and use_rowshade:
+            # Enable rowshade in current column, which is the first column.
+            body.loc[1::2, column] = sgr('48;5;255') + body[column]
+
+        previous_column = column
+        previous_highlight = current_highlight
+
+    if previous_highlight:
+        # Disable highlight in previous column, which is the last column.
+        body[previous_column] = body[previous_column] + sgr('49')
+    elif use_rowshade:
+        # Disable rowshade in previous column, which is the last column.
+        assert previous_column is not None
+        body.loc[1::2, previous_column] = body[previous_column] + sgr('49')
+
+    return header, body
+
+
+# ======================================================================================
+
+
 def format_text(
     df: pd.DataFrame,
     *,
@@ -159,8 +221,9 @@ def format_text(
     delta_percent: str = 'Δ%',
     header_terminator: str = '',
     use_sgr: bool = False,
-    highlights: None | str | list[str] = None,
-) -> str:
+    use_rowshade: bool = False,
+    highlights: None | str | Sequence[str] = None,
+) -> tuple[str, int]:
     # Make index part of frame.
     df = df.reset_index()
 
@@ -170,51 +233,97 @@ def format_text(
     widths = titles.str.split().apply(lambda words: max(len(w) for w in words))
 
     # Format columns, determine theirs widths, and combine with title widths.
-    body = df.apply(lambda column: _format_column(column, not_available))
+    column_formats = {}
+    def do_format_column(column: pd.Series) -> pd.Series:
+        format, formatted = _format_column(column, not_available)
+        column_formats[column.name] = format
+        return formatted
+    body = df.apply(do_format_column)
     widths = body.apply(lambda column: column.str.len().max()).combine(widths, max)
 
     # Text-wrap each title to its column width.
     titles = pd.Series(
         (textwrap.wrap(title, width) for title, width in zip(titles, widths)),
         index=titles.index)
-    # Normalize number of lines for each title and combine into dataframe.
+    # Normalize number of lines for each title by prepending empty lines.
     line_count = titles.apply(lambda lines: len(lines)).max()
     header = pd.DataFrame(
         [[*it.repeat('', line_count - len(lines)), *lines] for lines in titles],
         index=titles.index,
-    ).transpose()
+    )
+    # Transpose the dataframe so that each title forms a column.
+    header = header.transpose()
 
     # Normalize the cell width for each column
-    header = _pad_columns(header, widths)
-    body = _pad_columns(body, widths)
+    header = header.apply(lambda column: column.str.ljust(widths[column.name]))
 
-    # Maybe highlight columns.
-    if use_sgr and highlights is not None:
-        if isinstance(highlights, str):
-            highlights = [highlights]
-        for column in highlights:
-            body[column] = _sgr('48;5;230') + body[column] + _sgr('49')
+    def pad_column(column: pd.Series) -> pd.Series:
+        name: str = cast(str, column.name)
+        if _ColumnFormat.STRING == column_formats[name]:
+            return column.str.ljust(widths[name])
+        else:
+            return column.str.rjust(widths[name])
+    body = body.apply(pad_column)
 
-    # Maybe highlight outliers.
+    # Calculate width of table in characters
+    table_width = (
+        widths.sum()
+        + (len(widths) - 1) * len(column_separator)
+        + max(len(row_terminator), len(header_terminator))
+    )
+
+    # Maybe highlight outliers. We colorize text before backgrounds,
+    # since the latter may span more than one column.
     if use_sgr and _maybe_has_outliers(df):
         body = _highlight_outliers_sgr(df['Δ%'], body)
 
-    # Render down to string.
-    bold = _sgr('1') if use_sgr else ''
-    plain = _sgr('0') if use_sgr else ''
+    # Maybe add row and column backgrounds
+    if use_sgr and (use_rowshade or highlights is not None):
+        header, body = _add_background_colors(header, body, use_rowshade, highlights)
 
-    return (
+    # Render down to string
+    bold = sgr('1') if use_sgr else ''
+    plain = sgr('0') if use_sgr else ''
+
+    text = (
         bold
-        + _join_cells(header, column_separator, row_terminator + '\n')
+        + (row_terminator + '\n').join(
+            header.apply(lambda row: column_separator.join(row), axis=1))
         + plain + header_terminator + '\n'
-        + _join_cells(body, column_separator, row_terminator + '\n')
+        + (row_terminator + '\n').join(
+            body.apply(lambda row: column_separator.join(row), axis=1))
         + row_terminator  # No trailing newline
     )
+
+    # Et voilà!
+    return text, table_width
+
+
+def format_table(
+    df: pd.DataFrame,
+    title: None | str = None,
+    use_sgr: bool = True,
+    highlights: None | str | Sequence[str] = None,
+) -> str:
+    text, width = format_text(
+        df,
+        use_sgr=use_sgr,
+        use_rowshade=True,
+        highlights=highlights
+    )
+
+    if title is None:
+        return text
+
+    indent = ' ' * max(0, (width - len(title)) // 2 - 1)
+    if use_sgr:
+        title = sgr(1) + title + sgr(0)
+    return indent + title + '\n\n' + text
 
 
 def format_latex(df: pd.DataFrame) -> str:
     alignment = "r" * (len(df.columns) + 1)
-    body = format_text(
+    body, _ = format_text(
         df,
         not_available='$\cdots$',
         column_separator='  &  ',
