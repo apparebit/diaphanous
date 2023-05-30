@@ -1,4 +1,6 @@
+from collections.abc import Sequence
 from typing import Protocol
+
 import pandas as pd
 
 
@@ -21,6 +23,7 @@ def silent_logger(
     frame: pd.DataFrame,
     *,
     title: None | str = None,
-    description: None | str = None
+    description: None | str = None,
+    highlights: None | str | Sequence[str] = None,
 ) -> None:
     pass
