@@ -16,7 +16,9 @@ from .country import (
 from .display import (
     # In terminal or LaTeX
     format_text,
+    format_table,
     format_latex,
+    sgr,
 
     # In HTML
     show_html,
