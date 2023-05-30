@@ -247,13 +247,14 @@ class ReportsPerCountry(NamedTuple):
     populations: pd.DataFrame
     countries: pd.DataFrame
     regions: pd.DataFrame
-    geometries: pd.DataFrame
+    geometries: None | pd.DataFrame
 
 
 def ingest_reports_per_country(
     path: str | Path,
     *,
     logger: None | FrameLogger = None,
+    load_geometries: bool = False,
 ) -> ReportsPerCountry:
     path = Path(path)
 
@@ -274,8 +275,10 @@ def ingest_reports_per_country(
     regions = read_regions(path / 'regions.csv')
     logger(regions, title='regions')
 
-    geometries = read_geometries(path / 'naturalearth/ne_110m_admin_0_countries.shp')
-    logger(geometries, title='geometries')
+    geometries = None
+    if load_geometries:
+        geometries = read_geometries(path/'naturalearth/ne_110m_admin_0_countries.shp')
+        logger(geometries, title='geometries')
 
     reports_per_capita = (
         merge_reports_per_country(reports, populations, countries, regions))
@@ -289,6 +292,11 @@ def ingest_reports_per_country(
 def reports_per_capita_country_year(
     reports_per_country: ReportsPerCountry
 ) -> Iterator[Any]:
+    """
+    Create an iterator over the year and reports per capita per country, with
+    the entries sorted in descending order by reports per capita. The index is a
+    country's rank.
+    """
     sorted_and_grouped = (
         reports_per_country.reports_per_capita
         .drop(columns=['region', 'superregion', 'continent'])
