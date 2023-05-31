@@ -163,3 +163,13 @@ def print_divergent_descriptors(delta: pd.DataFrame, *, use_sgr: bool = False) -
         print('  •', metric)
 
     print()
+
+
+def hype_divergent_descriptors(delta: pd.DataFrame) -> str:
+    lines = ['<p>Divergent policy areas:</p><ul>']
+    for policy_area in delta['policy_area'].unique():
+        lines.append(f'<li>{policy_area}</li>')
+    lines.append('</ul><p>Divergent metrics:</p><ul>')
+    for metric in delta['metric'].unique():
+        lines.append(f'<li>{metric}</li>')
+    return '\n'.join(lines)
