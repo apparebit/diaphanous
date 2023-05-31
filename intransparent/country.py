@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Any, Iterator, NamedTuple
 
 import pandas as pd
-import geopandas as geo # type: ignore
+import geopandas as geo  # type: ignore
 
 from .frame_logger import FrameLogger, silent_logger
 
@@ -33,7 +33,8 @@ def read_reports(path: str | Path) -> pd.DataFrame:
     actual = reports['iso3'].isna().sum()
     if actual != 1:
         raise AssertionError(
-            f'{actual:,d} instead of 1 row without ISO Alpha-3 code in "{path}"')
+            f'{actual:,d} instead of 1 row without ISO Alpha-3 code in "{path}"'
+        )
 
     for year, expected_nulls in zip(YEAR_LABELS, (8, 5, 5, 3)):
         actual_nulls = reports[year].isna().sum()
@@ -85,9 +86,7 @@ def read_reports(path: str | Path) -> pd.DataFrame:
     actual_pct = reports.groupby(level='year')['reports_pct'].sum()
     expected_pct = pd.Series([100.0] * len(YEAR_LABELS), index=YEAR_LABELS)
     if not actual_pct.equals(expected_pct):
-        raise AssertionError(
-            f'{actual_pct} instead of {expected_pct} report fractions'
-        )
+        raise AssertionError(f'{actual_pct} instead of {expected_pct} report fractions')
 
     return reports
 
@@ -106,9 +105,7 @@ def read_populations(path: str | Path) -> pd.DataFrame:
     rows = populations.shape[0]
     actual = 944
     if actual != 944:
-        raise AssertionError(
-            f'{actual:,d} instead of 944 rows with population counts'
-        )
+        raise AssertionError(f'{actual:,d} instead of 944 rows with population counts')
     actual = populations.index.get_level_values('iso3').nunique()
     if actual != 236:
         raise AssertionError(
@@ -118,7 +115,8 @@ def read_populations(path: str | Path) -> pd.DataFrame:
     # Compute total population per year and add column with percentage fraction.
     total_yearly_populations = populations.groupby(level='year')['population'].sum()
     populations['population_pct'] = (
-        populations['population'] / total_yearly_populations * 100)
+        populations['population'] / total_yearly_populations * 100
+    )
 
     actual_pct = populations.groupby(level='year')['population_pct'].sum()
     expected_pct = pd.Series([100.0] * len(YEAR_LABELS), index=YEAR_LABELS)
@@ -177,10 +175,7 @@ def read_geometries(path: str | Path) -> pd.DataFrame:
     geometries.loc[country == 'Somaliland', 'iso3'] = 'SOM'
 
     geometries = (
-        geometries
-        .drop(columns=['name'])
-        .astype({'iso3': 'category'})
-        .set_index('iso3')
+        geometries.drop(columns=['name']).astype({'iso3': 'category'}).set_index('iso3')
     )
 
     # There are two fewer countries thanks to N. Cyprus and Somaliland.
@@ -201,16 +196,12 @@ def read_geometries(path: str | Path) -> pd.DataFrame:
 
 def without_populations(
     reports: pd.DataFrame, populations: pd.DataFrame
-) ->tuple[pd.Index, pd.DataFrame]:
+) -> tuple[pd.Index, pd.DataFrame]:
     countries_without = reports.index.get_level_values('iso3').difference(
-        populations.index.get_level_values('iso3'))
-    country_names = ', '.join(f'"{country}"' for country in countries_without.values)
-    reports_without = (
-        reports
-        .query(f'iso3 in [{country_names}]')
-        .groupby('year')
-        .sum()
+        populations.index.get_level_values('iso3')
     )
+    country_names = ', '.join(f'"{country}"' for country in countries_without.values)
+    reports_without = reports.query(f'iso3 in [{country_names}]').groupby('year').sum()
     return countries_without, reports_without
 
 
@@ -221,8 +212,7 @@ def merge_reports_per_country(
     regions: pd.DataFrame,
 ) -> pd.DataFrame:
     df = (
-        reports
-        .merge(populations, how='inner', left_index=True, right_index=True)
+        reports.merge(populations, how='inner', left_index=True, right_index=True)
         .reset_index(level='year')
         .merge(countries, how='left', on='iso3')
         .reset_index()
@@ -277,11 +267,14 @@ def ingest_reports_per_country(
 
     geometries = None
     if load_geometries:
-        geometries = read_geometries(path/'naturalearth/ne_110m_admin_0_countries.shp')
+        geometries = read_geometries(
+            path / 'naturalearth/ne_110m_admin_0_countries.shp'
+        )
         logger(geometries, title='geometries')
 
-    reports_per_capita = (
-        merge_reports_per_country(reports, populations, countries, regions))
+    reports_per_capita = merge_reports_per_country(
+        reports, populations, countries, regions
+    )
     logger(reports_per_capita, title='reports per capita per country')
 
     return ReportsPerCountry(
@@ -290,7 +283,7 @@ def ingest_reports_per_country(
 
 
 def reports_per_capita_country_year(
-    reports_per_country: ReportsPerCountry
+    reports_per_country: ReportsPerCountry,
 ) -> Iterator[Any]:
     """
     Create an iterator over the year and reports per capita per country, with
@@ -298,8 +291,9 @@ def reports_per_capita_country_year(
     country's rank.
     """
     sorted_and_grouped = (
-        reports_per_country.reports_per_capita
-        .drop(columns=['region', 'superregion', 'continent'])
+        reports_per_country.reports_per_capita.drop(
+            columns=['region', 'superregion', 'continent']
+        )
         .sort_values('reports_per_capita', ascending=False)
         .groupby('year')
     )

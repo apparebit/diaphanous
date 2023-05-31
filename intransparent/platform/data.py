@@ -15,9 +15,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
         "brands": ("Tumblr", "Wordpress"),
     },
     "Facebook": {
-        "sources": (
-            "https://transparency.fb.com/sr/community-standards/",
-        ),
+        "sources": ("https://transparency.fb.com/sr/community-standards/",),
         "row_index": "period",
         "columns": (
             "pieces (Child Nudity & Sexual Exploitation)",
@@ -278,9 +276,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "https://transparency.twitter.com",
             "https://blog.twitter.com/en_us/topics/company/2023/an-update-on-twitter-transparency-reporting",
         ),
-        "comments": (
-            "'child sexual exploitation' is reported to NCMEC, hence CSAM",
-        ),
+        "comments": ("'child sexual exploitation' is reported to NCMEC, hence CSAM",),
         "row_index": "period",
         "columns": (
             "accounts actioned",

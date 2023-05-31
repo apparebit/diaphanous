@@ -10,6 +10,7 @@ from .type import (
     RowType,
 )
 
+
 def _format_row_json(row: RowType) -> str:
     for header, cell_values in row.items():
         if header != "redundant":
@@ -52,7 +53,7 @@ def _format_citation(metadata: MetadataType) -> Iterator[str]:
 
 
 def encode_reports_per_platform(
-    platform_disclosures: DisclosureCollectionType
+    platform_disclosures: DisclosureCollectionType,
 ) -> Iterator[str]:
     previous_line: None | str = None
 

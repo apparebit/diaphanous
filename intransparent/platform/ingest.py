@@ -124,7 +124,8 @@ def _ingest_table(
         ingest_index = _ingest_period
     elif include_redundant:
         raise ValueError(
-            f"{platform}: including redundant rows requires periods as row index")
+            f"{platform}: including redundant rows requires periods as row index"
+        )
     else:
         columns = [_ingest_period(platform, period) for period in data["columns"]]
         ingest_index = _ingest_name
@@ -155,7 +156,7 @@ _TABLE_FIELD = set(["row_index", "columns", "rows", "nonintegers"])
 def ingest_reports_per_platform(
     raw_data: DisclosureCollectionType,
     include_redundant: bool = False,
-    logger: None | Callable[..., None] = None
+    logger: None | Callable[..., None] = None,
 ) -> dict[str, pd.DataFrame]:
     # Define verbose logger.
     if logger is None:

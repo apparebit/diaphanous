@@ -9,12 +9,10 @@ import pandas as pd
 from intransparent import (
     ingest_reports_per_country,
     reports_per_capita_country_year,
-
     REPORTS_PER_PLATFORM,
     ingest_reports_per_platform,
     encode_reports_per_platform,
     compare_all_platform_reports,
-
     format_table,
     format_latex,
     sgr,
@@ -26,15 +24,18 @@ def create_parser() -> ArgumentParser:
     parser.add_argument(
         "--export-platform-data",
         action="store_true",
-        help="Export platform data to \"data/csam-reports-per-platform.json\""
+        help="Export platform data to \"data/csam-reports-per-platform.json\"",
     )
     format = parser.add_argument_group("output format")
     format.add_argument(
-        "--latex", action="store_true", help="emit LaTeX instead of text")
+        "--latex", action="store_true", help="emit LaTeX instead of text"
+    )
     format.add_argument(
-        "--color", action=BooleanOptionalAction, help="force (no) color in output")
+        "--color", action=BooleanOptionalAction, help="force (no) color in output"
+    )
     format.add_argument(
-        "-v", "--verbose", action="store_true", help="enable verbose mode")
+        "-v", "--verbose", action="store_true", help="enable verbose mode"
+    )
     return parser
 
 
@@ -68,12 +69,14 @@ def _main(args: Sequence[str]) -> None:
             table: pd.DataFrame, *, title: str, highlights: None | str = None
         ) -> None:
             print(heavy_rule)
-            print(format_table(
-                table,
-                title=title,
-                use_sgr=options.color,
-                highlights=highlights,
-            ))
+            print(
+                format_table(
+                    table,
+                    title=title,
+                    use_sgr=options.color,
+                    highlights=highlights,
+                )
+            )
             print()
 
     if options.export_platform_data:
@@ -85,7 +88,6 @@ def _main(args: Sequence[str]) -> None:
 
     disclosures = ingest_reports_per_platform(
         REPORTS_PER_PLATFORM,
-
     )
     comparisons = compare_all_platform_reports(disclosures)
 

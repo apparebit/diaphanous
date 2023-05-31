@@ -10,13 +10,15 @@ class FrameLogger(Protocol):
     which is passed as its only positional argument. Optional named arguments
     provide a title and/or description.
     """
+
     def __call__(
         self,
         frame: pd.DataFrame,
         *,
         title: None | str = None,
         description: None | str = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
 
 def silent_logger(

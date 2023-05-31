@@ -19,7 +19,6 @@ from .display import (
     format_table,
     format_latex,
     sgr,
-
     # In HTML
     show_html,
     show_info,

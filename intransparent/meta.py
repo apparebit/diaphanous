@@ -33,19 +33,13 @@ SCHEMA = {
 def parse_counts(df: pd.DataFrame) -> pd.Series:
     """Parse all values that are integer counts."""
     return (
-        df.loc[df['metric'].isin(COUNT), 'value']
-        .str.replace(',', '')
-        .astype('Float64')
+        df.loc[df['metric'].isin(COUNT), 'value'].str.replace(',', '').astype('Float64')
     )
 
 
 def parse_percents(df: pd.DataFrame) -> pd.Series:
     """Parse all values that are percentages."""
-    return (
-        df.loc[df['metric'].isin(PERCENT), 'value']
-        .str.rstrip('%')
-        .astype('Float64')
-    )
+    return df.loc[df['metric'].isin(PERCENT), 'value'].str.rstrip('%').astype('Float64')
 
 
 _Q4_2022 = pd.Period('2022q4')
@@ -62,19 +56,18 @@ def read(path: str | Path, quarter: str | pd.Period) -> pd.DataFrame:
 
     path = Path(path) / f'meta-q{quarter.quarter}-{quarter.year}.csv'
     # mypy madness: read_csv's dtype accepts defaultdict but not dict.
-    data = pd.read_csv(path, dtype=SCHEMA) # type: ignore[arg-type]
+    data = pd.read_csv(path, dtype=SCHEMA)  # type: ignore[arg-type]
 
     # Quick and dirty mitigation against unusual value "4%-5%":
     if quarter == _Q4_2022:
-        fake_account_prevalence = (
-            (data['policy_area'] == 'Fake Accounts') & (data['metric'] == 'Prevalence')
+        fake_account_prevalence = (data['policy_area'] == 'Fake Accounts') & (
+            data['metric'] == 'Prevalence'
         )
         assert len(data[fake_account_prevalence]) == 1
         data.loc[fake_account_prevalence, 'value'] = "4.5%"
 
     return (
-        data
-        .assign(count=parse_counts)
+        data.assign(count=parse_counts)
         .assign(percent=parse_percents)
         .assign(value=lambda df: df['count'].fillna(df['percent']))
         .drop(columns=['count', 'percent'])

@@ -51,7 +51,9 @@ class _ColumnFormat(StrEnum):
     FLOAT = auto()
     STRING = auto()
 
+
 _CF = _ColumnFormat
+
 
 def _format_column(column: pd.Series, na: str) -> tuple[_ColumnFormat, pd.Series]:
     if pd.api.types.is_bool_dtype(column.dtype):
@@ -68,7 +70,7 @@ def _format_column(column: pd.Series, na: str) -> tuple[_ColumnFormat, pd.Series
         precision = max(1, 3 - logmin)
         return (
             _CF.FLOAT,
-            column.apply(lambda v: na if pd.isna(v) else f'{v:.{precision}f}')
+            column.apply(lambda v: na if pd.isna(v) else f'{v:.{precision}f}'),
         )
     else:
         c = column.astype(str)
@@ -144,11 +146,14 @@ def _highlight_outliers_css(data: pd.DataFrame) -> pd.DataFrame:
     """
     bins = _bin_outliers(data['Δ%'])
     row_styles = bins.apply(lambda bin: '' if pd.isna(bin) else _OUTLIER_CSS[int(bin)])
-    return pd.DataFrame({
-        'reports': row_styles,
-        'Δ%': row_styles,
-        'NCMEC': row_styles,
-    }, index=data.index)
+    return pd.DataFrame(
+        {
+            'reports': row_styles,
+            'Δ%': row_styles,
+            'NCMEC': row_styles,
+        },
+        index=data.index,
+    )
 
 
 # ======================================================================================
@@ -158,7 +163,7 @@ def _add_background_colors(
     header: pd.DataFrame,
     body: pd.DataFrame,
     use_rowshade: bool,
-    highlights: None | str | Sequence[str]
+    highlights: None | str | Sequence[str],
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     # Normalize highlights.
     if highlights is None:
@@ -188,8 +193,9 @@ def _add_background_colors(
             body[previous_column] = body[previous_column] + sgr('49')
             if use_rowshade:
                 # Enable rowshade in previous column, so that it covers column gap.
-                body.loc[1::2, previous_column] = (
-                    body[previous_column] + sgr('48;5;255'))
+                body.loc[1::2, previous_column] = body[previous_column] + sgr(
+                    '48;5;255'
+                )
 
         elif previous_column is None and use_rowshade:
             # Enable rowshade in current column, which is the first column.
@@ -229,22 +235,26 @@ def format_text(
 
     # Determine titles and their minimum widths, i.e., longest words.
     titles = df.columns.to_series().apply(
-        partial(_format_title, delta_percent=delta_percent))
+        partial(_format_title, delta_percent=delta_percent)
+    )
     widths = titles.str.split().apply(lambda words: max(len(w) for w in words))
 
     # Format columns, determine theirs widths, and combine with title widths.
     column_formats = {}
+
     def do_format_column(column: pd.Series) -> pd.Series:
         format, formatted = _format_column(column, not_available)
         column_formats[column.name] = format
         return formatted
+
     body = df.apply(do_format_column)
     widths = body.apply(lambda column: column.str.len().max()).combine(widths, max)
 
     # Text-wrap each title to its column width.
     titles = pd.Series(
         (textwrap.wrap(title, width) for title, width in zip(titles, widths)),
-        index=titles.index)
+        index=titles.index,
+    )
     # Normalize number of lines for each title by prepending empty lines.
     line_count = titles.apply(lambda lines: len(lines)).max()
     header = pd.DataFrame(
@@ -263,6 +273,7 @@ def format_text(
             return column.str.ljust(widths[name])
         else:
             return column.str.rjust(widths[name])
+
     body = body.apply(pad_column)
 
     # Calculate width of table in characters
@@ -288,10 +299,14 @@ def format_text(
     text = (
         bold
         + (row_terminator + '\n').join(
-            header.apply(lambda row: column_separator.join(row), axis=1))
-        + plain + header_terminator + '\n'
+            header.apply(lambda row: column_separator.join(row), axis=1)
+        )
+        + plain
+        + header_terminator
+        + '\n'
         + (row_terminator + '\n').join(
-            body.apply(lambda row: column_separator.join(row), axis=1))
+            body.apply(lambda row: column_separator.join(row), axis=1)
+        )
         + row_terminator  # No trailing newline
     )
 
@@ -306,10 +321,7 @@ def format_table(
     highlights: None | str | Sequence[str] = None,
 ) -> str:
     text, width = format_text(
-        df,
-        use_sgr=use_sgr,
-        use_rowshade=True,
-        highlights=highlights
+        df, use_sgr=use_sgr, use_rowshade=True, highlights=highlights
     )
 
     if title is None:
@@ -392,7 +404,7 @@ def show_table(
     title: None | str = None,
     description: None | str = None,  # unused
     highlights: None | str | list[str] = None,
-    first_index_rules: bool = False
+    first_index_rules: bool = False,
 ) -> None:
     if isinstance(table, pd.Series):
         table = table.to_frame()
@@ -402,12 +414,14 @@ def show_table(
     # Add table name as caption
     if title is not None:
         style.set_caption(title)
-        style.set_table_styles([
-            {
-                'selector': 'caption',
-                'props': 'caption-side: bottom; font-style: italic; margin-top: 1ex;'
-            }
-        ])
+        style.set_table_styles(
+            [
+                {
+                    'selector': 'caption',
+                    'props': 'caption-side: bottom; font-style: italic; margin-top: 1ex;',
+                }
+            ]
+        )
 
     # Improve readability of large numbers.
     style.format(thousands=',')
@@ -426,13 +440,16 @@ def show_table(
                 if group.size > 0:
                     style.set_table_styles(
                         {
-                            group.index[0]: [{
-                                'selector': '',
-                                'props': 'border-top: 2px solid #000000 !important;',
-                            }]
+                            group.index[0]: [
+                                {
+                                    'selector': '',
+                                    'props': 'border-top: 2px solid #000000 !important;',
+                                }
+                            ]
                         },
                         overwrite=False,
-                        axis=1)
+                        axis=1,
+                    )
 
     # Highlight column(s) as requested.
     if highlights is not None:
