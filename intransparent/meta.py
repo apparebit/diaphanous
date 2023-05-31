@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Callable
 
 import pandas as pd
 
@@ -146,7 +147,7 @@ def diff_all(
     return differences
 
 
-def quarterly_divergent(delta: pd.DataFrame) -> None:
+def quarterly_divergent(delta: pd.DataFrame) -> pd.DataFrame:
     return (
         delta
         .groupby('period')
@@ -159,7 +160,7 @@ def quarterly_divergent(delta: pd.DataFrame) -> None:
 def print_divergent_descriptors(
     delta: pd.DataFrame, *, use_sgr: bool = False
 ) -> None:
-    sgr = (lambda v: f'\x1b[{v}m') if use_sgr else (lambda _: '')
+    sgr: Callable[[int], str] = (lambda v: f'\x1b[{v}m') if use_sgr else (lambda _: '')
 
     print('\n' + sgr(1) + 'Divergent policy areas:' + sgr(0))
     for policy_area in delta['policy_area'].unique():
