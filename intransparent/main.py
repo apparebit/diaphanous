@@ -12,7 +12,7 @@ from intransparent import (
 
     REPORTS_PER_PLATFORM,
     ingest_reports_per_platform,
-    dumps_reports_per_platform,
+    encode_reports_per_platform,
     compare_all_platform_reports,
 
     format_table,
@@ -77,11 +77,11 @@ def _main(args: Sequence[str]) -> None:
             print()
 
     if options.export_platform_data:
-        target = Path('data/csam-reports-per-platform.json')
-        source = target.with_suffix('.tmp.json')
-        with open(source, mode='w', encoding='utf') as file:
-            file.write(dumps_reports_per_platform(REPORTS_PER_PLATFORM))
-        source.replace(target)
+        json_path = Path('data/csam-reports-per-platform.json')
+        tmp_path = json_path.with_suffix('.tmp.json')
+        with open(tmp_path, mode='w', encoding='utf') as file:
+            file.write('\n'.join(encode_reports_per_platform(REPORTS_PER_PLATFORM)))
+        tmp_path.replace(json_path)
 
     disclosures = ingest_reports_per_platform(
         REPORTS_PER_PLATFORM,
