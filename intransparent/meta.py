@@ -148,18 +148,10 @@ def diff_all(
 
 
 def quarterly_divergent(delta: pd.DataFrame) -> pd.DataFrame:
-    return (
-        delta
-        .groupby('period')
-        .size()
-        .to_frame()
-        .rename(columns={0: 'divergent'})
-    )
+    return delta.groupby('period').size().to_frame().rename(columns={0: 'divergent'})
 
 
-def print_divergent_descriptors(
-    delta: pd.DataFrame, *, use_sgr: bool = False
-) -> None:
+def print_divergent_descriptors(delta: pd.DataFrame, *, use_sgr: bool = False) -> None:
     sgr: Callable[[int], str] = (lambda v: f'\x1b[{v}m') if use_sgr else (lambda _: '')
 
     print('\n' + sgr(1) + 'Divergent policy areas:' + sgr(0))

@@ -16,10 +16,10 @@ from intransparent import (
     compare_all_platform_reports,
     format_table,
     format_latex,
-    sgr,
 )
 
 import intransparent.meta as meta
+
 
 def create_parser() -> ArgumentParser:
     parser = ArgumentParser(__package__)
