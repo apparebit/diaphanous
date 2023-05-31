@@ -1,0 +1,81 @@
+[build-system]
+requires = ["flit_core >=3.4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "intransparent"
+version = "0.1"
+description = "CSAM reporting by social media and NCMEC"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "Apache 2.0"}
+authors = [{name = "Robert Grimm", email = "rgrimm@alum.mit.edu"}]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Environment :: Other Environment",
+    "Framework :: IPython",
+    "Framework :: Jupyter",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Internet",
+    "Topic :: Sociology",
+]
+
+dependencies = [
+    "ipython",   # 8.13.2
+    "pandas",    # 2.0.1
+    "nbformat",
+    "jinja2",    # 3.1.2
+    "plotly",    # 5.14.1
+    "geopandas",  # 0.13.0
+    "pandas-stubs",
+]
+
+[project.optional-dependencies]
+
+dev = [
+    "black[jupyter]",
+    "flit",
+    "mypy",
+    "mypy-ipython",
+    "vermin",
+]
+
+[project.urls]
+Repository = "https://github.com/apparebit/intransparent"
+
+
+[tool.mypy]
+python_version = "3.11"
+files = ["intransparent/**/*.py"]
+mypy_path = ["stubs"]
+warn_unused_configs = true
+disallow_any_unimported = true
+# disallow_any_expr = true
+# disallow_any_decorated = true
+# disallow_any_explicit = true
+# disallow_any_generics = true
+disallow_subclassing_any = true
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+strict_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+# warn_return_any = true
+warn_unreachable = true
+strict_equality = true
+show_error_codes = true
+
+[tool.black]
+target-version = ['py310']
+skip-string-normalization = true
+include = '\.(py|ipynb)'
