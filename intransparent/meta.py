@@ -30,7 +30,7 @@ SCHEMA = {
 }
 
 
-def parse_counts(df) -> pd.DataFrame:
+def parse_counts(df: pd.DataFrame) -> pd.Series:
     """Parse all values that are integer counts."""
     return (
         df.loc[df['metric'].isin(COUNT), 'value']
@@ -39,7 +39,7 @@ def parse_counts(df) -> pd.DataFrame:
     )
 
 
-def parse_percents(df) -> pd.DataFrame:
+def parse_percents(df: pd.DataFrame) -> pd.Series:
     """Parse all values that are percentages."""
     return (
         df.loc[df['metric'].isin(PERCENT), 'value']
