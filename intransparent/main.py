@@ -3,6 +3,7 @@ from argparse import ArgumentParser, BooleanOptionalAction
 import os
 from pathlib import Path
 import sys
+import traceback
 
 import pandas as pd
 
@@ -18,6 +19,7 @@ from intransparent import (
     sgr,
 )
 
+import intransparent.meta as meta
 
 def create_parser() -> ArgumentParser:
     parser = ArgumentParser(__package__)
@@ -39,10 +41,12 @@ def create_parser() -> ArgumentParser:
     return parser
 
 
-def _main(args: Sequence[str]) -> None:
+def _main(args: Sequence[str]) -> int:
+    # Parse command line arguments
     parser = create_parser()
     options = parser.parse_args(args[1:])
 
+    # Set up function to print table in either LaTeX or ansified text.
     if options.latex:
         term_width = 140
         heavy_rule = f"% {'=' * (term_width - 2)}"
@@ -79,6 +83,7 @@ def _main(args: Sequence[str]) -> None:
             )
             print()
 
+    # Export platform data
     if options.export_platform_data:
         json_path = Path('data/csam-reports-per-platform.json')
         tmp_path = json_path.with_suffix('.tmp.json')
@@ -86,6 +91,9 @@ def _main(args: Sequence[str]) -> None:
             file.write('\n'.join(encode_reports_per_platform(REPORTS_PER_PLATFORM)))
         tmp_path.replace(json_path)
 
+    # ====================
+    # REPORTS PER PLATFORM
+    # ====================
     disclosures = ingest_reports_per_platform(
         REPORTS_PER_PLATFORM,
     )
@@ -94,6 +102,9 @@ def _main(args: Sequence[str]) -> None:
     for platform, data in comparisons.items():
         print_table(data, title=platform)
 
+    # ===================
+    # REPORTS PER COUNTRY
+    # ===================
     country_data = ingest_reports_per_country('data')
     for year, data in reports_per_capita_country_year(country_data):
         print_table(
@@ -102,11 +113,24 @@ def _main(args: Sequence[str]) -> None:
             highlights='reports_per_capita',
         )
 
+    # ====
+    # META
+    # ====
+    meta_disclosures = meta.read_all('data', '2022q2', '2022q4')
+    meta_differences = meta.diff_all(meta_disclosures)
+
+    for p1, delta in meta_differences.items():
+        p2 = p1 + 1
+        title = f'Δ(Q{p1.quarter}-{p1.year} / Q{p2.quarter}-{p2.year})'
+        print_table(meta.quarterly_divergent(delta), title=title)
+        meta.print_divergent_descriptors(delta, use_sgr=options.color)
+
+    return 0
+
 
 def main(args: Sequence[str]) -> int:
     try:
-        _main(args)
-        return 0
+        return _main(args)
     except Exception as x:
-        print(x, file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
         return 1
