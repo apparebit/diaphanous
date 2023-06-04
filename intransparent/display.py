@@ -418,7 +418,12 @@ def show_table(
             [
                 {
                     'selector': 'caption',
-                    'props': 'caption-side: bottom; font-style: italic; margin-top: 1ex;',
+                    'props': [
+                        ('caption-side', 'top'),
+                        ('font-size', '1.2em'),
+                        ('font-style', 'italic'),
+                        ('margin-bottom', '2ex'),
+                    ],
                 }
             ]
         )
@@ -464,5 +469,8 @@ def show_table(
     if _maybe_has_outliers(table):
         style.apply(_highlight_outliers_css, axis=None)
 
+    # Improve spacing.
+    table_style = '<style>table { margin-bottom: 3ex; }</style>'
+
     # Ready to render...
-    display(HTML(style.to_html()))
+    display(HTML(table_style + style.to_html()))
