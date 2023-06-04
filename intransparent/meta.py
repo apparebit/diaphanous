@@ -44,13 +44,14 @@ def parse_percents(df: pd.DataFrame) -> pd.Series:
 
 
 _Q4_2022 = pd.Period('2022q4')
+_Q1_2023 = pd.Period('2023q1')
 
 
 def read(path: str | Path, quarter: str | pd.Period) -> pd.DataFrame:
     """
     Read Meta's transparency disclosures for the given quarter. The prevalence
-    of fake accounts for Q4 2022 is not a percentage but the range "4%-5%". This
-    function normalizes the value to 4.5%.
+    of fake accounts for Q4 2022 and Q1 2023 is not a percentage but the range
+    "4%-5%". This function normalizes the value to 4.5%.
     """
     if isinstance(quarter, str):
         quarter = pd.Period(quarter)
@@ -60,7 +61,7 @@ def read(path: str | Path, quarter: str | pd.Period) -> pd.DataFrame:
     data = pd.read_csv(path, dtype=SCHEMA)  # type: ignore[arg-type]
 
     # Quick and dirty mitigation against unusual value "4%-5%":
-    if quarter == _Q4_2022:
+    if quarter == _Q4_2022 or quarter == _Q1_2023:
         fake_account_prevalence = (data['policy_area'] == 'Fake Accounts') & (
             data['metric'] == 'Prevalence'
         )
