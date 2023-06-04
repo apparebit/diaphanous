@@ -27,23 +27,23 @@ classifiers = [
 ]
 
 dependencies = [
-    "ipython",   # 8.13.2
-    "pandas",    # 2.0.1
-    "nbformat",
-    "jinja2",    # 3.1.2
-    "plotly",    # 5.14.1
-    "geopandas",  # 0.13.0
-    "pandas-stubs",
+    "ipykernel",  # 6.23.1  -- required for runing notebooks, includes ipython
+    "pandas",     # 2.0.1   -- dataframes
+    "geopandas",  # 0.13.0  -- geographical data (effectively unused currently)
+    "jinja2",     # 3.1.2   -- required for styling Pandas
+    "plotly",     # 5.14.1  -- one option for graphing Pandas
+    "nbformat",   # 5.9.0   -- required for rendering Plotly MIME types
+    "kaleido",    # 0.2.1   -- required for exporting images from Plotly
 ]
 
 [project.optional-dependencies]
 
 dev = [
+    "mypy",
+    "pandas-stubs",    # required for type-checking code, eliminates 93 errors.
     "black[jupyter]",
     "flit",
-    "mypy",
-    "mypy-ipython",
-    "vermin",
+    "vermin",          # check minimum required Python version
 ]
 
 [project.urls]
