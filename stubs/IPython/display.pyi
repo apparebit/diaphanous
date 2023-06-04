@@ -1,8 +1,8 @@
-class _HTMLSnippet:
-    pass
+# Define as much stub as needed for appeasing mypy. No more.
 
-def HTML(s: str) -> _HTMLSnippet:
-    ...
+class HTML:
+    def __init__(self, s: str) -> None:
+        ...
 
-def display(obj: _HTMLSnippet) -> None:
+def display(*objects: object) -> None:
     ...
