@@ -102,14 +102,13 @@ def read_populations(path: str | Path) -> pd.DataFrame:
         .set_index(['iso3', 'year'])
     )
 
-    rows = populations.shape[0]
-    actual = 944
-    if actual != 944:
-        raise AssertionError(f'{actual:,d} instead of 944 rows with population counts')
-    actual = populations.index.get_level_values('iso3').nunique()
-    if actual != 236:
+    row_no = populations.shape[0]
+    if row_no != 944:
+        raise AssertionError(f'{row_no:,d} instead of 944 rows with population counts')
+    country_no = populations.index.get_level_values('iso3').nunique()
+    if country_no != 236:
         raise AssertionError(
-            f'{actual} instead of 236 countries with population counts'
+            f'{country_no:,d} instead of 236 countries with population counts'
         )
 
     # Compute total population per year and add column with percentage fraction.
@@ -129,7 +128,7 @@ def read_populations(path: str | Path) -> pd.DataFrame:
 
 
 def read_countries(path: str | Path) -> pd.DataFrame:
-    return pd.read_csv(path, dtype={'iso3': 'category'}, index_col='iso3')
+    return pd.read_csv(path, index_col='iso3', dtype='category')
 
 
 def read_regions(path: str | Path) -> pd.DataFrame:
@@ -144,6 +143,7 @@ def read_regions(path: str | Path) -> pd.DataFrame:
         )
         .assign(continent=lambda df: df['superregion2'].fillna(df['superregion']))
         .drop(columns=['superregion2', 'region2'])
+        .astype('category')
     )
     return regions
 
@@ -218,6 +218,7 @@ def merge_reports_per_country(
         .reset_index()
         .merge(regions, how='left', on='region')
         .set_index(['iso3', 'year'])
+        .astype({'region': 'category'})  # Restore category lost on merge
     )
     df.insert(4, 'reports_per_capita', df['reports'] / df['population'])
 
@@ -252,30 +253,28 @@ def ingest_reports_per_country(
         logger = silent_logger
 
     reports = read_reports(path / 'csam-reports-per-country.csv')
-    description = f'covers {reports.shape[0] / 4:.0f} countries'
-    logger(reports, title='reports', description=description)
+    logger(reports, caption='reports')
 
     populations = read_populations(path / 'populations.csv')
-    description = f'covers {populations.shape[0] / 4:.0f} countries'
-    logger(populations, title='populations', description=description)
+    logger(populations, caption='populations')
 
     countries = read_countries(path / 'countries.csv')
-    logger(countries, title='countries')
+    logger(countries, caption='countries')
 
     regions = read_regions(path / 'regions.csv')
-    logger(regions, title='regions')
+    logger(regions, caption='regions')
 
     geometries = None
     if load_geometries:
         geometries = read_geometries(
             path / 'naturalearth/ne_110m_admin_0_countries.shp'
         )
-        logger(geometries, title='geometries')
+        logger(geometries, caption='geometries')
 
     reports_per_capita = merge_reports_per_country(
         reports, populations, countries, regions
     )
-    logger(reports_per_capita, title='reports per capita per country')
+    logger(reports_per_capita, caption='reports per capita')
 
     return ReportsPerCountry(
         reports_per_capita, reports, populations, countries, regions, geometries
