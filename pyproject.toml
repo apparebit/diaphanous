@@ -34,6 +34,7 @@ dependencies = [
     "plotly",     # 5.14.1  -- one option for graphing Pandas
     "nbformat",   # 5.9.0   -- required for rendering Plotly MIME types
     "kaleido",    # 0.2.1   -- required for exporting images from Plotly
+    "matplotlib", # 3.7.1   -- required for background gradient in table
 ]
 
 [project.optional-dependencies]
@@ -52,7 +53,7 @@ Repository = "https://github.com/apparebit/intransparent"
 
 [tool.mypy]
 python_version = "3.11"
-files = ["intransparent/**/*.py"]
+files = ["intransparent/**/*.py", "show/**/*.py"]
 mypy_path = ["stubs"]
 warn_unused_configs = true
 disallow_any_unimported = true
