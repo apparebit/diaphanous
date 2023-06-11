@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 import re
-import sys
 from typing import cast, Callable, ClassVar
 
 import pandas as pd
@@ -194,6 +193,9 @@ def ingest_reports_per_platform(
         table = _ingest_table(platform, record, include_redundant=redundant)
         if record["row_index"] != "period":
             table = table.transpose()
+            table.index.name = 'period'
+        if platform == 'NCMEC':
+            table = table.sort_index()
         disclosures[platform] = table
 
     return disclosures
