@@ -50,21 +50,16 @@
       * [pre-Musk Twitter](https://transparency.twitter.com) and [current
         Twitter](https://blog.twitter.com/en_us/topics/company/2023/an-update-on-twitter-transparency-reporting)
       * [WhatsApp](https://www.whatsapp.com/legal/california-privacy-notice/transparency-report/")
-      * NCMEC disclosures for
+      * NCMEC's per-platform disclosures for
         [2019](https://www.missingkids.org/content/dam/missingkids/pdfs/2019-reports-by-esp.pdf),
         [2020](https://www.missingkids.org/content/dam/missingkids/pdfs/2020-reports-by-esp.pdf),
         [2021](https://www.missingkids.org/content/dam/missingkids/pdfs/2021-reports-by-esp.pdf),
         and
         [2022](https://www.missingkids.org/content/dam/missingkids/pdfs/2022-reports-by-esp.pdf)
 
-  * __`meta-q2-2022.csv`__: Meta's machine-readable disclosure released for Q2
-    2022.
-
-  * __`meta-q3-2022.csv`__: Meta's machine-readable disclosure released for Q3
-    2022.
-
-  * __`meta-q4-2022.csv`__: Meta's machine-readable disclosure released for Q3
-    2022.
+  * __`meta-q2-2022.csv`__, __`meta-q3-2022.csv`__, __`meta-q4-2022.csv`__, and
+    __`meta-q1-2023.csv`__: Meta's machine-readable disclosures from Q2 2022 to
+    Q1 2023.
 
   * __`populations`__: Per-country population statistics for 2019–2022 from the
     [United Nations Population
