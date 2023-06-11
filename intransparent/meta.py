@@ -3,6 +3,8 @@ from typing import Callable
 
 import pandas as pd
 
+from show import BlockContent, mx
+
 
 # Metrics with integer counts as values.
 COUNT = (
@@ -166,11 +168,25 @@ def print_divergent_descriptors(delta: pd.DataFrame, *, use_sgr: bool = False) -
     print()
 
 
-def hype_divergent_descriptors(delta: pd.DataFrame) -> str:
-    lines = ['<p>Divergent policy areas:</p><ul>']
-    for policy_area in delta['policy_area'].unique():
-        lines.append(f'<li>{policy_area}</li>')
-    lines.append('</ul><p>Divergent metrics:</p><ul>')
-    for metric in delta['metric'].unique():
-        lines.append(f'<li>{metric}</li>')
-    return '\n'.join(lines)
+def divergent_descriptors(delta: pd.DataFrame) -> list[BlockContent]:
+    blocks: list[BlockContent] = [
+        mx.p('There are ', mx.strong(f'{len(delta)} divergent values'),
+             '. They differ in these policy areas:')
+    ]
+    policies = [mx.li(policy) for policy in delta['policy_area'].unique()]
+    blocks.append(mx.ul(*policies))
+    blocks.append(mx.p('They also differ in these metrics:'))
+    metrics = [mx.li(metric) for metric in delta['metric'].unique()]
+    blocks.append(mx.ul(*metrics))
+    return blocks
+
+
+def fraction_of_reports(ncmec: pd.DataFrame) -> pd.DataFrame:
+    return (
+        ncmec[['Facebook', 'Instagram', 'Meta', 'WhatsApp']]
+        .sum(axis=1)
+        .to_frame()
+        .rename(columns={0: 'Meta'})
+        .assign(Total=ncmec['Total'])
+        .assign(**{'Meta Percent': lambda df: df['Meta'] / df['Total'] * 100})
+    )
