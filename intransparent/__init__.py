@@ -13,14 +13,10 @@ from .country import (
 )
 
 # Shared utilities for nicely rendering tables
-from .display import (
+from .terminal import (
     # In terminal or LaTeX
     format_text,
     format_table,
     format_latex,
     sgr,
-    # In HTML
-    show_html,
-    show_info,
-    show_table,
 )

@@ -6,7 +6,6 @@ import math
 import textwrap
 from typing import cast
 
-from IPython.display import display, HTML
 import pandas as pd
 
 
@@ -93,13 +92,6 @@ _OUTLIER_SGR = (
     ('1;38;5;126', '39;0'),
 )
 
-_OUTLIER_CSS = (
-    '',
-    'color: #d95100; background-color: #ffeada;',
-    'color: #f4002a; background-color: #ffe8e7;',
-    'color: #d900c7; background-color: #ffe5fa;',
-)
-
 
 def _maybe_has_outliers(data: pd.DataFrame) -> bool:
     columns = data.columns
@@ -135,25 +127,6 @@ def _highlight_outliers_sgr(percentages: pd.Series, data: pd.DataFrame) -> pd.Da
         data.at[row, 'NCMEC'] = data.at[row, 'NCMEC'] + sgr(codes[1])
 
     return data
-
-
-def _highlight_outliers_css(data: pd.DataFrame) -> pd.DataFrame:
-    """
-    Create a new dataframe with CSS styles that highlight Δ% outliers amongst
-    the cells of the given dataframe. This function assumes that the dataframe
-    contains the requisite reports, Δ%, and NCMEC columns, right next to each
-    other and in that same order.
-    """
-    bins = _bin_outliers(data['Δ%'])
-    row_styles = bins.apply(lambda bin: '' if pd.isna(bin) else _OUTLIER_CSS[int(bin)])
-    return pd.DataFrame(
-        {
-            'reports': row_styles,
-            'Δ%': row_styles,
-            'NCMEC': row_styles,
-        },
-        index=data.index,
-    )
 
 
 # ======================================================================================
@@ -349,128 +322,28 @@ def format_latex(df: pd.DataFrame) -> str:
 
 # ======================================================================================
 
-
-def show_html(text: None | str = None, **kwargs: str) -> None:
-    s = ''
-    if text is not None:
-        s += f'<p>{text}</p>'
-    if len(kwargs) > 0:
-        s += ''.join(f'<{tag}>{content}</{tag}>' for tag, content in kwargs.items())
-    display(HTML(s))
-
-
-def show_info(
-    table: pd.DataFrame,
-    *,
-    title: None | str = None,
-    description: None | str = None,
-    highlights: None | str | list[str] = None,  # unused
-) -> None:
-    fragments = ['<p>Table']
-
-    if title is not None:
-        fragments.append(f' <strong>{title}</strong>')
-
-    rows = len(table)
-    fragments.append(f' with {rows:,d} rows')
-    fragments.append('' if description is None else f' {description}')
-    fragments.append(':</p><ul>')
-
-    if table.index.nlevels == 1:
-        label = table.index.name
-        fragments.append('<li>index')
-        fragments.append('' if label is None else f' {label}')
-        fragments.append(f': {table.index.dtype}</li>')
-    else:
-        index = cast(pd.MultiIndex, table.index)
-        for level, (name, typ) in enumerate(zip(index.names, index.dtypes)):
-            fragments.append('<li>index ')
-            fragments.append(f'#{level}' if name is None else name)
-            fragments.append(f': {typ}</li>')
-
-    for col, typ in zip(table.columns, table.dtypes):
-        nonnull = rows - table[col].isna().sum()
-        fragments.append(f'<li>column {col}: {typ}, ')
-        fragments.append('all' if nonnull == rows else f'{nonnull:,d}')
-        fragments.append(' values non-null</li>')
-
-    fragments.append('</ul>')
-    display(HTML(''.join(fragments)))
-
-
-def show_table(
-    table: pd.Series | pd.DataFrame,
-    *,
-    title: None | str = None,
-    description: None | str = None,  # unused
-    highlights: None | str | list[str] = None,
-    first_index_rules: bool = False,
-) -> None:
-    if isinstance(table, pd.Series):
-        table = table.to_frame()
-    assert isinstance(table, pd.DataFrame)
-    style = table.style
-
-    # Add table name as caption
-    if title is not None:
-        style.set_caption(title)
-        style.set_table_styles(
-            [
-                {
-                    'selector': 'caption',
-                    'props': [
-                        ('caption-side', 'top'),
-                        ('font-size', '1.2em'),
-                        ('font-style', 'italic'),
-                        ('margin-bottom', '2ex'),
-                    ],
-                }
-            ]
-        )
-
-    # Improve readability of large numbers.
-    style.format(thousands=',')
-
-    if table.index.nlevels == 1:
-        # Improve presentation of periods.
-        if all(_is_period(value) for value in table.index.values):
-            style.format_index(_format_period, axis=0)
-    elif first_index_rules:
-        # Improve presentation of tables with multi-indices.
-        level_name = table.index.names[0]
-        if level_name is not None:
-            for _, group in table.groupby(level_name):
-                # If the table is the result of a query, its multi-index is that
-                # of the original table and some groups may be empty.
-                if group.size > 0:
-                    style.set_table_styles(
-                        {
-                            group.index[0]: [
-                                {
-                                    'selector': '',
-                                    'props': 'border-top: 2px solid #000000 !important;',
-                                }
-                            ]
-                        },
-                        overwrite=False,
-                        axis=1,
-                    )
-
-    # Highlight column(s) as requested.
-    if highlights is not None:
-        if isinstance(highlights, str):
-            highlights = [highlights]
-        style.set_properties(
-            **{'background-color': '#ffffb3'},
-            subset=highlights,
-        )
-
-    # Highlight outliers when comparing CSAM report counts.
-    if _maybe_has_outliers(table):
-        style.apply(_highlight_outliers_css, axis=None)
-
-    # Improve spacing.
-    table_style = '<style>table { margin-bottom: 3ex; }</style>'
-
-    # Ready to render...
-    display(HTML(table_style + style.to_html()))
+# if table.index.nlevels == 1:
+#     # Improve presentation of periods.
+#     if all(_is_period(value) for value in table.index.values):
+#         style.format_index(_format_period, axis=0)
+# elif first_index_rules:
+#     # Improve presentation of tables with multi-indices.
+#     level_name = table.index.names[0]
+#     if level_name is not None:
+#         for _, group in table.groupby(level_name):
+#             # If the table is the result of a query, its multi-index is that
+#             # of the original table and some groups may be empty.
+#             if group.size > 0:
+#                 # style.set_table_styles(
+#                 #     {
+#                 #         group.index[0]: [
+#                 #             {
+#                 #                 'selector': '',
+#                 #                 'props': 'border-top: 2px solid #000000 !important;',
+#                 #             }
+#                 #         ]
+#                 #     },
+#                 #     overwrite=False,
+#                 #     axis=1,
+#                 # )
+#                 pass
