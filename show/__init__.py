@@ -12,12 +12,7 @@ from .markup import Markup, BlockContent, Heading, InlineContent, Paragraph
 # A convenient alias
 mx = Markup
 
-__all__ = (
-    'BlockContent',
-    'Markup',
-    'mx',
-    'show'
-)
+__all__ = ('BlockContent', 'Markup', 'mx', 'show')
 
 
 class _DisplayInspector:
@@ -26,11 +21,11 @@ class _DisplayInspector:
 
     def _repr_html_(self) -> str:
         self.status = 'HTML'
-        return ''  #'<p>Checking HTML support: ✅</p>'
+        return '<p>Checking HTML support: ✅</p>'
 
     def __repr__(self) -> str:
         self.status = 'Plain'
-        return ''#'Checking HTML support: ❌'
+        return 'Checking HTML support: ❌'
 
 
 def supports_html() -> bool:
@@ -39,6 +34,7 @@ def supports_html() -> bool:
         return False
 
     from IPython.display import display
+
     inspector = _DisplayInspector()
     display(inspector)
     return inspector.status == 'HTML'
@@ -66,9 +62,12 @@ def formatter(formatter: None | Formatter) -> Iterator[Formatter]:
 
 # Data that can be shown:
 _Showable: TypeAlias = (
-    None | # Implicit block content headings specified through keyword arguments
-    str | Sequence[str | InlineContent] | BlockContent | # Block content
-    pd.Series | pd.DataFrame # Dataframes
+    None
+    | str  # Implicit block content headings specified through keyword arguments
+    | Sequence[str | InlineContent]
+    | BlockContent
+    | pd.Series  # Block content
+    | pd.DataFrame  # Dataframes
 )
 
 

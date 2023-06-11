@@ -10,6 +10,7 @@ from typing import ClassVar, Literal
 
 class Markup(ABC):
     """The base class for markup."""
+
     RENDER_WITH: ClassVar[str]
 
     @staticmethod
@@ -177,12 +178,14 @@ class TerminalRenderer(MarkupRenderer):
         return f'\x1b[{code}m' if self._use_sgr else ''
 
     def render_heading(self, heading: Heading) -> str:
-        return ''.join([
-            ('━' if heading.level == 1 else '─') * self.terminal_line_width,
-            '\n',
-            self._sgr('1') + heading.text + self._sgr('0'),
-            '\n\n'
-        ])
+        return ''.join(
+            [
+                ('━' if heading.level == 1 else '─') * self.terminal_line_width,
+                '\n',
+                self._sgr('1') + heading.text + self._sgr('0'),
+                '\n\n',
+            ]
+        )
 
     def render_unordered_list(self, unordered_list: UnorderedList) -> str:
         return self.reduce(unordered_list.list_items) + '\n'
@@ -190,13 +193,15 @@ class TerminalRenderer(MarkupRenderer):
     def render_list_item(self, list_item: ListItem) -> str:
         lines = textwrap.wrap(
             self.reduce(list_item.fragments),
-            width=min(self.terminal_line_width - 4, self.MAX_LINE_WIDTH - 4))
+            width=min(self.terminal_line_width - 4, self.MAX_LINE_WIDTH - 4),
+        )
         return '  • ' + '\n    '.join(lines) + '\n'
 
     def render_paragraph(self, paragraph: Paragraph) -> str:
         lines = textwrap.wrap(
             self.reduce(paragraph.fragments),
-            width=min(self.terminal_line_width, self.MAX_LINE_WIDTH))
+            width=min(self.terminal_line_width, self.MAX_LINE_WIDTH),
+        )
         return '\n'.join(lines) + '\n\n'
 
     def render_strong(self, strong: Strong) -> str:

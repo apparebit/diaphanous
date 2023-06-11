@@ -1,6 +1,7 @@
 from typing import Protocol
 import pandas as pd
 
+
 class FrameLogger(Protocol):
     """
     A frame logger is a function that prints information about a given

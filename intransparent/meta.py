@@ -170,8 +170,11 @@ def print_divergent_descriptors(delta: pd.DataFrame, *, use_sgr: bool = False) -
 
 def divergent_descriptors(delta: pd.DataFrame) -> list[BlockContent]:
     blocks: list[BlockContent] = [
-        mx.p('There are ', mx.strong(f'{len(delta)} divergent values'),
-             '. They differ in these policy areas:')
+        mx.p(
+            'There are ',
+            mx.strong(f'{len(delta)} divergent values'),
+            '. They differ in these policy areas:',
+        )
     ]
     policies = [mx.li(policy) for policy in delta['policy_area'].unique()]
     blocks.append(mx.ul(*policies))
