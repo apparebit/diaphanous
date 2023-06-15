@@ -6,14 +6,17 @@
         "dtype",
         "dtypes",
         "fillna",
+        "iloc",
         "isin",
         "isna",
         "NCMEC",
+        "ncolumns",
         "nextin",
         "nlevels",
         "nunique",
         "Plotly",
         "Quora"
     ],
-    "python.defaultInterpreterPath": ".venv/bin/python"
+    "python.defaultInterpreterPath": ".venv/bin/python",
+    "svg.preview.background": "black"
 }
