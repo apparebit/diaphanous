@@ -1,9 +1,9 @@
 from pathlib import Path
-from typing import Callable
+from typing import cast
 
 import pandas as pd
 
-from show import BlockContent, mx
+from show import BlockContent, Markup
 
 
 # Metrics with integer counts as values.
@@ -45,8 +45,8 @@ def parse_percents(df: pd.DataFrame) -> pd.Series:
     return df.loc[df['metric'].isin(PERCENT), 'value'].str.rstrip('%').astype('Float64')
 
 
-_Q4_2022 = pd.Period('2022q4')
-_Q1_2023 = pd.Period('2023q1')
+_Q4_2022 = pd.Period('2022q4')  # Begin
+_Q1_2023 = pd.Period('2023q1')  # End (inclusive)
 
 
 def read(path: str | Path, quarter: str | pd.Period) -> pd.DataFrame:
@@ -154,34 +154,20 @@ def quarterly_divergent(delta: pd.DataFrame) -> pd.DataFrame:
     return delta.groupby('period').size().to_frame().rename(columns={0: 'divergent'})
 
 
-def print_divergent_descriptors(delta: pd.DataFrame, *, use_sgr: bool = False) -> None:
-    sgr: Callable[[int], str] = (lambda v: f'\x1b[{v}m') if use_sgr else (lambda _: '')
-
-    print('\n' + sgr(1) + 'Divergent policy areas:' + sgr(0))
-    for policy_area in delta['policy_area'].unique():
-        print('  •', policy_area)
-
-    print('\n' + sgr(1) + 'Divergent metrics:' + sgr(0))
-    for metric in delta['metric'].unique():
-        print('  •', metric)
-
-    print()
-
-
 def divergent_descriptors(delta: pd.DataFrame) -> list[BlockContent]:
-    blocks: list[BlockContent] = [
-        mx.p(
+    blocks: list[Markup] = [
+        Markup.tx.p(
             'There are ',
-            mx.strong(f'{len(delta)} divergent values'),
+            Markup.tx.strong(f'{len(delta)} divergent values'),
             '. They differ in these policy areas:',
         )
     ]
-    policies = [mx.li(policy) for policy in delta['policy_area'].unique()]
-    blocks.append(mx.ul(*policies))
-    blocks.append(mx.p('They also differ in these metrics:'))
-    metrics = [mx.li(metric) for metric in delta['metric'].unique()]
-    blocks.append(mx.ul(*metrics))
-    return blocks
+    policies = [Markup.tx.li(policy) for policy in delta['policy_area'].unique()]
+    blocks.append(Markup.tx.ul(*policies))
+    blocks.append(Markup.tx.p('They also differ in these metrics:'))
+    metrics = [Markup.tx.li(metric) for metric in delta['metric'].unique()]
+    blocks.append(Markup.tx.ul(*metrics))
+    return cast(list[BlockContent], blocks)
 
 
 def fraction_of_reports(ncmec: pd.DataFrame) -> pd.DataFrame:
