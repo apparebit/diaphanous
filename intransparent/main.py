@@ -168,12 +168,27 @@ def reports_per_country(section: int) -> None:
         political stability, suggesting that neither is a primary causal factor.
         They both also are members of the Arab League. In fact, between 9 and 12
         countries amongst each year's top 20 are members of the Arab League.
-        That suggests cultural factors as a primary cause.<p>
+        That's far too many to be some random effect and suggests shared
+        cultural factors as a primary cause. Such skew could arise, for example,
+        if a large number of people in the region viewed some borderline
+        material as acceptable, whereas US companies and law do not.</p>
 
-        <p>Having said that, the trend is towards fewer countries amongst the
-        top 20 being members of the Arab League, the reports per capita for Arab
-        League countries declining, and the reports per capita for many other
-        countries including the United States clearly increasing.</p>
+        <p>Irrespective of cause(s),</p>
+
+        <ul>
+            <li>the number of Arab League countries in the top 20 is shrinking;
+
+            <li>the number of reports per capita for Arab League countries is
+            shrinking;
+
+            <li>the number of reports per capita for other countries is clearly
+            growing.
+        </ul>
+
+        <p>Notably, that third category clearly includes the United States. If
+        these trends persist for a few more years, Arab League countries won't
+        stand out anymore because most other countries saw huge increases in
+        reports per capita.</p>
         """)
 
     # ----------------------------------------------------------------------------------
@@ -246,6 +261,11 @@ def meta_disclosures(section: int, disclosures: dict[str, pd.DataFrame]) -> None
         <em>and</em> WhatsApp. While WhatsApp consistently has the smallest
         count of Meta's three social networks, that’s still over 1 million CSAM
         reports per year.</p>
+
+        <p>As the above table shows, the <strong>total number of CSAM reports to
+        NCMEC almost doubled from less than 17 million reports in 2019 to less
+        than 32 million reports in 2022</strong>. That clearly is the wrong
+        trend.</p>
         """)
 
     # ----------------------------------------------------------------------------------
