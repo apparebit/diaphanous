@@ -76,14 +76,11 @@ def visible_length(text: str) -> int:
     return len(text)
 
 
-def format_label(label: object) -> None | str:
+def format_label(label: object) -> str:
     """
     Format the label for a vertical for humane presentation. This function replaces
     underscores with spaces and turns `pct` (case-insensitive) into `%`.
     """
-    if label is None:
-        return None
-
     text = str(label)
     text = Syntax.UnderscoresOrSpaces.sub(' ', text)
     text = Syntax.Pct.sub('%', text)
@@ -143,7 +140,7 @@ class Reflow:
 
     def handle_token_width(
         self, line: list[str], width: int, token: str
-    ) -> tuple[int, bool, bool]:
+    ) -> tuple[int, bool]:
         """Determine the token's width and whether it fits onto the current line."""
         token_width = Reflow.width(token)
         has_width = width + token_width <= self.max_width

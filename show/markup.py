@@ -98,6 +98,7 @@ class _PendingElement:
             self.children[-1] = last_child + child
         else:
             self.children.append(child)
+        return self
 
     def add_element(self, child: 'Markup') -> Self:
         self.children.append(child)
@@ -148,7 +149,7 @@ class _MarkupParser(HTMLParser):
         markup = self._pending.pop().instantiate()
         self.most_recent_pending().add_element(markup)
 
-    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+    def handle_starttag(self, name: str, attrs: list[tuple[str, str | None]]) -> None:
         # Reject start tag with attributes
         if len(attrs) > 0:
             raise ValueError('Markup does not support attributes such as those in '
@@ -156,9 +157,9 @@ class _MarkupParser(HTMLParser):
 
         # Validate tag
         try:
-            tag = Tag[tag]
+            tag = Tag[name]
         except KeyError:
-            raise ValueError(f'<{tag}> is not a valid tag')
+            raise ValueError(f'<{name}> is not a valid tag')
 
         # Initialize outermost pending element if necessary
         if not self.has_pending():
@@ -170,54 +171,54 @@ class _MarkupParser(HTMLParser):
                 raise TypeError(f'<{tag}> must not be the outermost element')
 
         # Handle implicitly closed <p> and <li>
-        innermost_open = self.most_recent_pending().tag
-        if innermost_open is Tag.p and tag.is_block():
+        most_recent = self.most_recent_pending().tag
+        if most_recent is Tag.p and tag.is_block():
             self.stop_pending()
-        elif innermost_open is Tag.li and tag is Tag.li:
+        elif most_recent is Tag.li and tag is Tag.li:
             self.stop_pending()
 
         # If the currently pending element allows this tag, start pending the tag.
-        innermost_open = self.most_recent_pending().tag
+        most_recent = self.most_recent_pending().tag
         if (
-            innermost_open is None and tag.is_block()
-            or innermost_open.has_inline() and tag.is_inline()
-            or innermost_open.has_list_item() and tag is Tag.li
+            (most_recent is None and tag.is_block())
+            or (most_recent and most_recent.has_inline() and tag.is_inline())
+            or (most_recent and most_recent.has_list_item() and tag is Tag.li)
         ):
             self.start_pending(tag)
             if tag.is_void():
                 self.stop_pending()
             return
 
-        if innermost_open is None:
+        if most_recent is None:
             raise ValueError(f'<{tag}> cannot be outermost element')
         else:
-            raise ValueError(f'<{tag}> may not appear inside <{innermost_open}>')
+            raise ValueError(f'<{tag}> may not appear inside <{most_recent}>')
 
-    def handle_endtag(self, tag: str) -> None:
+    def handle_endtag(self, name: str) -> None:
         # Validate the tag
         try:
-            tag = Tag[tag]
+            tag = Tag[name]
         except KeyError:
-            raise ValueError(f'</{tag}> is not a valid tag name')
+            raise ValueError(f'</{name}> is not a valid tag name')
 
         # Check that there are pending elements
         if not self.has_pending(2):
             raise ValueError(f'got </{tag}> when no tag has been opened')
 
         # Handle implicitly closed <li>
-        innermost_open = self.most_recent_pending().tag
-        if innermost_open is Tag.li and tag.has_list_item():
+        most_recent = self.most_recent_pending().tag
+        if most_recent is Tag.li and tag.has_list_item():
             self.stop_pending()
 
             if not self.has_pending(2):
                 raise ValueError(f'got </{tag}> when no tag has been opened')
 
         # If the end tag matches the most recently opened tag, close that tag.
-        innermost_open = self.most_recent_pending().tag
-        if innermost_open is tag:
+        most_recent = self.most_recent_pending().tag
+        if most_recent is tag:
             self.stop_pending()
         else:
-            raise ValueError(f'got </{tag}> where </{innermost_open}> expected')
+            raise ValueError(f'got </{tag}> where </{most_recent}> expected')
 
     def handle_data(self, data: str) -> None:
         # Initialize outermost pending element if necessary
@@ -225,8 +226,8 @@ class _MarkupParser(HTMLParser):
             self.start_pending(Tag.p)
 
         # If current tag has textual content, add the text.
-        current_tag = self.most_recent_pending().tag
-        if current_tag is not None and current_tag.has_text():
+        most_recent = self.most_recent_pending().tag
+        if most_recent is not None and most_recent.has_text():
             self.most_recent_pending().add_text(data)
             return
 
@@ -261,7 +262,7 @@ class Markup(ABC):
     """The base class for markup."""
 
     RENDER_METHOD: ClassVar[str]
-    Tag: ClassVar[type[Tag]] = Tag
+    tx: ClassVar[type[Tag]] = Tag
 
     @staticmethod
     def parse(text: str) -> 'list[BlockContent]':
@@ -300,11 +301,6 @@ class Markup(ABC):
 class InlineContent(Markup):
     """Inline content modifies spans of text within a paragraph or similar block."""
 
-    def cast(cls, markup: Markup) -> Self:
-        if isinstance(markup, cls):
-            return markup
-        raise TypeError(f'got <{markup.tag}> where inline content expected')
-
     def render(self, renderer: 'MarkupRenderer[R]') -> str:
         return getattr(renderer, self.RENDER_METHOD)(self)
 
@@ -337,6 +333,18 @@ class Strong(InlineContent):
 class BlockContent(Markup):
     """Block content comprises one or more lines of text of its own."""
 
+    @staticmethod
+    def cast(markup: Markup) -> 'BlockContent':
+        if isinstance(markup, BlockContent):
+            return markup
+        raise TypeError(f'got <{markup.tag}> where block expected')
+
+    @staticmethod
+    def cast_all(markup_list: Sequence[Markup]) -> 'tuple[BlockContent, ...]':
+        blocks: list[BlockContent] = []
+        for block in markup_list:
+            blocks.append(BlockContent.cast(block))
+        return tuple(blocks)
 
 @dataclass(frozen=True, slots=True)
 class Rule(BlockContent):
