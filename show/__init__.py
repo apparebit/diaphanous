@@ -1,53 +1,66 @@
 from collections.abc import Iterator, Sequence
 from contextlib import contextmanager
 import sys
-from typing import overload, TypeAlias
+from typing import cast, overload, TypeAlias
 
 import pandas as pd
 
-from .formatter import Formatter, HtmlFormatter
-from .markup import Markup, BlockContent, Heading, InlineContent, Paragraph
+from .formatter import Formatter, HtmlFormatter, TerminalFormatter
+from .markup import (
+    Markup,
+    BlockContent,
+    only_block_content,
+)
 
 
-# A convenient alias
-mx = Markup
-
-__all__ = ('BlockContent', 'Markup', 'mx', 'show')
+__all__ = ('Markup' 'show', 'SUPPORTS_HTML', 'use_color')
 
 
-class _DisplayInspector:
-    def __init__(self) -> None:
-        self.status: None | str = None
-
-    def _repr_html_(self) -> str:
-        self.status = 'HTML'
-        return '<p>Checking HTML support: ✅</p>'
-
-    def __repr__(self) -> str:
-        self.status = 'Plain'
-        return 'Checking HTML support: ❌'
-
-
-def supports_html() -> bool:
+def _supports_html() -> bool:
     """Determine whether the current runtime environment displays HTML content."""
     if 'IPython' not in sys.modules or 'IPython.display' not in sys.modules:
         return False
 
+    class Inspector:
+        def __init__(self) -> None:
+            self.status: None | str = None
+
+        def _repr_html_(self) -> str:
+            self.status = 'HTML'
+            return '<p>Checking HTML support: ✅</p>'
+
+        def __repr__(self) -> str:
+            self.status = 'Plain'
+            return 'Checking HTML support: ❌'
+
     from IPython.display import display
 
-    inspector = _DisplayInspector()
+    inspector = Inspector()
     display(inspector)
     return inspector.status == 'HTML'
+
+
+SUPPORTS_HTML = _supports_html()
 
 
 # ======================================================================================
 
 
-_current_formatter: Formatter = HtmlFormatter()
+_current_formatter: Formatter
+if SUPPORTS_HTML:
+    _current_formatter = HtmlFormatter()
+else:
+    _current_formatter = TerminalFormatter(sys.stdout)
+
+
+def use_color(colorful: bool) -> None:
+    """Force colors or no colors in formatter output."""
+    _current_formatter.use_color = colorful
 
 
 @contextmanager
 def formatter(formatter: None | Formatter) -> Iterator[Formatter]:
+    """Show data with a user-controlled formatter."""
     global _current_formatter
     saved_formatter = _current_formatter
     _current_formatter = _current_formatter if formatter is None else formatter
@@ -64,8 +77,8 @@ def formatter(formatter: None | Formatter) -> Iterator[Formatter]:
 _Showable: TypeAlias = (
     None
     | str  # Implicit block content headings specified through keyword arguments
-    | Sequence[str | InlineContent]
     | BlockContent
+    | Sequence[BlockContent] # May be paragraph, several blocks, or ordered list
     | pd.Series  # Block content
     | pd.DataFrame  # Dataframes
 )
@@ -82,64 +95,40 @@ def show(
 ) -> None:
     """Show the given series or dataframe or its schema."""
 
-
 @overload
-def show(
-    data: str | Sequence[str | InlineContent] | BlockContent,
-    *,
-    h1: None | str = None,
-    h2: None | str = None,
-) -> None:
-    """Show the given block content, with strings or sequences of strings and
-    inline content treated as paragraphs."""
-
-
-@overload
-def show(
-    data: None = None,
-    *,
-    h1: None | str = None,
-    h2: None | str = None,
-) -> None:
-    """Show the given headlines."""
-
+def show(data: str | BlockContent | Sequence[BlockContent]) -> None:
+    """
+    Show the given data as (rich) text. This function converts the data to
+    markup and then displays the markup.
+    """
 
 def show(
-    data: _Showable = None,
+    data: _Showable,
     *,
-    h1: None | str = None,
-    h2: None | str = None,
     schema: bool = False,
     caption: None | str = None,
     highlight_columns: None | str | Sequence[str] = None,
     margin_bottom: float = 1.0,
 ) -> None:
     # Nothing to show:
-    if data is None and h1 is None and h2 is None:
+    if data is None:
         return
 
     # Handle all block content:
-    blocks: list[BlockContent] = []
-    data_is_block = False
-
-    if h1 is not None:
-        blocks.append(Heading(1, h1))
-    if h2 is not None:
-        blocks.append(Heading(2, h2))
-
+    blocks: None | Sequence[BlockContent] = None
     if isinstance(data, str):
-        blocks.append(Paragraph((data,)))
-        data_is_block = True
+        blocks = Markup.parse(data)
+    elif isinstance(data, Markup):
+        blocks = [data]
     elif isinstance(data, Sequence):
-        blocks.append(Paragraph(tuple(data)))
-        data_is_block = True
-    elif isinstance(data, BlockContent):
-        blocks.append(data)
-        data_is_block = True
+        if only_block_content(data):
+            blocks = data
+        else:
+            blocks = [cast(BlockContent,
+                Markup.tx.ol(*(Markup.tx.li(str(el)) for el in data)))]
 
     if blocks:
         _current_formatter.display_all(blocks)
-    if data is None or data_is_block:
         return
 
     # Normalize to dataframe:
