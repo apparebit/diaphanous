@@ -54,6 +54,11 @@ class Vertical(ABC):
 
     @property
     @abstractmethod
+    def kind(self) -> str:
+        ...
+
+    @property
+    @abstractmethod
     def selector(self) -> str:
         ...
 
@@ -72,6 +77,10 @@ class IndexLevel(Vertical):
         return self.data
 
     @property
+    def kind(self) -> str:
+        return 'level'
+
+    @property
     def selector(self) -> str:
         return f'.level{self.index}'
 
@@ -88,6 +97,10 @@ class Column(Vertical):
     @property
     def column(self) -> pd.Series:
         return self.data
+
+    @property
+    def kind(self) -> str:
+        return 'column'
 
     @property
     def selector(self) -> str:
