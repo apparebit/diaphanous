@@ -506,7 +506,7 @@ class HtmlRenderer(MarkupRenderer[str]):
         return f'<li>{self.reduce(item.fragments)}</li>'
 
     def render_paragraph(self, paragraph: Paragraph) -> str:
-        return f'<p>{self.reduce(paragraph.fragments)}</p>'
+        return f'<p style="max-width: 70ch;">{self.reduce(paragraph.fragments)}</p>'
 
     def render_rule(self, rule: Rule) -> str:
         return '<hr>'
