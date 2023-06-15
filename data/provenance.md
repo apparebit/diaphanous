@@ -72,3 +72,6 @@
   * __`regions.csv`__: Countries and their geographical regions based on [Luke
     Duncalfe's ISO-3166
     dataset](https://github.com/lukes/ISO-3166-Countries-with-Regional-Codes)
+
+  * __`arab-league.csv`__: Member countries of the [Arab
+    League](https://en.wikipedia.org/wiki/Arab_League)

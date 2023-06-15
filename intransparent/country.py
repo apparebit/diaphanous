@@ -148,6 +148,12 @@ def read_regions(path: str | Path) -> pd.DataFrame:
     return regions
 
 
+def read_arab_league(path: str | Path) -> pd.DataFrame:
+    arab_league = pd.read_csv(path).drop(columns=['country']).astype('category')
+    assert arab_league.shape[0] == 22
+    return arab_league
+
+
 def read_geometries(path: str | Path) -> pd.DataFrame:
     # https://github.com/geopandas/geopandas/blob/
     # 04c2dee547777d9e87f9df4c85cc372a03b29f93/
@@ -210,6 +216,7 @@ def merge_reports_per_country(
     populations: pd.DataFrame,
     countries: pd.DataFrame,
     regions: pd.DataFrame,
+    arab_league: pd.DataFrame,
 ) -> pd.DataFrame:
     df = (
         reports.merge(populations, how='inner', left_index=True, right_index=True)
@@ -217,10 +224,11 @@ def merge_reports_per_country(
         .merge(countries, how='left', on='iso3')
         .reset_index()
         .merge(regions, how='left', on='region')
-        .set_index(['iso3', 'year'])
         .astype({'region': 'category'})  # Restore category lost on merge
     )
     df.insert(4, 'reports_per_capita', df['reports'] / df['population'])
+    df['arab_league'] = df['iso3'].isin(arab_league['iso3'])
+    df = df.set_index(['iso3', 'year'])
 
     expected_rows = populations.shape[0]
     actual_rows = df.shape[0]
@@ -238,6 +246,7 @@ class ReportsPerCountry(NamedTuple):
     populations: pd.DataFrame
     countries: pd.DataFrame
     regions: pd.DataFrame
+    arab_league: pd.DataFrame
     geometries: None | pd.DataFrame
 
 
@@ -264,6 +273,9 @@ def ingest_reports_per_country(
     regions = read_regions(path / 'regions.csv')
     logger(regions, caption='regions')
 
+    arab_league = read_arab_league(path / 'arab-league.csv')
+    logger(arab_league, caption='arab_league')
+
     geometries = None
     if load_geometries:
         geometries = read_geometries(
@@ -272,12 +284,18 @@ def ingest_reports_per_country(
         logger(geometries, caption='geometries')
 
     reports_per_capita = merge_reports_per_country(
-        reports, populations, countries, regions
+        reports, populations, countries, regions, arab_league
     )
     logger(reports_per_capita, caption='reports per capita')
 
     return ReportsPerCountry(
-        reports_per_capita, reports, populations, countries, regions, geometries
+        reports_per_capita,
+        reports,
+        populations,
+        countries,
+        regions,
+        arab_league,
+        geometries,
     )
 
 
