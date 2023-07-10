@@ -45,7 +45,6 @@ dev = [
     "black[jupyter]",
     "flit",
     "vermin",          # check minimum required Python version
-    "pytest",
 ]
 
 [project.urls]
@@ -54,7 +53,7 @@ Repository = "https://github.com/apparebit/intransparent"
 
 [tool.mypy]
 python_version = "3.11"
-files = ["intransparent/**/*.py", "show/**/*.py"]
+files = ["intransparent/**/*.py"]
 mypy_path = ["stubs"]
 warn_unused_configs = true
 disallow_any_unimported = true
@@ -81,7 +80,3 @@ show_error_codes = true
 target-version = ['py310']
 skip-string-normalization = true
 include = '\.(py|ipynb)'
-
-[pytest]
-capture=false
-testpaths=["test"]

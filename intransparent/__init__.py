@@ -12,11 +12,4 @@ from .country import (
     reports_per_capita_country_year,
 )
 
-# Shared utilities for nicely rendering tables
-from .terminal import (
-    # In terminal or LaTeX
-    format_text,
-    format_table,
-    format_latex,
-    sgr,
-)
+from .show import show

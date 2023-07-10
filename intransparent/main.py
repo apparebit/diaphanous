@@ -19,12 +19,13 @@ from intransparent import (
     compare_all_platform_reports,
     without_populations,
     YEAR_LABELS,
+    show,
 )
 
 import intransparent.meta as meta
-from show import show, SUPPORTS_HTML
 
-def choropleth(frame: pd.DataFrame, with_panels: bool, with_antarctica: bool) -> Any:
+
+def choropleth_plotly(frame: pd.DataFrame, with_panels: bool, with_antarctica: bool) -> Any:
     kwargs = dict(
         title='CSAM Reports per Capita and Country',
         locations='iso3',
@@ -65,6 +66,7 @@ def choropleth(frame: pd.DataFrame, with_panels: bool, with_antarctica: bool) ->
         coastlinewidth=0.4,
         # Also see "marker_line_width" under update_traces() above
         countrywidth=0.4,
+        landcolor='#00ffff',
     )
     if not with_antarctica:
         fig.update_geos(lataxis_range=[-58, 90])
@@ -152,7 +154,7 @@ def reports_per_country(section: int) -> None:
     show(f'<h1>{section}. CSAM Reports per Country</h1>')
     show(f'<h2>{section}.1 The Raw Data</h2>')
 
-    logger = partial(show, schema=True)
+    logger = partial(show, show_schema=True, margin_bottom=2)
     country_data = ingest_reports_per_country('./data', logger=logger)
 
     countries_without, reports_without = (
@@ -168,6 +170,7 @@ def reports_per_country(section: int) -> None:
         .groupby(['year', 'region'])
         .sum(numeric_only=True)
         .sort_values(by='reports', ascending=False)
+        .drop(columns=['arab_league'])
     )
     for year in YEAR_LABELS:
         top20 = most_reports.query(f'year == "{year}"').head(20)
@@ -181,7 +184,7 @@ def reports_per_country(section: int) -> None:
     show(f'<h2>{section}.3 Countries Ranked by CSAM Reports per Capita</h2>')
     rpc_range = country_data.reports_per_capita.agg(
         {'reports_per_capita': ['min', 'max']})
-    show(rpc_range, caption='Range of Reports per Capita')
+    show(rpc_range, caption='Range of Reports per Capita', margin_bottom=0)
 
     for year, year_data in reports_per_capita_country_year(country_data):
         top20 = year_data.head(20)
@@ -189,11 +192,13 @@ def reports_per_country(section: int) -> None:
             top20,
             caption=f'Reports per Capita and Country {year}',
             highlight_columns='reports_per_capita',
+            margin_top=2,
+            margin_bottom=0,
         )
 
         in_arab_league = top20['arab_league'].sum()
         show(f'{in_arab_league} out of 20 countries with the most CSAM reports '
-             f'per capita in {year} are members of the Arab League.')
+             f'per capita in {year} are members of the Arab League.<br><br>')
 
     show("""
         <p>Both Libya and the United Arab Emirates each rank first for two of
@@ -228,7 +233,7 @@ def reports_per_country(section: int) -> None:
     show(f'<h2>{section}.4 Mapping CSAM Reports per Capita and Year</h2>')
     map_data = country_data.reports_per_capita.copy()
     map_data = map_data.reset_index()
-    show(map_data, schema=True, caption='map_data')
+    show(map_data, show_schema=True, caption='map_data')
 
     # The text for hover labels (without clunky hover data)
     map_data['labels'] = (
@@ -237,14 +242,12 @@ def reports_per_country(section: int) -> None:
         map_data['year'].astype(str) + ')'
     )
 
-    if SUPPORTS_HTML:
-        fig = choropleth(map_data, with_panels=False, with_antarctica=False)
-        fig.show()
+    fig = choropleth_plotly(map_data, with_panels=False, with_antarctica=False)
+    fig.show()
 
-    fig = choropleth(map_data, with_panels=True, with_antarctica=False)
+    fig = choropleth_plotly(map_data, with_panels=True, with_antarctica=False)
     fig.write_image(f'csam-reports-per-capita.svg')
-    if SUPPORTS_HTML:
-        fig.show()
+    fig.show()
 
 
 def reports_per_platform(section: int) -> dict[str, pd.DataFrame]:
@@ -275,7 +278,7 @@ def meta_disclosures(section: int, disclosures: dict[str, pd.DataFrame]) -> None
     show(f'<h2>{section}.1 Meta is a “Hotbed of CSAM”</h2>')
 
     ncmec_disclosures = disclosures['NCMEC']
-    show(ncmec_disclosures, schema=True, caption='NCMEC')
+    show(ncmec_disclosures, show_schema=True, caption='NCMEC')
     meta_reports = meta.fraction_of_reports(ncmec_disclosures)
     show(meta_reports, caption="Meta's Share of CSAM Reports", margin_bottom=0)
 
@@ -328,8 +331,7 @@ def meta_disclosures(section: int, disclosures: dict[str, pd.DataFrame]) -> None
         show(f'<h2>Δ(Q{p2.quarter}-{p2.year} / Q{p1.quarter}-{p1.year})</h2>')
         show(divergent, margin_bottom=0)
 
-        divergent_descriptors = meta.divergent_descriptors(delta)
-        show(divergent_descriptors)
+        show(meta.divergent_descriptors(delta))
 
 # ======================================================================================
 

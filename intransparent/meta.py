@@ -1,9 +1,6 @@
 from pathlib import Path
-from typing import cast
 
 import pandas as pd
-
-from show import BlockContent, Markup
 
 
 # Metrics with integer counts as values.
@@ -154,20 +151,16 @@ def quarterly_divergent(delta: pd.DataFrame) -> pd.DataFrame:
     return delta.groupby('period').size().to_frame().rename(columns={0: 'divergent'})
 
 
-def divergent_descriptors(delta: pd.DataFrame) -> list[BlockContent]:
-    blocks: list[Markup] = [
-        Markup.tx.p(
-            'There are ',
-            Markup.tx.strong(f'{len(delta)} divergent values'),
-            '. They differ in these policy areas:',
-        )
+def divergent_descriptors(delta: pd.DataFrame) -> str:
+    fragments = [
+        f'<p>There are <strong>{len(delta)} divergent values</strong>. '
+        'They differ in these policy areas:</p><ul>',
+        *(f'<li>{policy}</li>' for policy in delta['policy_area'].unique()),
+        '</ul><p>They also differ in these metrics:</p><ul>',
+        *(f'<li>{metric}</li>' for metric in delta['metric'].unique()),
+        '</ul>',
     ]
-    policies = [Markup.tx.li(policy) for policy in delta['policy_area'].unique()]
-    blocks.append(Markup.tx.ul(*policies))
-    blocks.append(Markup.tx.p('They also differ in these metrics:'))
-    metrics = [Markup.tx.li(metric) for metric in delta['metric'].unique()]
-    blocks.append(Markup.tx.ul(*metrics))
-    return cast(list[BlockContent], blocks)
+    return ''.join(fragments)
 
 
 def fraction_of_reports(ncmec: pd.DataFrame) -> pd.DataFrame:
