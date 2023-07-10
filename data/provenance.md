@@ -14,42 +14,61 @@
 
   * __`csam-reports-per-platform.json`__: Transparency disclosures about CSAM by
     major social media platforms and companies as well as the corresponding
-    disclosures by NCMEC. The dataset incorporates information from:
+    disclosures by NCMEC. The dataset incorporates information about the
+    following platforms:
 
-      * [Automattic](https://transparency.automattic.com)
-      * [Facebook and
-        Instagram](https://transparency.fb.com/sr/community-standards/)
-      * [Google including
-        YouTube](https://transparencyreport.google.com/child-sexual-abuse-material/)
-      * [LinkedIn](https://about.linkedin.com/transparency/community-report)
-      * [Pinterest](https://policy.pinterest.com/en/transparency-report) and its
-        [archive of past
-        disclosures](https://help.pinterest.com/en/guide/transparency-report-archive)
-      * [Quora](https://help.quora.com/hc/en-us/articles/13294268051732-DSA-Transparency)
-      * [Reddit](https://www.redditinc.com/policies/transparency), in particular
-        its disclosures for
-        [2022](https://www.redditinc.com/policies/2022-transparency-report)
-        including [mid-year
-        update](https://www.redditinc.com/policies/mid-year-transparency-report-2022-2),
-        [2021](https://www.redditinc.com/policies/transparency-report-2021),
-        [2020](https://www.redditinc.com/policies/transparency-report-2020), and
-        [2019](https://www.redditinc.com/policies/transparency-report-2019-1)
-      * [Snap](https://values.snap.com/privacy/transparency), in particular its
-        disclosures for [H2
-        2021](https://www.snap.com/en-US/privacy/transparency/2021-12-31), [H1
-        2021](https://www.snap.com/en-US/privacy/transparency/2021-6-30), [H2
-        2020](https://www.snap.com/en-US/privacy/transparency/2020-12-31), [H1
-        2020](https://www.snap.com/en-US/privacy/transparency/2020-6-30), and [H2
-        2019](https://www.snap.com/en-US/privacy/transparency/2019-12-31)
-      * [TikTok](https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-4/)
-        including datasets released for [Q4
-        2022](https://sf16-va.tiktokcdn.com/obj/eden-va2/nuvlojeh7ryht/Transparency_CGE_2022Q4/2022Q4_raw_data_cger_English.csv)
-        and [Q3
-        2022](https://sf16-va.tiktokcdn.com/obj/eden-va2/nuvlojeh7ryht/Transparency_CGE_2022Q3/English_CGE_2022Q3.xlsx)
-      * [Tumblr](https://www.tumblr.com/transparency)
-      * [pre-Musk Twitter](https://transparency.twitter.com) and [current
-        Twitter](https://blog.twitter.com/en_us/topics/company/2023/an-update-on-twitter-transparency-reporting)
-      * [WhatsApp](https://www.whatsapp.com/legal/california-privacy-notice/transparency-report/")
+      * Platforms that make no or very limited disclosures
+          * [Automattic](https://transparency.automattic.com) (no disclosures on
+            content moderation)
+          * [Quora](https://help.quora.com/hc/en-us/articles/13294268051732-DSA-Transparency)
+            (only a single monthly user disclosure for EU's DSA)
+          * Telegram (no transparency disclosures)
+          * [Tumblr](https://www.tumblr.com/transparency) (no disclosures on
+            content moderation)
+          * [WhatsApp](https://www.whatsapp.com/legal/california-privacy-notice/transparency-report/")
+            (only a single disclosure for California's privacy law)
+
+      * Platforms that make disclosures about content moderation including CSAM
+        but not reports made to NCMEC
+          * [Facebook and
+            Instagram](https://transparency.fb.com/sr/community-standards/)
+          * [LinkedIn](https://about.linkedin.com/transparency/community-report)
+          * [TikTok](https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-4/)
+            including datasets released for [Q4
+            2022](https://sf16-va.tiktokcdn.com/obj/eden-va2/nuvlojeh7ryht/Transparency_CGE_2022Q4/2022Q4_raw_data_cger_English.csv)
+            and [Q3
+            2022](https://sf16-va.tiktokcdn.com/obj/eden-va2/nuvlojeh7ryht/Transparency_CGE_2022Q3/English_CGE_2022Q3.xlsx)
+          * [Twitter](https://transparency.twitter.com) (pre-Musk) and
+            [Twitter](https://blog.twitter.com/en_us/topics/company/2023/an-update-on-twitter-transparency-reporting) (current)
+
+      * Platforms that make disclosures about content moderation including CSAM
+        reports made to NCMEC
+          * [Google including
+            YouTube](https://transparencyreport.google.com/child-sexual-abuse-material/)
+          * [Pinterest](https://policy.pinterest.com/en/transparency-report) and
+            its [archive of past
+            disclosures](https://help.pinterest.com/en/guide/transparency-report-archive)
+          * [Reddit](https://www.redditinc.com/policies/transparency), in
+            particular its disclosures for
+            [2022](https://www.redditinc.com/policies/2022-transparency-report)
+            including [mid-year
+            update](https://www.redditinc.com/policies/mid-year-transparency-report-2022-2),
+            [2021](https://www.redditinc.com/policies/transparency-report-2021),
+            [2020](https://www.redditinc.com/policies/transparency-report-2020),
+            and
+            [2019](https://www.redditinc.com/policies/transparency-report-2019-1)
+          * [Snap](https://values.snap.com/privacy/transparency), in particular
+            its disclosures for [H2
+            2021](https://www.snap.com/en-US/privacy/transparency/2021-12-31),
+            [H1
+            2021](https://www.snap.com/en-US/privacy/transparency/2021-6-30),
+            [H2
+            2020](https://www.snap.com/en-US/privacy/transparency/2020-12-31),
+            [H1
+            2020](https://www.snap.com/en-US/privacy/transparency/2020-6-30),
+            and [H2
+            2019](https://www.snap.com/en-US/privacy/transparency/2019-12-31)
+
       * NCMEC's per-platform disclosures for
         [2019](https://www.missingkids.org/content/dam/missingkids/pdfs/2019-reports-by-esp.pdf),
         [2020](https://www.missingkids.org/content/dam/missingkids/pdfs/2020-reports-by-esp.pdf),
