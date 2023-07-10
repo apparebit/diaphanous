@@ -1,4 +1,3 @@
-from argparse import ArgumentParser, BooleanOptionalAction
 from collections.abc import Sequence
 from functools import partial
 from pathlib import Path
@@ -335,40 +334,15 @@ def meta_disclosures(section: int, disclosures: dict[str, pd.DataFrame]) -> None
 
 # ======================================================================================
 
-def create_parser() -> ArgumentParser:
-    parser = ArgumentParser(__package__)
-    parser.add_argument(
-        "--export-platform-data",
-        action="store_true",
-        help="Export platform data to \"data/csam-reports-per-platform.json\"",
-    )
-    format = parser.add_argument_group("output format")
-    # format.add_argument(
-    #     "--latex", action="store_true", help="emit LaTeX instead of text"
-    # )
-    format.add_argument(
-        "--color", action=BooleanOptionalAction, help="force (no) color in output"
-    )
-    return parser
-
-
 def _main(args: Sequence[str]) -> int:
-    # Parse command line arguments
-    parser = create_parser()
-    options = parser.parse_args(args[1:])
-
     # Export platform data
-    if options.export_platform_data:
-        json_path = Path('data/csam-reports-per-platform.json')
-        tmp_path = json_path.with_suffix('.tmp.json')
-        with open(tmp_path, mode='w', encoding='utf') as file:
-            file.write('\n'.join(encode_reports_per_platform(REPORTS_PER_PLATFORM)))
-        tmp_path.replace(json_path)
-
-    # Analyze dataset
-    reports_per_country(section=1)
-    disclosures = reports_per_platform(section=2)
-    meta_disclosures(section=3, disclosures=disclosures)
+    print('Exporting platform data to "data/csam-reports-per-platform.json"...')
+    json_path = Path('data/csam-reports-per-platform.json')
+    tmp_path = json_path.with_suffix('.tmp.json')
+    with open(tmp_path, mode='w', encoding='utf') as file:
+        file.write('\n'.join(encode_reports_per_platform(REPORTS_PER_PLATFORM)))
+    tmp_path.replace(json_path)
+    print('Done!')
     return 0
 
 
