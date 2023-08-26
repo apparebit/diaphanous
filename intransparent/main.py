@@ -61,18 +61,26 @@ def reports_per_country(section: int) -> None:
     show(rpc_range, caption='Range of Reports per Capita', margin_bottom=0)
 
     for year, year_data in reports_per_capita_country_year(country_data):
-        top20 = year_data.head(20)
+        top = year_data.head(30 if year == '2022' else 21)
+        rank = top.index[top['iso3'] == '\u262a'][0]
         show(
-            top20,
+            top,
             caption=f'Reports per Capita and Country {year}',
             highlight_columns='reports_per_capita',
+            highlight_rows=rank,
             margin_top=2,
             margin_bottom=0,
         )
 
-        in_arab_league = top20['arab_league'].sum()
-        show(f'{in_arab_league} out of 20 countries with the most CSAM reports '
-             f'per capita in {year} are members of the Arab League.<br><br>')
+        in_arab_league = top['arab_league'].sum()
+        if year == '2022':
+            assert top.tail(10)['arab_league'].sum() == 0
+
+        show(f"""
+            {in_arab_league} out of 20 countries with the most CSAM reports per
+            capita in {year} are members of the Arab League. If the Arab League
+            were a country, its rank would be {rank}.<br><br>
+        """)
 
     show("""
         <p>Both Libya and the United Arab Emirates each rank first for two of
@@ -116,7 +124,7 @@ def reports_per_country(section: int) -> None:
         map_data['year'].astype(str) + ')'
     )
 
-    fig = create_map(map_data, with_panels=False, with_antarctica=True)
+    fig = create_map(map_data, with_panels=False, with_antarctica=True, with_animation=True)
     show(pio.to_html(fig))
 
     fig = create_map(map_data, with_panels=True, with_antarctica=True)
@@ -189,23 +197,25 @@ def meta_disclosures(section: int, disclosures: dict[str, pd.DataFrame]) -> None
         that rounds transparency data. That may hide small-ish updates to
         historical values.
         """)
-    meta_disclosures = meta.read_all('data', '2022q2', '2023q1')
+    meta_disclosures = meta.read_all('data')
     meta_differences = meta.diff_all(meta_disclosures)
 
     for p1, delta in meta_differences.items():
-        divergent = (
-            delta
-            .groupby('period')
-            .size()
-            .to_frame()
-            .rename(columns={0: 'divergent'})
-        )
         p2 = p1 + 1
 
         show(f'<h2>Δ(Q{p2.quarter}-{p2.year} / Q{p1.quarter}-{p1.year})</h2>')
-        show(divergent, margin_bottom=0)
+        show(meta.age_of_divergence(delta), margin_bottom=0)
 
         show(meta.divergent_descriptors(delta))
+
+    show(f'<h2>Quarterly rate of divergence</h2>')
+    show(meta.rate_of_divergence(meta_disclosures, meta_differences))
+    show("""
+        For each quarter, the table shows the number of entries in that
+        quarter's data that are <em>changed</em> from the previous quarter's
+        <em>total</em> number of entries. The rate of divergence simply is the
+        percentage fraction of changed over total entries.
+    """)
 
 # ======================================================================================
 
