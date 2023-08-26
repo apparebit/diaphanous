@@ -240,6 +240,33 @@ def merge_reports_per_country(
     return df
 
 
+def summarize_arab_league(frame: pd.DataFrame) -> pd.DataFrame:
+    rows = []
+
+    for year in YEAR_LABELS:
+        year_in_league = frame.query(f'year == "{year}" and arab_league == True')
+        reports = year_in_league['reports'].sum()
+        population = year_in_league['population'].sum()
+        rows.append({
+            'iso3': '\u262A',
+            'year': year,
+            'reports': reports,
+            'reports_pct': year_in_league['reports_pct'].sum(),
+            'reports_per_capita': reports / population,
+            'population': population,
+            'population_pct': year_in_league['population_pct'].sum(),
+            'country': 'Arab League',
+            'iso2': '',
+            'region': None,
+            'superregion': None,
+            'continent': None,
+            'arab_league': False, # Only True for members, not a synthetic summary
+        })
+
+    addendum = pd.DataFrame(rows).set_index(['iso3', 'year'])
+    return pd.concat([frame, addendum])
+
+
 class ReportsPerCountry(NamedTuple):
     reports_per_capita: pd.DataFrame
     reports: pd.DataFrame
@@ -287,6 +314,8 @@ def ingest_reports_per_country(
         reports, populations, countries, regions, arab_league
     )
     logger(reports_per_capita, caption='reports per capita')
+
+    reports_per_capita = summarize_arab_league(reports_per_capita)
 
     return ReportsPerCountry(
         reports_per_capita,
