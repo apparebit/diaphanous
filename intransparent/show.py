@@ -1,4 +1,5 @@
 from collections.abc import Iterator
+import math
 from typing import cast, NamedTuple, TypeAlias
 
 from IPython.display import display, HTML
@@ -18,6 +19,7 @@ def show(
     show_schema: bool = False,
     caption: None | str = None,
     highlight_columns: None | str | list[str] = None,
+    highlight_rows: None | int | list[int] = None,
     margin_top: float = 0,
     margin_bottom: float = 2.0,
 ) -> None:
@@ -45,6 +47,7 @@ def show(
         value,
         caption=caption,
         highlight_columns=highlight_columns,
+        highlight_rows=highlight_rows,
         margin_top=margin_top,
         margin_bottom=margin_bottom,
     )
@@ -88,6 +91,7 @@ def format_table(
     show_column_header: bool = True,
     show_row_header: bool = True,
     highlight_columns: None | str | list[str] = None,
+    highlight_rows: None | int | list[int] = None,
     margin_top: float = 0,
     margin_bottom: float = 2,
 ) -> Styler:
@@ -144,14 +148,39 @@ def format_table(
         }
     )
 
+    for v in all_columns(frame):
+        if pd.api.types.is_float_dtype(v.dtype):
+            minval = cast(pd.Series, v.data).abs().pipe(lambda c: c[c > 0].min())
+            logmin = 2 if pd.isna(minval) else math.ceil(math.log10(minval))
+            precision = max(1, 3 - logmin)
+            style.format(
+                thousands=',',
+                na_rep='⋯',
+                precision=precision,
+                subset=[v.name or v.position],
+            )
+
     # Apply collected CSS
     if table_styles:
         style.set_table_styles(table_styles, overwrite=False) # type: ignore[arg-type]
 
-    # Apply highlight
+    # Apply highlights to rows and columns
+    if highlight_rows is not None:
+        if not isinstance(highlight_rows, list):
+            highlight_rows = [highlight_rows]
+        style.set_table_styles({
+            row_label: [{
+                'selector': '',
+                'props': [('background-color', '#feddb0')],
+            }]
+            for row_label in highlight_rows
+        }, overwrite=False, axis=1)
+
     if highlight_columns is not None:
         if isinstance(highlight_columns, str):
             highlight_columns = [highlight_columns]
+        # Don't use style.set_table_styles() for columns
+        # because that changes column headers, too.
         style.set_properties(
             **{'background-color': '#ffffb3'},
             subset=highlight_columns,
