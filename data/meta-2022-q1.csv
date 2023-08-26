@@ -1,0 +1,2487 @@
+app,policy_area,metric,period,value
+Facebook,Adult Nudity & Sexual Activity,Content Actioned,2017Q4,"20,800,000"
+Facebook,Adult Nudity & Sexual Activity,Content Actioned,2018Q1,"21,000,000"
+Facebook,Adult Nudity & Sexual Activity,Content Actioned,2018Q2,"34,900,000"
+Facebook,Adult Nudity & Sexual Activity,Content Actioned,2018Q3,"31,800,000"
+Facebook,Adult Nudity & Sexual Activity,Content Actioned,2018Q4,"28,700,000"
+Facebook,Adult Nudity & Sexual Activity,Content Actioned,2019Q1,"24,500,000"
+Facebook,Adult Nudity & Sexual Activity,Content Actioned,2019Q2,"27,800,000"
+Facebook,Adult Nudity & Sexual Activity,Content Actioned,2019Q3,"30,300,000"
+Facebook,Adult Nudity & Sexual Activity,Content Actioned,2019Q4,"38,900,000"
+Facebook,Adult Nudity & Sexual Activity,Content Actioned,2020Q1,"39,500,000"
+Facebook,Adult Nudity & Sexual Activity,Content Actioned,2020Q2,"20,100,000"
+Facebook,Adult Nudity & Sexual Activity,Content Actioned,2020Q3,"36,700,000"
+Facebook,Adult Nudity & Sexual Activity,Content Actioned,2020Q4,"28,100,000"
+Facebook,Adult Nudity & Sexual Activity,Content Actioned,2021Q1,"31,900,000"
+Facebook,Adult Nudity & Sexual Activity,Content Actioned,2021Q2,"32,800,000"
+Facebook,Adult Nudity & Sexual Activity,Content Actioned,2021Q3,"34,700,000"
+Facebook,Adult Nudity & Sexual Activity,Content Actioned,2021Q4,"27,300,000"
+Facebook,Adult Nudity & Sexual Activity,Content Actioned,2022Q1,"31,000,000"
+Facebook,Bullying & Harassment,Content Actioned,2017Q4,N/A
+Facebook,Bullying & Harassment,Content Actioned,2018Q1,N/A
+Facebook,Bullying & Harassment,Content Actioned,2018Q2,N/A
+Facebook,Bullying & Harassment,Content Actioned,2018Q3,"2,000,000"
+Facebook,Bullying & Harassment,Content Actioned,2018Q4,"2,700,000"
+Facebook,Bullying & Harassment,Content Actioned,2019Q1,"2,400,000"
+Facebook,Bullying & Harassment,Content Actioned,2019Q2,"2,500,000"
+Facebook,Bullying & Harassment,Content Actioned,2019Q3,"3,200,000"
+Facebook,Bullying & Harassment,Content Actioned,2019Q4,"2,800,000"
+Facebook,Bullying & Harassment,Content Actioned,2020Q1,"2,300,000"
+Facebook,Bullying & Harassment,Content Actioned,2020Q2,"1,400,000"
+Facebook,Bullying & Harassment,Content Actioned,2020Q3,"3,500,000"
+Facebook,Bullying & Harassment,Content Actioned,2020Q4,"6,300,000"
+Facebook,Bullying & Harassment,Content Actioned,2021Q1,"8,800,000"
+Facebook,Bullying & Harassment,Content Actioned,2021Q2,"7,900,000"
+Facebook,Bullying & Harassment,Content Actioned,2021Q3,"9,200,000"
+Facebook,Bullying & Harassment,Content Actioned,2021Q4,"8,200,000"
+Facebook,Bullying & Harassment,Content Actioned,2022Q1,"9,500,000"
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2017Q4,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2018Q1,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2018Q2,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2018Q3,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2018Q4,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2019Q1,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2019Q2,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2019Q3,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2019Q4,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2020Q1,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2020Q2,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2020Q3,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2020Q4,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2021Q1,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2021Q2,"2,300,000"
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2021Q3,"1,800,000"
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2021Q4,"1,800,000"
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2022Q1,"2,100,000"
+Facebook,Child Endangerment: Sexual Exploitation,Content Actioned,2017Q4,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Actioned,2018Q1,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Actioned,2018Q2,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Actioned,2018Q3,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Actioned,2018Q4,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Actioned,2019Q1,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Actioned,2019Q2,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Actioned,2019Q3,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Actioned,2019Q4,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Actioned,2020Q1,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Actioned,2020Q2,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Actioned,2020Q3,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Actioned,2020Q4,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Actioned,2021Q1,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Actioned,2021Q2,"25,600,000"
+Facebook,Child Endangerment: Sexual Exploitation,Content Actioned,2021Q3,"21,200,000"
+Facebook,Child Endangerment: Sexual Exploitation,Content Actioned,2021Q4,"19,800,000"
+Facebook,Child Endangerment: Sexual Exploitation,Content Actioned,2022Q1,"16,500,000"
+Facebook,Child Nudity & Sexual Exploitation,Content Actioned,2017Q4,N/A
+Facebook,Child Nudity & Sexual Exploitation,Content Actioned,2018Q1,N/A
+Facebook,Child Nudity & Sexual Exploitation,Content Actioned,2018Q2,N/A
+Facebook,Child Nudity & Sexual Exploitation,Content Actioned,2018Q3,"9,000,000"
+Facebook,Child Nudity & Sexual Exploitation,Content Actioned,2018Q4,"7,200,000"
+Facebook,Child Nudity & Sexual Exploitation,Content Actioned,2019Q1,"5,800,000"
+Facebook,Child Nudity & Sexual Exploitation,Content Actioned,2019Q2,"6,900,000"
+Facebook,Child Nudity & Sexual Exploitation,Content Actioned,2019Q3,"11,400,000"
+Facebook,Child Nudity & Sexual Exploitation,Content Actioned,2019Q4,"13,300,000"
+Facebook,Child Nudity & Sexual Exploitation,Content Actioned,2020Q1,"8,500,000"
+Facebook,Child Nudity & Sexual Exploitation,Content Actioned,2020Q2,"2,800,000"
+Facebook,Child Nudity & Sexual Exploitation,Content Actioned,2020Q3,"12,400,000"
+Facebook,Child Nudity & Sexual Exploitation,Content Actioned,2020Q4,"5,300,000"
+Facebook,Child Nudity & Sexual Exploitation,Content Actioned,2021Q1,"5,000,000"
+Facebook,Dangerous Orgs: Organized Hate,Content Actioned,2017Q4,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Actioned,2018Q1,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Actioned,2018Q2,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Actioned,2018Q3,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Actioned,2018Q4,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Actioned,2019Q1,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Actioned,2019Q2,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Actioned,2019Q3,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Actioned,2019Q4,"1,600,000"
+Facebook,Dangerous Orgs: Organized Hate,Content Actioned,2020Q1,"4,700,000"
+Facebook,Dangerous Orgs: Organized Hate,Content Actioned,2020Q2,"1,700,000"
+Facebook,Dangerous Orgs: Organized Hate,Content Actioned,2020Q3,"4,000,000"
+Facebook,Dangerous Orgs: Organized Hate,Content Actioned,2020Q4,"6,400,000"
+Facebook,Dangerous Orgs: Organized Hate,Content Actioned,2021Q1,"9,800,000"
+Facebook,Dangerous Orgs: Organized Hate,Content Actioned,2021Q2,"6,200,000"
+Facebook,Dangerous Orgs: Organized Hate,Content Actioned,2021Q3,"2,000,000"
+Facebook,Dangerous Orgs: Organized Hate,Content Actioned,2021Q4,"1,600,000"
+Facebook,Dangerous Orgs: Organized Hate,Content Actioned,2022Q1,"2,500,000"
+Facebook,Dangerous Orgs: Terrorism,Content Actioned,2017Q4,"1,100,000"
+Facebook,Dangerous Orgs: Terrorism,Content Actioned,2018Q1,"1,900,000"
+Facebook,Dangerous Orgs: Terrorism,Content Actioned,2018Q2,"9,400,000"
+Facebook,Dangerous Orgs: Terrorism,Content Actioned,2018Q3,"3,100,000"
+Facebook,Dangerous Orgs: Terrorism,Content Actioned,2018Q4,"4,900,000"
+Facebook,Dangerous Orgs: Terrorism,Content Actioned,2019Q1,"8,200,000"
+Facebook,Dangerous Orgs: Terrorism,Content Actioned,2019Q2,"5,900,000"
+Facebook,Dangerous Orgs: Terrorism,Content Actioned,2019Q3,"5,200,000"
+Facebook,Dangerous Orgs: Terrorism,Content Actioned,2019Q4,"7,600,000"
+Facebook,Dangerous Orgs: Terrorism,Content Actioned,2020Q1,"6,300,000"
+Facebook,Dangerous Orgs: Terrorism,Content Actioned,2020Q2,"5,400,000"
+Facebook,Dangerous Orgs: Terrorism,Content Actioned,2020Q3,"9,600,000"
+Facebook,Dangerous Orgs: Terrorism,Content Actioned,2020Q4,"8,600,000"
+Facebook,Dangerous Orgs: Terrorism,Content Actioned,2021Q1,"9,000,000"
+Facebook,Dangerous Orgs: Terrorism,Content Actioned,2021Q2,"7,100,000"
+Facebook,Dangerous Orgs: Terrorism,Content Actioned,2021Q3,"10,600,000"
+Facebook,Dangerous Orgs: Terrorism,Content Actioned,2021Q4,"7,700,000"
+Facebook,Dangerous Orgs: Terrorism,Content Actioned,2022Q1,"16,100,000"
+Facebook,Fake Accounts,Content Actioned,2017Q4,"694,000,000"
+Facebook,Fake Accounts,Content Actioned,2018Q1,"583,000,000"
+Facebook,Fake Accounts,Content Actioned,2018Q2,"800,300,000"
+Facebook,Fake Accounts,Content Actioned,2018Q3,"754,000,000"
+Facebook,Fake Accounts,Content Actioned,2018Q4,"1,200,000,000"
+Facebook,Fake Accounts,Content Actioned,2019Q1,"2,200,000,000"
+Facebook,Fake Accounts,Content Actioned,2019Q2,"1,500,000,000"
+Facebook,Fake Accounts,Content Actioned,2019Q3,"1,700,000,000"
+Facebook,Fake Accounts,Content Actioned,2019Q4,"1,100,000,000"
+Facebook,Fake Accounts,Content Actioned,2020Q1,"1,700,000,000"
+Facebook,Fake Accounts,Content Actioned,2020Q2,"791,000,000"
+Facebook,Fake Accounts,Content Actioned,2020Q3,"1,300,000,000"
+Facebook,Fake Accounts,Content Actioned,2020Q4,"1,300,000,000"
+Facebook,Fake Accounts,Content Actioned,2021Q1,"1,300,000,000"
+Facebook,Fake Accounts,Content Actioned,2021Q2,"1,700,000,000"
+Facebook,Fake Accounts,Content Actioned,2021Q3,"1,800,000,000"
+Facebook,Fake Accounts,Content Actioned,2021Q4,"1,700,000,000"
+Facebook,Fake Accounts,Content Actioned,2022Q1,"1,600,000,000"
+Facebook,Hate Speech,Content Actioned,2017Q4,"1,600,000"
+Facebook,Hate Speech,Content Actioned,2018Q1,"2,500,000"
+Facebook,Hate Speech,Content Actioned,2018Q2,"2,500,000"
+Facebook,Hate Speech,Content Actioned,2018Q3,"2,900,000"
+Facebook,Hate Speech,Content Actioned,2018Q4,"3,400,000"
+Facebook,Hate Speech,Content Actioned,2019Q1,"4,000,000"
+Facebook,Hate Speech,Content Actioned,2019Q2,"4,300,000"
+Facebook,Hate Speech,Content Actioned,2019Q3,"6,900,000"
+Facebook,Hate Speech,Content Actioned,2019Q4,"5,500,000"
+Facebook,Hate Speech,Content Actioned,2020Q1,"9,500,000"
+Facebook,Hate Speech,Content Actioned,2020Q2,"13,800,000"
+Facebook,Hate Speech,Content Actioned,2020Q3,"22,100,000"
+Facebook,Hate Speech,Content Actioned,2020Q4,"26,900,000"
+Facebook,Hate Speech,Content Actioned,2021Q1,"25,200,000"
+Facebook,Hate Speech,Content Actioned,2021Q2,"31,500,000"
+Facebook,Hate Speech,Content Actioned,2021Q3,"22,300,000"
+Facebook,Hate Speech,Content Actioned,2021Q4,"17,400,000"
+Facebook,Hate Speech,Content Actioned,2022Q1,"15,100,000"
+Facebook,Regulated Goods: Drugs,Content Actioned,2017Q4,N/A
+Facebook,Regulated Goods: Drugs,Content Actioned,2018Q1,N/A
+Facebook,Regulated Goods: Drugs,Content Actioned,2018Q2,N/A
+Facebook,Regulated Goods: Drugs,Content Actioned,2018Q3,N/A
+Facebook,Regulated Goods: Drugs,Content Actioned,2018Q4,"572,400"
+Facebook,Regulated Goods: Drugs,Content Actioned,2019Q1,"820,000"
+Facebook,Regulated Goods: Drugs,Content Actioned,2019Q2,"2,600,000"
+Facebook,Regulated Goods: Drugs,Content Actioned,2019Q3,"4,400,000"
+Facebook,Regulated Goods: Drugs,Content Actioned,2019Q4,"8,800,000"
+Facebook,Regulated Goods: Drugs,Content Actioned,2020Q1,"7,900,000"
+Facebook,Regulated Goods: Drugs,Content Actioned,2020Q2,"1,700,000"
+Facebook,Regulated Goods: Drugs,Content Actioned,2020Q3,"4,700,000"
+Facebook,Regulated Goods: Drugs,Content Actioned,2020Q4,"4,300,000"
+Facebook,Regulated Goods: Drugs,Content Actioned,2021Q1,"3,200,000"
+Facebook,Regulated Goods: Drugs,Content Actioned,2021Q2,"2,300,000"
+Facebook,Regulated Goods: Drugs,Content Actioned,2021Q3,"2,700,000"
+Facebook,Regulated Goods: Drugs,Content Actioned,2021Q4,"4,000,000"
+Facebook,Regulated Goods: Drugs,Content Actioned,2022Q1,"3,300,000"
+Facebook,Regulated Goods: Firearms,Content Actioned,2017Q4,N/A
+Facebook,Regulated Goods: Firearms,Content Actioned,2018Q1,N/A
+Facebook,Regulated Goods: Firearms,Content Actioned,2018Q2,N/A
+Facebook,Regulated Goods: Firearms,Content Actioned,2018Q3,N/A
+Facebook,Regulated Goods: Firearms,Content Actioned,2018Q4,"689,800"
+Facebook,Regulated Goods: Firearms,Content Actioned,2019Q1,"609,100"
+Facebook,Regulated Goods: Firearms,Content Actioned,2019Q2,"2,500,000"
+Facebook,Regulated Goods: Firearms,Content Actioned,2019Q3,"2,300,000"
+Facebook,Regulated Goods: Firearms,Content Actioned,2019Q4,"2,200,000"
+Facebook,Regulated Goods: Firearms,Content Actioned,2020Q1,"1,400,000"
+Facebook,Regulated Goods: Firearms,Content Actioned,2020Q2,"689,800"
+Facebook,Regulated Goods: Firearms,Content Actioned,2020Q3,"1,100,000"
+Facebook,Regulated Goods: Firearms,Content Actioned,2020Q4,"1,300,000"
+Facebook,Regulated Goods: Firearms,Content Actioned,2021Q1,"1,900,000"
+Facebook,Regulated Goods: Firearms,Content Actioned,2021Q2,"1,500,000"
+Facebook,Regulated Goods: Firearms,Content Actioned,2021Q3,"1,100,000"
+Facebook,Regulated Goods: Firearms,Content Actioned,2021Q4,"1,500,000"
+Facebook,Regulated Goods: Firearms,Content Actioned,2022Q1,"1,200,000"
+Facebook,Spam,Content Actioned,2017Q4,"727,000,000"
+Facebook,Spam,Content Actioned,2018Q1,"836,000,000"
+Facebook,Spam,Content Actioned,2018Q2,"957,000,000"
+Facebook,Spam,Content Actioned,2018Q3,"1,200,000,000"
+Facebook,Spam,Content Actioned,2018Q4,"2,000,000,000"
+Facebook,Spam,Content Actioned,2019Q1,"1,800,000,000"
+Facebook,Spam,Content Actioned,2019Q2,"2,200,000,000"
+Facebook,Spam,Content Actioned,2019Q3,"1,900,000,000"
+Facebook,Spam,Content Actioned,2019Q4,"2,900,000,000"
+Facebook,Spam,Content Actioned,2020Q1,"1,900,000,000"
+Facebook,Spam,Content Actioned,2020Q2,"834,600,000"
+Facebook,Spam,Content Actioned,2020Q3,"1,900,000,000"
+Facebook,Spam,Content Actioned,2020Q4,"1,000,000,000"
+Facebook,Spam,Content Actioned,2021Q1,"918,900,000"
+Facebook,Spam,Content Actioned,2021Q2,"794,400,000"
+Facebook,Spam,Content Actioned,2021Q3,"777,200,000"
+Facebook,Spam,Content Actioned,2021Q4,"1,200,000,000"
+Facebook,Spam,Content Actioned,2022Q1,"1,800,000,000"
+Facebook,Suicide and Self-Injury,Content Actioned,2017Q4,N/A
+Facebook,Suicide and Self-Injury,Content Actioned,2018Q1,N/A
+Facebook,Suicide and Self-Injury,Content Actioned,2018Q2,N/A
+Facebook,Suicide and Self-Injury,Content Actioned,2018Q3,N/A
+Facebook,Suicide and Self-Injury,Content Actioned,2018Q4,N/A
+Facebook,Suicide and Self-Injury,Content Actioned,2019Q1,N/A
+Facebook,Suicide and Self-Injury,Content Actioned,2019Q2,"2,000,000"
+Facebook,Suicide and Self-Injury,Content Actioned,2019Q3,"2,500,000"
+Facebook,Suicide and Self-Injury,Content Actioned,2019Q4,"5,100,000"
+Facebook,Suicide and Self-Injury,Content Actioned,2020Q1,"1,800,000"
+Facebook,Suicide and Self-Injury,Content Actioned,2020Q2,"614,600"
+Facebook,Suicide and Self-Injury,Content Actioned,2020Q3,"1,400,000"
+Facebook,Suicide and Self-Injury,Content Actioned,2020Q4,"2,600,000"
+Facebook,Suicide and Self-Injury,Content Actioned,2021Q1,"5,200,000"
+Facebook,Suicide and Self-Injury,Content Actioned,2021Q2,"16,800,000"
+Facebook,Suicide and Self-Injury,Content Actioned,2021Q3,"8,500,000"
+Facebook,Suicide and Self-Injury,Content Actioned,2021Q4,"6,100,000"
+Facebook,Suicide and Self-Injury,Content Actioned,2022Q1,"6,800,000"
+Facebook,Violence And Incitement,Content Actioned,2017Q4,N/A
+Facebook,Violence And Incitement,Content Actioned,2018Q1,N/A
+Facebook,Violence And Incitement,Content Actioned,2018Q2,N/A
+Facebook,Violence And Incitement,Content Actioned,2018Q3,N/A
+Facebook,Violence And Incitement,Content Actioned,2018Q4,N/A
+Facebook,Violence And Incitement,Content Actioned,2019Q1,N/A
+Facebook,Violence And Incitement,Content Actioned,2019Q2,N/A
+Facebook,Violence And Incitement,Content Actioned,2019Q3,N/A
+Facebook,Violence And Incitement,Content Actioned,2019Q4,N/A
+Facebook,Violence And Incitement,Content Actioned,2020Q1,N/A
+Facebook,Violence And Incitement,Content Actioned,2020Q2,N/A
+Facebook,Violence And Incitement,Content Actioned,2020Q3,N/A
+Facebook,Violence And Incitement,Content Actioned,2020Q4,N/A
+Facebook,Violence And Incitement,Content Actioned,2021Q1,N/A
+Facebook,Violence And Incitement,Content Actioned,2021Q2,N/A
+Facebook,Violence And Incitement,Content Actioned,2021Q3,"13,600,000"
+Facebook,Violence And Incitement,Content Actioned,2021Q4,"12,400,000"
+Facebook,Violence And Incitement,Content Actioned,2022Q1,"21,700,000"
+Facebook,Violent & Graphic Content,Content Actioned,2017Q4,"1,200,000"
+Facebook,Violent & Graphic Content,Content Actioned,2018Q1,"3,400,000"
+Facebook,Violent & Graphic Content,Content Actioned,2018Q2,"7,900,000"
+Facebook,Violent & Graphic Content,Content Actioned,2018Q3,"15,900,000"
+Facebook,Violent & Graphic Content,Content Actioned,2018Q4,"18,900,000"
+Facebook,Violent & Graphic Content,Content Actioned,2019Q1,"33,300,000"
+Facebook,Violent & Graphic Content,Content Actioned,2019Q2,"29,200,000"
+Facebook,Violent & Graphic Content,Content Actioned,2019Q3,"25,100,000"
+Facebook,Violent & Graphic Content,Content Actioned,2019Q4,"34,700,000"
+Facebook,Violent & Graphic Content,Content Actioned,2020Q1,"25,200,000"
+Facebook,Violent & Graphic Content,Content Actioned,2020Q2,"8,300,000"
+Facebook,Violent & Graphic Content,Content Actioned,2020Q3,"19,000,000"
+Facebook,Violent & Graphic Content,Content Actioned,2020Q4,"15,800,000"
+Facebook,Violent & Graphic Content,Content Actioned,2021Q1,"34,000,000"
+Facebook,Violent & Graphic Content,Content Actioned,2021Q2,"30,100,000"
+Facebook,Violent & Graphic Content,Content Actioned,2021Q3,"26,600,000"
+Facebook,Violent & Graphic Content,Content Actioned,2021Q4,"25,200,000"
+Facebook,Violent & Graphic Content,Content Actioned,2022Q1,"26,100,000"
+Facebook,Adult Nudity & Sexual Activity,Content Appealed,2017Q4,N/A
+Facebook,Adult Nudity & Sexual Activity,Content Appealed,2018Q1,N/A
+Facebook,Adult Nudity & Sexual Activity,Content Appealed,2018Q2,N/A
+Facebook,Adult Nudity & Sexual Activity,Content Appealed,2018Q3,N/A
+Facebook,Adult Nudity & Sexual Activity,Content Appealed,2018Q4,N/A
+Facebook,Adult Nudity & Sexual Activity,Content Appealed,2019Q1,"3,100,000"
+Facebook,Adult Nudity & Sexual Activity,Content Appealed,2019Q2,"3,800,000"
+Facebook,Adult Nudity & Sexual Activity,Content Appealed,2019Q3,"3,400,000"
+Facebook,Adult Nudity & Sexual Activity,Content Appealed,2019Q4,"2,800,000"
+Facebook,Adult Nudity & Sexual Activity,Content Appealed,2020Q1,"2,300,000"
+Facebook,Adult Nudity & Sexual Activity,Content Appealed,2020Q2,"10,300"
+Facebook,Adult Nudity & Sexual Activity,Content Appealed,2020Q3,"14,700"
+Facebook,Adult Nudity & Sexual Activity,Content Appealed,2020Q4,"306,200"
+Facebook,Adult Nudity & Sexual Activity,Content Appealed,2021Q1,"390,000"
+Facebook,Adult Nudity & Sexual Activity,Content Appealed,2021Q2,"536,200"
+Facebook,Adult Nudity & Sexual Activity,Content Appealed,2021Q3,"272,900"
+Facebook,Adult Nudity & Sexual Activity,Content Appealed,2021Q4,"311,400"
+Facebook,Adult Nudity & Sexual Activity,Content Appealed,2022Q1,"274,300"
+Facebook,Bullying & Harassment,Content Appealed,2017Q4,N/A
+Facebook,Bullying & Harassment,Content Appealed,2018Q1,N/A
+Facebook,Bullying & Harassment,Content Appealed,2018Q2,N/A
+Facebook,Bullying & Harassment,Content Appealed,2018Q3,N/A
+Facebook,Bullying & Harassment,Content Appealed,2018Q4,N/A
+Facebook,Bullying & Harassment,Content Appealed,2019Q1,"475,700"
+Facebook,Bullying & Harassment,Content Appealed,2019Q2,"410,500"
+Facebook,Bullying & Harassment,Content Appealed,2019Q3,"713,900"
+Facebook,Bullying & Harassment,Content Appealed,2019Q4,"697,500"
+Facebook,Bullying & Harassment,Content Appealed,2020Q1,"552,600"
+Facebook,Bullying & Harassment,Content Appealed,2020Q2,20
+Facebook,Bullying & Harassment,Content Appealed,2020Q3,"14,700"
+Facebook,Bullying & Harassment,Content Appealed,2020Q4,"442,900"
+Facebook,Bullying & Harassment,Content Appealed,2021Q1,"935,500"
+Facebook,Bullying & Harassment,Content Appealed,2021Q2,"919,200"
+Facebook,Bullying & Harassment,Content Appealed,2021Q3,"1,000,000"
+Facebook,Bullying & Harassment,Content Appealed,2021Q4,"799,400"
+Facebook,Bullying & Harassment,Content Appealed,2022Q1,"736,000"
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2017Q4,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2018Q1,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2018Q2,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2018Q3,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2018Q4,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2019Q1,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2019Q2,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2019Q3,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2019Q4,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2020Q1,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2020Q2,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2020Q3,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2020Q4,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2021Q1,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2021Q2,"3,000"
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2021Q3,"2,300"
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2021Q4,"3,700"
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2022Q1,"4,000"
+Facebook,Child Endangerment: Sexual Exploitation,Content Appealed,2017Q4,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Appealed,2018Q1,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Appealed,2018Q2,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Appealed,2018Q3,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Appealed,2018Q4,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Appealed,2019Q1,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Appealed,2019Q2,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Appealed,2019Q3,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Appealed,2019Q4,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Appealed,2020Q1,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Appealed,2020Q2,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Appealed,2020Q3,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Appealed,2020Q4,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Appealed,2021Q1,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Appealed,2021Q2,"1,000"
+Facebook,Child Endangerment: Sexual Exploitation,Content Appealed,2021Q3,700
+Facebook,Child Endangerment: Sexual Exploitation,Content Appealed,2021Q4,800
+Facebook,Child Endangerment: Sexual Exploitation,Content Appealed,2022Q1,800
+Facebook,Child Nudity & Sexual Exploitation,Content Appealed,2017Q4,N/A
+Facebook,Child Nudity & Sexual Exploitation,Content Appealed,2018Q1,N/A
+Facebook,Child Nudity & Sexual Exploitation,Content Appealed,2018Q2,N/A
+Facebook,Child Nudity & Sexual Exploitation,Content Appealed,2018Q3,N/A
+Facebook,Child Nudity & Sexual Exploitation,Content Appealed,2018Q4,N/A
+Facebook,Child Nudity & Sexual Exploitation,Content Appealed,2019Q1,"27,400"
+Facebook,Child Nudity & Sexual Exploitation,Content Appealed,2019Q2,"145,000"
+Facebook,Child Nudity & Sexual Exploitation,Content Appealed,2019Q3,"128,800"
+Facebook,Child Nudity & Sexual Exploitation,Content Appealed,2019Q4,"72,900"
+Facebook,Child Nudity & Sexual Exploitation,Content Appealed,2020Q1,"55,000"
+Facebook,Child Nudity & Sexual Exploitation,Content Appealed,2020Q2,20
+Facebook,Child Nudity & Sexual Exploitation,Content Appealed,2020Q3,300
+Facebook,Child Nudity & Sexual Exploitation,Content Appealed,2020Q4,"4,600"
+Facebook,Child Nudity & Sexual Exploitation,Content Appealed,2021Q1,"3,800"
+Facebook,Dangerous Orgs: Organized Hate,Content Appealed,2017Q4,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Appealed,2018Q1,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Appealed,2018Q2,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Appealed,2018Q3,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Appealed,2018Q4,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Appealed,2019Q1,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Appealed,2019Q2,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Appealed,2019Q3,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Appealed,2019Q4,"191,800"
+Facebook,Dangerous Orgs: Organized Hate,Content Appealed,2020Q1,"232,800"
+Facebook,Dangerous Orgs: Organized Hate,Content Appealed,2020Q2,10
+Facebook,Dangerous Orgs: Organized Hate,Content Appealed,2020Q3,"21,600"
+Facebook,Dangerous Orgs: Organized Hate,Content Appealed,2020Q4,"137,700"
+Facebook,Dangerous Orgs: Organized Hate,Content Appealed,2021Q1,"148,600"
+Facebook,Dangerous Orgs: Organized Hate,Content Appealed,2021Q2,"87,800"
+Facebook,Dangerous Orgs: Organized Hate,Content Appealed,2021Q3,"53,300"
+Facebook,Dangerous Orgs: Organized Hate,Content Appealed,2021Q4,"35,700"
+Facebook,Dangerous Orgs: Organized Hate,Content Appealed,2022Q1,"34,000"
+Facebook,Dangerous Orgs: Terrorism,Content Appealed,2017Q4,N/A
+Facebook,Dangerous Orgs: Terrorism,Content Appealed,2018Q1,N/A
+Facebook,Dangerous Orgs: Terrorism,Content Appealed,2018Q2,N/A
+Facebook,Dangerous Orgs: Terrorism,Content Appealed,2018Q3,N/A
+Facebook,Dangerous Orgs: Terrorism,Content Appealed,2018Q4,N/A
+Facebook,Dangerous Orgs: Terrorism,Content Appealed,2019Q1,"83,700"
+Facebook,Dangerous Orgs: Terrorism,Content Appealed,2019Q2,"83,600"
+Facebook,Dangerous Orgs: Terrorism,Content Appealed,2019Q3,"135,100"
+Facebook,Dangerous Orgs: Terrorism,Content Appealed,2019Q4,"236,100"
+Facebook,Dangerous Orgs: Terrorism,Content Appealed,2020Q1,"181,600"
+Facebook,Dangerous Orgs: Terrorism,Content Appealed,2020Q2,10
+Facebook,Dangerous Orgs: Terrorism,Content Appealed,2020Q3,"1,700"
+Facebook,Dangerous Orgs: Terrorism,Content Appealed,2020Q4,"50,300"
+Facebook,Dangerous Orgs: Terrorism,Content Appealed,2021Q1,"38,800"
+Facebook,Dangerous Orgs: Terrorism,Content Appealed,2021Q2,"35,900"
+Facebook,Dangerous Orgs: Terrorism,Content Appealed,2021Q3,"64,700"
+Facebook,Dangerous Orgs: Terrorism,Content Appealed,2021Q4,"39,000"
+Facebook,Dangerous Orgs: Terrorism,Content Appealed,2022Q1,"33,800"
+Facebook,Hate Speech,Content Appealed,2017Q4,N/A
+Facebook,Hate Speech,Content Appealed,2018Q1,N/A
+Facebook,Hate Speech,Content Appealed,2018Q2,N/A
+Facebook,Hate Speech,Content Appealed,2018Q3,N/A
+Facebook,Hate Speech,Content Appealed,2018Q4,N/A
+Facebook,Hate Speech,Content Appealed,2019Q1,"1,100,000"
+Facebook,Hate Speech,Content Appealed,2019Q2,"1,100,000"
+Facebook,Hate Speech,Content Appealed,2019Q3,"1,400,000"
+Facebook,Hate Speech,Content Appealed,2019Q4,"1,000,000"
+Facebook,Hate Speech,Content Appealed,2020Q1,"1,200,000"
+Facebook,Hate Speech,Content Appealed,2020Q2,"27,700"
+Facebook,Hate Speech,Content Appealed,2020Q3,"41,900"
+Facebook,Hate Speech,Content Appealed,2020Q4,"985,000"
+Facebook,Hate Speech,Content Appealed,2021Q1,"1,100,000"
+Facebook,Hate Speech,Content Appealed,2021Q2,"1,400,000"
+Facebook,Hate Speech,Content Appealed,2021Q3,"1,100,000"
+Facebook,Hate Speech,Content Appealed,2021Q4,"768,800"
+Facebook,Hate Speech,Content Appealed,2022Q1,"586,700"
+Facebook,Regulated Goods: Drugs,Content Appealed,2017Q4,N/A
+Facebook,Regulated Goods: Drugs,Content Appealed,2018Q1,N/A
+Facebook,Regulated Goods: Drugs,Content Appealed,2018Q2,N/A
+Facebook,Regulated Goods: Drugs,Content Appealed,2018Q3,N/A
+Facebook,Regulated Goods: Drugs,Content Appealed,2018Q4,N/A
+Facebook,Regulated Goods: Drugs,Content Appealed,2019Q1,"79,400"
+Facebook,Regulated Goods: Drugs,Content Appealed,2019Q2,"113,300"
+Facebook,Regulated Goods: Drugs,Content Appealed,2019Q3,"134,600"
+Facebook,Regulated Goods: Drugs,Content Appealed,2019Q4,"165,300"
+Facebook,Regulated Goods: Drugs,Content Appealed,2020Q1,"122,400"
+Facebook,Regulated Goods: Drugs,Content Appealed,2020Q2,"25,600"
+Facebook,Regulated Goods: Drugs,Content Appealed,2020Q3,"45,000"
+Facebook,Regulated Goods: Drugs,Content Appealed,2020Q4,"80,200"
+Facebook,Regulated Goods: Drugs,Content Appealed,2021Q1,"36,400"
+Facebook,Regulated Goods: Drugs,Content Appealed,2021Q2,"36,300"
+Facebook,Regulated Goods: Drugs,Content Appealed,2021Q3,"43,900"
+Facebook,Regulated Goods: Drugs,Content Appealed,2021Q4,"80,000"
+Facebook,Regulated Goods: Drugs,Content Appealed,2022Q1,"104,000"
+Facebook,Regulated Goods: Firearms,Content Appealed,2017Q4,N/A
+Facebook,Regulated Goods: Firearms,Content Appealed,2018Q1,N/A
+Facebook,Regulated Goods: Firearms,Content Appealed,2018Q2,N/A
+Facebook,Regulated Goods: Firearms,Content Appealed,2018Q3,N/A
+Facebook,Regulated Goods: Firearms,Content Appealed,2018Q4,N/A
+Facebook,Regulated Goods: Firearms,Content Appealed,2019Q1,"73,800"
+Facebook,Regulated Goods: Firearms,Content Appealed,2019Q2,"150,700"
+Facebook,Regulated Goods: Firearms,Content Appealed,2019Q3,"196,300"
+Facebook,Regulated Goods: Firearms,Content Appealed,2019Q4,"150,500"
+Facebook,Regulated Goods: Firearms,Content Appealed,2020Q1,"109,200"
+Facebook,Regulated Goods: Firearms,Content Appealed,2020Q2,"38,100"
+Facebook,Regulated Goods: Firearms,Content Appealed,2020Q3,"36,100"
+Facebook,Regulated Goods: Firearms,Content Appealed,2020Q4,"44,100"
+Facebook,Regulated Goods: Firearms,Content Appealed,2021Q1,"125,300"
+Facebook,Regulated Goods: Firearms,Content Appealed,2021Q2,"82,700"
+Facebook,Regulated Goods: Firearms,Content Appealed,2021Q3,"44,100"
+Facebook,Regulated Goods: Firearms,Content Appealed,2021Q4,"63,000"
+Facebook,Regulated Goods: Firearms,Content Appealed,2022Q1,"74,200"
+Facebook,Spam,Content Appealed,2017Q4,N/A
+Facebook,Spam,Content Appealed,2018Q1,N/A
+Facebook,Spam,Content Appealed,2018Q2,N/A
+Facebook,Spam,Content Appealed,2018Q3,N/A
+Facebook,Spam,Content Appealed,2018Q4,N/A
+Facebook,Spam,Content Appealed,2019Q1,"19,900,000"
+Facebook,Spam,Content Appealed,2019Q2,"19,600,000"
+Facebook,Spam,Content Appealed,2019Q3,"8,500,000"
+Facebook,Spam,Content Appealed,2019Q4,"3,600,000"
+Facebook,Spam,Content Appealed,2020Q1,"2,200,000"
+Facebook,Spam,Content Appealed,2020Q2,"23,300"
+Facebook,Spam,Content Appealed,2020Q3,"25,900"
+Facebook,Spam,Content Appealed,2020Q4,"31,200"
+Facebook,Spam,Content Appealed,2021Q1,"7,200"
+Facebook,Spam,Content Appealed,2021Q2,"14,600"
+Facebook,Spam,Content Appealed,2021Q3,"18,700"
+Facebook,Spam,Content Appealed,2021Q4,"21,700"
+Facebook,Spam,Content Appealed,2022Q1,"39,600"
+Facebook,Suicide and Self-Injury,Content Appealed,2017Q4,N/A
+Facebook,Suicide and Self-Injury,Content Appealed,2018Q1,N/A
+Facebook,Suicide and Self-Injury,Content Appealed,2018Q2,N/A
+Facebook,Suicide and Self-Injury,Content Appealed,2018Q3,N/A
+Facebook,Suicide and Self-Injury,Content Appealed,2018Q4,N/A
+Facebook,Suicide and Self-Injury,Content Appealed,2019Q1,N/A
+Facebook,Suicide and Self-Injury,Content Appealed,2019Q2,"49,100"
+Facebook,Suicide and Self-Injury,Content Appealed,2019Q3,"43,500"
+Facebook,Suicide and Self-Injury,Content Appealed,2019Q4,"57,900"
+Facebook,Suicide and Self-Injury,Content Appealed,2020Q1,"21,900"
+Facebook,Suicide and Self-Injury,Content Appealed,2020Q2,0
+Facebook,Suicide and Self-Injury,Content Appealed,2020Q3,0
+Facebook,Suicide and Self-Injury,Content Appealed,2020Q4,700
+Facebook,Suicide and Self-Injury,Content Appealed,2021Q1,900
+Facebook,Suicide and Self-Injury,Content Appealed,2021Q2,300
+Facebook,Suicide and Self-Injury,Content Appealed,2021Q3,200
+Facebook,Suicide and Self-Injury,Content Appealed,2021Q4,200
+Facebook,Suicide and Self-Injury,Content Appealed,2022Q1,"6,100"
+Facebook,Violence And Incitement,Content Appealed,2017Q4,N/A
+Facebook,Violence And Incitement,Content Appealed,2018Q1,N/A
+Facebook,Violence And Incitement,Content Appealed,2018Q2,N/A
+Facebook,Violence And Incitement,Content Appealed,2018Q3,N/A
+Facebook,Violence And Incitement,Content Appealed,2018Q4,N/A
+Facebook,Violence And Incitement,Content Appealed,2019Q1,N/A
+Facebook,Violence And Incitement,Content Appealed,2019Q2,N/A
+Facebook,Violence And Incitement,Content Appealed,2019Q3,N/A
+Facebook,Violence And Incitement,Content Appealed,2019Q4,N/A
+Facebook,Violence And Incitement,Content Appealed,2020Q1,N/A
+Facebook,Violence And Incitement,Content Appealed,2020Q2,N/A
+Facebook,Violence And Incitement,Content Appealed,2020Q3,N/A
+Facebook,Violence And Incitement,Content Appealed,2020Q4,N/A
+Facebook,Violence And Incitement,Content Appealed,2021Q1,N/A
+Facebook,Violence And Incitement,Content Appealed,2021Q2,N/A
+Facebook,Violence And Incitement,Content Appealed,2021Q3,"435,300"
+Facebook,Violence And Incitement,Content Appealed,2021Q4,"361,800"
+Facebook,Violence And Incitement,Content Appealed,2022Q1,"756,000"
+Facebook,Violent & Graphic Content,Content Appealed,2017Q4,N/A
+Facebook,Violent & Graphic Content,Content Appealed,2018Q1,N/A
+Facebook,Violent & Graphic Content,Content Appealed,2018Q2,N/A
+Facebook,Violent & Graphic Content,Content Appealed,2018Q3,N/A
+Facebook,Violent & Graphic Content,Content Appealed,2018Q4,N/A
+Facebook,Violent & Graphic Content,Content Appealed,2019Q1,"158,000"
+Facebook,Violent & Graphic Content,Content Appealed,2019Q2,"216,900"
+Facebook,Violent & Graphic Content,Content Appealed,2019Q3,"603,700"
+Facebook,Violent & Graphic Content,Content Appealed,2019Q4,"607,800"
+Facebook,Violent & Graphic Content,Content Appealed,2020Q1,"480,000"
+Facebook,Violent & Graphic Content,Content Appealed,2020Q2,500
+Facebook,Violent & Graphic Content,Content Appealed,2020Q3,500
+Facebook,Violent & Graphic Content,Content Appealed,2020Q4,"3,900"
+Facebook,Violent & Graphic Content,Content Appealed,2021Q1,"3,700"
+Facebook,Violent & Graphic Content,Content Appealed,2021Q2,"3,700"
+Facebook,Violent & Graphic Content,Content Appealed,2021Q3,"3,300"
+Facebook,Violent & Graphic Content,Content Appealed,2021Q4,"3,700"
+Facebook,Violent & Graphic Content,Content Appealed,2022Q1,"4,500"
+Facebook,Adult Nudity & Sexual Activity,Content Restored with appeal,2017Q4,N/A
+Facebook,Adult Nudity & Sexual Activity,Content Restored with appeal,2018Q1,N/A
+Facebook,Adult Nudity & Sexual Activity,Content Restored with appeal,2018Q2,N/A
+Facebook,Adult Nudity & Sexual Activity,Content Restored with appeal,2018Q3,N/A
+Facebook,Adult Nudity & Sexual Activity,Content Restored with appeal,2018Q4,N/A
+Facebook,Adult Nudity & Sexual Activity,Content Restored with appeal,2019Q1,"472,800"
+Facebook,Adult Nudity & Sexual Activity,Content Restored with appeal,2019Q2,"953,800"
+Facebook,Adult Nudity & Sexual Activity,Content Restored with appeal,2019Q3,"813,700"
+Facebook,Adult Nudity & Sexual Activity,Content Restored with appeal,2019Q4,"664,800"
+Facebook,Adult Nudity & Sexual Activity,Content Restored with appeal,2020Q1,"612,700"
+Facebook,Adult Nudity & Sexual Activity,Content Restored with appeal,2020Q2,100
+Facebook,Adult Nudity & Sexual Activity,Content Restored with appeal,2020Q3,200
+Facebook,Adult Nudity & Sexual Activity,Content Restored with appeal,2020Q4,"35,100"
+Facebook,Adult Nudity & Sexual Activity,Content Restored with appeal,2021Q1,"73,100"
+Facebook,Adult Nudity & Sexual Activity,Content Restored with appeal,2021Q2,"55,900"
+Facebook,Adult Nudity & Sexual Activity,Content Restored with appeal,2021Q3,"32,900"
+Facebook,Adult Nudity & Sexual Activity,Content Restored with appeal,2021Q4,"36,600"
+Facebook,Adult Nudity & Sexual Activity,Content Restored with appeal,2022Q1,"47,000"
+Facebook,Bullying & Harassment,Content Restored with appeal,2017Q4,N/A
+Facebook,Bullying & Harassment,Content Restored with appeal,2018Q1,N/A
+Facebook,Bullying & Harassment,Content Restored with appeal,2018Q2,N/A
+Facebook,Bullying & Harassment,Content Restored with appeal,2018Q3,N/A
+Facebook,Bullying & Harassment,Content Restored with appeal,2018Q4,N/A
+Facebook,Bullying & Harassment,Content Restored with appeal,2019Q1,"78,900"
+Facebook,Bullying & Harassment,Content Restored with appeal,2019Q2,"58,100"
+Facebook,Bullying & Harassment,Content Restored with appeal,2019Q3,"92,900"
+Facebook,Bullying & Harassment,Content Restored with appeal,2019Q4,"88,300"
+Facebook,Bullying & Harassment,Content Restored with appeal,2020Q1,"65,800"
+Facebook,Bullying & Harassment,Content Restored with appeal,2020Q2,10
+Facebook,Bullying & Harassment,Content Restored with appeal,2020Q3,"3,000"
+Facebook,Bullying & Harassment,Content Restored with appeal,2020Q4,"41,000"
+Facebook,Bullying & Harassment,Content Restored with appeal,2021Q1,"112,600"
+Facebook,Bullying & Harassment,Content Restored with appeal,2021Q2,"120,900"
+Facebook,Bullying & Harassment,Content Restored with appeal,2021Q3,"149,800"
+Facebook,Bullying & Harassment,Content Restored with appeal,2021Q4,"121,400"
+Facebook,Bullying & Harassment,Content Restored with appeal,2022Q1,"114,700"
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2017Q4,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2018Q1,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2018Q2,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2018Q3,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2018Q4,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2019Q1,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2019Q2,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2019Q3,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2019Q4,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2020Q1,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2020Q2,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2020Q3,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2020Q4,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2021Q1,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2021Q2,800
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2021Q3,700
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2021Q4,800
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2022Q1,700
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2017Q4,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2018Q1,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2018Q2,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2018Q3,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2018Q4,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2019Q1,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2019Q2,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2019Q3,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2019Q4,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2020Q1,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2020Q2,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2020Q3,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2020Q4,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2021Q1,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2021Q2,50
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2021Q3,30
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2021Q4,70
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2022Q1,100
+Facebook,Child Nudity & Sexual Exploitation,Content Restored with appeal,2017Q4,N/A
+Facebook,Child Nudity & Sexual Exploitation,Content Restored with appeal,2018Q1,N/A
+Facebook,Child Nudity & Sexual Exploitation,Content Restored with appeal,2018Q2,N/A
+Facebook,Child Nudity & Sexual Exploitation,Content Restored with appeal,2018Q3,N/A
+Facebook,Child Nudity & Sexual Exploitation,Content Restored with appeal,2018Q4,N/A
+Facebook,Child Nudity & Sexual Exploitation,Content Restored with appeal,2019Q1,800
+Facebook,Child Nudity & Sexual Exploitation,Content Restored with appeal,2019Q2,"14,200"
+Facebook,Child Nudity & Sexual Exploitation,Content Restored with appeal,2019Q3,"13,300"
+Facebook,Child Nudity & Sexual Exploitation,Content Restored with appeal,2019Q4,"4,400"
+Facebook,Child Nudity & Sexual Exploitation,Content Restored with appeal,2020Q1,"3,700"
+Facebook,Child Nudity & Sexual Exploitation,Content Restored with appeal,2020Q2,0
+Facebook,Child Nudity & Sexual Exploitation,Content Restored with appeal,2020Q3,0
+Facebook,Child Nudity & Sexual Exploitation,Content Restored with appeal,2020Q4,100
+Facebook,Child Nudity & Sexual Exploitation,Content Restored with appeal,2021Q1,300
+Facebook,Dangerous Orgs: Organized Hate,Content Restored with appeal,2017Q4,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Restored with appeal,2018Q1,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Restored with appeal,2018Q2,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Restored with appeal,2018Q3,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Restored with appeal,2018Q4,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Restored with appeal,2019Q1,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Restored with appeal,2019Q2,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Restored with appeal,2019Q3,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Restored with appeal,2019Q4,"40,600"
+Facebook,Dangerous Orgs: Organized Hate,Content Restored with appeal,2020Q1,"53,700"
+Facebook,Dangerous Orgs: Organized Hate,Content Restored with appeal,2020Q2,50
+Facebook,Dangerous Orgs: Organized Hate,Content Restored with appeal,2020Q3,"3,800"
+Facebook,Dangerous Orgs: Organized Hate,Content Restored with appeal,2020Q4,"27,200"
+Facebook,Dangerous Orgs: Organized Hate,Content Restored with appeal,2021Q1,"45,000"
+Facebook,Dangerous Orgs: Organized Hate,Content Restored with appeal,2021Q2,"33,700"
+Facebook,Dangerous Orgs: Organized Hate,Content Restored with appeal,2021Q3,"23,800"
+Facebook,Dangerous Orgs: Organized Hate,Content Restored with appeal,2021Q4,"11,900"
+Facebook,Dangerous Orgs: Organized Hate,Content Restored with appeal,2022Q1,"12,000"
+Facebook,Dangerous Orgs: Terrorism,Content Restored with appeal,2017Q4,N/A
+Facebook,Dangerous Orgs: Terrorism,Content Restored with appeal,2018Q1,N/A
+Facebook,Dangerous Orgs: Terrorism,Content Restored with appeal,2018Q2,N/A
+Facebook,Dangerous Orgs: Terrorism,Content Restored with appeal,2018Q3,N/A
+Facebook,Dangerous Orgs: Terrorism,Content Restored with appeal,2018Q4,N/A
+Facebook,Dangerous Orgs: Terrorism,Content Restored with appeal,2019Q1,"26,700"
+Facebook,Dangerous Orgs: Terrorism,Content Restored with appeal,2019Q2,"18,900"
+Facebook,Dangerous Orgs: Terrorism,Content Restored with appeal,2019Q3,"32,400"
+Facebook,Dangerous Orgs: Terrorism,Content Restored with appeal,2019Q4,"54,600"
+Facebook,Dangerous Orgs: Terrorism,Content Restored with appeal,2020Q1,"23,000"
+Facebook,Dangerous Orgs: Terrorism,Content Restored with appeal,2020Q2,30
+Facebook,Dangerous Orgs: Terrorism,Content Restored with appeal,2020Q3,100
+Facebook,Dangerous Orgs: Terrorism,Content Restored with appeal,2020Q4,"4,300"
+Facebook,Dangerous Orgs: Terrorism,Content Restored with appeal,2021Q1,"6,500"
+Facebook,Dangerous Orgs: Terrorism,Content Restored with appeal,2021Q2,"3,500"
+Facebook,Dangerous Orgs: Terrorism,Content Restored with appeal,2021Q3,"10,200"
+Facebook,Dangerous Orgs: Terrorism,Content Restored with appeal,2021Q4,"5,200"
+Facebook,Dangerous Orgs: Terrorism,Content Restored with appeal,2022Q1,"5,400"
+Facebook,Hate Speech,Content Restored with appeal,2017Q4,N/A
+Facebook,Hate Speech,Content Restored with appeal,2018Q1,N/A
+Facebook,Hate Speech,Content Restored with appeal,2018Q2,N/A
+Facebook,Hate Speech,Content Restored with appeal,2018Q3,N/A
+Facebook,Hate Speech,Content Restored with appeal,2018Q4,N/A
+Facebook,Hate Speech,Content Restored with appeal,2019Q1,"128,700"
+Facebook,Hate Speech,Content Restored with appeal,2019Q2,"114,700"
+Facebook,Hate Speech,Content Restored with appeal,2019Q3,"166,800"
+Facebook,Hate Speech,Content Restored with appeal,2019Q4,"73,100"
+Facebook,Hate Speech,Content Restored with appeal,2020Q1,"59,600"
+Facebook,Hate Speech,Content Restored with appeal,2020Q2,"3,400"
+Facebook,Hate Speech,Content Restored with appeal,2020Q3,"4,800"
+Facebook,Hate Speech,Content Restored with appeal,2020Q4,"48,300"
+Facebook,Hate Speech,Content Restored with appeal,2021Q1,"84,800"
+Facebook,Hate Speech,Content Restored with appeal,2021Q2,"88,100"
+Facebook,Hate Speech,Content Restored with appeal,2021Q3,"90,700"
+Facebook,Hate Speech,Content Restored with appeal,2021Q4,"65,300"
+Facebook,Hate Speech,Content Restored with appeal,2022Q1,"48,700"
+Facebook,Regulated Goods: Drugs,Content Restored with appeal,2017Q4,N/A
+Facebook,Regulated Goods: Drugs,Content Restored with appeal,2018Q1,N/A
+Facebook,Regulated Goods: Drugs,Content Restored with appeal,2018Q2,N/A
+Facebook,Regulated Goods: Drugs,Content Restored with appeal,2018Q3,N/A
+Facebook,Regulated Goods: Drugs,Content Restored with appeal,2018Q4,N/A
+Facebook,Regulated Goods: Drugs,Content Restored with appeal,2019Q1,"16,300"
+Facebook,Regulated Goods: Drugs,Content Restored with appeal,2019Q2,"22,000"
+Facebook,Regulated Goods: Drugs,Content Restored with appeal,2019Q3,"33,600"
+Facebook,Regulated Goods: Drugs,Content Restored with appeal,2019Q4,"51,900"
+Facebook,Regulated Goods: Drugs,Content Restored with appeal,2020Q1,"27,800"
+Facebook,Regulated Goods: Drugs,Content Restored with appeal,2020Q2,"4,900"
+Facebook,Regulated Goods: Drugs,Content Restored with appeal,2020Q3,"6,400"
+Facebook,Regulated Goods: Drugs,Content Restored with appeal,2020Q4,"58,600"
+Facebook,Regulated Goods: Drugs,Content Restored with appeal,2021Q1,"14,900"
+Facebook,Regulated Goods: Drugs,Content Restored with appeal,2021Q2,"6,100"
+Facebook,Regulated Goods: Drugs,Content Restored with appeal,2021Q3,"9,300"
+Facebook,Regulated Goods: Drugs,Content Restored with appeal,2021Q4,"27,700"
+Facebook,Regulated Goods: Drugs,Content Restored with appeal,2022Q1,"37,600"
+Facebook,Regulated Goods: Firearms,Content Restored with appeal,2017Q4,N/A
+Facebook,Regulated Goods: Firearms,Content Restored with appeal,2018Q1,N/A
+Facebook,Regulated Goods: Firearms,Content Restored with appeal,2018Q2,N/A
+Facebook,Regulated Goods: Firearms,Content Restored with appeal,2018Q3,N/A
+Facebook,Regulated Goods: Firearms,Content Restored with appeal,2018Q4,N/A
+Facebook,Regulated Goods: Firearms,Content Restored with appeal,2019Q1,"5,900"
+Facebook,Regulated Goods: Firearms,Content Restored with appeal,2019Q2,"14,400"
+Facebook,Regulated Goods: Firearms,Content Restored with appeal,2019Q3,"10,200"
+Facebook,Regulated Goods: Firearms,Content Restored with appeal,2019Q4,"8,700"
+Facebook,Regulated Goods: Firearms,Content Restored with appeal,2020Q1,"5,100"
+Facebook,Regulated Goods: Firearms,Content Restored with appeal,2020Q2,"2,900"
+Facebook,Regulated Goods: Firearms,Content Restored with appeal,2020Q3,"2,100"
+Facebook,Regulated Goods: Firearms,Content Restored with appeal,2020Q4,"7,100"
+Facebook,Regulated Goods: Firearms,Content Restored with appeal,2021Q1,"39,600"
+Facebook,Regulated Goods: Firearms,Content Restored with appeal,2021Q2,"20,600"
+Facebook,Regulated Goods: Firearms,Content Restored with appeal,2021Q3,"9,000"
+Facebook,Regulated Goods: Firearms,Content Restored with appeal,2021Q4,"10,700"
+Facebook,Regulated Goods: Firearms,Content Restored with appeal,2022Q1,"12,800"
+Facebook,Spam,Content Restored with appeal,2017Q4,N/A
+Facebook,Spam,Content Restored with appeal,2018Q1,N/A
+Facebook,Spam,Content Restored with appeal,2018Q2,N/A
+Facebook,Spam,Content Restored with appeal,2018Q3,N/A
+Facebook,Spam,Content Restored with appeal,2018Q4,N/A
+Facebook,Spam,Content Restored with appeal,2019Q1,"5,300,000"
+Facebook,Spam,Content Restored with appeal,2019Q2,"5,200,000"
+Facebook,Spam,Content Restored with appeal,2019Q3,"2,500,000"
+Facebook,Spam,Content Restored with appeal,2019Q4,"527,300"
+Facebook,Spam,Content Restored with appeal,2020Q1,"536,100"
+Facebook,Spam,Content Restored with appeal,2020Q2,900
+Facebook,Spam,Content Restored with appeal,2020Q3,90
+Facebook,Spam,Content Restored with appeal,2020Q4,800
+Facebook,Spam,Content Restored with appeal,2021Q1,"1,300"
+Facebook,Spam,Content Restored with appeal,2021Q2,"1,300"
+Facebook,Spam,Content Restored with appeal,2021Q3,"1,200"
+Facebook,Spam,Content Restored with appeal,2021Q4,"2,000"
+Facebook,Spam,Content Restored with appeal,2022Q1,"1,600"
+Facebook,Suicide and Self-Injury,Content Restored with appeal,2017Q4,N/A
+Facebook,Suicide and Self-Injury,Content Restored with appeal,2018Q1,N/A
+Facebook,Suicide and Self-Injury,Content Restored with appeal,2018Q2,N/A
+Facebook,Suicide and Self-Injury,Content Restored with appeal,2018Q3,N/A
+Facebook,Suicide and Self-Injury,Content Restored with appeal,2018Q4,N/A
+Facebook,Suicide and Self-Injury,Content Restored with appeal,2019Q1,N/A
+Facebook,Suicide and Self-Injury,Content Restored with appeal,2019Q2,"6,100"
+Facebook,Suicide and Self-Injury,Content Restored with appeal,2019Q3,"5,900"
+Facebook,Suicide and Self-Injury,Content Restored with appeal,2019Q4,"10,700"
+Facebook,Suicide and Self-Injury,Content Restored with appeal,2020Q1,"4,200"
+Facebook,Suicide and Self-Injury,Content Restored with appeal,2020Q2,10
+Facebook,Suicide and Self-Injury,Content Restored with appeal,2020Q3,0
+Facebook,Suicide and Self-Injury,Content Restored with appeal,2020Q4,100
+Facebook,Suicide and Self-Injury,Content Restored with appeal,2021Q1,100
+Facebook,Suicide and Self-Injury,Content Restored with appeal,2021Q2,60
+Facebook,Suicide and Self-Injury,Content Restored with appeal,2021Q3,70
+Facebook,Suicide and Self-Injury,Content Restored with appeal,2021Q4,50
+Facebook,Suicide and Self-Injury,Content Restored with appeal,2022Q1,"1,700"
+Facebook,Violence And Incitement,Content Restored with appeal,2017Q4,N/A
+Facebook,Violence And Incitement,Content Restored with appeal,2018Q1,N/A
+Facebook,Violence And Incitement,Content Restored with appeal,2018Q2,N/A
+Facebook,Violence And Incitement,Content Restored with appeal,2018Q3,N/A
+Facebook,Violence And Incitement,Content Restored with appeal,2018Q4,N/A
+Facebook,Violence And Incitement,Content Restored with appeal,2019Q1,N/A
+Facebook,Violence And Incitement,Content Restored with appeal,2019Q2,N/A
+Facebook,Violence And Incitement,Content Restored with appeal,2019Q3,N/A
+Facebook,Violence And Incitement,Content Restored with appeal,2019Q4,N/A
+Facebook,Violence And Incitement,Content Restored with appeal,2020Q1,N/A
+Facebook,Violence And Incitement,Content Restored with appeal,2020Q2,N/A
+Facebook,Violence And Incitement,Content Restored with appeal,2020Q3,N/A
+Facebook,Violence And Incitement,Content Restored with appeal,2020Q4,N/A
+Facebook,Violence And Incitement,Content Restored with appeal,2021Q1,N/A
+Facebook,Violence And Incitement,Content Restored with appeal,2021Q2,N/A
+Facebook,Violence And Incitement,Content Restored with appeal,2021Q3,"37,900"
+Facebook,Violence And Incitement,Content Restored with appeal,2021Q4,"33,900"
+Facebook,Violence And Incitement,Content Restored with appeal,2022Q1,"77,700"
+Facebook,Violent & Graphic Content,Content Restored with appeal,2017Q4,N/A
+Facebook,Violent & Graphic Content,Content Restored with appeal,2018Q1,N/A
+Facebook,Violent & Graphic Content,Content Restored with appeal,2018Q2,N/A
+Facebook,Violent & Graphic Content,Content Restored with appeal,2018Q3,N/A
+Facebook,Violent & Graphic Content,Content Restored with appeal,2018Q4,N/A
+Facebook,Violent & Graphic Content,Content Restored with appeal,2019Q1,"24,100"
+Facebook,Violent & Graphic Content,Content Restored with appeal,2019Q2,"25,100"
+Facebook,Violent & Graphic Content,Content Restored with appeal,2019Q3,"14,900"
+Facebook,Violent & Graphic Content,Content Restored with appeal,2019Q4,"5,100"
+Facebook,Violent & Graphic Content,Content Restored with appeal,2020Q1,"119,100"
+Facebook,Violent & Graphic Content,Content Restored with appeal,2020Q2,10
+Facebook,Violent & Graphic Content,Content Restored with appeal,2020Q3,90
+Facebook,Violent & Graphic Content,Content Restored with appeal,2020Q4,500
+Facebook,Violent & Graphic Content,Content Restored with appeal,2021Q1,"1,000"
+Facebook,Violent & Graphic Content,Content Restored with appeal,2021Q2,700
+Facebook,Violent & Graphic Content,Content Restored with appeal,2021Q3,700
+Facebook,Violent & Graphic Content,Content Restored with appeal,2021Q4,600
+Facebook,Violent & Graphic Content,Content Restored with appeal,2022Q1,800
+Facebook,Adult Nudity & Sexual Activity,Content Restored without appeal,2017Q4,N/A
+Facebook,Adult Nudity & Sexual Activity,Content Restored without appeal,2018Q1,N/A
+Facebook,Adult Nudity & Sexual Activity,Content Restored without appeal,2018Q2,N/A
+Facebook,Adult Nudity & Sexual Activity,Content Restored without appeal,2018Q3,N/A
+Facebook,Adult Nudity & Sexual Activity,Content Restored without appeal,2018Q4,N/A
+Facebook,Adult Nudity & Sexual Activity,Content Restored without appeal,2019Q1,"355,600"
+Facebook,Adult Nudity & Sexual Activity,Content Restored without appeal,2019Q2,"67,800"
+Facebook,Adult Nudity & Sexual Activity,Content Restored without appeal,2019Q3,"47,100"
+Facebook,Adult Nudity & Sexual Activity,Content Restored without appeal,2019Q4,"53,100"
+Facebook,Adult Nudity & Sexual Activity,Content Restored without appeal,2020Q1,"25,300"
+Facebook,Adult Nudity & Sexual Activity,Content Restored without appeal,2020Q2,"8,800"
+Facebook,Adult Nudity & Sexual Activity,Content Restored without appeal,2020Q3,"20,100"
+Facebook,Adult Nudity & Sexual Activity,Content Restored without appeal,2020Q4,"281,400"
+Facebook,Adult Nudity & Sexual Activity,Content Restored without appeal,2021Q1,"559,500"
+Facebook,Adult Nudity & Sexual Activity,Content Restored without appeal,2021Q2,"311,600"
+Facebook,Adult Nudity & Sexual Activity,Content Restored without appeal,2021Q3,"233,600"
+Facebook,Adult Nudity & Sexual Activity,Content Restored without appeal,2021Q4,"261,900"
+Facebook,Adult Nudity & Sexual Activity,Content Restored without appeal,2022Q1,"239,500"
+Facebook,Bullying & Harassment,Content Restored without appeal,2017Q4,N/A
+Facebook,Bullying & Harassment,Content Restored without appeal,2018Q1,N/A
+Facebook,Bullying & Harassment,Content Restored without appeal,2018Q2,N/A
+Facebook,Bullying & Harassment,Content Restored without appeal,2018Q3,N/A
+Facebook,Bullying & Harassment,Content Restored without appeal,2018Q4,N/A
+Facebook,Bullying & Harassment,Content Restored without appeal,2019Q1,800
+Facebook,Bullying & Harassment,Content Restored without appeal,2019Q2,"4,800"
+Facebook,Bullying & Harassment,Content Restored without appeal,2019Q3,"6,900"
+Facebook,Bullying & Harassment,Content Restored without appeal,2019Q4,"5,000"
+Facebook,Bullying & Harassment,Content Restored without appeal,2020Q1,"1,600"
+Facebook,Bullying & Harassment,Content Restored without appeal,2020Q2,"38,400"
+Facebook,Bullying & Harassment,Content Restored without appeal,2020Q3,"393,500"
+Facebook,Bullying & Harassment,Content Restored without appeal,2020Q4,"131,800"
+Facebook,Bullying & Harassment,Content Restored without appeal,2021Q1,"179,000"
+Facebook,Bullying & Harassment,Content Restored without appeal,2021Q2,"210,800"
+Facebook,Bullying & Harassment,Content Restored without appeal,2021Q3,"282,600"
+Facebook,Bullying & Harassment,Content Restored without appeal,2021Q4,"242,500"
+Facebook,Bullying & Harassment,Content Restored without appeal,2022Q1,"333,500"
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2017Q4,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2018Q1,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2018Q2,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2018Q3,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2018Q4,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2019Q1,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2019Q2,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2019Q3,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2019Q4,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2020Q1,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2020Q2,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2020Q3,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2020Q4,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2021Q1,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2021Q2,"21,100"
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2021Q3,"167,200"
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2021Q4,"19,200"
+Facebook,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2022Q1,"21,200"
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2017Q4,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2018Q1,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2018Q2,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2018Q3,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2018Q4,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2019Q1,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2019Q2,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2019Q3,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2019Q4,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2020Q1,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2020Q2,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2020Q3,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2020Q4,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2021Q1,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2021Q2,"2,800"
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2021Q3,"2,800"
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2021Q4,"180,500"
+Facebook,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2022Q1,"687,700"
+Facebook,Child Nudity & Sexual Exploitation,Content Restored without appeal,2017Q4,N/A
+Facebook,Child Nudity & Sexual Exploitation,Content Restored without appeal,2018Q1,N/A
+Facebook,Child Nudity & Sexual Exploitation,Content Restored without appeal,2018Q2,N/A
+Facebook,Child Nudity & Sexual Exploitation,Content Restored without appeal,2018Q3,N/A
+Facebook,Child Nudity & Sexual Exploitation,Content Restored without appeal,2018Q4,N/A
+Facebook,Child Nudity & Sexual Exploitation,Content Restored without appeal,2019Q1,"5,300"
+Facebook,Child Nudity & Sexual Exploitation,Content Restored without appeal,2019Q2,"1,500"
+Facebook,Child Nudity & Sexual Exploitation,Content Restored without appeal,2019Q3,"3,400"
+Facebook,Child Nudity & Sexual Exploitation,Content Restored without appeal,2019Q4,"2,500"
+Facebook,Child Nudity & Sexual Exploitation,Content Restored without appeal,2020Q1,500
+Facebook,Child Nudity & Sexual Exploitation,Content Restored without appeal,2020Q2,40
+Facebook,Child Nudity & Sexual Exploitation,Content Restored without appeal,2020Q3,"1,200"
+Facebook,Child Nudity & Sexual Exploitation,Content Restored without appeal,2020Q4,"3,200"
+Facebook,Child Nudity & Sexual Exploitation,Content Restored without appeal,2021Q1,"46,600"
+Facebook,Dangerous Orgs: Organized Hate,Content Restored without appeal,2017Q4,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Restored without appeal,2018Q1,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Restored without appeal,2018Q2,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Restored without appeal,2018Q3,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Restored without appeal,2018Q4,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Restored without appeal,2019Q1,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Restored without appeal,2019Q2,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Restored without appeal,2019Q3,N/A
+Facebook,Dangerous Orgs: Organized Hate,Content Restored without appeal,2019Q4,"34,900"
+Facebook,Dangerous Orgs: Organized Hate,Content Restored without appeal,2020Q1,"11,300"
+Facebook,Dangerous Orgs: Organized Hate,Content Restored without appeal,2020Q2,"90,800"
+Facebook,Dangerous Orgs: Organized Hate,Content Restored without appeal,2020Q3,"123,500"
+Facebook,Dangerous Orgs: Organized Hate,Content Restored without appeal,2020Q4,"204,200"
+Facebook,Dangerous Orgs: Organized Hate,Content Restored without appeal,2021Q1,"454,800"
+Facebook,Dangerous Orgs: Organized Hate,Content Restored without appeal,2021Q2,"484,600"
+Facebook,Dangerous Orgs: Organized Hate,Content Restored without appeal,2021Q3,"433,100"
+Facebook,Dangerous Orgs: Organized Hate,Content Restored without appeal,2021Q4,"115,400"
+Facebook,Dangerous Orgs: Organized Hate,Content Restored without appeal,2022Q1,"219,600"
+Facebook,Dangerous Orgs: Terrorism,Content Restored without appeal,2017Q4,N/A
+Facebook,Dangerous Orgs: Terrorism,Content Restored without appeal,2018Q1,N/A
+Facebook,Dangerous Orgs: Terrorism,Content Restored without appeal,2018Q2,N/A
+Facebook,Dangerous Orgs: Terrorism,Content Restored without appeal,2018Q3,N/A
+Facebook,Dangerous Orgs: Terrorism,Content Restored without appeal,2018Q4,N/A
+Facebook,Dangerous Orgs: Terrorism,Content Restored without appeal,2019Q1,"151,500"
+Facebook,Dangerous Orgs: Terrorism,Content Restored without appeal,2019Q2,"168,600"
+Facebook,Dangerous Orgs: Terrorism,Content Restored without appeal,2019Q3,"172,100"
+Facebook,Dangerous Orgs: Terrorism,Content Restored without appeal,2019Q4,"287,900"
+Facebook,Dangerous Orgs: Terrorism,Content Restored without appeal,2020Q1,"198,700"
+Facebook,Dangerous Orgs: Terrorism,Content Restored without appeal,2020Q2,"356,800"
+Facebook,Dangerous Orgs: Terrorism,Content Restored without appeal,2020Q3,"122,700"
+Facebook,Dangerous Orgs: Terrorism,Content Restored without appeal,2020Q4,"50,300"
+Facebook,Dangerous Orgs: Terrorism,Content Restored without appeal,2021Q1,"62,600"
+Facebook,Dangerous Orgs: Terrorism,Content Restored without appeal,2021Q2,"41,200"
+Facebook,Dangerous Orgs: Terrorism,Content Restored without appeal,2021Q3,"85,200"
+Facebook,Dangerous Orgs: Terrorism,Content Restored without appeal,2021Q4,"52,300"
+Facebook,Dangerous Orgs: Terrorism,Content Restored without appeal,2022Q1,"408,300"
+Facebook,Hate Speech,Content Restored without appeal,2017Q4,N/A
+Facebook,Hate Speech,Content Restored without appeal,2018Q1,N/A
+Facebook,Hate Speech,Content Restored without appeal,2018Q2,N/A
+Facebook,Hate Speech,Content Restored without appeal,2018Q3,N/A
+Facebook,Hate Speech,Content Restored without appeal,2018Q4,N/A
+Facebook,Hate Speech,Content Restored without appeal,2019Q1,700
+Facebook,Hate Speech,Content Restored without appeal,2019Q2,"1,500"
+Facebook,Hate Speech,Content Restored without appeal,2019Q3,"2,200"
+Facebook,Hate Speech,Content Restored without appeal,2019Q4,"2,400"
+Facebook,Hate Speech,Content Restored without appeal,2020Q1,"1,000"
+Facebook,Hate Speech,Content Restored without appeal,2020Q2,"137,600"
+Facebook,Hate Speech,Content Restored without appeal,2020Q3,"232,600"
+Facebook,Hate Speech,Content Restored without appeal,2020Q4,"211,300"
+Facebook,Hate Speech,Content Restored without appeal,2021Q1,"324,200"
+Facebook,Hate Speech,Content Restored without appeal,2021Q2,"328,200"
+Facebook,Hate Speech,Content Restored without appeal,2021Q3,"303,000"
+Facebook,Hate Speech,Content Restored without appeal,2021Q4,"227,800"
+Facebook,Hate Speech,Content Restored without appeal,2022Q1,"218,200"
+Facebook,Regulated Goods: Drugs,Content Restored without appeal,2017Q4,N/A
+Facebook,Regulated Goods: Drugs,Content Restored without appeal,2018Q1,N/A
+Facebook,Regulated Goods: Drugs,Content Restored without appeal,2018Q2,N/A
+Facebook,Regulated Goods: Drugs,Content Restored without appeal,2018Q3,N/A
+Facebook,Regulated Goods: Drugs,Content Restored without appeal,2018Q4,N/A
+Facebook,Regulated Goods: Drugs,Content Restored without appeal,2019Q1,400
+Facebook,Regulated Goods: Drugs,Content Restored without appeal,2019Q2,"16,400"
+Facebook,Regulated Goods: Drugs,Content Restored without appeal,2019Q3,"28,500"
+Facebook,Regulated Goods: Drugs,Content Restored without appeal,2019Q4,"74,700"
+Facebook,Regulated Goods: Drugs,Content Restored without appeal,2020Q1,"11,600"
+Facebook,Regulated Goods: Drugs,Content Restored without appeal,2020Q2,"36,100"
+Facebook,Regulated Goods: Drugs,Content Restored without appeal,2020Q3,"82,900"
+Facebook,Regulated Goods: Drugs,Content Restored without appeal,2020Q4,"316,500"
+Facebook,Regulated Goods: Drugs,Content Restored without appeal,2021Q1,"97,100"
+Facebook,Regulated Goods: Drugs,Content Restored without appeal,2021Q2,"59,200"
+Facebook,Regulated Goods: Drugs,Content Restored without appeal,2021Q3,"83,500"
+Facebook,Regulated Goods: Drugs,Content Restored without appeal,2021Q4,"119,800"
+Facebook,Regulated Goods: Drugs,Content Restored without appeal,2022Q1,"111,400"
+Facebook,Regulated Goods: Firearms,Content Restored without appeal,2017Q4,N/A
+Facebook,Regulated Goods: Firearms,Content Restored without appeal,2018Q1,N/A
+Facebook,Regulated Goods: Firearms,Content Restored without appeal,2018Q2,N/A
+Facebook,Regulated Goods: Firearms,Content Restored without appeal,2018Q3,N/A
+Facebook,Regulated Goods: Firearms,Content Restored without appeal,2018Q4,N/A
+Facebook,Regulated Goods: Firearms,Content Restored without appeal,2019Q1,700
+Facebook,Regulated Goods: Firearms,Content Restored without appeal,2019Q2,"13,300"
+Facebook,Regulated Goods: Firearms,Content Restored without appeal,2019Q3,"19,400"
+Facebook,Regulated Goods: Firearms,Content Restored without appeal,2019Q4,"12,500"
+Facebook,Regulated Goods: Firearms,Content Restored without appeal,2020Q1,"4,500"
+Facebook,Regulated Goods: Firearms,Content Restored without appeal,2020Q2,"7,700"
+Facebook,Regulated Goods: Firearms,Content Restored without appeal,2020Q3,"7,700"
+Facebook,Regulated Goods: Firearms,Content Restored without appeal,2020Q4,"24,900"
+Facebook,Regulated Goods: Firearms,Content Restored without appeal,2021Q1,"128,100"
+Facebook,Regulated Goods: Firearms,Content Restored without appeal,2021Q2,"119,900"
+Facebook,Regulated Goods: Firearms,Content Restored without appeal,2021Q3,"60,700"
+Facebook,Regulated Goods: Firearms,Content Restored without appeal,2021Q4,"59,800"
+Facebook,Regulated Goods: Firearms,Content Restored without appeal,2022Q1,"67,500"
+Facebook,Spam,Content Restored without appeal,2017Q4,N/A
+Facebook,Spam,Content Restored without appeal,2018Q1,N/A
+Facebook,Spam,Content Restored without appeal,2018Q2,N/A
+Facebook,Spam,Content Restored without appeal,2018Q3,N/A
+Facebook,Spam,Content Restored without appeal,2018Q4,N/A
+Facebook,Spam,Content Restored without appeal,2019Q1,"31,800,000"
+Facebook,Spam,Content Restored without appeal,2019Q2,"110,200,000"
+Facebook,Spam,Content Restored without appeal,2019Q3,"109,300,000"
+Facebook,Spam,Content Restored without appeal,2019Q4,"31,600,000"
+Facebook,Spam,Content Restored without appeal,2020Q1,"94,500,000"
+Facebook,Spam,Content Restored without appeal,2020Q2,"18,000,000"
+Facebook,Spam,Content Restored without appeal,2020Q3,"74,900,000"
+Facebook,Spam,Content Restored without appeal,2020Q4,"21,400,000"
+Facebook,Spam,Content Restored without appeal,2021Q1,"38,800,000"
+Facebook,Spam,Content Restored without appeal,2021Q2,"30,600,000"
+Facebook,Spam,Content Restored without appeal,2021Q3,"20,900,000"
+Facebook,Spam,Content Restored without appeal,2021Q4,"54,100,000"
+Facebook,Spam,Content Restored without appeal,2022Q1,"33,000,000"
+Facebook,Suicide and Self-Injury,Content Restored without appeal,2017Q4,N/A
+Facebook,Suicide and Self-Injury,Content Restored without appeal,2018Q1,N/A
+Facebook,Suicide and Self-Injury,Content Restored without appeal,2018Q2,N/A
+Facebook,Suicide and Self-Injury,Content Restored without appeal,2018Q3,N/A
+Facebook,Suicide and Self-Injury,Content Restored without appeal,2018Q4,N/A
+Facebook,Suicide and Self-Injury,Content Restored without appeal,2019Q1,N/A
+Facebook,Suicide and Self-Injury,Content Restored without appeal,2019Q2,100
+Facebook,Suicide and Self-Injury,Content Restored without appeal,2019Q3,200
+Facebook,Suicide and Self-Injury,Content Restored without appeal,2019Q4,300
+Facebook,Suicide and Self-Injury,Content Restored without appeal,2020Q1,200
+Facebook,Suicide and Self-Injury,Content Restored without appeal,2020Q2,50
+Facebook,Suicide and Self-Injury,Content Restored without appeal,2020Q3,200
+Facebook,Suicide and Self-Injury,Content Restored without appeal,2020Q4,"3,700"
+Facebook,Suicide and Self-Injury,Content Restored without appeal,2021Q1,"185,500"
+Facebook,Suicide and Self-Injury,Content Restored without appeal,2021Q2,"279,700"
+Facebook,Suicide and Self-Injury,Content Restored without appeal,2021Q3,"161,500"
+Facebook,Suicide and Self-Injury,Content Restored without appeal,2021Q4,"95,200"
+Facebook,Suicide and Self-Injury,Content Restored without appeal,2022Q1,"343,900"
+Facebook,Violence And Incitement,Content Restored without appeal,2017Q4,N/A
+Facebook,Violence And Incitement,Content Restored without appeal,2018Q1,N/A
+Facebook,Violence And Incitement,Content Restored without appeal,2018Q2,N/A
+Facebook,Violence And Incitement,Content Restored without appeal,2018Q3,N/A
+Facebook,Violence And Incitement,Content Restored without appeal,2018Q4,N/A
+Facebook,Violence And Incitement,Content Restored without appeal,2019Q1,N/A
+Facebook,Violence And Incitement,Content Restored without appeal,2019Q2,N/A
+Facebook,Violence And Incitement,Content Restored without appeal,2019Q3,N/A
+Facebook,Violence And Incitement,Content Restored without appeal,2019Q4,N/A
+Facebook,Violence And Incitement,Content Restored without appeal,2020Q1,N/A
+Facebook,Violence And Incitement,Content Restored without appeal,2020Q2,N/A
+Facebook,Violence And Incitement,Content Restored without appeal,2020Q3,N/A
+Facebook,Violence And Incitement,Content Restored without appeal,2020Q4,N/A
+Facebook,Violence And Incitement,Content Restored without appeal,2021Q1,N/A
+Facebook,Violence And Incitement,Content Restored without appeal,2021Q2,N/A
+Facebook,Violence And Incitement,Content Restored without appeal,2021Q3,"209,500"
+Facebook,Violence And Incitement,Content Restored without appeal,2021Q4,"198,800"
+Facebook,Violence And Incitement,Content Restored without appeal,2022Q1,"402,900"
+Facebook,Violent & Graphic Content,Content Restored without appeal,2017Q4,N/A
+Facebook,Violent & Graphic Content,Content Restored without appeal,2018Q1,N/A
+Facebook,Violent & Graphic Content,Content Restored without appeal,2018Q2,N/A
+Facebook,Violent & Graphic Content,Content Restored without appeal,2018Q3,N/A
+Facebook,Violent & Graphic Content,Content Restored without appeal,2018Q4,N/A
+Facebook,Violent & Graphic Content,Content Restored without appeal,2019Q1,"38,700"
+Facebook,Violent & Graphic Content,Content Restored without appeal,2019Q2,"2,100"
+Facebook,Violent & Graphic Content,Content Restored without appeal,2019Q3,"2,000"
+Facebook,Violent & Graphic Content,Content Restored without appeal,2019Q4,700
+Facebook,Violent & Graphic Content,Content Restored without appeal,2020Q1,"1,500"
+Facebook,Violent & Graphic Content,Content Restored without appeal,2020Q2,100
+Facebook,Violent & Graphic Content,Content Restored without appeal,2020Q3,700
+Facebook,Violent & Graphic Content,Content Restored without appeal,2020Q4,"4,900"
+Facebook,Violent & Graphic Content,Content Restored without appeal,2021Q1,"10,500"
+Facebook,Violent & Graphic Content,Content Restored without appeal,2021Q2,"12,100"
+Facebook,Violent & Graphic Content,Content Restored without appeal,2021Q3,"8,000"
+Facebook,Violent & Graphic Content,Content Restored without appeal,2021Q4,"5,500"
+Facebook,Violent & Graphic Content,Content Restored without appeal,2022Q1,"12,000"
+Facebook,Adult Nudity & Sexual Activity,Proactive rate,2017Q4,94.40%
+Facebook,Adult Nudity & Sexual Activity,Proactive rate,2018Q1,95.80%
+Facebook,Adult Nudity & Sexual Activity,Proactive rate,2018Q2,96.90%
+Facebook,Adult Nudity & Sexual Activity,Proactive rate,2018Q3,97.30%
+Facebook,Adult Nudity & Sexual Activity,Proactive rate,2018Q4,98.20%
+Facebook,Adult Nudity & Sexual Activity,Proactive rate,2019Q1,98.20%
+Facebook,Adult Nudity & Sexual Activity,Proactive rate,2019Q2,98.60%
+Facebook,Adult Nudity & Sexual Activity,Proactive rate,2019Q3,98.80%
+Facebook,Adult Nudity & Sexual Activity,Proactive rate,2019Q4,99.00%
+Facebook,Adult Nudity & Sexual Activity,Proactive rate,2020Q1,99.10%
+Facebook,Adult Nudity & Sexual Activity,Proactive rate,2020Q2,97.70%
+Facebook,Adult Nudity & Sexual Activity,Proactive rate,2020Q3,98.20%
+Facebook,Adult Nudity & Sexual Activity,Proactive rate,2020Q4,97.90%
+Facebook,Adult Nudity & Sexual Activity,Proactive rate,2021Q1,98.60%
+Facebook,Adult Nudity & Sexual Activity,Proactive rate,2021Q2,98.90%
+Facebook,Adult Nudity & Sexual Activity,Proactive rate,2021Q3,98.80%
+Facebook,Adult Nudity & Sexual Activity,Proactive rate,2021Q4,97.70%
+Facebook,Adult Nudity & Sexual Activity,Proactive rate,2022Q1,96.70%
+Facebook,Bullying & Harassment,Proactive rate,2017Q4,N/A
+Facebook,Bullying & Harassment,Proactive rate,2018Q1,N/A
+Facebook,Bullying & Harassment,Proactive rate,2018Q2,N/A
+Facebook,Bullying & Harassment,Proactive rate,2018Q3,14.80%
+Facebook,Bullying & Harassment,Proactive rate,2018Q4,20.70%
+Facebook,Bullying & Harassment,Proactive rate,2019Q1,14.40%
+Facebook,Bullying & Harassment,Proactive rate,2019Q2,18.80%
+Facebook,Bullying & Harassment,Proactive rate,2019Q3,16.20%
+Facebook,Bullying & Harassment,Proactive rate,2019Q4,15.00%
+Facebook,Bullying & Harassment,Proactive rate,2020Q1,14.00%
+Facebook,Bullying & Harassment,Proactive rate,2020Q2,15.80%
+Facebook,Bullying & Harassment,Proactive rate,2020Q3,25.90%
+Facebook,Bullying & Harassment,Proactive rate,2020Q4,48.30%
+Facebook,Bullying & Harassment,Proactive rate,2021Q1,54.10%
+Facebook,Bullying & Harassment,Proactive rate,2021Q2,54.10%
+Facebook,Bullying & Harassment,Proactive rate,2021Q3,59.40%
+Facebook,Bullying & Harassment,Proactive rate,2021Q4,58.80%
+Facebook,Bullying & Harassment,Proactive rate,2022Q1,67.00%
+Facebook,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2017Q4,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2018Q1,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2018Q2,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2018Q3,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2018Q4,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2019Q1,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2019Q2,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2019Q3,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2019Q4,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2020Q1,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2020Q2,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2020Q3,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2020Q4,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2021Q1,N/A
+Facebook,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2021Q2,97.90%
+Facebook,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2021Q3,97.10%
+Facebook,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2021Q4,97.50%
+Facebook,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2022Q1,97.80%
+Facebook,Child Endangerment: Sexual Exploitation,Proactive rate,2017Q4,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Proactive rate,2018Q1,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Proactive rate,2018Q2,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Proactive rate,2018Q3,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Proactive rate,2018Q4,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Proactive rate,2019Q1,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Proactive rate,2019Q2,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Proactive rate,2019Q3,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Proactive rate,2019Q4,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Proactive rate,2020Q1,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Proactive rate,2020Q2,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Proactive rate,2020Q3,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Proactive rate,2020Q4,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Proactive rate,2021Q1,N/A
+Facebook,Child Endangerment: Sexual Exploitation,Proactive rate,2021Q2,99.50%
+Facebook,Child Endangerment: Sexual Exploitation,Proactive rate,2021Q3,99.10%
+Facebook,Child Endangerment: Sexual Exploitation,Proactive rate,2021Q4,99.00%
+Facebook,Child Endangerment: Sexual Exploitation,Proactive rate,2022Q1,96.40%
+Facebook,Child Nudity & Sexual Exploitation,Proactive rate,2017Q4,N/A
+Facebook,Child Nudity & Sexual Exploitation,Proactive rate,2018Q1,N/A
+Facebook,Child Nudity & Sexual Exploitation,Proactive rate,2018Q2,N/A
+Facebook,Child Nudity & Sexual Exploitation,Proactive rate,2018Q3,99.10%
+Facebook,Child Nudity & Sexual Exploitation,Proactive rate,2018Q4,99.30%
+Facebook,Child Nudity & Sexual Exploitation,Proactive rate,2019Q1,99.10%
+Facebook,Child Nudity & Sexual Exploitation,Proactive rate,2019Q2,99.20%
+Facebook,Child Nudity & Sexual Exploitation,Proactive rate,2019Q3,99.50%
+Facebook,Child Nudity & Sexual Exploitation,Proactive rate,2019Q4,99.70%
+Facebook,Child Nudity & Sexual Exploitation,Proactive rate,2020Q1,99.50%
+Facebook,Child Nudity & Sexual Exploitation,Proactive rate,2020Q2,97.80%
+Facebook,Child Nudity & Sexual Exploitation,Proactive rate,2020Q3,99.40%
+Facebook,Child Nudity & Sexual Exploitation,Proactive rate,2020Q4,98.70%
+Facebook,Child Nudity & Sexual Exploitation,Proactive rate,2021Q1,98.90%
+Facebook,Dangerous Orgs: Organized Hate,Proactive rate,2017Q4,N/A
+Facebook,Dangerous Orgs: Organized Hate,Proactive rate,2018Q1,N/A
+Facebook,Dangerous Orgs: Organized Hate,Proactive rate,2018Q2,N/A
+Facebook,Dangerous Orgs: Organized Hate,Proactive rate,2018Q3,N/A
+Facebook,Dangerous Orgs: Organized Hate,Proactive rate,2018Q4,N/A
+Facebook,Dangerous Orgs: Organized Hate,Proactive rate,2019Q1,N/A
+Facebook,Dangerous Orgs: Organized Hate,Proactive rate,2019Q2,N/A
+Facebook,Dangerous Orgs: Organized Hate,Proactive rate,2019Q3,N/A
+Facebook,Dangerous Orgs: Organized Hate,Proactive rate,2019Q4,89.30%
+Facebook,Dangerous Orgs: Organized Hate,Proactive rate,2020Q1,96.60%
+Facebook,Dangerous Orgs: Organized Hate,Proactive rate,2020Q2,96.50%
+Facebook,Dangerous Orgs: Organized Hate,Proactive rate,2020Q3,97.40%
+Facebook,Dangerous Orgs: Organized Hate,Proactive rate,2020Q4,98.10%
+Facebook,Dangerous Orgs: Organized Hate,Proactive rate,2021Q1,98.60%
+Facebook,Dangerous Orgs: Organized Hate,Proactive rate,2021Q2,97.80%
+Facebook,Dangerous Orgs: Organized Hate,Proactive rate,2021Q3,96.40%
+Facebook,Dangerous Orgs: Organized Hate,Proactive rate,2021Q4,96.10%
+Facebook,Dangerous Orgs: Organized Hate,Proactive rate,2022Q1,96.90%
+Facebook,Dangerous Orgs: Terrorism,Proactive rate,2017Q4,96.90%
+Facebook,Dangerous Orgs: Terrorism,Proactive rate,2018Q1,99.50%
+Facebook,Dangerous Orgs: Terrorism,Proactive rate,2018Q2,99.70%
+Facebook,Dangerous Orgs: Terrorism,Proactive rate,2018Q3,99.30%
+Facebook,Dangerous Orgs: Terrorism,Proactive rate,2018Q4,99.60%
+Facebook,Dangerous Orgs: Terrorism,Proactive rate,2019Q1,98.90%
+Facebook,Dangerous Orgs: Terrorism,Proactive rate,2019Q2,98.80%
+Facebook,Dangerous Orgs: Terrorism,Proactive rate,2019Q3,98.50%
+Facebook,Dangerous Orgs: Terrorism,Proactive rate,2019Q4,99.00%
+Facebook,Dangerous Orgs: Terrorism,Proactive rate,2020Q1,99.10%
+Facebook,Dangerous Orgs: Terrorism,Proactive rate,2020Q2,99.60%
+Facebook,Dangerous Orgs: Terrorism,Proactive rate,2020Q3,99.70%
+Facebook,Dangerous Orgs: Terrorism,Proactive rate,2020Q4,99.80%
+Facebook,Dangerous Orgs: Terrorism,Proactive rate,2021Q1,99.60%
+Facebook,Dangerous Orgs: Terrorism,Proactive rate,2021Q2,99.70%
+Facebook,Dangerous Orgs: Terrorism,Proactive rate,2021Q3,97.90%
+Facebook,Dangerous Orgs: Terrorism,Proactive rate,2021Q4,97.70%
+Facebook,Dangerous Orgs: Terrorism,Proactive rate,2022Q1,98.80%
+Facebook,Fake Accounts,Proactive rate,2017Q4,99.10%
+Facebook,Fake Accounts,Proactive rate,2018Q1,98.50%
+Facebook,Fake Accounts,Proactive rate,2018Q2,99.60%
+Facebook,Fake Accounts,Proactive rate,2018Q3,99.60%
+Facebook,Fake Accounts,Proactive rate,2018Q4,99.70%
+Facebook,Fake Accounts,Proactive rate,2019Q1,99.80%
+Facebook,Fake Accounts,Proactive rate,2019Q2,99.70%
+Facebook,Fake Accounts,Proactive rate,2019Q3,99.60%
+Facebook,Fake Accounts,Proactive rate,2019Q4,99.30%
+Facebook,Fake Accounts,Proactive rate,2020Q1,99.60%
+Facebook,Fake Accounts,Proactive rate,2020Q2,99.40%
+Facebook,Fake Accounts,Proactive rate,2020Q3,99.20%
+Facebook,Fake Accounts,Proactive rate,2020Q4,99.50%
+Facebook,Fake Accounts,Proactive rate,2021Q1,99.80%
+Facebook,Fake Accounts,Proactive rate,2021Q2,99.80%
+Facebook,Fake Accounts,Proactive rate,2021Q3,99.80%
+Facebook,Fake Accounts,Proactive rate,2021Q4,99.90%
+Facebook,Fake Accounts,Proactive rate,2022Q1,99.70%
+Facebook,Hate Speech,Proactive rate,2017Q4,23.60%
+Facebook,Hate Speech,Proactive rate,2018Q1,38.00%
+Facebook,Hate Speech,Proactive rate,2018Q2,52.90%
+Facebook,Hate Speech,Proactive rate,2018Q3,52.90%
+Facebook,Hate Speech,Proactive rate,2018Q4,60.70%
+Facebook,Hate Speech,Proactive rate,2019Q1,68.70%
+Facebook,Hate Speech,Proactive rate,2019Q2,71.10%
+Facebook,Hate Speech,Proactive rate,2019Q3,80.60%
+Facebook,Hate Speech,Proactive rate,2019Q4,80.70%
+Facebook,Hate Speech,Proactive rate,2020Q1,89.10%
+Facebook,Hate Speech,Proactive rate,2020Q2,94.70%
+Facebook,Hate Speech,Proactive rate,2020Q3,94.70%
+Facebook,Hate Speech,Proactive rate,2020Q4,97.00%
+Facebook,Hate Speech,Proactive rate,2021Q1,96.70%
+Facebook,Hate Speech,Proactive rate,2021Q2,97.60%
+Facebook,Hate Speech,Proactive rate,2021Q3,96.50%
+Facebook,Hate Speech,Proactive rate,2021Q4,95.90%
+Facebook,Hate Speech,Proactive rate,2022Q1,95.60%
+Facebook,Regulated Goods: Drugs,Proactive rate,2017Q4,N/A
+Facebook,Regulated Goods: Drugs,Proactive rate,2018Q1,N/A
+Facebook,Regulated Goods: Drugs,Proactive rate,2018Q2,N/A
+Facebook,Regulated Goods: Drugs,Proactive rate,2018Q3,N/A
+Facebook,Regulated Goods: Drugs,Proactive rate,2018Q4,78.60%
+Facebook,Regulated Goods: Drugs,Proactive rate,2019Q1,84.20%
+Facebook,Regulated Goods: Drugs,Proactive rate,2019Q2,95.60%
+Facebook,Regulated Goods: Drugs,Proactive rate,2019Q3,97.60%
+Facebook,Regulated Goods: Drugs,Proactive rate,2019Q4,98.40%
+Facebook,Regulated Goods: Drugs,Proactive rate,2020Q1,99.00%
+Facebook,Regulated Goods: Drugs,Proactive rate,2020Q2,95.70%
+Facebook,Regulated Goods: Drugs,Proactive rate,2020Q3,96.80%
+Facebook,Regulated Goods: Drugs,Proactive rate,2020Q4,97.10%
+Facebook,Regulated Goods: Drugs,Proactive rate,2021Q1,94.10%
+Facebook,Regulated Goods: Drugs,Proactive rate,2021Q2,93.10%
+Facebook,Regulated Goods: Drugs,Proactive rate,2021Q3,96.70%
+Facebook,Regulated Goods: Drugs,Proactive rate,2021Q4,97.90%
+Facebook,Regulated Goods: Drugs,Proactive rate,2022Q1,97.70%
+Facebook,Regulated Goods: Firearms,Proactive rate,2017Q4,N/A
+Facebook,Regulated Goods: Firearms,Proactive rate,2018Q1,N/A
+Facebook,Regulated Goods: Firearms,Proactive rate,2018Q2,N/A
+Facebook,Regulated Goods: Firearms,Proactive rate,2018Q3,N/A
+Facebook,Regulated Goods: Firearms,Proactive rate,2018Q4,64.70%
+Facebook,Regulated Goods: Firearms,Proactive rate,2019Q1,69.90%
+Facebook,Regulated Goods: Firearms,Proactive rate,2019Q2,95.70%
+Facebook,Regulated Goods: Firearms,Proactive rate,2019Q3,93.80%
+Facebook,Regulated Goods: Firearms,Proactive rate,2019Q4,91.00%
+Facebook,Regulated Goods: Firearms,Proactive rate,2020Q1,92.80%
+Facebook,Regulated Goods: Firearms,Proactive rate,2020Q2,90.20%
+Facebook,Regulated Goods: Firearms,Proactive rate,2020Q3,91.40%
+Facebook,Regulated Goods: Firearms,Proactive rate,2020Q4,91.90%
+Facebook,Regulated Goods: Firearms,Proactive rate,2021Q1,94.80%
+Facebook,Regulated Goods: Firearms,Proactive rate,2021Q2,94.00%
+Facebook,Regulated Goods: Firearms,Proactive rate,2021Q3,94.10%
+Facebook,Regulated Goods: Firearms,Proactive rate,2021Q4,92.00%
+Facebook,Regulated Goods: Firearms,Proactive rate,2022Q1,94.60%
+Facebook,Spam,Proactive rate,2017Q4,99.80%
+Facebook,Spam,Proactive rate,2018Q1,99.70%
+Facebook,Spam,Proactive rate,2018Q2,99.70%
+Facebook,Spam,Proactive rate,2018Q3,99.70%
+Facebook,Spam,Proactive rate,2018Q4,99.90%
+Facebook,Spam,Proactive rate,2019Q1,99.90%
+Facebook,Spam,Proactive rate,2019Q2,99.90%
+Facebook,Spam,Proactive rate,2019Q3,99.90%
+Facebook,Spam,Proactive rate,2019Q4,99.90%
+Facebook,Spam,Proactive rate,2020Q1,99.80%
+Facebook,Spam,Proactive rate,2020Q2,99.70%
+Facebook,Spam,Proactive rate,2020Q3,99.90%
+Facebook,Spam,Proactive rate,2020Q4,99.80%
+Facebook,Spam,Proactive rate,2021Q1,99.80%
+Facebook,Spam,Proactive rate,2021Q2,99.70%
+Facebook,Spam,Proactive rate,2021Q3,99.60%
+Facebook,Spam,Proactive rate,2021Q4,99.60%
+Facebook,Spam,Proactive rate,2022Q1,99.70%
+Facebook,Suicide and Self-Injury,Proactive rate,2017Q4,N/A
+Facebook,Suicide and Self-Injury,Proactive rate,2018Q1,N/A
+Facebook,Suicide and Self-Injury,Proactive rate,2018Q2,N/A
+Facebook,Suicide and Self-Injury,Proactive rate,2018Q3,N/A
+Facebook,Suicide and Self-Injury,Proactive rate,2018Q4,N/A
+Facebook,Suicide and Self-Injury,Proactive rate,2019Q1,N/A
+Facebook,Suicide and Self-Injury,Proactive rate,2019Q2,96.50%
+Facebook,Suicide and Self-Injury,Proactive rate,2019Q3,96.80%
+Facebook,Suicide and Self-Injury,Proactive rate,2019Q4,96.90%
+Facebook,Suicide and Self-Injury,Proactive rate,2020Q1,95.60%
+Facebook,Suicide and Self-Injury,Proactive rate,2020Q2,90.90%
+Facebook,Suicide and Self-Injury,Proactive rate,2020Q3,94.70%
+Facebook,Suicide and Self-Injury,Proactive rate,2020Q4,92.10%
+Facebook,Suicide and Self-Injury,Proactive rate,2021Q1,97.70%
+Facebook,Suicide and Self-Injury,Proactive rate,2021Q2,99.30%
+Facebook,Suicide and Self-Injury,Proactive rate,2021Q3,99.00%
+Facebook,Suicide and Self-Injury,Proactive rate,2021Q4,98.80%
+Facebook,Suicide and Self-Injury,Proactive rate,2022Q1,98.80%
+Facebook,Violence And Incitement,Proactive rate,2017Q4,N/A
+Facebook,Violence And Incitement,Proactive rate,2018Q1,N/A
+Facebook,Violence And Incitement,Proactive rate,2018Q2,N/A
+Facebook,Violence And Incitement,Proactive rate,2018Q3,N/A
+Facebook,Violence And Incitement,Proactive rate,2018Q4,N/A
+Facebook,Violence And Incitement,Proactive rate,2019Q1,N/A
+Facebook,Violence And Incitement,Proactive rate,2019Q2,N/A
+Facebook,Violence And Incitement,Proactive rate,2019Q3,N/A
+Facebook,Violence And Incitement,Proactive rate,2019Q4,N/A
+Facebook,Violence And Incitement,Proactive rate,2020Q1,N/A
+Facebook,Violence And Incitement,Proactive rate,2020Q2,N/A
+Facebook,Violence And Incitement,Proactive rate,2020Q3,N/A
+Facebook,Violence And Incitement,Proactive rate,2020Q4,N/A
+Facebook,Violence And Incitement,Proactive rate,2021Q1,N/A
+Facebook,Violence And Incitement,Proactive rate,2021Q2,N/A
+Facebook,Violence And Incitement,Proactive rate,2021Q3,96.70%
+Facebook,Violence And Incitement,Proactive rate,2021Q4,96.60%
+Facebook,Violence And Incitement,Proactive rate,2022Q1,98.10%
+Facebook,Violent & Graphic Content,Proactive rate,2017Q4,71.60%
+Facebook,Violent & Graphic Content,Proactive rate,2018Q1,85.60%
+Facebook,Violent & Graphic Content,Proactive rate,2018Q2,96.50%
+Facebook,Violent & Graphic Content,Proactive rate,2018Q3,96.70%
+Facebook,Violent & Graphic Content,Proactive rate,2018Q4,98.20%
+Facebook,Violent & Graphic Content,Proactive rate,2019Q1,99.10%
+Facebook,Violent & Graphic Content,Proactive rate,2019Q2,99.20%
+Facebook,Violent & Graphic Content,Proactive rate,2019Q3,99.00%
+Facebook,Violent & Graphic Content,Proactive rate,2019Q4,99.30%
+Facebook,Violent & Graphic Content,Proactive rate,2020Q1,99.00%
+Facebook,Violent & Graphic Content,Proactive rate,2020Q2,99.30%
+Facebook,Violent & Graphic Content,Proactive rate,2020Q3,99.40%
+Facebook,Violent & Graphic Content,Proactive rate,2020Q4,99.40%
+Facebook,Violent & Graphic Content,Proactive rate,2021Q1,99.60%
+Facebook,Violent & Graphic Content,Proactive rate,2021Q2,99.60%
+Facebook,Violent & Graphic Content,Proactive rate,2021Q3,99.40%
+Facebook,Violent & Graphic Content,Proactive rate,2021Q4,99.50%
+Facebook,Violent & Graphic Content,Proactive rate,2022Q1,99.50%
+Instagram,Adult Nudity & Sexual Activity,Content Actioned,2017Q4,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Actioned,2018Q1,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Actioned,2018Q2,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Actioned,2018Q3,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Actioned,2018Q4,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Actioned,2019Q1,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Actioned,2019Q2,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Actioned,2019Q3,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Actioned,2019Q4,"6,300,000"
+Instagram,Adult Nudity & Sexual Activity,Content Actioned,2020Q1,"8,100,000"
+Instagram,Adult Nudity & Sexual Activity,Content Actioned,2020Q2,"7,500,000"
+Instagram,Adult Nudity & Sexual Activity,Content Actioned,2020Q3,"13,100,000"
+Instagram,Adult Nudity & Sexual Activity,Content Actioned,2020Q4,"11,500,000"
+Instagram,Adult Nudity & Sexual Activity,Content Actioned,2021Q1,"10,400,000"
+Instagram,Adult Nudity & Sexual Activity,Content Actioned,2021Q2,"9,400,000"
+Instagram,Adult Nudity & Sexual Activity,Content Actioned,2021Q3,"10,900,000"
+Instagram,Adult Nudity & Sexual Activity,Content Actioned,2021Q4,"11,300,000"
+Instagram,Adult Nudity & Sexual Activity,Content Actioned,2022Q1,"10,400,000"
+Instagram,Bullying & Harassment,Content Actioned,2017Q4,N/A
+Instagram,Bullying & Harassment,Content Actioned,2018Q1,N/A
+Instagram,Bullying & Harassment,Content Actioned,2018Q2,N/A
+Instagram,Bullying & Harassment,Content Actioned,2018Q3,N/A
+Instagram,Bullying & Harassment,Content Actioned,2018Q4,N/A
+Instagram,Bullying & Harassment,Content Actioned,2019Q1,N/A
+Instagram,Bullying & Harassment,Content Actioned,2019Q2,N/A
+Instagram,Bullying & Harassment,Content Actioned,2019Q3,N/A
+Instagram,Bullying & Harassment,Content Actioned,2019Q4,"1,500,000"
+Instagram,Bullying & Harassment,Content Actioned,2020Q1,"1,500,000"
+Instagram,Bullying & Harassment,Content Actioned,2020Q2,"1,600,000"
+Instagram,Bullying & Harassment,Content Actioned,2020Q3,"2,600,000"
+Instagram,Bullying & Harassment,Content Actioned,2020Q4,"5,000,000"
+Instagram,Bullying & Harassment,Content Actioned,2021Q1,"5,600,000"
+Instagram,Bullying & Harassment,Content Actioned,2021Q2,"4,500,000"
+Instagram,Bullying & Harassment,Content Actioned,2021Q3,"7,800,000"
+Instagram,Bullying & Harassment,Content Actioned,2021Q4,"6,600,000"
+Instagram,Bullying & Harassment,Content Actioned,2022Q1,"7,000,000"
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2017Q4,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2018Q1,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2018Q2,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2018Q3,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2018Q4,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2019Q1,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2019Q2,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2019Q3,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2019Q4,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2020Q1,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2020Q2,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2020Q3,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2020Q4,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2021Q1,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2021Q2,"458,300"
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2021Q3,"526,500"
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2021Q4,"983,400"
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Actioned,2022Q1,"600,800"
+Instagram,Child Endangerment: Sexual Exploitation,Content Actioned,2017Q4,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Actioned,2018Q1,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Actioned,2018Q2,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Actioned,2018Q3,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Actioned,2018Q4,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Actioned,2019Q1,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Actioned,2019Q2,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Actioned,2019Q3,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Actioned,2019Q4,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Actioned,2020Q1,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Actioned,2020Q2,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Actioned,2020Q3,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Actioned,2020Q4,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Actioned,2021Q1,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Actioned,2021Q2,"1,400,000"
+Instagram,Child Endangerment: Sexual Exploitation,Content Actioned,2021Q3,"1,600,000"
+Instagram,Child Endangerment: Sexual Exploitation,Content Actioned,2021Q4,"2,600,000"
+Instagram,Child Endangerment: Sexual Exploitation,Content Actioned,2022Q1,"1,500,000"
+Instagram,Child Nudity & Sexual Exploitation,Content Actioned,2017Q4,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Actioned,2018Q1,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Actioned,2018Q2,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Actioned,2018Q3,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Actioned,2018Q4,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Actioned,2019Q1,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Actioned,2019Q2,"526,200"
+Instagram,Child Nudity & Sexual Exploitation,Content Actioned,2019Q3,"755,800"
+Instagram,Child Nudity & Sexual Exploitation,Content Actioned,2019Q4,"686,400"
+Instagram,Child Nudity & Sexual Exploitation,Content Actioned,2020Q1,"1,000,000"
+Instagram,Child Nudity & Sexual Exploitation,Content Actioned,2020Q2,"158,200"
+Instagram,Child Nudity & Sexual Exploitation,Content Actioned,2020Q3,"1,000,000"
+Instagram,Child Nudity & Sexual Exploitation,Content Actioned,2020Q4,"809,400"
+Instagram,Child Nudity & Sexual Exploitation,Content Actioned,2021Q1,"812,400"
+Instagram,Dangerous Orgs: Organized Hate,Content Actioned,2019Q1,N/A
+Instagram,Dangerous Orgs: Organized Hate,Content Actioned,2019Q2,N/A
+Instagram,Dangerous Orgs: Organized Hate,Content Actioned,2019Q3,N/A
+Instagram,Dangerous Orgs: Organized Hate,Content Actioned,2019Q4,"140,200"
+Instagram,Dangerous Orgs: Organized Hate,Content Actioned,2020Q1,"175,400"
+Instagram,Dangerous Orgs: Organized Hate,Content Actioned,2020Q2,"159,300"
+Instagram,Dangerous Orgs: Organized Hate,Content Actioned,2020Q3,"224,800"
+Instagram,Dangerous Orgs: Organized Hate,Content Actioned,2020Q4,"308,200"
+Instagram,Dangerous Orgs: Organized Hate,Content Actioned,2021Q1,"324,700"
+Instagram,Dangerous Orgs: Organized Hate,Content Actioned,2021Q2,"367,400"
+Instagram,Dangerous Orgs: Organized Hate,Content Actioned,2021Q3,"305,800"
+Instagram,Dangerous Orgs: Organized Hate,Content Actioned,2021Q4,"332,200"
+Instagram,Dangerous Orgs: Organized Hate,Content Actioned,2022Q1,"481,300"
+Instagram,Dangerous Orgs: Terrorism,Content Actioned,2017Q4,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Actioned,2018Q1,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Actioned,2018Q2,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Actioned,2018Q3,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Actioned,2018Q4,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Actioned,2019Q1,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Actioned,2019Q2,"107,200"
+Instagram,Dangerous Orgs: Terrorism,Content Actioned,2019Q3,"134,700"
+Instagram,Dangerous Orgs: Terrorism,Content Actioned,2019Q4,"85,500"
+Instagram,Dangerous Orgs: Terrorism,Content Actioned,2020Q1,"440,700"
+Instagram,Dangerous Orgs: Terrorism,Content Actioned,2020Q2,"136,200"
+Instagram,Dangerous Orgs: Terrorism,Content Actioned,2020Q3,"183,200"
+Instagram,Dangerous Orgs: Terrorism,Content Actioned,2020Q4,"345,600"
+Instagram,Dangerous Orgs: Terrorism,Content Actioned,2021Q1,"429,000"
+Instagram,Dangerous Orgs: Terrorism,Content Actioned,2021Q2,"337,000"
+Instagram,Dangerous Orgs: Terrorism,Content Actioned,2021Q3,"685,200"
+Instagram,Dangerous Orgs: Terrorism,Content Actioned,2021Q4,"905,600"
+Instagram,Dangerous Orgs: Terrorism,Content Actioned,2022Q1,"1,500,000"
+Instagram,Hate Speech,Content Actioned,2017Q4,N/A
+Instagram,Hate Speech,Content Actioned,2018Q1,N/A
+Instagram,Hate Speech,Content Actioned,2018Q2,N/A
+Instagram,Hate Speech,Content Actioned,2018Q3,N/A
+Instagram,Hate Speech,Content Actioned,2018Q4,N/A
+Instagram,Hate Speech,Content Actioned,2019Q1,N/A
+Instagram,Hate Speech,Content Actioned,2019Q2,N/A
+Instagram,Hate Speech,Content Actioned,2019Q3,N/A
+Instagram,Hate Speech,Content Actioned,2019Q4,"645,300"
+Instagram,Hate Speech,Content Actioned,2020Q1,"577,600"
+Instagram,Hate Speech,Content Actioned,2020Q2,"2,500,000"
+Instagram,Hate Speech,Content Actioned,2020Q3,"6,500,000"
+Instagram,Hate Speech,Content Actioned,2020Q4,"6,600,000"
+Instagram,Hate Speech,Content Actioned,2021Q1,"6,300,000"
+Instagram,Hate Speech,Content Actioned,2021Q2,"9,800,000"
+Instagram,Hate Speech,Content Actioned,2021Q3,"6,000,000"
+Instagram,Hate Speech,Content Actioned,2021Q4,"3,800,000"
+Instagram,Hate Speech,Content Actioned,2022Q1,"3,400,000"
+Instagram,Regulated Goods: Drugs,Content Actioned,2017Q4,N/A
+Instagram,Regulated Goods: Drugs,Content Actioned,2018Q1,N/A
+Instagram,Regulated Goods: Drugs,Content Actioned,2018Q2,N/A
+Instagram,Regulated Goods: Drugs,Content Actioned,2018Q3,N/A
+Instagram,Regulated Goods: Drugs,Content Actioned,2018Q4,N/A
+Instagram,Regulated Goods: Drugs,Content Actioned,2019Q1,N/A
+Instagram,Regulated Goods: Drugs,Content Actioned,2019Q2,"1,500,000"
+Instagram,Regulated Goods: Drugs,Content Actioned,2019Q3,"1,500,000"
+Instagram,Regulated Goods: Drugs,Content Actioned,2019Q4,"1,300,000"
+Instagram,Regulated Goods: Drugs,Content Actioned,2020Q1,"1,300,000"
+Instagram,Regulated Goods: Drugs,Content Actioned,2020Q2,"804,900"
+Instagram,Regulated Goods: Drugs,Content Actioned,2020Q3,"1,200,000"
+Instagram,Regulated Goods: Drugs,Content Actioned,2020Q4,"1,400,000"
+Instagram,Regulated Goods: Drugs,Content Actioned,2021Q1,"1,000,000"
+Instagram,Regulated Goods: Drugs,Content Actioned,2021Q2,"1,100,000"
+Instagram,Regulated Goods: Drugs,Content Actioned,2021Q3,"1,800,000"
+Instagram,Regulated Goods: Drugs,Content Actioned,2021Q4,"1,200,000"
+Instagram,Regulated Goods: Drugs,Content Actioned,2022Q1,"1,800,000"
+Instagram,Regulated Goods: Firearms,Content Actioned,2017Q4,N/A
+Instagram,Regulated Goods: Firearms,Content Actioned,2018Q1,N/A
+Instagram,Regulated Goods: Firearms,Content Actioned,2018Q2,N/A
+Instagram,Regulated Goods: Firearms,Content Actioned,2018Q3,N/A
+Instagram,Regulated Goods: Firearms,Content Actioned,2018Q4,N/A
+Instagram,Regulated Goods: Firearms,Content Actioned,2019Q1,N/A
+Instagram,Regulated Goods: Firearms,Content Actioned,2019Q2,"36,900"
+Instagram,Regulated Goods: Firearms,Content Actioned,2019Q3,"58,600"
+Instagram,Regulated Goods: Firearms,Content Actioned,2019Q4,"50,400"
+Instagram,Regulated Goods: Firearms,Content Actioned,2020Q1,"54,300"
+Instagram,Regulated Goods: Firearms,Content Actioned,2020Q2,"22,100"
+Instagram,Regulated Goods: Firearms,Content Actioned,2020Q3,"36,500"
+Instagram,Regulated Goods: Firearms,Content Actioned,2020Q4,"70,200"
+Instagram,Regulated Goods: Firearms,Content Actioned,2021Q1,"90,400"
+Instagram,Regulated Goods: Firearms,Content Actioned,2021Q2,"76,300"
+Instagram,Regulated Goods: Firearms,Content Actioned,2021Q3,"154,400"
+Instagram,Regulated Goods: Firearms,Content Actioned,2021Q4,"195,000"
+Instagram,Regulated Goods: Firearms,Content Actioned,2022Q1,"151,000"
+Instagram,Suicide and Self-Injury,Content Actioned,2017Q4,N/A
+Instagram,Suicide and Self-Injury,Content Actioned,2018Q1,N/A
+Instagram,Suicide and Self-Injury,Content Actioned,2018Q2,N/A
+Instagram,Suicide and Self-Injury,Content Actioned,2018Q3,N/A
+Instagram,Suicide and Self-Injury,Content Actioned,2018Q4,N/A
+Instagram,Suicide and Self-Injury,Content Actioned,2019Q1,N/A
+Instagram,Suicide and Self-Injury,Content Actioned,2019Q2,"838,800"
+Instagram,Suicide and Self-Injury,Content Actioned,2019Q3,"845,800"
+Instagram,Suicide and Self-Injury,Content Actioned,2019Q4,"897,300"
+Instagram,Suicide and Self-Injury,Content Actioned,2020Q1,"1,300,000"
+Instagram,Suicide and Self-Injury,Content Actioned,2020Q2,"203,700"
+Instagram,Suicide and Self-Injury,Content Actioned,2020Q3,"1,300,000"
+Instagram,Suicide and Self-Injury,Content Actioned,2020Q4,"3,400,000"
+Instagram,Suicide and Self-Injury,Content Actioned,2021Q1,"2,700,000"
+Instagram,Suicide and Self-Injury,Content Actioned,2021Q2,"3,000,000"
+Instagram,Suicide and Self-Injury,Content Actioned,2021Q3,"3,500,000"
+Instagram,Suicide and Self-Injury,Content Actioned,2021Q4,"7,800,000"
+Instagram,Suicide and Self-Injury,Content Actioned,2022Q1,"5,100,000"
+Instagram,Violence And Incitement,Content Actioned,2017Q4,N/A
+Instagram,Violence And Incitement,Content Actioned,2018Q1,N/A
+Instagram,Violence And Incitement,Content Actioned,2018Q2,N/A
+Instagram,Violence And Incitement,Content Actioned,2018Q3,N/A
+Instagram,Violence And Incitement,Content Actioned,2018Q4,N/A
+Instagram,Violence And Incitement,Content Actioned,2019Q1,N/A
+Instagram,Violence And Incitement,Content Actioned,2019Q2,N/A
+Instagram,Violence And Incitement,Content Actioned,2019Q3,N/A
+Instagram,Violence And Incitement,Content Actioned,2019Q4,N/A
+Instagram,Violence And Incitement,Content Actioned,2020Q1,N/A
+Instagram,Violence And Incitement,Content Actioned,2020Q2,N/A
+Instagram,Violence And Incitement,Content Actioned,2020Q3,N/A
+Instagram,Violence And Incitement,Content Actioned,2020Q4,N/A
+Instagram,Violence And Incitement,Content Actioned,2021Q1,N/A
+Instagram,Violence And Incitement,Content Actioned,2021Q2,N/A
+Instagram,Violence And Incitement,Content Actioned,2021Q3,"3,300,000"
+Instagram,Violence And Incitement,Content Actioned,2021Q4,"2,600,000"
+Instagram,Violence And Incitement,Content Actioned,2022Q1,"2,700,000"
+Instagram,Violent & Graphic Content,Content Actioned,2017Q4,N/A
+Instagram,Violent & Graphic Content,Content Actioned,2018Q1,N/A
+Instagram,Violent & Graphic Content,Content Actioned,2018Q2,N/A
+Instagram,Violent & Graphic Content,Content Actioned,2018Q3,N/A
+Instagram,Violent & Graphic Content,Content Actioned,2018Q4,N/A
+Instagram,Violent & Graphic Content,Content Actioned,2019Q1,N/A
+Instagram,Violent & Graphic Content,Content Actioned,2019Q2,N/A
+Instagram,Violent & Graphic Content,Content Actioned,2019Q3,N/A
+Instagram,Violent & Graphic Content,Content Actioned,2019Q4,"2,300,000"
+Instagram,Violent & Graphic Content,Content Actioned,2020Q1,"2,800,000"
+Instagram,Violent & Graphic Content,Content Actioned,2020Q2,"2,100,000"
+Instagram,Violent & Graphic Content,Content Actioned,2020Q3,"4,100,000"
+Instagram,Violent & Graphic Content,Content Actioned,2020Q4,"5,700,000"
+Instagram,Violent & Graphic Content,Content Actioned,2021Q1,"5,500,000"
+Instagram,Violent & Graphic Content,Content Actioned,2021Q2,"7,600,000"
+Instagram,Violent & Graphic Content,Content Actioned,2021Q3,"10,700,000"
+Instagram,Violent & Graphic Content,Content Actioned,2021Q4,"5,500,000"
+Instagram,Violent & Graphic Content,Content Actioned,2022Q1,"6,100,000"
+Instagram,Adult Nudity & Sexual Activity,Content Appealed,2017Q4,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Appealed,2018Q1,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Appealed,2018Q2,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Appealed,2018Q3,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Appealed,2018Q4,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Appealed,2019Q1,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Appealed,2019Q2,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Appealed,2019Q3,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Appealed,2019Q4,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Appealed,2020Q1,"509,100"
+Instagram,Adult Nudity & Sexual Activity,Content Appealed,2020Q2,0
+Instagram,Adult Nudity & Sexual Activity,Content Appealed,2020Q3,0
+Instagram,Adult Nudity & Sexual Activity,Content Appealed,2020Q4,0
+Instagram,Adult Nudity & Sexual Activity,Content Appealed,2021Q1,0
+Instagram,Adult Nudity & Sexual Activity,Content Appealed,2021Q2,0
+Instagram,Adult Nudity & Sexual Activity,Content Appealed,2021Q3,0
+Instagram,Adult Nudity & Sexual Activity,Content Appealed,2021Q4,0
+Instagram,Adult Nudity & Sexual Activity,Content Appealed,2022Q1,0
+Instagram,Bullying & Harassment,Content Appealed,2017Q4,N/A
+Instagram,Bullying & Harassment,Content Appealed,2018Q1,N/A
+Instagram,Bullying & Harassment,Content Appealed,2018Q2,N/A
+Instagram,Bullying & Harassment,Content Appealed,2018Q3,N/A
+Instagram,Bullying & Harassment,Content Appealed,2018Q4,N/A
+Instagram,Bullying & Harassment,Content Appealed,2019Q1,N/A
+Instagram,Bullying & Harassment,Content Appealed,2019Q2,N/A
+Instagram,Bullying & Harassment,Content Appealed,2019Q3,N/A
+Instagram,Bullying & Harassment,Content Appealed,2019Q4,N/A
+Instagram,Bullying & Harassment,Content Appealed,2020Q1,"87,500"
+Instagram,Bullying & Harassment,Content Appealed,2020Q2,0
+Instagram,Bullying & Harassment,Content Appealed,2020Q3,0
+Instagram,Bullying & Harassment,Content Appealed,2020Q4,0
+Instagram,Bullying & Harassment,Content Appealed,2021Q1,0
+Instagram,Bullying & Harassment,Content Appealed,2021Q2,0
+Instagram,Bullying & Harassment,Content Appealed,2021Q3,0
+Instagram,Bullying & Harassment,Content Appealed,2021Q4,0
+Instagram,Bullying & Harassment,Content Appealed,2022Q1,0
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2017Q4,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2018Q1,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2018Q2,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2018Q3,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2018Q4,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2019Q1,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2019Q2,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2019Q3,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2019Q4,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2020Q1,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2020Q2,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2020Q3,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2020Q4,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2021Q1,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2021Q2,0
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2021Q3,0
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2021Q4,0
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Appealed,2022Q1,0
+Instagram,Child Endangerment: Sexual Exploitation,Content Appealed,2017Q4,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Appealed,2018Q1,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Appealed,2018Q2,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Appealed,2018Q3,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Appealed,2018Q4,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Appealed,2019Q1,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Appealed,2019Q2,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Appealed,2019Q3,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Appealed,2019Q4,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Appealed,2020Q1,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Appealed,2020Q2,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Appealed,2020Q3,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Appealed,2020Q4,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Appealed,2021Q1,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Appealed,2021Q2,0
+Instagram,Child Endangerment: Sexual Exploitation,Content Appealed,2021Q3,0
+Instagram,Child Endangerment: Sexual Exploitation,Content Appealed,2021Q4,0
+Instagram,Child Endangerment: Sexual Exploitation,Content Appealed,2022Q1,0
+Instagram,Child Nudity & Sexual Exploitation,Content Appealed,2017Q4,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Appealed,2018Q1,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Appealed,2018Q2,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Appealed,2018Q3,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Appealed,2018Q4,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Appealed,2019Q1,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Appealed,2019Q2,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Appealed,2019Q3,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Appealed,2019Q4,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Appealed,2020Q1,"53,400"
+Instagram,Child Nudity & Sexual Exploitation,Content Appealed,2020Q2,0
+Instagram,Child Nudity & Sexual Exploitation,Content Appealed,2020Q3,0
+Instagram,Child Nudity & Sexual Exploitation,Content Appealed,2020Q4,0
+Instagram,Child Nudity & Sexual Exploitation,Content Appealed,2021Q1,0
+Instagram,Dangerous Orgs: Organized Hate,Content Appealed,2019Q1,N/A
+Instagram,Dangerous Orgs: Organized Hate,Content Appealed,2019Q2,N/A
+Instagram,Dangerous Orgs: Organized Hate,Content Appealed,2019Q3,N/A
+Instagram,Dangerous Orgs: Organized Hate,Content Appealed,2019Q4,N/A
+Instagram,Dangerous Orgs: Organized Hate,Content Appealed,2020Q1,"4,000"
+Instagram,Dangerous Orgs: Organized Hate,Content Appealed,2020Q2,0
+Instagram,Dangerous Orgs: Organized Hate,Content Appealed,2020Q3,0
+Instagram,Dangerous Orgs: Organized Hate,Content Appealed,2020Q4,0
+Instagram,Dangerous Orgs: Organized Hate,Content Appealed,2021Q1,0
+Instagram,Dangerous Orgs: Organized Hate,Content Appealed,2021Q2,0
+Instagram,Dangerous Orgs: Organized Hate,Content Appealed,2021Q3,0
+Instagram,Dangerous Orgs: Organized Hate,Content Appealed,2021Q4,0
+Instagram,Dangerous Orgs: Organized Hate,Content Appealed,2022Q1,0
+Instagram,Dangerous Orgs: Terrorism,Content Appealed,2017Q4,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Appealed,2018Q1,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Appealed,2018Q2,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Appealed,2018Q3,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Appealed,2018Q4,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Appealed,2019Q1,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Appealed,2019Q2,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Appealed,2019Q3,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Appealed,2019Q4,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Appealed,2020Q1,"8,400"
+Instagram,Dangerous Orgs: Terrorism,Content Appealed,2020Q2,0
+Instagram,Dangerous Orgs: Terrorism,Content Appealed,2020Q3,0
+Instagram,Dangerous Orgs: Terrorism,Content Appealed,2020Q4,0
+Instagram,Dangerous Orgs: Terrorism,Content Appealed,2021Q1,0
+Instagram,Dangerous Orgs: Terrorism,Content Appealed,2021Q2,0
+Instagram,Dangerous Orgs: Terrorism,Content Appealed,2021Q3,0
+Instagram,Dangerous Orgs: Terrorism,Content Appealed,2021Q4,0
+Instagram,Dangerous Orgs: Terrorism,Content Appealed,2022Q1,0
+Instagram,Hate Speech,Content Appealed,2017Q4,N/A
+Instagram,Hate Speech,Content Appealed,2018Q1,N/A
+Instagram,Hate Speech,Content Appealed,2018Q2,N/A
+Instagram,Hate Speech,Content Appealed,2018Q3,N/A
+Instagram,Hate Speech,Content Appealed,2018Q4,N/A
+Instagram,Hate Speech,Content Appealed,2019Q1,N/A
+Instagram,Hate Speech,Content Appealed,2019Q2,N/A
+Instagram,Hate Speech,Content Appealed,2019Q3,N/A
+Instagram,Hate Speech,Content Appealed,2019Q4,N/A
+Instagram,Hate Speech,Content Appealed,2020Q1,"42,800"
+Instagram,Hate Speech,Content Appealed,2020Q2,0
+Instagram,Hate Speech,Content Appealed,2020Q3,0
+Instagram,Hate Speech,Content Appealed,2020Q4,0
+Instagram,Hate Speech,Content Appealed,2021Q1,0
+Instagram,Hate Speech,Content Appealed,2021Q2,0
+Instagram,Hate Speech,Content Appealed,2021Q3,0
+Instagram,Hate Speech,Content Appealed,2021Q4,0
+Instagram,Hate Speech,Content Appealed,2022Q1,0
+Instagram,Regulated Goods: Drugs,Content Appealed,2017Q4,N/A
+Instagram,Regulated Goods: Drugs,Content Appealed,2018Q1,N/A
+Instagram,Regulated Goods: Drugs,Content Appealed,2018Q2,N/A
+Instagram,Regulated Goods: Drugs,Content Appealed,2018Q3,N/A
+Instagram,Regulated Goods: Drugs,Content Appealed,2018Q4,N/A
+Instagram,Regulated Goods: Drugs,Content Appealed,2019Q1,N/A
+Instagram,Regulated Goods: Drugs,Content Appealed,2019Q2,N/A
+Instagram,Regulated Goods: Drugs,Content Appealed,2019Q3,N/A
+Instagram,Regulated Goods: Drugs,Content Appealed,2019Q4,N/A
+Instagram,Regulated Goods: Drugs,Content Appealed,2020Q1,"95,100"
+Instagram,Regulated Goods: Drugs,Content Appealed,2020Q2,0
+Instagram,Regulated Goods: Drugs,Content Appealed,2020Q3,0
+Instagram,Regulated Goods: Drugs,Content Appealed,2020Q4,0
+Instagram,Regulated Goods: Drugs,Content Appealed,2021Q1,0
+Instagram,Regulated Goods: Drugs,Content Appealed,2021Q2,0
+Instagram,Regulated Goods: Drugs,Content Appealed,2021Q3,0
+Instagram,Regulated Goods: Drugs,Content Appealed,2021Q4,0
+Instagram,Regulated Goods: Drugs,Content Appealed,2022Q1,0
+Instagram,Regulated Goods: Firearms,Content Appealed,2017Q4,N/A
+Instagram,Regulated Goods: Firearms,Content Appealed,2018Q1,N/A
+Instagram,Regulated Goods: Firearms,Content Appealed,2018Q2,N/A
+Instagram,Regulated Goods: Firearms,Content Appealed,2018Q3,N/A
+Instagram,Regulated Goods: Firearms,Content Appealed,2018Q4,N/A
+Instagram,Regulated Goods: Firearms,Content Appealed,2019Q1,N/A
+Instagram,Regulated Goods: Firearms,Content Appealed,2019Q2,N/A
+Instagram,Regulated Goods: Firearms,Content Appealed,2019Q3,N/A
+Instagram,Regulated Goods: Firearms,Content Appealed,2019Q4,N/A
+Instagram,Regulated Goods: Firearms,Content Appealed,2020Q1,"4,300"
+Instagram,Regulated Goods: Firearms,Content Appealed,2020Q2,0
+Instagram,Regulated Goods: Firearms,Content Appealed,2020Q3,0
+Instagram,Regulated Goods: Firearms,Content Appealed,2020Q4,0
+Instagram,Regulated Goods: Firearms,Content Appealed,2021Q1,0
+Instagram,Regulated Goods: Firearms,Content Appealed,2021Q2,0
+Instagram,Regulated Goods: Firearms,Content Appealed,2021Q3,0
+Instagram,Regulated Goods: Firearms,Content Appealed,2021Q4,0
+Instagram,Regulated Goods: Firearms,Content Appealed,2022Q1,0
+Instagram,Suicide and Self-Injury,Content Appealed,2017Q4,N/A
+Instagram,Suicide and Self-Injury,Content Appealed,2018Q1,N/A
+Instagram,Suicide and Self-Injury,Content Appealed,2018Q2,N/A
+Instagram,Suicide and Self-Injury,Content Appealed,2018Q3,N/A
+Instagram,Suicide and Self-Injury,Content Appealed,2018Q4,N/A
+Instagram,Suicide and Self-Injury,Content Appealed,2019Q1,N/A
+Instagram,Suicide and Self-Injury,Content Appealed,2019Q2,N/A
+Instagram,Suicide and Self-Injury,Content Appealed,2019Q3,N/A
+Instagram,Suicide and Self-Injury,Content Appealed,2019Q4,N/A
+Instagram,Suicide and Self-Injury,Content Appealed,2020Q1,"67,200"
+Instagram,Suicide and Self-Injury,Content Appealed,2020Q2,0
+Instagram,Suicide and Self-Injury,Content Appealed,2020Q3,0
+Instagram,Suicide and Self-Injury,Content Appealed,2020Q4,0
+Instagram,Suicide and Self-Injury,Content Appealed,2021Q1,0
+Instagram,Suicide and Self-Injury,Content Appealed,2021Q2,0
+Instagram,Suicide and Self-Injury,Content Appealed,2021Q3,0
+Instagram,Suicide and Self-Injury,Content Appealed,2021Q4,0
+Instagram,Suicide and Self-Injury,Content Appealed,2022Q1,0
+Instagram,Violence And Incitement,Content Appealed,2017Q4,N/A
+Instagram,Violence And Incitement,Content Appealed,2018Q1,N/A
+Instagram,Violence And Incitement,Content Appealed,2018Q2,N/A
+Instagram,Violence And Incitement,Content Appealed,2018Q3,N/A
+Instagram,Violence And Incitement,Content Appealed,2018Q4,N/A
+Instagram,Violence And Incitement,Content Appealed,2019Q1,N/A
+Instagram,Violence And Incitement,Content Appealed,2019Q2,N/A
+Instagram,Violence And Incitement,Content Appealed,2019Q3,N/A
+Instagram,Violence And Incitement,Content Appealed,2019Q4,N/A
+Instagram,Violence And Incitement,Content Appealed,2020Q1,N/A
+Instagram,Violence And Incitement,Content Appealed,2020Q2,N/A
+Instagram,Violence And Incitement,Content Appealed,2020Q3,N/A
+Instagram,Violence And Incitement,Content Appealed,2020Q4,N/A
+Instagram,Violence And Incitement,Content Appealed,2021Q1,N/A
+Instagram,Violence And Incitement,Content Appealed,2021Q2,N/A
+Instagram,Violence And Incitement,Content Appealed,2021Q3,0
+Instagram,Violence And Incitement,Content Appealed,2021Q4,0
+Instagram,Violence And Incitement,Content Appealed,2022Q1,0
+Instagram,Violent & Graphic Content,Content Appealed,2017Q4,N/A
+Instagram,Violent & Graphic Content,Content Appealed,2018Q1,N/A
+Instagram,Violent & Graphic Content,Content Appealed,2018Q2,N/A
+Instagram,Violent & Graphic Content,Content Appealed,2018Q3,N/A
+Instagram,Violent & Graphic Content,Content Appealed,2018Q4,N/A
+Instagram,Violent & Graphic Content,Content Appealed,2019Q1,N/A
+Instagram,Violent & Graphic Content,Content Appealed,2019Q2,N/A
+Instagram,Violent & Graphic Content,Content Appealed,2019Q3,N/A
+Instagram,Violent & Graphic Content,Content Appealed,2019Q4,N/A
+Instagram,Violent & Graphic Content,Content Appealed,2020Q1,"3,000"
+Instagram,Violent & Graphic Content,Content Appealed,2020Q2,0
+Instagram,Violent & Graphic Content,Content Appealed,2020Q3,0
+Instagram,Violent & Graphic Content,Content Appealed,2020Q4,0
+Instagram,Violent & Graphic Content,Content Appealed,2021Q1,0
+Instagram,Violent & Graphic Content,Content Appealed,2021Q2,0
+Instagram,Violent & Graphic Content,Content Appealed,2021Q3,0
+Instagram,Violent & Graphic Content,Content Appealed,2021Q4,0
+Instagram,Violent & Graphic Content,Content Appealed,2022Q1,0
+Instagram,Adult Nudity & Sexual Activity,Content Restored with appeal,2017Q4,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Restored with appeal,2018Q1,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Restored with appeal,2018Q2,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Restored with appeal,2018Q3,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Restored with appeal,2018Q4,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Restored with appeal,2019Q1,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Restored with appeal,2019Q2,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Restored with appeal,2019Q3,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Restored with appeal,2019Q4,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Restored with appeal,2020Q1,"98,200"
+Instagram,Adult Nudity & Sexual Activity,Content Restored with appeal,2020Q2,20
+Instagram,Adult Nudity & Sexual Activity,Content Restored with appeal,2020Q3,30
+Instagram,Adult Nudity & Sexual Activity,Content Restored with appeal,2020Q4,20
+Instagram,Adult Nudity & Sexual Activity,Content Restored with appeal,2021Q1,10
+Instagram,Adult Nudity & Sexual Activity,Content Restored with appeal,2021Q2,0
+Instagram,Adult Nudity & Sexual Activity,Content Restored with appeal,2021Q3,0
+Instagram,Adult Nudity & Sexual Activity,Content Restored with appeal,2021Q4,0
+Instagram,Adult Nudity & Sexual Activity,Content Restored with appeal,2022Q1,0
+Instagram,Bullying & Harassment,Content Restored with appeal,2017Q4,N/A
+Instagram,Bullying & Harassment,Content Restored with appeal,2018Q1,N/A
+Instagram,Bullying & Harassment,Content Restored with appeal,2018Q2,N/A
+Instagram,Bullying & Harassment,Content Restored with appeal,2018Q3,N/A
+Instagram,Bullying & Harassment,Content Restored with appeal,2018Q4,N/A
+Instagram,Bullying & Harassment,Content Restored with appeal,2019Q1,N/A
+Instagram,Bullying & Harassment,Content Restored with appeal,2019Q2,N/A
+Instagram,Bullying & Harassment,Content Restored with appeal,2019Q3,N/A
+Instagram,Bullying & Harassment,Content Restored with appeal,2019Q4,N/A
+Instagram,Bullying & Harassment,Content Restored with appeal,2020Q1,"20,900"
+Instagram,Bullying & Harassment,Content Restored with appeal,2020Q2,0
+Instagram,Bullying & Harassment,Content Restored with appeal,2020Q3,0
+Instagram,Bullying & Harassment,Content Restored with appeal,2020Q4,0
+Instagram,Bullying & Harassment,Content Restored with appeal,2021Q1,0
+Instagram,Bullying & Harassment,Content Restored with appeal,2021Q2,0
+Instagram,Bullying & Harassment,Content Restored with appeal,2021Q3,0
+Instagram,Bullying & Harassment,Content Restored with appeal,2021Q4,0
+Instagram,Bullying & Harassment,Content Restored with appeal,2022Q1,0
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2017Q4,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2018Q1,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2018Q2,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2018Q3,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2018Q4,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2019Q1,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2019Q2,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2019Q3,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2019Q4,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2020Q1,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2020Q2,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2020Q3,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2020Q4,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2021Q1,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2021Q2,0
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2021Q3,0
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2021Q4,0
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored with appeal,2022Q1,0
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2017Q4,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2018Q1,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2018Q2,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2018Q3,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2018Q4,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2019Q1,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2019Q2,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2019Q3,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2019Q4,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2020Q1,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2020Q2,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2020Q3,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2020Q4,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2021Q1,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2021Q2,0
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2021Q3,0
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2021Q4,0
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored with appeal,2022Q1,20
+Instagram,Child Nudity & Sexual Exploitation,Content Restored with appeal,2017Q4,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Restored with appeal,2018Q1,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Restored with appeal,2018Q2,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Restored with appeal,2018Q3,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Restored with appeal,2018Q4,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Restored with appeal,2019Q1,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Restored with appeal,2019Q2,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Restored with appeal,2019Q3,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Restored with appeal,2019Q4,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Restored with appeal,2020Q1,"16,100"
+Instagram,Child Nudity & Sexual Exploitation,Content Restored with appeal,2020Q2,0
+Instagram,Child Nudity & Sexual Exploitation,Content Restored with appeal,2020Q3,10
+Instagram,Child Nudity & Sexual Exploitation,Content Restored with appeal,2020Q4,0
+Instagram,Child Nudity & Sexual Exploitation,Content Restored with appeal,2021Q1,0
+Instagram,Dangerous Orgs: Organized Hate,Content Restored with appeal,2019Q1,N/A
+Instagram,Dangerous Orgs: Organized Hate,Content Restored with appeal,2019Q2,N/A
+Instagram,Dangerous Orgs: Organized Hate,Content Restored with appeal,2019Q3,N/A
+Instagram,Dangerous Orgs: Organized Hate,Content Restored with appeal,2019Q4,N/A
+Instagram,Dangerous Orgs: Organized Hate,Content Restored with appeal,2020Q1,500
+Instagram,Dangerous Orgs: Organized Hate,Content Restored with appeal,2020Q2,0
+Instagram,Dangerous Orgs: Organized Hate,Content Restored with appeal,2020Q3,0
+Instagram,Dangerous Orgs: Organized Hate,Content Restored with appeal,2020Q4,0
+Instagram,Dangerous Orgs: Organized Hate,Content Restored with appeal,2021Q1,0
+Instagram,Dangerous Orgs: Organized Hate,Content Restored with appeal,2021Q2,0
+Instagram,Dangerous Orgs: Organized Hate,Content Restored with appeal,2021Q3,0
+Instagram,Dangerous Orgs: Organized Hate,Content Restored with appeal,2021Q4,0
+Instagram,Dangerous Orgs: Organized Hate,Content Restored with appeal,2022Q1,0
+Instagram,Dangerous Orgs: Terrorism,Content Restored with appeal,2017Q4,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Restored with appeal,2018Q1,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Restored with appeal,2018Q2,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Restored with appeal,2018Q3,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Restored with appeal,2018Q4,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Restored with appeal,2019Q1,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Restored with appeal,2019Q2,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Restored with appeal,2019Q3,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Restored with appeal,2019Q4,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Restored with appeal,2020Q1,500
+Instagram,Dangerous Orgs: Terrorism,Content Restored with appeal,2020Q2,0
+Instagram,Dangerous Orgs: Terrorism,Content Restored with appeal,2020Q3,0
+Instagram,Dangerous Orgs: Terrorism,Content Restored with appeal,2020Q4,0
+Instagram,Dangerous Orgs: Terrorism,Content Restored with appeal,2021Q1,0
+Instagram,Dangerous Orgs: Terrorism,Content Restored with appeal,2021Q2,0
+Instagram,Dangerous Orgs: Terrorism,Content Restored with appeal,2021Q3,0
+Instagram,Dangerous Orgs: Terrorism,Content Restored with appeal,2021Q4,0
+Instagram,Dangerous Orgs: Terrorism,Content Restored with appeal,2022Q1,0
+Instagram,Hate Speech,Content Restored with appeal,2017Q4,N/A
+Instagram,Hate Speech,Content Restored with appeal,2018Q1,N/A
+Instagram,Hate Speech,Content Restored with appeal,2018Q2,N/A
+Instagram,Hate Speech,Content Restored with appeal,2018Q3,N/A
+Instagram,Hate Speech,Content Restored with appeal,2018Q4,N/A
+Instagram,Hate Speech,Content Restored with appeal,2019Q1,N/A
+Instagram,Hate Speech,Content Restored with appeal,2019Q2,N/A
+Instagram,Hate Speech,Content Restored with appeal,2019Q3,N/A
+Instagram,Hate Speech,Content Restored with appeal,2019Q4,N/A
+Instagram,Hate Speech,Content Restored with appeal,2020Q1,"8,600"
+Instagram,Hate Speech,Content Restored with appeal,2020Q2,10
+Instagram,Hate Speech,Content Restored with appeal,2020Q3,0
+Instagram,Hate Speech,Content Restored with appeal,2020Q4,0
+Instagram,Hate Speech,Content Restored with appeal,2021Q1,0
+Instagram,Hate Speech,Content Restored with appeal,2021Q2,0
+Instagram,Hate Speech,Content Restored with appeal,2021Q3,0
+Instagram,Hate Speech,Content Restored with appeal,2021Q4,0
+Instagram,Hate Speech,Content Restored with appeal,2022Q1,0
+Instagram,Regulated Goods: Drugs,Content Restored with appeal,2017Q4,N/A
+Instagram,Regulated Goods: Drugs,Content Restored with appeal,2018Q1,N/A
+Instagram,Regulated Goods: Drugs,Content Restored with appeal,2018Q2,N/A
+Instagram,Regulated Goods: Drugs,Content Restored with appeal,2018Q3,N/A
+Instagram,Regulated Goods: Drugs,Content Restored with appeal,2018Q4,N/A
+Instagram,Regulated Goods: Drugs,Content Restored with appeal,2019Q1,N/A
+Instagram,Regulated Goods: Drugs,Content Restored with appeal,2019Q2,N/A
+Instagram,Regulated Goods: Drugs,Content Restored with appeal,2019Q3,N/A
+Instagram,Regulated Goods: Drugs,Content Restored with appeal,2019Q4,N/A
+Instagram,Regulated Goods: Drugs,Content Restored with appeal,2020Q1,"29,800"
+Instagram,Regulated Goods: Drugs,Content Restored with appeal,2020Q2,10
+Instagram,Regulated Goods: Drugs,Content Restored with appeal,2020Q3,10
+Instagram,Regulated Goods: Drugs,Content Restored with appeal,2020Q4,0
+Instagram,Regulated Goods: Drugs,Content Restored with appeal,2021Q1,0
+Instagram,Regulated Goods: Drugs,Content Restored with appeal,2021Q2,0
+Instagram,Regulated Goods: Drugs,Content Restored with appeal,2021Q3,0
+Instagram,Regulated Goods: Drugs,Content Restored with appeal,2021Q4,0
+Instagram,Regulated Goods: Drugs,Content Restored with appeal,2022Q1,0
+Instagram,Regulated Goods: Firearms,Content Restored with appeal,2017Q4,N/A
+Instagram,Regulated Goods: Firearms,Content Restored with appeal,2018Q1,N/A
+Instagram,Regulated Goods: Firearms,Content Restored with appeal,2018Q2,N/A
+Instagram,Regulated Goods: Firearms,Content Restored with appeal,2018Q3,N/A
+Instagram,Regulated Goods: Firearms,Content Restored with appeal,2018Q4,N/A
+Instagram,Regulated Goods: Firearms,Content Restored with appeal,2019Q1,N/A
+Instagram,Regulated Goods: Firearms,Content Restored with appeal,2019Q2,N/A
+Instagram,Regulated Goods: Firearms,Content Restored with appeal,2019Q3,N/A
+Instagram,Regulated Goods: Firearms,Content Restored with appeal,2019Q4,N/A
+Instagram,Regulated Goods: Firearms,Content Restored with appeal,2020Q1,400
+Instagram,Regulated Goods: Firearms,Content Restored with appeal,2020Q2,0
+Instagram,Regulated Goods: Firearms,Content Restored with appeal,2020Q3,0
+Instagram,Regulated Goods: Firearms,Content Restored with appeal,2020Q4,0
+Instagram,Regulated Goods: Firearms,Content Restored with appeal,2021Q1,0
+Instagram,Regulated Goods: Firearms,Content Restored with appeal,2021Q2,0
+Instagram,Regulated Goods: Firearms,Content Restored with appeal,2021Q3,0
+Instagram,Regulated Goods: Firearms,Content Restored with appeal,2021Q4,0
+Instagram,Regulated Goods: Firearms,Content Restored with appeal,2022Q1,0
+Instagram,Suicide and Self-Injury,Content Restored with appeal,2017Q4,N/A
+Instagram,Suicide and Self-Injury,Content Restored with appeal,2018Q1,N/A
+Instagram,Suicide and Self-Injury,Content Restored with appeal,2018Q2,N/A
+Instagram,Suicide and Self-Injury,Content Restored with appeal,2018Q3,N/A
+Instagram,Suicide and Self-Injury,Content Restored with appeal,2018Q4,N/A
+Instagram,Suicide and Self-Injury,Content Restored with appeal,2019Q1,N/A
+Instagram,Suicide and Self-Injury,Content Restored with appeal,2019Q2,N/A
+Instagram,Suicide and Self-Injury,Content Restored with appeal,2019Q3,N/A
+Instagram,Suicide and Self-Injury,Content Restored with appeal,2019Q4,N/A
+Instagram,Suicide and Self-Injury,Content Restored with appeal,2020Q1,"4,500"
+Instagram,Suicide and Self-Injury,Content Restored with appeal,2020Q2,0
+Instagram,Suicide and Self-Injury,Content Restored with appeal,2020Q3,10
+Instagram,Suicide and Self-Injury,Content Restored with appeal,2020Q4,0
+Instagram,Suicide and Self-Injury,Content Restored with appeal,2021Q1,0
+Instagram,Suicide and Self-Injury,Content Restored with appeal,2021Q2,0
+Instagram,Suicide and Self-Injury,Content Restored with appeal,2021Q3,0
+Instagram,Suicide and Self-Injury,Content Restored with appeal,2021Q4,0
+Instagram,Suicide and Self-Injury,Content Restored with appeal,2022Q1,0
+Instagram,Violence And Incitement,Content Restored with appeal,2017Q4,N/A
+Instagram,Violence And Incitement,Content Restored with appeal,2018Q1,N/A
+Instagram,Violence And Incitement,Content Restored with appeal,2018Q2,N/A
+Instagram,Violence And Incitement,Content Restored with appeal,2018Q3,N/A
+Instagram,Violence And Incitement,Content Restored with appeal,2018Q4,N/A
+Instagram,Violence And Incitement,Content Restored with appeal,2019Q1,N/A
+Instagram,Violence And Incitement,Content Restored with appeal,2019Q2,N/A
+Instagram,Violence And Incitement,Content Restored with appeal,2019Q3,N/A
+Instagram,Violence And Incitement,Content Restored with appeal,2019Q4,N/A
+Instagram,Violence And Incitement,Content Restored with appeal,2020Q1,N/A
+Instagram,Violence And Incitement,Content Restored with appeal,2020Q2,N/A
+Instagram,Violence And Incitement,Content Restored with appeal,2020Q3,N/A
+Instagram,Violence And Incitement,Content Restored with appeal,2020Q4,N/A
+Instagram,Violence And Incitement,Content Restored with appeal,2021Q1,N/A
+Instagram,Violence And Incitement,Content Restored with appeal,2021Q2,N/A
+Instagram,Violence And Incitement,Content Restored with appeal,2021Q3,0
+Instagram,Violence And Incitement,Content Restored with appeal,2021Q4,0
+Instagram,Violence And Incitement,Content Restored with appeal,2022Q1,0
+Instagram,Violent & Graphic Content,Content Restored with appeal,2017Q4,N/A
+Instagram,Violent & Graphic Content,Content Restored with appeal,2018Q1,N/A
+Instagram,Violent & Graphic Content,Content Restored with appeal,2018Q2,N/A
+Instagram,Violent & Graphic Content,Content Restored with appeal,2018Q3,N/A
+Instagram,Violent & Graphic Content,Content Restored with appeal,2018Q4,N/A
+Instagram,Violent & Graphic Content,Content Restored with appeal,2019Q1,N/A
+Instagram,Violent & Graphic Content,Content Restored with appeal,2019Q2,N/A
+Instagram,Violent & Graphic Content,Content Restored with appeal,2019Q3,N/A
+Instagram,Violent & Graphic Content,Content Restored with appeal,2019Q4,N/A
+Instagram,Violent & Graphic Content,Content Restored with appeal,2020Q1,500
+Instagram,Violent & Graphic Content,Content Restored with appeal,2020Q2,0
+Instagram,Violent & Graphic Content,Content Restored with appeal,2020Q3,0
+Instagram,Violent & Graphic Content,Content Restored with appeal,2020Q4,0
+Instagram,Violent & Graphic Content,Content Restored with appeal,2021Q1,0
+Instagram,Violent & Graphic Content,Content Restored with appeal,2021Q2,0
+Instagram,Violent & Graphic Content,Content Restored with appeal,2021Q3,0
+Instagram,Violent & Graphic Content,Content Restored with appeal,2021Q4,0
+Instagram,Violent & Graphic Content,Content Restored with appeal,2022Q1,0
+Instagram,Adult Nudity & Sexual Activity,Content Restored without appeal,2017Q4,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Restored without appeal,2018Q1,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Restored without appeal,2018Q2,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Restored without appeal,2018Q3,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Restored without appeal,2018Q4,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Restored without appeal,2019Q1,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Restored without appeal,2019Q2,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Restored without appeal,2019Q3,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Restored without appeal,2019Q4,N/A
+Instagram,Adult Nudity & Sexual Activity,Content Restored without appeal,2020Q1,"10,100"
+Instagram,Adult Nudity & Sexual Activity,Content Restored without appeal,2020Q2,"1,500"
+Instagram,Adult Nudity & Sexual Activity,Content Restored without appeal,2020Q3,"3,300"
+Instagram,Adult Nudity & Sexual Activity,Content Restored without appeal,2020Q4,"141,300"
+Instagram,Adult Nudity & Sexual Activity,Content Restored without appeal,2021Q1,"264,500"
+Instagram,Adult Nudity & Sexual Activity,Content Restored without appeal,2021Q2,"149,800"
+Instagram,Adult Nudity & Sexual Activity,Content Restored without appeal,2021Q3,"159,200"
+Instagram,Adult Nudity & Sexual Activity,Content Restored without appeal,2021Q4,"227,800"
+Instagram,Adult Nudity & Sexual Activity,Content Restored without appeal,2022Q1,"183,600"
+Instagram,Bullying & Harassment,Content Restored without appeal,2017Q4,N/A
+Instagram,Bullying & Harassment,Content Restored without appeal,2018Q1,N/A
+Instagram,Bullying & Harassment,Content Restored without appeal,2018Q2,N/A
+Instagram,Bullying & Harassment,Content Restored without appeal,2018Q3,N/A
+Instagram,Bullying & Harassment,Content Restored without appeal,2018Q4,N/A
+Instagram,Bullying & Harassment,Content Restored without appeal,2019Q1,N/A
+Instagram,Bullying & Harassment,Content Restored without appeal,2019Q2,N/A
+Instagram,Bullying & Harassment,Content Restored without appeal,2019Q3,N/A
+Instagram,Bullying & Harassment,Content Restored without appeal,2019Q4,N/A
+Instagram,Bullying & Harassment,Content Restored without appeal,2020Q1,"2,700"
+Instagram,Bullying & Harassment,Content Restored without appeal,2020Q2,"10,800"
+Instagram,Bullying & Harassment,Content Restored without appeal,2020Q3,"183,100"
+Instagram,Bullying & Harassment,Content Restored without appeal,2020Q4,"43,100"
+Instagram,Bullying & Harassment,Content Restored without appeal,2021Q1,"52,700"
+Instagram,Bullying & Harassment,Content Restored without appeal,2021Q2,"21,400"
+Instagram,Bullying & Harassment,Content Restored without appeal,2021Q3,"91,500"
+Instagram,Bullying & Harassment,Content Restored without appeal,2021Q4,"182,100"
+Instagram,Bullying & Harassment,Content Restored without appeal,2022Q1,"215,900"
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2017Q4,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2018Q1,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2018Q2,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2018Q3,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2018Q4,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2019Q1,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2019Q2,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2019Q3,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2019Q4,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2020Q1,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2020Q2,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2020Q3,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2020Q4,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2021Q1,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2021Q2,"4,500"
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2021Q3,"168,300"
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2021Q4,"13,600"
+Instagram,Child Endangerment: Nudity and Physical Abuse,Content Restored without appeal,2022Q1,"10,700"
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2017Q4,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2018Q1,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2018Q2,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2018Q3,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2018Q4,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2019Q1,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2019Q2,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2019Q3,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2019Q4,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2020Q1,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2020Q2,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2020Q3,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2020Q4,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2021Q1,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2021Q2,300
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2021Q3,300
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2021Q4,"1,600"
+Instagram,Child Endangerment: Sexual Exploitation,Content Restored without appeal,2022Q1,"154,300"
+Instagram,Child Nudity & Sexual Exploitation,Content Restored without appeal,2017Q4,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Restored without appeal,2018Q1,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Restored without appeal,2018Q2,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Restored without appeal,2018Q3,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Restored without appeal,2018Q4,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Restored without appeal,2019Q1,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Restored without appeal,2019Q2,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Restored without appeal,2019Q3,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Restored without appeal,2019Q4,N/A
+Instagram,Child Nudity & Sexual Exploitation,Content Restored without appeal,2020Q1,200
+Instagram,Child Nudity & Sexual Exploitation,Content Restored without appeal,2020Q2,20
+Instagram,Child Nudity & Sexual Exploitation,Content Restored without appeal,2020Q3,700
+Instagram,Child Nudity & Sexual Exploitation,Content Restored without appeal,2020Q4,"2,900"
+Instagram,Child Nudity & Sexual Exploitation,Content Restored without appeal,2021Q1,"3,500"
+Instagram,Dangerous Orgs: Organized Hate,Content Restored without appeal,2019Q1,N/A
+Instagram,Dangerous Orgs: Organized Hate,Content Restored without appeal,2019Q2,N/A
+Instagram,Dangerous Orgs: Organized Hate,Content Restored without appeal,2019Q3,N/A
+Instagram,Dangerous Orgs: Organized Hate,Content Restored without appeal,2019Q4,N/A
+Instagram,Dangerous Orgs: Organized Hate,Content Restored without appeal,2020Q1,300
+Instagram,Dangerous Orgs: Organized Hate,Content Restored without appeal,2020Q2,600
+Instagram,Dangerous Orgs: Organized Hate,Content Restored without appeal,2020Q3,"1,000"
+Instagram,Dangerous Orgs: Organized Hate,Content Restored without appeal,2020Q4,"1,800"
+Instagram,Dangerous Orgs: Organized Hate,Content Restored without appeal,2021Q1,"6,500"
+Instagram,Dangerous Orgs: Organized Hate,Content Restored without appeal,2021Q2,"2,200"
+Instagram,Dangerous Orgs: Organized Hate,Content Restored without appeal,2021Q3,"3,700"
+Instagram,Dangerous Orgs: Organized Hate,Content Restored without appeal,2021Q4,"7,500"
+Instagram,Dangerous Orgs: Organized Hate,Content Restored without appeal,2022Q1,"31,200"
+Instagram,Dangerous Orgs: Terrorism,Content Restored without appeal,2017Q4,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Restored without appeal,2018Q1,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Restored without appeal,2018Q2,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Restored without appeal,2018Q3,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Restored without appeal,2018Q4,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Restored without appeal,2019Q1,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Restored without appeal,2019Q2,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Restored without appeal,2019Q3,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Restored without appeal,2019Q4,N/A
+Instagram,Dangerous Orgs: Terrorism,Content Restored without appeal,2020Q1,200
+Instagram,Dangerous Orgs: Terrorism,Content Restored without appeal,2020Q2,20
+Instagram,Dangerous Orgs: Terrorism,Content Restored without appeal,2020Q3,100
+Instagram,Dangerous Orgs: Terrorism,Content Restored without appeal,2020Q4,10
+Instagram,Dangerous Orgs: Terrorism,Content Restored without appeal,2021Q1,60
+Instagram,Dangerous Orgs: Terrorism,Content Restored without appeal,2021Q2,"1,100"
+Instagram,Dangerous Orgs: Terrorism,Content Restored without appeal,2021Q3,"3,500"
+Instagram,Dangerous Orgs: Terrorism,Content Restored without appeal,2021Q4,"4,000"
+Instagram,Dangerous Orgs: Terrorism,Content Restored without appeal,2022Q1,"84,900"
+Instagram,Hate Speech,Content Restored without appeal,2017Q4,N/A
+Instagram,Hate Speech,Content Restored without appeal,2018Q1,N/A
+Instagram,Hate Speech,Content Restored without appeal,2018Q2,N/A
+Instagram,Hate Speech,Content Restored without appeal,2018Q3,N/A
+Instagram,Hate Speech,Content Restored without appeal,2018Q4,N/A
+Instagram,Hate Speech,Content Restored without appeal,2019Q1,N/A
+Instagram,Hate Speech,Content Restored without appeal,2019Q2,N/A
+Instagram,Hate Speech,Content Restored without appeal,2019Q3,N/A
+Instagram,Hate Speech,Content Restored without appeal,2019Q4,N/A
+Instagram,Hate Speech,Content Restored without appeal,2020Q1,"1,600"
+Instagram,Hate Speech,Content Restored without appeal,2020Q2,"20,900"
+Instagram,Hate Speech,Content Restored without appeal,2020Q3,"32,900"
+Instagram,Hate Speech,Content Restored without appeal,2020Q4,"35,700"
+Instagram,Hate Speech,Content Restored without appeal,2021Q1,"43,900"
+Instagram,Hate Speech,Content Restored without appeal,2021Q2,"30,800"
+Instagram,Hate Speech,Content Restored without appeal,2021Q3,"43,100"
+Instagram,Hate Speech,Content Restored without appeal,2021Q4,"63,600"
+Instagram,Hate Speech,Content Restored without appeal,2022Q1,"56,700"
+Instagram,Regulated Goods: Drugs,Content Restored without appeal,2017Q4,N/A
+Instagram,Regulated Goods: Drugs,Content Restored without appeal,2018Q1,N/A
+Instagram,Regulated Goods: Drugs,Content Restored without appeal,2018Q2,N/A
+Instagram,Regulated Goods: Drugs,Content Restored without appeal,2018Q3,N/A
+Instagram,Regulated Goods: Drugs,Content Restored without appeal,2018Q4,N/A
+Instagram,Regulated Goods: Drugs,Content Restored without appeal,2019Q1,N/A
+Instagram,Regulated Goods: Drugs,Content Restored without appeal,2019Q2,N/A
+Instagram,Regulated Goods: Drugs,Content Restored without appeal,2019Q3,N/A
+Instagram,Regulated Goods: Drugs,Content Restored without appeal,2019Q4,N/A
+Instagram,Regulated Goods: Drugs,Content Restored without appeal,2020Q1,"2,400"
+Instagram,Regulated Goods: Drugs,Content Restored without appeal,2020Q2,"18,400"
+Instagram,Regulated Goods: Drugs,Content Restored without appeal,2020Q3,"35,700"
+Instagram,Regulated Goods: Drugs,Content Restored without appeal,2020Q4,"62,100"
+Instagram,Regulated Goods: Drugs,Content Restored without appeal,2021Q1,"28,500"
+Instagram,Regulated Goods: Drugs,Content Restored without appeal,2021Q2,"19,600"
+Instagram,Regulated Goods: Drugs,Content Restored without appeal,2021Q3,"35,600"
+Instagram,Regulated Goods: Drugs,Content Restored without appeal,2021Q4,"27,600"
+Instagram,Regulated Goods: Drugs,Content Restored without appeal,2022Q1,"45,000"
+Instagram,Regulated Goods: Firearms,Content Restored without appeal,2017Q4,N/A
+Instagram,Regulated Goods: Firearms,Content Restored without appeal,2018Q1,N/A
+Instagram,Regulated Goods: Firearms,Content Restored without appeal,2018Q2,N/A
+Instagram,Regulated Goods: Firearms,Content Restored without appeal,2018Q3,N/A
+Instagram,Regulated Goods: Firearms,Content Restored without appeal,2018Q4,N/A
+Instagram,Regulated Goods: Firearms,Content Restored without appeal,2019Q1,N/A
+Instagram,Regulated Goods: Firearms,Content Restored without appeal,2019Q2,N/A
+Instagram,Regulated Goods: Firearms,Content Restored without appeal,2019Q3,N/A
+Instagram,Regulated Goods: Firearms,Content Restored without appeal,2019Q4,N/A
+Instagram,Regulated Goods: Firearms,Content Restored without appeal,2020Q1,40
+Instagram,Regulated Goods: Firearms,Content Restored without appeal,2020Q2,400
+Instagram,Regulated Goods: Firearms,Content Restored without appeal,2020Q3,300
+Instagram,Regulated Goods: Firearms,Content Restored without appeal,2020Q4,800
+Instagram,Regulated Goods: Firearms,Content Restored without appeal,2021Q1,"1,400"
+Instagram,Regulated Goods: Firearms,Content Restored without appeal,2021Q2,"1,800"
+Instagram,Regulated Goods: Firearms,Content Restored without appeal,2021Q3,"7,800"
+Instagram,Regulated Goods: Firearms,Content Restored without appeal,2021Q4,"21,700"
+Instagram,Regulated Goods: Firearms,Content Restored without appeal,2022Q1,"15,400"
+Instagram,Suicide and Self-Injury,Content Restored without appeal,2017Q4,N/A
+Instagram,Suicide and Self-Injury,Content Restored without appeal,2018Q1,N/A
+Instagram,Suicide and Self-Injury,Content Restored without appeal,2018Q2,N/A
+Instagram,Suicide and Self-Injury,Content Restored without appeal,2018Q3,N/A
+Instagram,Suicide and Self-Injury,Content Restored without appeal,2018Q4,N/A
+Instagram,Suicide and Self-Injury,Content Restored without appeal,2019Q1,N/A
+Instagram,Suicide and Self-Injury,Content Restored without appeal,2019Q2,N/A
+Instagram,Suicide and Self-Injury,Content Restored without appeal,2019Q3,N/A
+Instagram,Suicide and Self-Injury,Content Restored without appeal,2019Q4,N/A
+Instagram,Suicide and Self-Injury,Content Restored without appeal,2020Q1,"1,300"
+Instagram,Suicide and Self-Injury,Content Restored without appeal,2020Q2,30
+Instagram,Suicide and Self-Injury,Content Restored without appeal,2020Q3,"48,000"
+Instagram,Suicide and Self-Injury,Content Restored without appeal,2020Q4,"276,500"
+Instagram,Suicide and Self-Injury,Content Restored without appeal,2021Q1,"119,700"
+Instagram,Suicide and Self-Injury,Content Restored without appeal,2021Q2,"79,300"
+Instagram,Suicide and Self-Injury,Content Restored without appeal,2021Q3,"10,600"
+Instagram,Suicide and Self-Injury,Content Restored without appeal,2021Q4,600
+Instagram,Suicide and Self-Injury,Content Restored without appeal,2022Q1,"49,400"
+Instagram,Violence And Incitement,Content Restored without appeal,2017Q4,N/A
+Instagram,Violence And Incitement,Content Restored without appeal,2018Q1,N/A
+Instagram,Violence And Incitement,Content Restored without appeal,2018Q2,N/A
+Instagram,Violence And Incitement,Content Restored without appeal,2018Q3,N/A
+Instagram,Violence And Incitement,Content Restored without appeal,2018Q4,N/A
+Instagram,Violence And Incitement,Content Restored without appeal,2019Q1,N/A
+Instagram,Violence And Incitement,Content Restored without appeal,2019Q2,N/A
+Instagram,Violence And Incitement,Content Restored without appeal,2019Q3,N/A
+Instagram,Violence And Incitement,Content Restored without appeal,2019Q4,N/A
+Instagram,Violence And Incitement,Content Restored without appeal,2020Q1,N/A
+Instagram,Violence And Incitement,Content Restored without appeal,2020Q2,N/A
+Instagram,Violence And Incitement,Content Restored without appeal,2020Q3,N/A
+Instagram,Violence And Incitement,Content Restored without appeal,2020Q4,N/A
+Instagram,Violence And Incitement,Content Restored without appeal,2021Q1,N/A
+Instagram,Violence And Incitement,Content Restored without appeal,2021Q2,N/A
+Instagram,Violence And Incitement,Content Restored without appeal,2021Q3,"21,400"
+Instagram,Violence And Incitement,Content Restored without appeal,2021Q4,"49,900"
+Instagram,Violence And Incitement,Content Restored without appeal,2022Q1,"53,100"
+Instagram,Violent & Graphic Content,Content Restored without appeal,2017Q4,N/A
+Instagram,Violent & Graphic Content,Content Restored without appeal,2018Q1,N/A
+Instagram,Violent & Graphic Content,Content Restored without appeal,2018Q2,N/A
+Instagram,Violent & Graphic Content,Content Restored without appeal,2018Q3,N/A
+Instagram,Violent & Graphic Content,Content Restored without appeal,2018Q4,N/A
+Instagram,Violent & Graphic Content,Content Restored without appeal,2019Q1,N/A
+Instagram,Violent & Graphic Content,Content Restored without appeal,2019Q2,N/A
+Instagram,Violent & Graphic Content,Content Restored without appeal,2019Q3,N/A
+Instagram,Violent & Graphic Content,Content Restored without appeal,2019Q4,N/A
+Instagram,Violent & Graphic Content,Content Restored without appeal,2020Q1,300
+Instagram,Violent & Graphic Content,Content Restored without appeal,2020Q2,200
+Instagram,Violent & Graphic Content,Content Restored without appeal,2020Q3,200
+Instagram,Violent & Graphic Content,Content Restored without appeal,2020Q4,"3,300"
+Instagram,Violent & Graphic Content,Content Restored without appeal,2021Q1,"10,800"
+Instagram,Violent & Graphic Content,Content Restored without appeal,2021Q2,"10,600"
+Instagram,Violent & Graphic Content,Content Restored without appeal,2021Q3,"21,200"
+Instagram,Violent & Graphic Content,Content Restored without appeal,2021Q4,"2,500,000"
+Instagram,Violent & Graphic Content,Content Restored without appeal,2022Q1,"31,500"
+Instagram,Adult Nudity & Sexual Activity,Proactive rate,2019Q1,N/A
+Instagram,Adult Nudity & Sexual Activity,Proactive rate,2019Q2,N/A
+Instagram,Adult Nudity & Sexual Activity,Proactive rate,2019Q3,N/A
+Instagram,Adult Nudity & Sexual Activity,Proactive rate,2019Q4,92.90%
+Instagram,Adult Nudity & Sexual Activity,Proactive rate,2020Q1,93.70%
+Instagram,Adult Nudity & Sexual Activity,Proactive rate,2020Q2,94.40%
+Instagram,Adult Nudity & Sexual Activity,Proactive rate,2020Q3,93.30%
+Instagram,Adult Nudity & Sexual Activity,Proactive rate,2020Q4,96.30%
+Instagram,Adult Nudity & Sexual Activity,Proactive rate,2021Q1,96.20%
+Instagram,Adult Nudity & Sexual Activity,Proactive rate,2021Q2,96.70%
+Instagram,Adult Nudity & Sexual Activity,Proactive rate,2021Q3,95.40%
+Instagram,Adult Nudity & Sexual Activity,Proactive rate,2021Q4,94.30%
+Instagram,Adult Nudity & Sexual Activity,Proactive rate,2022Q1,94.00%
+Instagram,Bullying & Harassment,Proactive rate,2019Q1,N/A
+Instagram,Bullying & Harassment,Proactive rate,2019Q2,N/A
+Instagram,Bullying & Harassment,Proactive rate,2019Q3,N/A
+Instagram,Bullying & Harassment,Proactive rate,2019Q4,36.20%
+Instagram,Bullying & Harassment,Proactive rate,2020Q1,35.00%
+Instagram,Bullying & Harassment,Proactive rate,2020Q2,44.40%
+Instagram,Bullying & Harassment,Proactive rate,2020Q3,54.50%
+Instagram,Bullying & Harassment,Proactive rate,2020Q4,79.90%
+Instagram,Bullying & Harassment,Proactive rate,2021Q1,78.60%
+Instagram,Bullying & Harassment,Proactive rate,2021Q2,71.50%
+Instagram,Bullying & Harassment,Proactive rate,2021Q3,83.20%
+Instagram,Bullying & Harassment,Proactive rate,2021Q4,82.10%
+Instagram,Bullying & Harassment,Proactive rate,2022Q1,83.80%
+Instagram,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2019Q1,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2019Q2,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2019Q3,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2019Q4,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2020Q1,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2020Q2,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2020Q3,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2020Q4,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2021Q1,N/A
+Instagram,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2021Q2,95.80%
+Instagram,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2021Q3,92.30%
+Instagram,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2021Q4,95.30%
+Instagram,Child Endangerment: Nudity and Physical Abuse,Proactive rate,2022Q1,93.80%
+Instagram,Child Endangerment: Sexual Exploitation,Proactive rate,2019Q1,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Proactive rate,2019Q2,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Proactive rate,2019Q3,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Proactive rate,2019Q4,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Proactive rate,2020Q1,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Proactive rate,2020Q2,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Proactive rate,2020Q3,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Proactive rate,2020Q4,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Proactive rate,2021Q1,N/A
+Instagram,Child Endangerment: Sexual Exploitation,Proactive rate,2021Q2,96.30%
+Instagram,Child Endangerment: Sexual Exploitation,Proactive rate,2021Q3,96.30%
+Instagram,Child Endangerment: Sexual Exploitation,Proactive rate,2021Q4,97.30%
+Instagram,Child Endangerment: Sexual Exploitation,Proactive rate,2022Q1,92.50%
+Instagram,Child Nudity & Sexual Exploitation,Proactive rate,2019Q1,N/A
+Instagram,Child Nudity & Sexual Exploitation,Proactive rate,2019Q2,92.40%
+Instagram,Child Nudity & Sexual Exploitation,Proactive rate,2019Q3,94.60%
+Instagram,Child Nudity & Sexual Exploitation,Proactive rate,2019Q4,96.70%
+Instagram,Child Nudity & Sexual Exploitation,Proactive rate,2020Q1,97.70%
+Instagram,Child Nudity & Sexual Exploitation,Proactive rate,2020Q2,91.30%
+Instagram,Child Nudity & Sexual Exploitation,Proactive rate,2020Q3,96.70%
+Instagram,Child Nudity & Sexual Exploitation,Proactive rate,2020Q4,97.90%
+Instagram,Child Nudity & Sexual Exploitation,Proactive rate,2021Q1,98.10%
+Instagram,Dangerous Orgs: Organized Hate,Proactive rate,2019Q1,N/A
+Instagram,Dangerous Orgs: Organized Hate,Proactive rate,2019Q2,N/A
+Instagram,Dangerous Orgs: Organized Hate,Proactive rate,2019Q3,N/A
+Instagram,Dangerous Orgs: Organized Hate,Proactive rate,2019Q4,56.30%
+Instagram,Dangerous Orgs: Organized Hate,Proactive rate,2020Q1,68.30%
+Instagram,Dangerous Orgs: Organized Hate,Proactive rate,2020Q2,77.80%
+Instagram,Dangerous Orgs: Organized Hate,Proactive rate,2020Q3,76.70%
+Instagram,Dangerous Orgs: Organized Hate,Proactive rate,2020Q4,67.60%
+Instagram,Dangerous Orgs: Organized Hate,Proactive rate,2021Q1,77.20%
+Instagram,Dangerous Orgs: Organized Hate,Proactive rate,2021Q2,77.70%
+Instagram,Dangerous Orgs: Organized Hate,Proactive rate,2021Q3,82.70%
+Instagram,Dangerous Orgs: Organized Hate,Proactive rate,2021Q4,84.80%
+Instagram,Dangerous Orgs: Organized Hate,Proactive rate,2022Q1,88.90%
+Instagram,Dangerous Orgs: Terrorism,Proactive rate,2019Q1,N/A
+Instagram,Dangerous Orgs: Terrorism,Proactive rate,2019Q2,93.20%
+Instagram,Dangerous Orgs: Terrorism,Proactive rate,2019Q3,91.20%
+Instagram,Dangerous Orgs: Terrorism,Proactive rate,2019Q4,91.00%
+Instagram,Dangerous Orgs: Terrorism,Proactive rate,2020Q1,84.80%
+Instagram,Dangerous Orgs: Terrorism,Proactive rate,2020Q2,98.30%
+Instagram,Dangerous Orgs: Terrorism,Proactive rate,2020Q3,99.20%
+Instagram,Dangerous Orgs: Terrorism,Proactive rate,2020Q4,98.00%
+Instagram,Dangerous Orgs: Terrorism,Proactive rate,2021Q1,99.60%
+Instagram,Dangerous Orgs: Terrorism,Proactive rate,2021Q2,99.70%
+Instagram,Dangerous Orgs: Terrorism,Proactive rate,2021Q3,72.30%
+Instagram,Dangerous Orgs: Terrorism,Proactive rate,2021Q4,79.60%
+Instagram,Dangerous Orgs: Terrorism,Proactive rate,2022Q1,86.30%
+Instagram,Hate Speech,Proactive rate,2019Q1,N/A
+Instagram,Hate Speech,Proactive rate,2019Q2,N/A
+Instagram,Hate Speech,Proactive rate,2019Q3,N/A
+Instagram,Hate Speech,Proactive rate,2019Q4,44.10%
+Instagram,Hate Speech,Proactive rate,2020Q1,42.50%
+Instagram,Hate Speech,Proactive rate,2020Q2,89.00%
+Instagram,Hate Speech,Proactive rate,2020Q3,94.80%
+Instagram,Hate Speech,Proactive rate,2020Q4,95.10%
+Instagram,Hate Speech,Proactive rate,2021Q1,93.40%
+Instagram,Hate Speech,Proactive rate,2021Q2,95.10%
+Instagram,Hate Speech,Proactive rate,2021Q3,93.80%
+Instagram,Hate Speech,Proactive rate,2021Q4,91.90%
+Instagram,Hate Speech,Proactive rate,2022Q1,89.60%
+Instagram,Regulated Goods: Drugs,Proactive rate,2019Q1,N/A
+Instagram,Regulated Goods: Drugs,Proactive rate,2019Q2,95.50%
+Instagram,Regulated Goods: Drugs,Proactive rate,2019Q3,95.20%
+Instagram,Regulated Goods: Drugs,Proactive rate,2019Q4,94.60%
+Instagram,Regulated Goods: Drugs,Proactive rate,2020Q1,94.50%
+Instagram,Regulated Goods: Drugs,Proactive rate,2020Q2,94.30%
+Instagram,Regulated Goods: Drugs,Proactive rate,2020Q3,93.00%
+Instagram,Regulated Goods: Drugs,Proactive rate,2020Q4,95.60%
+Instagram,Regulated Goods: Drugs,Proactive rate,2021Q1,91.40%
+Instagram,Regulated Goods: Drugs,Proactive rate,2021Q2,95.40%
+Instagram,Regulated Goods: Drugs,Proactive rate,2021Q3,97.40%
+Instagram,Regulated Goods: Drugs,Proactive rate,2021Q4,95.00%
+Instagram,Regulated Goods: Drugs,Proactive rate,2022Q1,96.00%
+Instagram,Regulated Goods: Firearms,Proactive rate,2019Q1,N/A
+Instagram,Regulated Goods: Firearms,Proactive rate,2019Q2,76.80%
+Instagram,Regulated Goods: Firearms,Proactive rate,2019Q3,91.00%
+Instagram,Regulated Goods: Firearms,Proactive rate,2019Q4,83.40%
+Instagram,Regulated Goods: Firearms,Proactive rate,2020Q1,90.70%
+Instagram,Regulated Goods: Firearms,Proactive rate,2020Q2,86.90%
+Instagram,Regulated Goods: Firearms,Proactive rate,2020Q3,87.00%
+Instagram,Regulated Goods: Firearms,Proactive rate,2020Q4,89.30%
+Instagram,Regulated Goods: Firearms,Proactive rate,2021Q1,89.70%
+Instagram,Regulated Goods: Firearms,Proactive rate,2021Q2,90.60%
+Instagram,Regulated Goods: Firearms,Proactive rate,2021Q3,95.80%
+Instagram,Regulated Goods: Firearms,Proactive rate,2021Q4,94.30%
+Instagram,Regulated Goods: Firearms,Proactive rate,2022Q1,92.20%
+Instagram,Suicide and Self-Injury,Proactive rate,2019Q1,N/A
+Instagram,Suicide and Self-Injury,Proactive rate,2019Q2,77.50%
+Instagram,Suicide and Self-Injury,Proactive rate,2019Q3,78.90%
+Instagram,Suicide and Self-Injury,Proactive rate,2019Q4,82.90%
+Instagram,Suicide and Self-Injury,Proactive rate,2020Q1,89.50%
+Instagram,Suicide and Self-Injury,Proactive rate,2020Q2,93.80%
+Instagram,Suicide and Self-Injury,Proactive rate,2020Q3,95.30%
+Instagram,Suicide and Self-Injury,Proactive rate,2020Q4,94.50%
+Instagram,Suicide and Self-Injury,Proactive rate,2021Q1,94.50%
+Instagram,Suicide and Self-Injury,Proactive rate,2021Q2,96.10%
+Instagram,Suicide and Self-Injury,Proactive rate,2021Q3,96.80%
+Instagram,Suicide and Self-Injury,Proactive rate,2021Q4,98.40%
+Instagram,Suicide and Self-Injury,Proactive rate,2022Q1,98.00%
+Instagram,Violence And Incitement,Proactive rate,2019Q1,N/A
+Instagram,Violence And Incitement,Proactive rate,2019Q2,N/A
+Instagram,Violence And Incitement,Proactive rate,2019Q3,N/A
+Instagram,Violence And Incitement,Proactive rate,2019Q4,N/A
+Instagram,Violence And Incitement,Proactive rate,2020Q1,N/A
+Instagram,Violence And Incitement,Proactive rate,2020Q2,N/A
+Instagram,Violence And Incitement,Proactive rate,2020Q3,N/A
+Instagram,Violence And Incitement,Proactive rate,2020Q4,N/A
+Instagram,Violence And Incitement,Proactive rate,2021Q1,N/A
+Instagram,Violence And Incitement,Proactive rate,2021Q2,N/A
+Instagram,Violence And Incitement,Proactive rate,2021Q3,96.40%
+Instagram,Violence And Incitement,Proactive rate,2021Q4,96.00%
+Instagram,Violence And Incitement,Proactive rate,2022Q1,95.40%
+Instagram,Violent & Graphic Content,Proactive rate,2019Q1,N/A
+Instagram,Violent & Graphic Content,Proactive rate,2019Q2,N/A
+Instagram,Violent & Graphic Content,Proactive rate,2019Q3,N/A
+Instagram,Violent & Graphic Content,Proactive rate,2019Q4,92.50%
+Instagram,Violent & Graphic Content,Proactive rate,2020Q1,95.30%
+Instagram,Violent & Graphic Content,Proactive rate,2020Q2,96.50%
+Instagram,Violent & Graphic Content,Proactive rate,2020Q3,97.40%
+Instagram,Violent & Graphic Content,Proactive rate,2020Q4,98.10%
+Instagram,Violent & Graphic Content,Proactive rate,2021Q1,98.40%
+Instagram,Violent & Graphic Content,Proactive rate,2021Q2,98.80%
+Instagram,Violent & Graphic Content,Proactive rate,2021Q3,99.30%
+Instagram,Violent & Graphic Content,Proactive rate,2021Q4,98.70%
+Instagram,Violent & Graphic Content,Proactive rate,2022Q1,99.00%
+Facebook,Dangerous Orgs: Terrorism,UBP,2022Q1,0.05%
+Facebook,Regulated Goods: Drugs,UBP,2022Q1,0.05%
+Facebook,Regulated Goods: Firearms,UBP,2022Q1,0.05%
+Facebook,Suicide and Self-Injury,UBP,2022Q1,0.05%
+Instagram,Dangerous Orgs: Terrorism,UBP,2022Q1,0.05%
+Instagram,Regulated Goods: Drugs,UBP,2022Q1,0.05%
+Instagram,Regulated Goods: Firearms,UBP,2022Q1,0.05%
+Instagram,Suicide and Self-Injury,UBP,2022Q1,0.05%
+Facebook,Fake Accounts,Prevalence,2022Q1,5.00%
+Facebook,Adult Nudity & Sexual Activity,Lowerbound Prevalence,2017Q4,0.06%
+Facebook,Adult Nudity & Sexual Activity,Upperbound Prevalence,2017Q4,0.08%
+Facebook,Adult Nudity & Sexual Activity,Lowerbound Prevalence,2018Q1,0.07%
+Facebook,Adult Nudity & Sexual Activity,Upperbound Prevalence,2018Q1,0.09%
+Facebook,Adult Nudity & Sexual Activity,Lowerbound Prevalence,2018Q2,0.08%
+Facebook,Adult Nudity & Sexual Activity,Upperbound Prevalence,2018Q2,0.09%
+Facebook,Adult Nudity & Sexual Activity,Lowerbound Prevalence,2018Q3,0.11%
+Facebook,Adult Nudity & Sexual Activity,Upperbound Prevalence,2018Q3,0.13%
+Facebook,Adult Nudity & Sexual Activity,Lowerbound Prevalence,2018Q4,0.08%
+Facebook,Adult Nudity & Sexual Activity,Upperbound Prevalence,2018Q4,0.10%
+Facebook,Adult Nudity & Sexual Activity,Lowerbound Prevalence,2019Q1,0.12%
+Facebook,Adult Nudity & Sexual Activity,Upperbound Prevalence,2019Q1,0.14%
+Facebook,Adult Nudity & Sexual Activity,Lowerbound Prevalence,2019Q2,0.07%
+Facebook,Adult Nudity & Sexual Activity,Upperbound Prevalence,2019Q2,0.08%
+Facebook,Adult Nudity & Sexual Activity,Lowerbound Prevalence,2019Q3,0.05%
+Facebook,Adult Nudity & Sexual Activity,Upperbound Prevalence,2019Q3,0.06%
+Facebook,Adult Nudity & Sexual Activity,Lowerbound Prevalence,2019Q4,0.04%
+Facebook,Adult Nudity & Sexual Activity,Upperbound Prevalence,2019Q4,0.05%
+Facebook,Adult Nudity & Sexual Activity,Lowerbound Prevalence,2020Q1,0.05%
+Facebook,Adult Nudity & Sexual Activity,Upperbound Prevalence,2020Q1,0.06%
+Facebook,Adult Nudity & Sexual Activity,Lowerbound Prevalence,2020Q2,N/A
+Facebook,Adult Nudity & Sexual Activity,Upperbound Prevalence,2020Q2,N/A
+Facebook,Adult Nudity & Sexual Activity,Lowerbound Prevalence,2020Q3,0.05%
+Facebook,Adult Nudity & Sexual Activity,Upperbound Prevalence,2020Q3,0.06%
+Facebook,Adult Nudity & Sexual Activity,Lowerbound Prevalence,2020Q4,0.03%
+Facebook,Adult Nudity & Sexual Activity,Upperbound Prevalence,2020Q4,0.04%
+Facebook,Adult Nudity & Sexual Activity,Lowerbound Prevalence,2021Q1,0.03%
+Facebook,Adult Nudity & Sexual Activity,Upperbound Prevalence,2021Q1,0.04%
+Facebook,Adult Nudity & Sexual Activity,Lowerbound Prevalence,2021Q2,0.04%
+Facebook,Adult Nudity & Sexual Activity,Upperbound Prevalence,2021Q2,0.04%
+Facebook,Adult Nudity & Sexual Activity,Lowerbound Prevalence,2021Q3,0.02%
+Facebook,Adult Nudity & Sexual Activity,Upperbound Prevalence,2021Q3,0.03%
+Facebook,Adult Nudity & Sexual Activity,Lowerbound Prevalence,2021Q4,0.03%
+Facebook,Adult Nudity & Sexual Activity,Upperbound Prevalence,2021Q4,0.03%
+Facebook,Adult Nudity & Sexual Activity,Lowerbound Prevalence,2022Q1,0.04%
+Facebook,Adult Nudity & Sexual Activity,Upperbound Prevalence,2022Q1,0.04%
+Facebook,Bullying & Harassment,Lowerbound Prevalence,2021Q3,0.14%
+Facebook,Bullying & Harassment,Upperbound Prevalence,2021Q3,0.15%
+Facebook,Bullying & Harassment,Lowerbound Prevalence,2021Q4,0.11%
+Facebook,Bullying & Harassment,Upperbound Prevalence,2021Q4,0.12%
+Facebook,Bullying & Harassment,Lowerbound Prevalence,2022Q1,0.09%
+Facebook,Bullying & Harassment,Upperbound Prevalence,2022Q1,0.09%
+Facebook,Hate Speech,Lowerbound Prevalence,2020Q3,0.10%
+Facebook,Hate Speech,Upperbound Prevalence,2020Q3,0.11%
+Facebook,Hate Speech,Lowerbound Prevalence,2020Q4,0.07%
+Facebook,Hate Speech,Upperbound Prevalence,2020Q4,0.08%
+Facebook,Hate Speech,Lowerbound Prevalence,2021Q1,0.05%
+Facebook,Hate Speech,Upperbound Prevalence,2021Q1,0.06%
+Facebook,Hate Speech,Lowerbound Prevalence,2021Q2,0.05%
+Facebook,Hate Speech,Upperbound Prevalence,2021Q2,0.05%
+Facebook,Hate Speech,Lowerbound Prevalence,2021Q3,0.03%
+Facebook,Hate Speech,Upperbound Prevalence,2021Q3,0.03%
+Facebook,Hate Speech,Lowerbound Prevalence,2021Q4,0.02%
+Facebook,Hate Speech,Upperbound Prevalence,2021Q4,0.03%
+Facebook,Hate Speech,Lowerbound Prevalence,2022Q1,0.02%
+Facebook,Hate Speech,Upperbound Prevalence,2022Q1,0.02%
+Facebook,Violence And Incitement,Lowerbound Prevalence,2021Q3,0.04%
+Facebook,Violence And Incitement,Upperbound Prevalence,2021Q3,0.05%
+Facebook,Violence And Incitement,Lowerbound Prevalence,2021Q4,0.03%
+Facebook,Violence And Incitement,Upperbound Prevalence,2021Q4,0.04%
+Facebook,Violence And Incitement,Lowerbound Prevalence,2022Q1,0.03%
+Facebook,Violence And Incitement,Upperbound Prevalence,2022Q1,0.03%
+Facebook,Violent & Graphic Content,Lowerbound Prevalence,2017Q4,0.16%
+Facebook,Violent & Graphic Content,Upperbound Prevalence,2017Q4,0.19%
+Facebook,Violent & Graphic Content,Lowerbound Prevalence,2018Q1,0.22%
+Facebook,Violent & Graphic Content,Upperbound Prevalence,2018Q1,0.27%
+Facebook,Violent & Graphic Content,Lowerbound Prevalence,2018Q2,0.21%
+Facebook,Violent & Graphic Content,Upperbound Prevalence,2018Q2,0.24%
+Facebook,Violent & Graphic Content,Lowerbound Prevalence,2018Q3,0.23%
+Facebook,Violent & Graphic Content,Upperbound Prevalence,2018Q3,0.27%
+Facebook,Violent & Graphic Content,Lowerbound Prevalence,2018Q4,0.21%
+Facebook,Violent & Graphic Content,Upperbound Prevalence,2018Q4,0.23%
+Facebook,Violent & Graphic Content,Lowerbound Prevalence,2019Q1,0.23%
+Facebook,Violent & Graphic Content,Upperbound Prevalence,2019Q1,0.25%
+Facebook,Violent & Graphic Content,Lowerbound Prevalence,2019Q2,0.21%
+Facebook,Violent & Graphic Content,Upperbound Prevalence,2019Q2,0.22%
+Facebook,Violent & Graphic Content,Lowerbound Prevalence,2019Q3,0.23%
+Facebook,Violent & Graphic Content,Upperbound Prevalence,2019Q3,0.25%
+Facebook,Violent & Graphic Content,Lowerbound Prevalence,2019Q4,0.20%
+Facebook,Violent & Graphic Content,Upperbound Prevalence,2019Q4,0.21%
+Facebook,Violent & Graphic Content,Lowerbound Prevalence,2020Q1,0.07%
+Facebook,Violent & Graphic Content,Upperbound Prevalence,2020Q1,0.08%
+Facebook,Violent & Graphic Content,Lowerbound Prevalence,2020Q2,N/A
+Facebook,Violent & Graphic Content,Upperbound Prevalence,2020Q2,N/A
+Facebook,Violent & Graphic Content,Lowerbound Prevalence,2020Q3,0.07%
+Facebook,Violent & Graphic Content,Upperbound Prevalence,2020Q3,0.07%
+Facebook,Violent & Graphic Content,Lowerbound Prevalence,2020Q4,0.05%
+Facebook,Violent & Graphic Content,Upperbound Prevalence,2020Q4,0.05%
+Facebook,Violent & Graphic Content,Lowerbound Prevalence,2021Q1,0.03%
+Facebook,Violent & Graphic Content,Upperbound Prevalence,2021Q1,0.04%
+Facebook,Violent & Graphic Content,Lowerbound Prevalence,2021Q2,0.03%
+Facebook,Violent & Graphic Content,Upperbound Prevalence,2021Q2,0.04%
+Facebook,Violent & Graphic Content,Lowerbound Prevalence,2021Q3,0.04%
+Facebook,Violent & Graphic Content,Upperbound Prevalence,2021Q3,0.04%
+Facebook,Violent & Graphic Content,Lowerbound Prevalence,2021Q4,0.03%
+Facebook,Violent & Graphic Content,Upperbound Prevalence,2021Q4,0.04%
+Facebook,Violent & Graphic Content,Lowerbound Prevalence,2022Q1,0.03%
+Facebook,Violent & Graphic Content,Upperbound Prevalence,2022Q1,0.04%
+Instagram,Adult Nudity & Sexual Activity,Lowerbound Prevalence,2021Q1,0.03%
+Instagram,Adult Nudity & Sexual Activity,Upperbound Prevalence,2021Q1,0.04%
+Instagram,Adult Nudity & Sexual Activity,Lowerbound Prevalence,2021Q2,0.03%
+Instagram,Adult Nudity & Sexual Activity,Upperbound Prevalence,2021Q2,0.03%
+Instagram,Adult Nudity & Sexual Activity,Lowerbound Prevalence,2021Q3,0.02%
+Instagram,Adult Nudity & Sexual Activity,Upperbound Prevalence,2021Q3,0.03%
+Instagram,Adult Nudity & Sexual Activity,Lowerbound Prevalence,2021Q4,0.02%
+Instagram,Adult Nudity & Sexual Activity,Upperbound Prevalence,2021Q4,0.03%
+Instagram,Adult Nudity & Sexual Activity,Lowerbound Prevalence,2022Q1,0.02%
+Instagram,Adult Nudity & Sexual Activity,Upperbound Prevalence,2022Q1,0.03%
+Instagram,Bullying & Harassment,Lowerbound Prevalence,2021Q3,0.05%
+Instagram,Bullying & Harassment,Upperbound Prevalence,2021Q3,0.06%
+Instagram,Bullying & Harassment,Lowerbound Prevalence,2021Q4,0.05%
+Instagram,Bullying & Harassment,Upperbound Prevalence,2021Q4,0.06%
+Instagram,Bullying & Harassment,Lowerbound Prevalence,2022Q1,0.05%
+Instagram,Bullying & Harassment,Upperbound Prevalence,2022Q1,0.06%
+Instagram,Hate Speech,Lowerbound Prevalence,2021Q3,0.02%
+Instagram,Hate Speech,Upperbound Prevalence,2021Q3,0.02%
+Instagram,Hate Speech,Lowerbound Prevalence,2021Q4,0.02%
+Instagram,Hate Speech,Upperbound Prevalence,2021Q4,0.03%
+Instagram,Hate Speech,Lowerbound Prevalence,2022Q1,0.02%
+Instagram,Hate Speech,Upperbound Prevalence,2022Q1,0.02%
+Instagram,Violence And Incitement,Lowerbound Prevalence,2021Q3,0.02%
+Instagram,Violence And Incitement,Upperbound Prevalence,2021Q3,0.02%
+Instagram,Violence And Incitement,Lowerbound Prevalence,2021Q4,0.01%
+Instagram,Violence And Incitement,Upperbound Prevalence,2021Q4,0.02%
+Instagram,Violence And Incitement,Lowerbound Prevalence,2022Q1,0.01%
+Instagram,Violence And Incitement,Upperbound Prevalence,2022Q1,0.02%
+Instagram,Violent & Graphic Content,Lowerbound Prevalence,2021Q1,0.01%
+Instagram,Violent & Graphic Content,Upperbound Prevalence,2021Q1,0.02%
+Instagram,Violent & Graphic Content,Lowerbound Prevalence,2021Q2,0.01%
+Instagram,Violent & Graphic Content,Upperbound Prevalence,2021Q2,0.01%
+Instagram,Violent & Graphic Content,Lowerbound Prevalence,2021Q3,0.01%
+Instagram,Violent & Graphic Content,Upperbound Prevalence,2021Q3,0.02%
+Instagram,Violent & Graphic Content,Lowerbound Prevalence,2021Q4,0.01%
+Instagram,Violent & Graphic Content,Upperbound Prevalence,2021Q4,0.02%
+Instagram,Violent & Graphic Content,Lowerbound Prevalence,2022Q1,0.01%
+Instagram,Violent & Graphic Content,Upperbound Prevalence,2022Q1,0.02%
