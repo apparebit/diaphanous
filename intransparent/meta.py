@@ -42,8 +42,9 @@ def parse_percents(df: pd.DataFrame) -> pd.Series:
     return df.loc[df['metric'].isin(PERCENT), 'value'].str.rstrip('%').astype('Float64')
 
 
-_Q4_2022 = pd.Period('2022q4')  # Begin
-_Q1_2023 = pd.Period('2023q1')  # End (inclusive)
+Q2_2021 = pd.Period('2021q2')  # Begin
+Q4_2022 = pd.Period('2022q4')
+Q1_2023 = pd.Period('2023q1')  # End (inclusive)
 
 
 def read(path: str | Path, quarter: str | pd.Period) -> pd.DataFrame:
@@ -55,12 +56,12 @@ def read(path: str | Path, quarter: str | pd.Period) -> pd.DataFrame:
     if isinstance(quarter, str):
         quarter = pd.Period(quarter)
 
-    path = Path(path) / f'meta-q{quarter.quarter}-{quarter.year}.csv'
+    path = Path(path) / f'meta-{quarter.year}-q{quarter.quarter}.csv'
     # mypy madness: read_csv's dtype accepts defaultdict but not dict.
     data = pd.read_csv(path, dtype=SCHEMA)
 
     # Quick and dirty mitigation against unusual value "4%-5%":
-    if quarter == _Q4_2022 or quarter == _Q1_2023:
+    if quarter == Q4_2022 or quarter == Q1_2023:
         fake_account_prevalence = (data['policy_area'] == 'Fake Accounts') & (
             data['metric'] == 'Prevalence'
         )
@@ -76,7 +77,9 @@ def read(path: str | Path, quarter: str | pd.Period) -> pd.DataFrame:
 
 
 def read_all(
-    path: str | Path, first: str | pd.Period, last: str | pd.Period
+    path: str | Path,
+    first: str | pd.Period = Q2_2021,
+    last: str | pd.Period = Q1_2023,
 ) -> dict[pd.Period, pd.DataFrame]:
     if isinstance(first, str):
         first = pd.Period(first)
@@ -147,8 +150,38 @@ def diff_all(
     return differences
 
 
-def quarterly_divergent(delta: pd.DataFrame) -> pd.DataFrame:
-    return delta.groupby('period').size().to_frame().rename(columns={0: 'divergent'})
+def age_of_divergence(delta: pd.DataFrame) -> pd.DataFrame:
+    return (
+        delta
+        .groupby('period')
+        .size()
+        .to_frame()
+        .rename(columns={0: 'divergent'})
+    )
+
+
+def rate_of_divergence(
+    disclosures: dict[pd.Period, pd.DataFrame],
+    differences: dict[pd.Period, pd.DataFrame],
+) -> pd.DataFrame:
+    cursor = min(*disclosures.keys())
+    last = max(*disclosures.keys())
+
+    data = []
+    while cursor < last:
+        next_cursor = cursor + 1
+        changed = len(differences[cursor])
+        total = len(disclosures[cursor])
+        cursor = next_cursor
+
+        data.append({
+            'period': next_cursor,
+            'changed': changed,
+            'total': total,
+            'rate_of_divergence': changed / total * 100,
+        })
+
+    return pd.DataFrame(data)
 
 
 def divergent_descriptors(delta: pd.DataFrame) -> str:
@@ -171,4 +204,10 @@ def fraction_of_reports(ncmec: pd.DataFrame) -> pd.DataFrame:
         .rename(columns={0: 'Meta'})
         .assign(Total=ncmec['Total'])
         .assign(**{'Meta Percent': lambda df: df['Meta'] / df['Total'] * 100})
+        .assign(Facebook=ncmec['Facebook'])
+        .assign(Instagram=ncmec['Instagram'])
+        .assign(WhatsApp=ncmec['WhatsApp'])
+        .assign(**{'WhatsApp Share': lambda df: df['WhatsApp'] / df['Meta'] * 100})
     )
+
+
