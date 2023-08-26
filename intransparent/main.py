@@ -5,7 +5,7 @@ import sys
 import traceback
 
 import pandas as pd
-import plotly.io as pio
+import plotly.io as pio  # type: ignore[import]
 
 from intransparent import (
     ingest_reports_per_country,
