@@ -76,9 +76,14 @@
         and
         [2022](https://www.missingkids.org/content/dam/missingkids/pdfs/2022-reports-by-esp.pdf)
 
-  * __`meta-q2-2022.csv`__, __`meta-q3-2022.csv`__, __`meta-q4-2022.csv`__, and
-    __`meta-q1-2023.csv`__: Meta's machine-readable disclosures from Q2 2022 to
-    Q1 2023.
+  * __`meta-2021-q2.csv`__ through __`meta-2023-q1.csv`__: Meta's
+    [machine-readable transparency
+    disclosures](https://transparency.fb.com/sr/community-standards/) from Q2
+    2021 through Q1 2023. Meta does not offer an archive of CSV files. Instead,
+    their website only has a single, unchanging link pointing to the latest
+    file. Files for Q2 2022 through Q1 2023 were downloaded from Meta's website
+    when they were available, earlier files from archive.org based on the
+    unchanging link.
 
   * __`populations`__: Per-country population statistics for 2019–2022 from the
     [United Nations Population
