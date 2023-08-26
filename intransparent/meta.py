@@ -57,7 +57,7 @@ def read(path: str | Path, quarter: str | pd.Period) -> pd.DataFrame:
 
     path = Path(path) / f'meta-q{quarter.quarter}-{quarter.year}.csv'
     # mypy madness: read_csv's dtype accepts defaultdict but not dict.
-    data = pd.read_csv(path, dtype=SCHEMA)  # type: ignore[arg-type]
+    data = pd.read_csv(path, dtype=SCHEMA)
 
     # Quick and dirty mitigation against unusual value "4%-5%":
     if quarter == _Q4_2022 or quarter == _Q1_2023:
