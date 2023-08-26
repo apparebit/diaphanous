@@ -18,6 +18,5 @@
         "Quora",
         "vpython"
     ],
-    "python.defaultInterpreterPath": ".venv/bin/python",
-    "svg.preview.background": "black"
+    "python.defaultInterpreterPath": ".venv/bin/python"
 }
