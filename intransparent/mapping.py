@@ -1,7 +1,11 @@
-from typing import Any
+from enum import StrEnum
+from typing import Any, assert_never
+
+from IPython.display import display, HTML
 import numpy as np
 import pandas as pd
 import plotly.express as px  # type: ignore[import]
+import plotly.io as pio  # type: ignore[import]
 
 
 def create_map(
@@ -162,3 +166,34 @@ def create_map(
 
     return fig
 
+
+class DisplayMethod(StrEnum):
+    # I started exploring alternative display methods when Visual Studio Code
+    # remotely accessing my main machine didn't render Plotly graphs. With
+    # remote access, IO_TO_HTML delivered results whereas FIG_DOT_SHOW did not.
+    # However, when I tried the same on that main machine locally, the exact
+    # opposite was the case, with FIG_DOT_SHOW working and IO_TO_HTML failing.
+    # Fun times!
+
+    FIG_DOT_SHOW = 'FIG_DOT_SHOW'
+    IO_TO_HTML = 'IO_TO_HTML'
+    SVG_FILE = 'SVG_FILE'
+
+    def render(self, fig: Any) -> None:
+        if self == self.FIG_DOT_SHOW:
+            fig.show()
+        elif self == self.IO_TO_HTML:
+            display(HTML(pio.to_html(fig)))
+        elif self == self.SVG_FILE:
+            # So that each rendered figure has its own SVG, we must store the
+            # counter somewhere. Using a global counter, however, is not
+            # thread-safe
+            count = getattr(self, '_count', 0) + 1
+            setattr(self, '_count', count)
+            fig.write_image(f'figure-{count}.svg')
+        else:
+            assert_never(self)
+
+
+def show_map(fig: Any) -> None:
+    DisplayMethod.IO_TO_HTML.render(fig)
