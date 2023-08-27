@@ -12,6 +12,6 @@ from .country import (
     reports_per_capita_country_year,
 )
 
-from .mapping import create_map
+from .mapping import create_map, DisplayMethod, show_map
 
 from .show import show
