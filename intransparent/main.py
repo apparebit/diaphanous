@@ -161,7 +161,7 @@ def meta_disclosures(section: int, disclosures: dict[str, pd.DataFrame]) -> None
 
     ncmec_disclosures = disclosures['NCMEC']
     show(ncmec_disclosures, show_schema=True, caption='NCMEC')
-    meta_reports = meta.fraction_of_reports(ncmec_disclosures)
+    meta_reports = meta.csam_reports(ncmec_disclosures)
     show(meta_reports, caption="Meta's Share of CSAM Reports", margin_bottom=0)
 
     show("""
@@ -206,7 +206,7 @@ def meta_disclosures(section: int, disclosures: dict[str, pd.DataFrame]) -> None
         show(f'<h2>Δ(Q{p2.quarter}-{p2.year} / Q{p1.quarter}-{p1.year})</h2>')
         show(meta.age_of_divergence(delta), margin_bottom=0)
 
-        show(meta.divergent_descriptors(delta))
+        show(meta.descriptors_of_divergence(delta))
 
     show(f'<h2>Quarterly rate of divergence</h2>')
     show(meta.rate_of_divergence(meta_disclosures, meta_differences))
