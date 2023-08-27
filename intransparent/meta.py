@@ -3,7 +3,7 @@ from pathlib import Path
 import pandas as pd
 
 
-# Metrics with integer counts as values.
+# Meta metrics with counts as values.
 COUNT = (
     'Content Actioned',
     'Content Appealed',
@@ -11,7 +11,7 @@ COUNT = (
     'Content Restored without appeal',
 )
 
-# Metrics with percentages as values.
+# Meta metrics with percentages as values. That is meant literally as well.
 PERCENT = (
     'Proactive rate',
     'UBP',
@@ -20,7 +20,7 @@ PERCENT = (
     'Upperbound Prevalence',
 )
 
-# The schema of Meta's transparency disclosures.
+# The schema of Meta's transparency disclosures after parsing into a data frame.
 SCHEMA = {
     'app': 'category',
     'policy_area': 'category',
@@ -30,24 +30,24 @@ SCHEMA = {
 }
 
 
-def parse_counts(df: pd.DataFrame) -> pd.Series:
+def _parse_counts(df: pd.DataFrame) -> pd.Series:
     """Parse all values that are integer counts."""
     return (
         df.loc[df['metric'].isin(COUNT), 'value'].str.replace(',', '').astype('Float64')
     )
 
 
-def parse_percents(df: pd.DataFrame) -> pd.Series:
+def _parse_percents(df: pd.DataFrame) -> pd.Series:
     """Parse all values that are percentages."""
     return df.loc[df['metric'].isin(PERCENT), 'value'].str.rstrip('%').astype('Float64')
 
 
 Q2_2021 = pd.Period('2021q2')  # Begin
-Q4_2022 = pd.Period('2022q4')
+Q4_2022 = pd.Period('2022q4')  # Patch a value
 Q1_2023 = pd.Period('2023q1')  # End (inclusive)
 
 
-def read(path: str | Path, quarter: str | pd.Period) -> pd.DataFrame:
+def _read(path: str | Path, quarter: str | pd.Period) -> pd.DataFrame:
     """
     Read Meta's transparency disclosures for the given quarter. The prevalence
     of fake accounts for Q4 2022 and Q1 2023 is not a percentage but the range
@@ -69,8 +69,8 @@ def read(path: str | Path, quarter: str | pd.Period) -> pd.DataFrame:
         data.loc[fake_account_prevalence, 'value'] = "4.5%"
 
     return (
-        data.assign(count=parse_counts)
-        .assign(percent=parse_percents)
+        data.assign(count=_parse_counts)
+        .assign(percent=_parse_percents)
         .assign(value=lambda df: df['count'].fillna(df['percent']))
         .drop(columns=['count', 'percent'])
     )
@@ -81,6 +81,16 @@ def read_all(
     first: str | pd.Period = Q2_2021,
     last: str | pd.Period = Q1_2023,
 ) -> dict[pd.Period, pd.DataFrame]:
+    """
+    Read Meta's transparency disclosures.
+
+    This function ingests all transparency disclosures between `first` and
+    `last` (inclusive) and returns a `dict` mapping periods to data frames.
+    Meta's CSV files have a straightforward schema with five columns identifying
+    the application, policy area, metric, period, and finally exactly one value.
+    Data frames mirror this simplicity but use Pandas' categories for the first
+    three columns, Pandas' periods for the fourth, and the value as a `float`.
+    """
     if isinstance(first, str):
         first = pd.Period(first)
     if isinstance(last, str):
@@ -90,13 +100,13 @@ def read_all(
 
     cursor = first
     while cursor <= last:
-        disclosures[cursor] = read(path, cursor)
+        disclosures[cursor] = _read(path, cursor)
         cursor += 1
 
     return disclosures
 
 
-def diff(
+def _diff(
     label1: str, data1: pd.DataFrame, label2: str, data2: pd.DataFrame
 ) -> pd.DataFrame:
     """
@@ -117,7 +127,7 @@ def diff(
     )
 
 
-def period2label(period: pd.Period) -> str:
+def _period2label(period: pd.Period) -> str:
     return f'_q{period.quarter}_{period.year}'
 
 
@@ -125,23 +135,33 @@ def diff_all(
     disclosures: dict[pd.Period, pd.DataFrame]
 ) -> dict[pd.Period, pd.DataFrame]:
     """
-    Compute the difference between a period's dataframe and the next period's
-    dataframe, starting with the earliest one. This function assumes that the
-    given disclosures cover a range of consecutive periods.
+    Find all differences in Meta's transparency disclosures between the
+    historical data in one quarter's file and the previous quarter's file.
+
+    Obviously, there is no previous quarter for the first in the dataset and
+    hence no differences can be found.
+
+    This function determines the range of periods, traverses them in order, and
+    computes the difference between the two sets by first performing an inner
+    join and then comparing the values from each of the disclosures. If one of
+    the values is N/A, they are ignored.
+
+    The resulting `dict` maps the *earlier* period to the data frame containing
+    the differences.
     """
     cursor = min(*disclosures.keys())
     last = max(*disclosures.keys())
 
-    label1 = period2label(cursor)
+    label1 = _period2label(cursor)
     data1 = disclosures[cursor]
     differences = {}
 
     while cursor < last:
         next_cursor = cursor + 1
-        label2 = period2label(next_cursor)
+        label2 = _period2label(next_cursor)
         data2 = disclosures[next_cursor]
 
-        differences[cursor] = diff(label1, data1, label2, data2)
+        differences[cursor] = _diff(label1, data1, label2, data2)
 
         cursor = next_cursor
         label1 = label2
@@ -151,6 +171,12 @@ def diff_all(
 
 
 def age_of_divergence(delta: pd.DataFrame) -> pd.DataFrame:
+    """
+    Given a data frame with differences between two disclosures, determine the
+    number of measurements per historical period that are divergent. This
+    function does not create zero entries for periods without such measurements.
+    It returns the result as a data frame.
+    """
     return (
         delta
         .groupby('period')
@@ -164,6 +190,14 @@ def rate_of_divergence(
     disclosures: dict[pd.Period, pd.DataFrame],
     differences: dict[pd.Period, pd.DataFrame],
 ) -> pd.DataFrame:
+    """
+    Given the parsed disclosures dictionary and the computed differences
+    dictionary, determine the rate of divergence for each quarter (but the
+    first). That rate is the number of divergent measurements divided by the
+    number of all measurements included in the earlier period's CSV file. The
+    result is returned in a data frame
+    """
+
     cursor = min(*disclosures.keys())
     last = max(*disclosures.keys())
 
@@ -184,7 +218,11 @@ def rate_of_divergence(
     return pd.DataFrame(data)
 
 
-def divergent_descriptors(delta: pd.DataFrame) -> str:
+def descriptors_of_divergence(delta: pd.DataFrame) -> str:
+    """
+    Format a simple HTML fragment with bulleted lists identifying the policy and
+    metric categories represented in the difference data frame.
+    """
     fragments = [
         f'<p>There are <strong>{len(delta)} divergent values</strong>. '
         'They differ in these policy areas:</p><ul>',
@@ -196,7 +234,16 @@ def divergent_descriptors(delta: pd.DataFrame) -> str:
     return ''.join(fragments)
 
 
-def fraction_of_reports(ncmec: pd.DataFrame) -> pd.DataFrame:
+def csam_reports(ncmec: pd.DataFrame) -> pd.DataFrame:
+    """
+    Extract report counts for Meta, Facebook, Instagram, WhatsApp, and the grand
+    total from the data frame with NCMEC's platform-specific transparency
+    disclosures. Note that NCMEC's reporting frequency is yearly and that
+    brand-specific information becomes available with 2021 only. This function
+    also includes the percentage for Meta's reports compared to the grand total
+    and for WhatsApp compared to all of Meta's reports.
+    """
+
     return (
         ncmec[['Facebook', 'Instagram', 'Meta', 'WhatsApp']]
         .sum(axis=1)
@@ -209,5 +256,3 @@ def fraction_of_reports(ncmec: pd.DataFrame) -> pd.DataFrame:
         .assign(WhatsApp=ncmec['WhatsApp'])
         .assign(**{'WhatsApp Share': lambda df: df['WhatsApp'] / df['Meta'] * 100})
     )
-
-
