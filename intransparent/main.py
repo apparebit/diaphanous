@@ -5,12 +5,12 @@ import sys
 import traceback
 
 import pandas as pd
-import plotly.io as pio  # type: ignore[import]
 
 from intransparent import (
     ingest_reports_per_country,
     reports_per_capita_country_year,
     create_map,
+    show_map,
     REPORTS_PER_PLATFORM,
     ingest_reports_per_platform,
     encode_reports_per_platform,
@@ -125,11 +125,11 @@ def reports_per_country(section: int) -> None:
     )
 
     fig = create_map(map_data, with_panels=False, with_antarctica=True, with_animation=True)
-    show(pio.to_html(fig))
+    show_map(fig)
 
     fig = create_map(map_data, with_panels=True, with_antarctica=True)
     fig.write_image(f'csam-reports-per-capita.svg')
-    show(pio.to_html(fig))
+    show_map(fig)
 
 
 def reports_per_platform(section: int) -> dict[str, pd.DataFrame]:
