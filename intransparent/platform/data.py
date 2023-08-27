@@ -159,6 +159,9 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
         ),
         "rows": (
             # fmt: off
+            {"2022 Q4": (None, 12_733, 1_716_192, 5_292, 24_288, 1_108, 33_228, 5_731, 2_686, 51, 35,9, 4)},
+            {"2022 Q3": (None, 10_772, 687_825, 2_987, 7_318, 633, 21_033, 3_896, 2_053, 61, 29, 6, 3)},
+            {"2022 H2": (27_995, None, None, None, None, None, None, None, None, None, None, None, None)},
             {"2022 Q2": (None, 9_085, 712_295, 2_038, 4_988, 1_162, 37_694, 7_467, 5_971, 61, 30, 6, 2)},
             {"2022 Q1": (None, 2_499, 300_003, 184, 542, 492, 10_743, 2_164, 1_169, 63, 28, 6, 3)},
             {"2022 H1": (4_969, None, None, None, None, None, None, None, None, None, None, None, None)},
@@ -215,6 +218,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
         "nonintegers": ("accounts",),
         "rows": (
             # fmt: off
+            {"2022 H2": (527_787, 204_490, 265_285)},
             {"2022 H1": (746_051, 201_527, 285_470)},
             {"2021 H2": (None, 198_109, None)},
             {"2021 H1": (None, "5.43 / 100 * 2,510,798", None), "redundant": True},
@@ -236,6 +240,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
     "Telegram": None,
     "TikTok": {
         "sources": (
+            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-1/",
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-4/",
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-3/",
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-2/",
@@ -245,26 +250,33 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
         ),
         "comments": (
             "category: minor safety; subcategory: sexual exploitation of minors",
-            "no further data for category vs total numbers for humans vs automation",
+            "category share only being given for human moderation renders data meaningless",
         ),
         "row_index": "period",
         "columns": (
             "pieces (human moderation)",
-            "CSAM share of minor safety (human moderation)",
-            "minor safety share of total",
-            "total videos removed",
+            "category share (human moderation)",
+            "minor safety category share of total",
             "total videos removed (automation)",
+            "total videos removed",
+            "removal rate within 24 hours (human moderation)",
+            "removal rate before any views (human moderation)",
+            "proactive removal rate (human moderation)",
         ),
         "nonintegers": (
-            "CSAM share of minor safety (human moderation)",
-            "minor safety share of total",
+            "category share (human moderation)",
+            "minor safety category share of total",
+            "removal rate within 24 hours (human moderation)",
+            "removal rate before any views (human moderation)",
+            "proactive removal rate (human moderation)",
         ),
         "rows": (
             # fmt: off
-            {"2022 Q4": (415_278, 0.033, 0.333, 85_680_819, 46_836_047)},
-            {"2022 Q3": (792_473, 0.033, 0.429, 110_954_663, 53_287_839)},
-            {"2022 Q2": (None, 0.024, 0.437, 113_809_300, 48_011_571)},
-            {"2022 Q1": (None, 0.019, 0.417, 102_305_516, 34_726_592)},
+            {"2023 Q1": (None, 0.023, 0.306, 53_494_911, 91_003_510, 0.869, 0.784, 0.927)},
+            {"2022 Q4": (415_278, 0.033, 0.333, 46_836_047, 85_680_819, 0.887, 0.821, 0.931)},
+            {"2022 Q3": (792_473, 0.033, 0.429, 53_287_839, 110_954_663, 0.925, 0.883, 0.951,)},
+            {"2022 Q2": (None, 0.024, 0.437, 48_011_571, 113_809_300, 0.907, 0.858, 0.932)},
+            {"2022 Q1": (None, 0.019, 0.417, 34_726_592, 102_305_516, 0.903, 0.825, 0.906)},
             # fmt: on
         ),
     },

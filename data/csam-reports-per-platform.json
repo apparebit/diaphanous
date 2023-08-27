@@ -165,6 +165,9 @@
       "% pins reached >100"
     ],
     "rows": [
+      {"2022 Q4": [null, 12733, 1716192, 5292, 24288, 1108, 33228, 5731, 2686, 51, 35, 9, 4]},
+      {"2022 Q3": [null, 10772, 687825, 2987, 7318, 633, 21033, 3896, 2053, 61, 29, 6, 3]},
+      {"2022 H2": [27995, null, null, null, null, null, null, null, null, null, null, null, null]},
       {"2022 Q2": [null, 9085, 712295, 2038, 4988, 1162, 37694, 7467, 5971, 61, 30, 6, 2]},
       {"2022 Q1": [null, 2499, 300003, 184, 542, 492, 10743, 2164, 1169, 63, 28, 6, 3]},
       {"2022 H1": [4969, null, null, null, null, null, null, null, null, null, null, null, null]},
@@ -228,6 +231,7 @@
       "accounts"
     ],
     "rows": [
+      {"2022 H2": [527787, 204490, 265285]},
       {"2022 H1": [746051, 201527, 285470]},
       {"2021 H2": [null, 198109, null]},
       {"2021 H1": [null, "5.43 / 100 * 2,510,798", null], "redundant": true},
@@ -248,6 +252,7 @@
   "Telegram": null,
   "TikTok": {
     "sources": [
+      "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-1/",
       "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-4/",
       "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-3/",
       "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-2/",
@@ -257,25 +262,32 @@
     ],
     "comments": [
       "category: minor safety; subcategory: sexual exploitation of minors",
-      "no further data for category vs total numbers for humans vs automation"
+      "category share only being given for human moderation renders data meaningless"
     ],
     "row_index": "period",
     "columns": [
       "pieces (human moderation)",
-      "CSAM share of minor safety (human moderation)",
-      "minor safety share of total",
+      "category share (human moderation)",
+      "minor safety category share of total",
+      "total videos removed (automation)",
       "total videos removed",
-      "total videos removed (automation)"
+      "removal rate within 24 hours (human moderation)",
+      "removal rate before any views (human moderation)",
+      "proactive removal rate (human moderation)"
     ],
     "nonintegers": [
-      "CSAM share of minor safety (human moderation)",
-      "minor safety share of total"
+      "category share (human moderation)",
+      "minor safety category share of total",
+      "removal rate within 24 hours (human moderation)",
+      "removal rate before any views (human moderation)",
+      "proactive removal rate (human moderation)"
     ],
     "rows": [
-      {"2022 Q4": [415278, 0.033000, 0.333000, 85680819, 46836047]},
-      {"2022 Q3": [792473, 0.033000, 0.429000, 110954663, 53287839]},
-      {"2022 Q2": [null, 0.024000, 0.437000, 113809300, 48011571]},
-      {"2022 Q1": [null, 0.019000, 0.417000, 102305516, 34726592]}
+      {"2023 Q1": [null, 0.023000, 0.306000, 53494911, 91003510, 0.869000, 0.784000, 0.927000]},
+      {"2022 Q4": [415278, 0.033000, 0.333000, 46836047, 85680819, 0.887000, 0.821000, 0.931000]},
+      {"2022 Q3": [792473, 0.033000, 0.429000, 53287839, 110954663, 0.925000, 0.883000, 0.951000]},
+      {"2022 Q2": [null, 0.024000, 0.437000, 48011571, 113809300, 0.907000, 0.858000, 0.932000]},
+      {"2022 Q1": [null, 0.019000, 0.417000, 34726592, 102305516, 0.903000, 0.825000, 0.906000]}
     ]
   },
   "Tumblr": {
