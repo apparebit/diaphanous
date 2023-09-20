@@ -14,4 +14,4 @@ from .country import (
 
 from .mapping import create_map, DisplayMethod, show_map
 
-from .show import show
+from .show import show, to_schema
