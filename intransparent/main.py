@@ -18,6 +18,7 @@ from intransparent import (
     without_populations,
     YEAR_LABELS,
     show,
+    to_schema,
 )
 
 import intransparent.meta as meta
@@ -219,9 +220,32 @@ def meta_disclosures(section: int, disclosures: dict[str, pd.DataFrame]) -> None
 
 # ======================================================================================
 
+def logger(df: pd.DataFrame, caption: None | str = None) -> None:
+    if caption is not None:
+        title = f'Table "{caption}"'
+        print(title)
+        print(f'{"-" * len(title)}\n')
+        print(to_schema(df).to_string())
+        print('\n')
+
 def _main(args: Sequence[str]) -> int:
     # Export platform data
-    print('Exporting platform data to "data/csam-reports-per-platform.json"...')
+    print('1. Exporting "data/csam-reports-per-year-country-capita"\n')
+    country_data = ingest_reports_per_country('./data', logger=logger)
+    country_data.reports_per_capita.reset_index().to_csv(
+        'data/csam-reports-per-year-country-capita.csv',
+        index=False,
+        columns=[
+            'year', 'iso2', 'iso3', 'country',
+            'reports', 'reports_pct',
+            'population', 'population_pct',
+            'reports_per_capita',
+            'region', 'superregion', 'continent',
+            'arab_league',
+        ],
+    )
+
+    print('2. Exporting "data/csam-reports-per-platform.json"')
     json_path = Path('data/csam-reports-per-platform.json')
     tmp_path = json_path.with_suffix('.tmp.json')
     with open(tmp_path, mode='w', encoding='utf') as file:
