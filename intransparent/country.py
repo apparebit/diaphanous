@@ -256,7 +256,7 @@ def summarize_arab_league(frame: pd.DataFrame) -> pd.DataFrame:
             'population': population,
             'population_pct': year_in_league['population_pct'].sum(),
             'country': 'Arab League',
-            'iso2': '',
+            'iso2': '\u262A',
             'region': None,
             'superregion': None,
             'continent': None,
