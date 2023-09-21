@@ -10,6 +10,10 @@ import plotly.io as pio  # type: ignore[import]
 
 def create_map(
     frame: pd.DataFrame,
+    # 0 disables discretization, a positive number results in as many quantiles,
+    # a negative number results in as many equal-sized intervals as its
+    # magnitude. Clever.
+    discretization: int = 0,
     with_panels: bool = True,
     with_equal_earth: bool = True,
     with_animation: bool = False,  # Forced to False if with_panels
@@ -21,13 +25,36 @@ def create_map(
     if with_equal_earth:
         with_antarctica = True
 
+    # -------------------- Discretization
+    # Prepare reports_per_capita:
+    if discretization == 0:
+        color_column = 'reports_per_capita'
+        color_range = (0, 0.042)  # Extra 0.002 to offset top tick from label
+    else:
+        bins = abs(int(discretization))
+        color_column = 'color_data'
+        color_range = (0, abs(bins))
+        if discretization < 0:
+            color_data = pd.cut(
+                frame['reports_per_capita'],
+                bins=bins,
+                labels=False,
+            )
+        else:
+            color_data = pd.qcut(
+                frame['reports_per_capita'],
+                q=bins,
+                labels=False,
+            )
+        frame[color_column] = color_data
+
     # -------------------- Collect arguments for choropleth constructor
     kwargs = dict(
         title='CSAM Reports per Capita and Country',
         locations='iso3',
-        color='reports_per_capita',
+        color=color_column,
         color_continuous_scale=px.colors.sequential.Plasma_r,
-        range_color=(0, 0.042), # Extra 0.002 helps offset ticks from label
+        range_color=color_range,
         #hover_name='labels',
         #hover_data={'iso3': False, 'reports_per_capita': False, 'year': False},
         labels={'reports_per_capita': 'Reports<br>per Capita'},

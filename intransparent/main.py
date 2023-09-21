@@ -128,7 +128,12 @@ def reports_per_country(section: int) -> None:
     fig = create_map(map_data, with_panels=False, with_antarctica=True, with_animation=True)
     show_map(fig)
 
-    fig = create_map(map_data, with_panels=True, with_antarctica=True)
+    fig = create_map(
+        map_data,
+        discretization=0,
+        with_panels=True,
+        with_antarctica=True,
+    )
     fig.write_image(f'csam-reports-per-capita.svg')
     show_map(fig)
 
