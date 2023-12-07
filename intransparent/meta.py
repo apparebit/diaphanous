@@ -41,10 +41,9 @@ def _parse_percents(df: pd.DataFrame) -> pd.Series:
     """Parse all values that are percentages."""
     return df.loc[df['metric'].isin(PERCENT), 'value'].str.rstrip('%').astype('Float64')
 
-
-Q2_2021 = pd.Period('2021q2')  # Begin
-Q4_2022 = pd.Period('2022q4')  # Patch a value
-Q1_2023 = pd.Period('2023q1')  # End (inclusive)
+FIRST_REPORT_PERIOD = pd.Period('2021q2')
+LATEST_REPORT_PERIOD = pd.Period('2023q3')
+PATCH_REPORT_START = pd.Period('2022q4')
 
 
 def _read(path: str | Path, quarter: str | pd.Period) -> pd.DataFrame:
@@ -61,7 +60,7 @@ def _read(path: str | Path, quarter: str | pd.Period) -> pd.DataFrame:
     data = pd.read_csv(path, dtype=SCHEMA)
 
     # Quick and dirty mitigation against unusual value "4%-5%":
-    if quarter == Q4_2022 or quarter == Q1_2023:
+    if quarter >= PATCH_REPORT_START:
         fake_account_prevalence = (data['policy_area'] == 'Fake Accounts') & (
             data['metric'] == 'Prevalence'
         )
@@ -78,8 +77,8 @@ def _read(path: str | Path, quarter: str | pd.Period) -> pd.DataFrame:
 
 def read_all(
     path: str | Path,
-    first: str | pd.Period = Q2_2021,
-    last: str | pd.Period = Q1_2023,
+    first: str | pd.Period = FIRST_REPORT_PERIOD,
+    last: str | pd.Period = LATEST_REPORT_PERIOD,
 ) -> dict[pd.Period, pd.DataFrame]:
     """
     Read Meta's transparency disclosures.
