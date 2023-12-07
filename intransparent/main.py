@@ -25,6 +25,23 @@ import intransparent.meta as meta
 
 # ======================================================================================
 
+def just_map() -> None:
+    country_data = ingest_reports_per_country('./data')
+    map_data = country_data.reports_per_capita.reset_index()
+    map_data['labels'] = (
+        map_data['country'].astype(str) + ':<br>' +
+        map_data['reports_per_capita'].apply(lambda v: f'{v:.5f}') + ' (' +
+        map_data['year'].astype(str) + ')'
+    )
+    fig = create_map(
+        map_data,
+        discretization=0,
+        with_panels=True,
+        with_antarctica=True,
+    )
+    fig.write_image(f'csam-reports-per-capita.svg')
+
+
 def reports_per_country(section: int) -> None:
     show(f'<h1>{section}. CSAM Reports per Country</h1>')
     show(f'<h2>{section}.1 The Raw Data</h2>')
@@ -62,7 +79,7 @@ def reports_per_country(section: int) -> None:
     show(rpc_range, caption='Range of Reports per Capita', margin_bottom=0)
 
     for year, year_data in reports_per_capita_country_year(country_data):
-        top = year_data.head(30 if year == '2022' else 21)
+        top = year_data.head(30)
         rank = top.index[top['iso3'] == '\u262a'][0]
         show(
             top,
@@ -234,6 +251,10 @@ def logger(df: pd.DataFrame, caption: None | str = None) -> None:
         print('\n')
 
 def _main(args: Sequence[str]) -> int:
+    if 'map' in args:
+        just_map()
+        return 0
+
     # Export platform data
     print('1. Exporting "data/csam-reports-per-year-country-capita"\n')
     country_data = ingest_reports_per_country('./data', logger=logger)

@@ -50,10 +50,10 @@ def create_map(
 
     # -------------------- Collect arguments for choropleth constructor
     kwargs = dict(
-        title='CSAM Reports per Capita and Country',
+        #title='<b>CSAM Reports per Capita, Country, Year</b>',
         locations='iso3',
         color=color_column,
-        color_continuous_scale=px.colors.sequential.Plasma_r,
+        color_continuous_scale=px.colors.sequential.Hot_r, # Plasma_r,
         range_color=color_range,
         #hover_name='labels',
         #hover_data={'iso3': False, 'reports_per_capita': False, 'year': False},
@@ -108,16 +108,17 @@ def create_map(
 
     if with_panels:
         fig.update_layout(
-            margin=dict(t=30, r=10, b=10, l=10),
+            margin=dict(t=54, r=10, b=10, l=10),
             width=640,
             height=1100 if with_antarctica else 960,
             coloraxis_colorbar_len=0.3,
             title=dict(
-                font_size=20,
-                x=0,
-                xanchor='left',
-                xref='paper',
-                yanchor='middle',
+                text='<i>CSAM Reports per Capita, Country, and Year</i>',
+                font_size=22,
+                # x=0.5,
+                # xanchor='center',
+                # xref='paper',
+                # pad=dict(t=20, b=20),
             ),
             #coloraxis_showscale=False,
         )
@@ -169,9 +170,11 @@ def create_map(
             year = a.text.split('=')[-1]
             domain = fig.layout[trace_by_year[year]].domain
 
-            y = domain.y[0] + 0.01
+            y = domain.y[0]
             if with_antarctica and not with_equal_earth:
                 y += 0.005
+            else:
+                pass
 
             a.update(
                 text=year,
