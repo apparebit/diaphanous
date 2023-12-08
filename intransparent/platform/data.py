@@ -1,13 +1,18 @@
+import pathlib
+import tomllib
+
 from .type import DisclosureCollectionType
+
+with open(pathlib.Path(__file__).parents[2] / "pyproject.toml", "rb") as file:
+    version = tomllib.load(file)["project"]["version"]
 
 REPORTS_PER_PLATFORM: DisclosureCollectionType = {
     "@": {
         # ──────────────────────────────────────────────────────────────
         "author": "Robert Grimm",
         "title": "Social Media CSAM Disclosures",
-        "version": "1.0",
-        "date": "2023-05-28",
         "url": "https://github.com/apparebit/intransparent",
+        "version": version,
         # ──────────────────────────────────────────────────────────────
     },
     "Automattic": {
