@@ -106,7 +106,7 @@ per country CSAM reports:
 ![CSAM reports per capita per country per year](csam-reports-per-capita.svg)
 
 
-## Dataset #3: Meta's Quarterly Transparency Data
+## Dataset 3: Meta's Quarterly Transparency Data
 
 Meta's quarterly transparency disclosures include a CSV file with data for the
 current and all previous quarters in machine-readable form. Presumably, for just
@@ -115,4 +115,5 @@ released CSV files. This dataset collects the quarterly CSV files from Q2 2021
 onward. Files prior to Q2 2022 were retrieved from archive.org's snapshots for
 the [unchanging URL](https://transparency.fb.com/sr/community-standards/) for
 the data and files for that and later quarters were manually downloaded from the
-URL.
+URL. The files are included because a small but significant number of historical
+quantities changed every quarter until 2023.
