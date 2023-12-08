@@ -20,8 +20,8 @@ the main dataset provided by this repository. It collects:
   * corresponding disclosures about platforms' reporting by NCMEC.
 
 The above linked JSON format is [automatically
-generated](intransparent/by_platform.py/export.py) from a [Python
-module](intransparent/by_platform/data.py). Both formats have the same structure
+generated](intransparent/platform/export.py) from a [Python
+module](intransparent/platform/data.py). Both formats have the same structure
 and contain the same information.
 
 The dataset incorporates information about these platforms:
@@ -103,7 +103,8 @@ geometries, and region/continent information. It leverages the following data:
 The following choropleths using the Equal Earth projection visualize normalized
 per country CSAM reports:
 
-![CSAM reports per capita per country per year](csam-reports-per-capita.svg)
+![CSAM reports per capita per country per
+year](https://raw.githubusercontent.com/apparebit/intransparent/boss/csam-reports-per-capita.svg)
 
 
 ## Dataset 3: Meta's Quarterly Transparency Data
