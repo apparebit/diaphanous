@@ -7,7 +7,7 @@ name = "intransparent"
 version = "1.0"
 description = "CSAM reporting by social media and NCMEC"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 license = {text = "Apache 2.0"}
 authors = [{name = "Robert Grimm", email = "rgrimm@alum.mit.edu"}]
 classifiers = [
@@ -19,7 +19,6 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Topic :: Internet",
