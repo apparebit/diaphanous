@@ -4,7 +4,6 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "intransparent"
-version = "1.0"
 description = "CSAM reporting by social media and NCMEC"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -35,6 +34,8 @@ dependencies = [
     "kaleido",    # 0.2.1   -- required for exporting images from Plotly
     "matplotlib", # 3.7.1   -- required for background gradient in table
 ]
+
+dynamic = ["version"]
 
 [project.optional-dependencies]
 

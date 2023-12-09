@@ -1,5 +1,6 @@
 # You are not drunk. Python is.
 __all__ = (
+    '__version__',
     'REPORTS_PER_PLATFORM',
     'ingest_reports_per_platform',
     'encode_reports_per_platform',
@@ -14,6 +15,8 @@ __all__ = (
     'show',
     'to_schema',
 )
+
+__version__ = "1.0b1"
 
 # Handle Dataset 1: CSAM Reports per Platform
 from .platform.data import REPORTS_PER_PLATFORM
