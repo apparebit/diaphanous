@@ -235,23 +235,20 @@ def descriptors_of_divergence(delta: pd.DataFrame) -> str:
 
 def csam_reports(ncmec: pd.DataFrame) -> pd.DataFrame:
     """
-    Extract report counts for Meta, Facebook, Instagram, WhatsApp, and the grand
-    total from the data frame with NCMEC's platform-specific transparency
-    disclosures. Note that NCMEC's reporting frequency is yearly and that
-    brand-specific information becomes available with 2021 only. This function
-    also includes the percentage for Meta's reports compared to the grand total
-    and for WhatsApp compared to all of Meta's reports.
+    Extract the report counts for Meta and its brands from NCMEC's disclosures
+    and enrich with percentage shares for Meta vs Total as well as WhatsApp vs
+    Meta.
     """
 
+    meta = ncmec[['Facebook', 'Instagram', 'Meta', 'WhatsApp']].sum(axis=1)
     return (
-        ncmec[['Facebook', 'Instagram', 'Meta', 'WhatsApp']]
-        .sum(axis=1)
+        ncmec['Total']
         .to_frame()
-        .rename(columns={0: 'Meta'})
-        .assign(Total=ncmec['Total'])
-        .assign(**{'Meta Percent': lambda df: df['Meta'] / df['Total'] * 100})
+        .rename(columns={0: 'Total'})
+        .assign(**{'%': lambda df: meta / df['Total'] * 100})
+        .assign(Meta=meta)
         .assign(Facebook=ncmec['Facebook'])
         .assign(Instagram=ncmec['Instagram'])
         .assign(WhatsApp=ncmec['WhatsApp'])
-        .assign(**{'WhatsApp Share': lambda df: df['WhatsApp'] / df['Meta'] * 100})
+        .assign(**{'% Meta': lambda df: df['WhatsApp'] / df['Meta'] * 100})
     )
