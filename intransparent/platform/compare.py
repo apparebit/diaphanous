@@ -1,52 +1,35 @@
 import pandas as pd
 
 
+def _components(p: pd.Period) -> tuple[pd.Period, int, int]:
+    return pd.Period(p.year, freq='Y'), p.start_time.month, p.end_time.month
+
+
 def _annualize(df: pd.DataFrame) -> pd.DataFrame:
     """
     Downsample the given dataframe, which must have a period index, to yearly
-    periods by summing up all data for a given year.
+    periods by summing up the columns for each year. The period index must cover
+    a continuous time period without redundant entries.
     """
-    # Pandas' resample() only handles dataframes with uniform periods.
-    # Converting to timestamps, resampling, and converting back to periods is
-    # exceedingly brittle. Since we are downsampling anyways, forcing every
-    # sample into the desired period is straight-forward (even if it requires an
-    # explicit lambda application) and works.
-    has_redundant = 'redundant' in df.columns
+    # When periods are uniform, Pandas uses PeriodIndex as index and
+    # downsampling is as easy as df.groupby(df.index.year). For our non-uniform
+    # index, we need to manually extract the year first. Furthermore, to ensure
+    # that we only include full years in the result, we check the minimum start
+    # month and maximum end month for each year. This does assume that the
+    # period index is continuous (but not uniform).
 
-    df = df[~df['redundant']] if has_redundant else df.copy()
-    df.index = df.index.map(lambda p: pd.Period(p.start_time.year, freq="Y"))
-    df.index.name = 'year'
-    result = df.groupby(df.index).sum(min_count=1).sort_index()
-    return result.drop(['redundant'], axis=1) if has_redundant else result
-
-
-def _combine(
-    disclosures: dict[str, pd.DataFrame], target: str, *sources: str
-) -> dict[str, pd.DataFrame]:
-    """
-    Compute a new version of the disclosures that has the same entries as the
-    given one but without the source platforms and with the target platform as
-    the sum of the source and target platforms. The target platform need not
-    exist originally. All source and target platform tables should have the same
-    columns and row index.
-    """
-    combined = disclosures.get(target)
-    new_disclosures = {}
-
-    for platform, table in disclosures.items():
-        if platform == target:
-            pass
-        elif platform in sources:
-            if combined is None:
-                combined = table
-            else:
-                combined += table
-        else:
-            new_disclosures[platform] = table
-
-    assert combined is not None
-    new_disclosures[target] = combined
-    return new_disclosures
+    aux = pd.DataFrame.from_records(
+        [_components(p) for p in df.index],
+        index=df.index,
+        columns=['year', 'start_month', 'end_month'],
+    )
+    yearly = pd.concat([df, aux], axis=1).groupby('year')
+    return (
+        yearly
+        .sum(min_count=1)
+        [(yearly['start_month'].min() == 1) & (yearly['end_month'].max() == 12)]
+        .drop(columns=['start_month', 'end_month'])
+    )
 
 
 def compare_platform_reports(
@@ -59,24 +42,23 @@ def compare_platform_reports(
     if platform not in NCMEC.columns:
         raise ValueError(f"{platform} does not appear in NCMEC's disclosures")
 
-    table = _annualize(table)
-    if "pieces" in table.columns:
-        comparison = table["pieces"].to_frame()
-        comparison["reports"] = sender = table["reports"]
-    else:
-        sender = table["reports"]
-        comparison = sender.to_frame()
+    if "redundant" in table.columns:
+        table = table[~table["redundant"]]
 
-    receiver = NCMEC[platform]
-    comparison["Δ%"] = (receiver - sender) / sender * 100
-    comparison["NCMEC"] = receiver
+    selection = ["pieces", "reports"] if "pieces" in table.columns else ["reports"]
+    comparison = _annualize(table[selection])
+
+    sent = comparison["reports"]
+    received = NCMEC[platform]
+    comparison["Δ%"] = (received - sent) / sent * 100
+    comparison["NCMEC"] = received
+
     return comparison
 
 
 def compare_all_platform_reports(
     disclosures: dict[str, pd.DataFrame]
 ) -> dict[str, pd.DataFrame]:
-    disclosures = _combine(disclosures, "Google/YouTube", "Google", "YouTube")
     NCMEC = disclosures["NCMEC"]
     comparisons = {}
 
