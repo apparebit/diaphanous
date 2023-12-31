@@ -75,8 +75,7 @@ def _ingest_number(
 # Rows
 
 
-def _is_redundant(row: RowType) -> bool:
-    return row.get("redundant") is True
+_REDUNDANT = frozenset({"redundant"})
 
 
 def _ingest_row(
@@ -86,29 +85,24 @@ def _ingest_row(
     ingest_index: Callable[[str, str], str | pd.Period],
     include_redundant: bool = False,
 ) -> None | tuple[str | pd.Period, list[None | int | float]]:
-    if len(row) == 2 and "redundant" in row:
-        if not include_redundant and row["redundant"]:
-            return None
-    elif len(row) != 1:
-        raise ValueError(f'{platform}\'s row "{row}" should have exactly one entry')
+    keys = row.keys() - _REDUNDANT
+    if len(keys) != 1:
+        raise ValueError(f'{platform}\'s row "{row}" does not have expected entries')
+    if (is_redundant := row.get("redundant") is True) and not include_redundant:
+        return None
 
-    for index, numbers in row.items():
-        if index == "redundant":
-            continue
+    (index,) = keys
+    numbers = cast(list[CellType], row[index])
+    if len(numbers) != width:
+        raise ValueError(
+            f"{platform}'s row has {len(numbers)} elements instead of {width}"
+        )
 
-        numbers = cast(list[CellType], numbers)
-        if len(numbers) != width:
-            raise ValueError(
-                f"{platform}'s row has {len(numbers)} elements instead of {width}"
-            )
-
-        row_index = ingest_index(platform, index)
-        row_data = [_ingest_number(platform, num) for num in numbers]
-        if include_redundant:
-            return (row_index, [*row_data, _is_redundant(row)])
-        return (row_index, row_data)
-
-    assert False, "unreachable statement"
+    row_index = ingest_index(platform, index)
+    row_data = [_ingest_number(platform, num) for num in numbers]
+    if include_redundant:
+        return (row_index, [*row_data, is_redundant])
+    return (row_index, row_data)
 
 
 def _ingest_table(
@@ -149,7 +143,36 @@ def _ingest_table(
     return pd.DataFrame(plain_rows, index=index, columns=columns).astype(schema)
 
 
-_TABLE_FIELD = set(["row_index", "columns", "rows", "nonintegers"])
+def _combine_tables(
+    disclosures: dict[str, pd.DataFrame], target: str, *sources: str
+) -> dict[str, pd.DataFrame]:
+    """
+    Compute a new version of the disclosures that has the same entries as the
+    given one but without the source platforms and with the target platform as
+    the sum of the source and target platforms. The target platform need not
+    exist originally. All source and target platform tables should have the same
+    columns and row index.
+    """
+    combined = disclosures.get(target)
+    new_disclosures = {}
+
+    for platform, table in disclosures.items():
+        if platform == target:
+            pass
+        elif platform in sources:
+            if combined is None:
+                combined = table
+            else:
+                combined += table
+        else:
+            new_disclosures[platform] = table
+
+    assert combined is not None
+    new_disclosures[target] = combined
+    return new_disclosures
+
+
+_TABLE_FIELDS = frozenset(["row_index", "columns", "rows", "nonintegers"])
 
 
 def ingest_reports_per_platform(
@@ -173,16 +196,13 @@ def ingest_reports_per_platform(
 
         # Check that disclosure record has either no or all required table properties.
         record = cast(DisclosureType, record)
-        missing = []
-        for field in _TABLE_FIELD:
-            if field not in record:
-                missing.append(field)
 
-        if len(missing) == len(_TABLE_FIELD):
+        missing = _TABLE_FIELDS - record.keys()
+        if missing == _TABLE_FIELDS:
             logger("Skipping {}: no CSAM data", platform)
             continue
-        if len(missing) > 1 or (len(missing) == 1 and missing[0] != "nonintegers"):
-            s = ", ".join(set(missing) - set(["noninteger"]))
+        if len(missing) > 0 and missing != {"nonintegers"}:
+            s = ", ".join(set(missing) - set(["nonintegers"]))
             raise ValueError(f"{platform}'s disclosure record lacks field(s) {s}")
 
         # Ingest table with platform's CSAM disclosures.
@@ -198,4 +218,25 @@ def ingest_reports_per_platform(
             table = table.sort_index()
         disclosures[platform] = table
 
-    return disclosures
+    return _combine_tables(disclosures, "Google/YouTube", "Google", "YouTube")
+
+
+_AUTO_BRANDS = ('Tumblr', 'Wordpress')
+_META_BRANDS = ('Facebook', 'Instagram', 'WhatsApp')
+
+
+def reshape_reports_per_platform(
+    disclosures: dict[str, pd.DataFrame]
+) -> pd.DataFrame:
+    return (
+        disclosures["NCMEC"]
+        .fillna(0)
+        .assign(Automattic=lambda df: df[['Automattic', *_AUTO_BRANDS]].sum(axis=1))
+        .assign(Meta=lambda df: df[['Meta', *_META_BRANDS]].sum(axis=1))
+        .drop(columns=[*_AUTO_BRANDS, *_META_BRANDS])
+        .transpose()
+        .melt(var_name='year', value_name='reports', ignore_index=False)
+        .assign(year=lambda df: df['year'].dt.year)
+        .astype({'reports': 'int64'})
+        .sort_values('reports', ascending=False)
+    )
