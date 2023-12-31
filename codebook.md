@@ -14,12 +14,13 @@ comments, i.e., lines starting with `#`, and utilizes trailing commas as much as
 possible. Finally, its indentation takes up four characters per level instead of
 only two for JSON.
 
-The Python format started out using lists, too. But a bug during ingestion
-modified the `REPORTS_PER_PLATFORM` data in place, making it impossible to run
-ingestion more than once. To reduce such bugs, I switched to using tuples.
-Unfortunately, Python still doesn't support an immutable dictionary within the
-standard library. (`MappingProxy` does protect against mutation but requires
-explicitly wrapping every `dict` value, which isn't very ergonomic.)
+The Python format started out using lists, too. But a (now fixed) bug during
+ingestion modified the `REPORTS_PER_PLATFORM` data in place, making it
+impossible to run ingestion more than once. To prevent similar bugs, I switched
+to using tuples. Unfortunately, Python still doesn't support an immutable
+dictionary within the standard library. (`MappingProxy` does protect against
+mutation but requires explicitly wrapping every `dict` value, which isn't very
+ergonomic.)
 
 
 ## 1. The Disclosure Collection
@@ -41,10 +42,8 @@ platform for the purposes of the dataset.
 ## 2. Citation Record
 
 The one exception is the `@` property. Its value is an object with metadata
-about the dataset itself. That includes `author`, `title`, `version`, `date`,
-`doi`, and `url`. The version number comprises a major and minor version
-separated by a dot. The date lists the year, month, and day in that order
-separated by a dash; single-digit months and days are zero-padded.
+about the dataset itself. That includes `author`, `title`, `version`, and `url`.
+The version number comprises a major and minor version separated by a dot.
 
 Where the Python version uses comments, the JSON version of the citation record
 also includes the `!` and `|` properties for visually highlighting the record
@@ -61,7 +60,7 @@ transparency disclosures.
 ### 3.1 Model: Arbitrary Quantities by Time Periods
 
 Most importantly, it may contain a platform's quantitative CSAM disclosures in a
-table with labelled columns and labelled rows.
+table with labeled columns and labeled rows.
 
 One of the table's dimensions are **time periods**. Individual periods may have
 different lengths, be repeated, or overlap with others. Valid period durations

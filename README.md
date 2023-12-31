@@ -3,15 +3,26 @@
 This repository curates transparency data published by social media firms, with
 a focus on child sexual abuse material (CSAM), and the code to analyze that same
 data, with a focus on assessing its quality. The focus on CSAM is not arbitrary:
-All US-based social media firms are [legally
-required](https://www.law.cornell.edu/uscode/text/18/2258A) to report such
-material to the National Center for Missing and Exploited Children (NCMEC),
-which serves as clearing house and intermediary to law enforcement. That raises
+As "electronic communication service providers," all US-based social media firms
+are [legally required](https://www.law.cornell.edu/uscode/text/18/2258A) to
+report such material to the National Center for Missing and Exploited Children
+(NCMEC). The Center receives reports through its CyberTipline, triages them, and
+then routes them to appropriate national and international law enforcement
+agencies. Similar to social media companies, NCMEC started making transparency
+disclosures has startThat raises
 the possibility of validating social media firms' transparency disclosures by
 comparing them to those made by NCMEC.
 
 
-## Dataset 1: CSAM Reports per Platform
+## Dataset 1: CSAM Reports per Year (1998 onward)
+
+The [CSAM reports per year](data/csam-reports-per-year.csv) dataset captures the
+number of reports NCMEC received on its CyberTipline since inception in March
+1998, as disclosed in Appendix A of its [CY 2022 Report to the Committees on
+Appropriations](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf).
+
+
+## Dataset 2: CSAM Reports per Platform (2019 onward)
 
 The [CSAM reports per platform](data/csam-reports-per-platform.json) dataset is
 the main dataset provided by this repository. It collects:
@@ -41,12 +52,12 @@ The dataset incorporates information about these platforms:
   * Wordpress
   * YouTube
 
-It also incorporates information about the following companies (with each
-operating at least one of the above platforms):
+It also incorporates information about the following companies operating one or
+more of the above platforms:
 
-  * Automattic
-  * Meta
-  * Google
+  * Automattic (Tumblr and Wordpress)
+  * Meta (Facebook, Instagram, WhatsApp)
+  * Google (YouTube)
 
 A separate [codebook](codebook.md) documents the JSON and Python formats.
 Basically, they consist of a top-level object that maps organization names to an
@@ -73,7 +84,7 @@ collects all of a platform's quantitative disclosures within one table:
     under *accounts*. However, temporarily impacted registrations are not.
 
 
-## Dataset 2: CSAM Reports per Country
+## Dataset 3: CSAM Reports per Country (2019 onward)
 
 [CSAM reports per country](data/csam-reports-per-country.csv) collects NCMEC's
 per-country breakdown of CSAM reports for
@@ -82,12 +93,26 @@ per-country breakdown of CSAM reports for
 [2021](https://www.missingkids.org/content/dam/missingkids/pdfs/2021-reports-by-country.pdf),
 and
 [2022](https://www.missingkids.org/content/dam/missingkids/pdfs/2022-reports-by-country.pdf)
-together in machine-readable form. The corresponding table is straightforward.
-Its six columns comprise the country name, the ISO three-letter code, as well as
-the numbers of reports for the country in 2019, 2020, 2021, and 2022, with
-exactly one quantity per country per year.
+in machine-readable form. The CSV table is mostly straightforward: Its first two
+columns comprise the country name and ISO three-letter code, followed by a
+column per year from 2019 through 2022. Still, a couple of details are
+noteworthy:
 
-The supporting Python package includes [code that
+  * When a country does not appear in NCMEC's report for the year, the
+    corresponding entry is empty not zero.
+  * When the count is larger than 999, the corresponding entry uses commas as
+    thousand separators and hence is double-quoted.
+  * To preserve all information from NCMEC's disclosures, the table includes
+    rows for the Netherlands Antilles (ANT), "Europe" (EEE), and "No Country
+    Listed" (*no code*). NCMEC does not explain its inclusion of Europe in
+    addition to individual European countries nor the Netherlands Antilles in
+    addition to its 2010 successors Bonaire, Sint Eustatius, and Saba (BES),
+    Curaçao (CUW), and Sint Maarten (SXM).
+  * For the same reason, the table includes a row for Bouvet Island (BVT) even
+    though the subantarctic dependency of Norway is an uninhabited nature
+    reserve.
+
+This repository's Python package includes [code that
 enriches](intransparent/country.py) this dataset with population counts,
 geometries, and region/continent information. It leverages the following data:
 
@@ -107,7 +132,7 @@ per country CSAM reports:
 year](https://raw.githubusercontent.com/apparebit/intransparent/boss/csam-reports-per-capita.svg)
 
 
-## Dataset 3: Meta's Quarterly Transparency Data
+## Dataset 4: Meta's Quarterly Transparency Data (Q1 2021 onward)
 
 Meta's quarterly transparency disclosures include a CSV file with data for the
 current and all previous quarters in machine-readable form. Presumably, for just
