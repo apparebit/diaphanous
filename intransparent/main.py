@@ -13,6 +13,7 @@ from intransparent import (
     show_map,
     REPORTS_PER_PLATFORM,
     ingest_reports_per_platform,
+    reshape_reports_per_platform,
     encode_reports_per_platform,
     compare_all_platform_reports,
     without_populations,
@@ -43,8 +44,8 @@ def just_map() -> None:
 
 
 def reports_per_country(section: int) -> None:
-    show(f'<h1>{section}. CSAM Reports per Country</h1>')
-    show(f'<h2>{section}.1 The Raw Data</h2>')
+    show(f'<h1>{section}.  CSAM Reports per Country</h1>')
+    show(f'<h2>{section}.1 Data Schemas</h2>')
 
     logger = partial(show, show_schema=True, margin_bottom=2)
     country_data = ingest_reports_per_country('./data', logger=logger)
@@ -101,33 +102,20 @@ def reports_per_country(section: int) -> None:
         """)
 
     show("""
-        <p>Both Libya and the United Arab Emirates each rank first for two of
-        four years. The two countries differ significantly in wealth and
-        political stability, suggesting that neither is a primary causal factor.
-        They both also are members of the Arab League. In fact, between 9 and 12
-        countries amongst each year's top 20 are members of the Arab League.
-        That's far too many to be some random effect and suggests shared
-        cultural factors as a primary cause. Such skew could arise, for example,
-        if a large number of people in the region viewed some borderline
-        material as acceptable, whereas US companies and law do not.</p>
+        <p>Member countries of the Arab League feature unusually prominently
+        when ranking countries by CSAM reports per capita. Notably, Libya and
+        the United Arab Emirates each rank worst for two out of four years
+        2019–2022. The substantial differences between the two countries would
+        seem to exclude wealth, political stability, and effective policing as
+        likely cause and instead point to some shared cultural trait as likely
+        reason.</p>
 
-        <p>Irrespective of cause(s),</p>
-
-        <ul>
-            <li>the number of Arab League countries in the top 20 is shrinking;
-
-            <li>the number of reports per capita for Arab League countries is
-            shrinking;
-
-            <li>the number of reports per capita for other countries is clearly
-            growing.
-        </ul>
-
-        <p>Notably, that third category clearly includes the United States. If
-        these trends persist for a few more years, Arab League countries won't
-        stand out anymore because most other countries saw huge increases in
-        reports per capita.</p>
-        """)
+        <p>However, we cannot tell whether such a shared cultural trait is
+        internal or external to the population, e.g., reflects an actual
+        difference in attitudes towards CSAM or is the result of biases in
+        content moderation. In either case, the data for 2022 shows that other
+        countries are rapidly closing the gap in CSAM reports per capita.
+    """)
 
     # ----------------------------------------------------------------------------------
     show(f'<h2>{section}.4 Mapping CSAM Reports per Capita and Year</h2>')
@@ -142,7 +130,12 @@ def reports_per_country(section: int) -> None:
         map_data['year'].astype(str) + ')'
     )
 
-    fig = create_map(map_data, with_panels=False, with_antarctica=True, with_animation=True)
+    fig = create_map(
+        map_data,
+        with_panels=False,
+        with_antarctica=True,
+        with_animation=True
+    )
     show_map(fig)
 
     fig = create_map(
@@ -157,19 +150,30 @@ def reports_per_country(section: int) -> None:
 
 def reports_per_platform(section: int) -> dict[str, pd.DataFrame]:
     # ----------------------------------------------------------------------------------
-    show(f'<h1>{section}. CSAM Reports per Platform</h1>')
     disclosures = ingest_reports_per_platform(
-        REPORTS_PER_PLATFORM, include_redundant=True)
+        REPORTS_PER_PLATFORM, include_redundant=True
+    )
     comparisons = compare_all_platform_reports(disclosures)
 
+    show(f'<h1>{section}.  CSAM Reports per Platform</h1>')
+    show(f'<h2>{section}.1 Ranking of Social Media Firms</h2>')
+
+    reshaped = reshape_reports_per_platform(disclosures)
+    for year in YEAR_LABELS:
+        yearly = reshaped.query(f'year == {year}').copy()
+        total = yearly.at['Total', 'reports']
+        yearly['reports_pct'] = yearly['reports'] / total * 100
+        show(
+            yearly.drop(columns='year'),
+            caption=f'Social Media by Reports Filed in {year}'
+        )
+
+    # ----------------------------------------------------------------------------------
+    show(f'<h2>{section}.2 Transparency Data Quality per Social Medium</h2>')
     show(f"""
         Out of {len(disclosures) - 2} companies and brands, only
         {len(comparisons)} disclose the number of CSAM reports made to NCMEC.
-        Since NCMEC also discloses the number CSAM reports made by each
-        platform, the availability of the same metric from sender and receiver
-        enables a direct comparison. Alas, the results aren’t exactly
-        encouraging...
-        """)
+    """)
 
     for platform, data in comparisons.items():
         show(data, caption=platform)
@@ -177,49 +181,44 @@ def reports_per_platform(section: int) -> dict[str, pd.DataFrame]:
     return disclosures
 
 
+_TDB_URL = (
+    'https://www.thedailybeast.com/facebook-a-hotbed-of-child-sexual-abuse-material-'
+    'with-203-million-reports-far-more-than-pornhub'
+)
+
+
 def meta_disclosures(section: int, disclosures: dict[str, pd.DataFrame]) -> None:
     # ----------------------------------------------------------------------------------
-    show(f'<h1>{section}. Meta’s Troublesome Transparency</h1>')
-    show(f'<h2>{section}.1 Meta is a “Hotbed of CSAM”</h2>')
-
-    ncmec_disclosures = disclosures['NCMEC']
-    show(ncmec_disclosures, show_schema=True, caption='NCMEC')
-    meta_reports = meta.csam_reports(ncmec_disclosures)
-    show(meta_reports, caption="Meta's Share of CSAM Reports", margin_bottom=0)
+    show(f'<h1>{section}.  Meta’s Troublesome Transparency</h1>')
+    show(f'<h2>{section}.1 Meta is a “<a href="{_TDB_URL}">Hotbed of CSAM</a>”</h2>')
 
     show("""
-        <p>Meta does not disclose the number of CSAM reports made to NCMEC, only
-        CSAM pieces and, like its other transparency disclosures, only for
-        Facebook and Instagram. At the same time, Meta is responsible for the
-        vast majority of all CSAM reports. With Meta employees serving as NCMEC
-        trustees, Meta must be well aware of its status as most prolific filer
-        of reports, NCMEC only disclosing report counts, and NCMEC disclosing
-        report counts for WhatsApp too. Still, it has not adjusted its reporting
-        practices.</p>
+        Meta does not disclose the number of CSAM reports made to NCMEC, only
+        CSAM pieces. That is surprising given that from 2020 onward two Meta
+        employees have been serving as NCMEC directors. Furthermore, Meta makes
+        no transparency disclosures for WhatsApp. In contrast, NCMEC started
+        distinguishing between Facebook, Instagram, and WhatsApp in its own
+        disclosures in 2021. Also see Section 2.1 above.
+    """)
 
-        <p>While Meta makes no disclosures about WhatsApp, NCMEC started
-        breaking down its counts of reports received by Facebook, Instagram,
-        <em>and</em> WhatsApp. While WhatsApp consistently has the smallest
-        count of Meta's three social networks, that’s still over 1 million CSAM
-        reports per year.</p>
-
-        <p>As the above table shows, the <strong>total number of CSAM reports to
-        NCMEC almost doubled from less than 17 million reports in 2019 to less
-        than 32 million reports in 2022</strong>. That clearly is the wrong
-        trend.</p>
-        """)
+    meta_reports = meta.csam_reports(disclosures['NCMEC'])
+    show(
+        meta_reports,
+        caption="Meta's Share of CSAM Reports",
+        highlight_columns=['%', '% Meta'],
+        margin_bottom=0
+    )
 
     # ----------------------------------------------------------------------------------
     show(f'<h2>{section}.2 Meta Rewrites History</h2>')
     show("""
-        It gets worse: When I ported a spreadsheet with initial analysis to
-        Python with Pandas, some results turned out different. Careful review of
-        all formulae and code ended with the discovery that Meta has been
-        changing historical datapoints over several quarters. The counts shown
-        below may be undercounts because Meta also is the only social media firm
-        that rounds transparency data. That may hide small-ish updates to
-        historical values.
-        """)
+        While testing an update to my data analysis code, I discovered that Meta
+        had changed seemingly arbitrary entries for previously disclosed
+        transparency statistics. This section tracks the extent of these
+        unacknowledged and unexplained changes by comparing Meta's CSV files
+        quarter over quarter.
+    """)
+
     meta_disclosures = meta.read_all('data')
     meta_differences = meta.diff_all(meta_disclosures)
 
@@ -228,10 +227,10 @@ def meta_disclosures(section: int, disclosures: dict[str, pd.DataFrame]) -> None
 
         show(f'<h2>Δ(Q{p2.quarter}-{p2.year} / Q{p1.quarter}-{p1.year})</h2>')
         show(meta.age_of_divergence(delta), margin_bottom=0)
-
         show(meta.descriptors_of_divergence(delta))
 
-    show(f'<h2>Quarterly rate of divergence</h2>')
+    # ----------------------------------------------------------------------------------
+    show(f'<h3>{section}.2.1 Quarterly rate of divergence</h3>')
     show(meta.rate_of_divergence(meta_disclosures, meta_differences))
     show("""
         For each quarter, the table shows the number of entries in that
