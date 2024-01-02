@@ -114,7 +114,7 @@ def reports_per_country(section: int) -> None:
         internal or external to the population, e.g., reflects an actual
         difference in attitudes towards CSAM or is the result of biases in
         content moderation. In either case, the data for 2022 shows that other
-        countries are rapidly closing the gap in CSAM reports per capita.
+        countries are rapidly closing the gap in CSAM reports per capita.</p>
     """)
 
     # ----------------------------------------------------------------------------------
