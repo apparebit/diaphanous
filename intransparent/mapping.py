@@ -226,4 +226,4 @@ class DisplayMethod(StrEnum):
 
 
 def show_map(fig: Any) -> None:
-    DisplayMethod.IO_TO_HTML.render(fig)
+    DisplayMethod.FIG_DOT_SHOW.render(fig)
