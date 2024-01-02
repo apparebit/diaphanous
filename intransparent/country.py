@@ -155,9 +155,7 @@ def read_arab_league(path: str | Path) -> pd.DataFrame:
 
 
 def read_geometries(path: str | Path) -> pd.DataFrame:
-    # https://github.com/geopandas/geopandas/blob/
-    # 04c2dee547777d9e87f9df4c85cc372a03b29f93/
-    # geopandas/datasets/naturalearth_creation.py#L87
+    # https://github.com/geopandas/geopandas/blob/04c2dee547777d9e87f9df4c85cc372a03b29f93/geopandas/datasets/naturalearth_creation.py#L87
     geometries = (
         geo.read_file(path)
         .rename(columns={'ISO_A3': 'iso3', 'NAME': 'name'})
@@ -165,7 +163,8 @@ def read_geometries(path: str | Path) -> pd.DataFrame:
     )
 
     # Check that countries with missing ISO Alpha-3 codes are the expected five.
-    # Two of them are not recognized and hence are merged with the
+    # North Cyprus and Somaliland are not internationally recognized and we
+    # treat them as part of Cyprus and Somalia, respectively.
     missing_iso3 = set(geometries.query('iso3 == "-99"')['name'].to_list())
     if missing_iso3 != _PROBLEMATIC_GEOMETRIES:
         raise AssertionError(
