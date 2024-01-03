@@ -65,13 +65,27 @@ def reports_per_country(section: int) -> None:
         .sort_values(by='reports', ascending=False)
         .drop(columns=['arab_league'])
     )
+
+    adjusted_reports = most_reports.copy()
+    adjusted_reports['pct_ratio'] = (
+        adjusted_reports['reports_pct'] / adjusted_reports['population_pct']
+    )
+    adjusted_reports = adjusted_reports.sort_values(by='pct_ratio', ascending=False)
+
     for year in YEAR_LABELS:
-        top20 = most_reports.query(f'year == "{year}"').head(20)
+        show(f'<h3>{year}</h3>')
         show(
-            top20,
+            most_reports.query(f'year == "{year}"'),
             caption=f'Regions by CSAM Reports {year}',
             highlight_columns=['reports', 'reports_pct'],
         )
+        show(
+            adjusted_reports.query(f'year == "{year}"'),
+            caption=f'Regions by Population-Adjusted CSAM Reports {year}',
+            highlight_columns='pct_ratio',
+        )
+        if year != YEAR_LABELS[-1]:
+            show('<hr>')
 
     # ----------------------------------------------------------------------------------
     show(f'<h2>{section}.3 Countries Ranked by CSAM Reports per Capita</h2>')
@@ -100,6 +114,9 @@ def reports_per_country(section: int) -> None:
             capita in {year} are members of the Arab League. If the Arab League
             were a country, its rank would be {rank}.<br><br>
         """)
+
+        if year != YEAR_LABELS[-1]:
+            show('<hr>')
 
     show("""
         <p>Member countries of the Arab League feature unusually prominently
@@ -144,8 +161,8 @@ def reports_per_country(section: int) -> None:
         with_panels=True,
         with_antarctica=True,
     )
-    fig.write_image(f'csam-reports-per-capita.svg')
     show_map(fig)
+    fig.write_image(f'csam-reports-per-capita.svg')
 
 
 def reports_per_platform(section: int) -> dict[str, pd.DataFrame]:
