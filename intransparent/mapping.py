@@ -115,9 +115,9 @@ def create_map(
             title=dict(
                 text='<i>CSAM Reports per Capita, Country, and Year</i>',
                 font_size=22,
-                # x=0.5,
-                # xanchor='center',
-                # xref='paper',
+                x=0.5,
+                xanchor='center',
+                xref='paper',
                 # pad=dict(t=20, b=20),
             ),
             #coloraxis_showscale=False,
