@@ -105,6 +105,7 @@ def format_table(
             ('caption-side', 'top'),
             ('font-size', '1.1em'),
             ('margin-bottom', '2ex'),
+            ('vertical-align', 'center'),
         ]
         if '<strong>' not in caption and '<em>' not in caption:
             props.append(('font-style', 'italic'))
