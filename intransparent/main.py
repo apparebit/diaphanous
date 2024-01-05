@@ -7,6 +7,7 @@ import traceback
 import pandas as pd
 
 from intransparent import (
+    report_contents,
     ingest_reports_per_country,
     reports_per_capita_country_year,
     create_map,
@@ -42,8 +43,50 @@ def just_map() -> None:
     )
     fig.write_image(f'csam-reports-per-capita.svg')
 
+# ======================================================================================
+
+def reports_overview(section: int) -> None:
+    contents = pd.read_csv('./data/csam-report-contents.csv', thousands=',')
+    pieces, violations, relationships = report_contents(contents)
+
+    show(f'<h1>{section}. CSAM Report Contents</h1>')
+    show(
+        violations,
+        caption='Reported Activities',
+        highlight_columns=['2020 %', '2021 %', '2022 %'],
+        highlight_rows='child pornography',
+    )
+    show(
+        pieces,
+        caption='Reported Pieces (Photos & Videos)',
+        highlight_columns='pieces',
+    )
+
+    show('<hr>')
+
+    show(
+        relationships.drop(columns='Distance'),
+        caption='Relationship to Victim per Piece',
+    )
+    show("""
+        <p>For each unique piece of content, i.e., photo or video, the above
+        table determines the relationship of the suspected offender to the
+        victimized child. It is <em>not</em> based on CSAM reports to NCMEC's
+        CyberTipline but separate law enforcement reports to NCMEC.</p>
+
+        <p>The table below summarizes the same data based on a coarse
+        categorization of relationships by emotional/social distance. It would
+        seem that drag queens aren't the biggest threat to the welfare of
+        children.</p>
+    """)
+    show(
+        relationships.groupby('Distance').sum(),
+        caption='Summary of Relationship Data',
+        highlight_columns=['2020 %', '2021 %', '2022 %']
+    )
 
 def reports_per_country(section: int) -> None:
+    # ----------------------------------------------------------------------------------
     show(f'<h1>{section}.  CSAM Reports per Country</h1>')
     show(f'<h2>{section}.1 Data Schemas</h2>')
 
@@ -265,6 +308,7 @@ def logger(df: pd.DataFrame, caption: None | str = None) -> None:
         print(f'{"-" * len(title)}\n')
         print(to_schema(df).to_string())
         print('\n')
+
 
 def _main(args: Sequence[str]) -> int:
     if 'map' in args:

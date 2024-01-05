@@ -22,7 +22,26 @@ number of reports NCMEC received on its CyberTipline since inception in March
 Appropriations](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf).
 
 
-## Dataset 2: CSAM Reports per Platform (2019 onward)
+## Dataset 2: CSAM Report Contents (2020 onward)
+
+The [CSAM report contents](data/csam-report-contents.csv) dataset breaks down
+the reports NCMEC received by:
+
+  * the category of sexual exploitation, e.g., whether a report concerns child
+    pornography, misleading words/images, online enticement, child sex
+    trafficking, obscene material sent to a child, misleading domain names,
+    child sexual molestation, or child sex tourism;
+  * the kind of attachments, e.g., photos, videos, or other;
+  * the uniqueness of attachments as determined by a precise hash (MD5) and a
+    perceptual hash (PhotoDNA, Videntifier).
+
+Labels for the latter classification use "unique" for precisely hashed
+attachments and "similar" for perceptually hashed ones. The dataset combines
+several tables from NCMEC's [CY 2022 Report to the Committees on
+Appropriations](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf).
+
+
+## Dataset 3: CSAM Reports per Platform (2019 onward)
 
 The [CSAM reports per platform](data/csam-reports-per-platform.json) dataset is
 the main dataset provided by this repository. It collects:
@@ -84,7 +103,7 @@ collects all of a platform's quantitative disclosures within one table:
     under *accounts*. However, temporarily impacted registrations are not.
 
 
-## Dataset 3: CSAM Reports per Country (2019 onward)
+## Dataset 4: CSAM Reports per Country (2019 onward)
 
 [CSAM reports per country](data/csam-reports-per-country.csv) collects NCMEC's
 per-country breakdown of CSAM reports for
@@ -132,7 +151,7 @@ per country CSAM reports:
 year](https://raw.githubusercontent.com/apparebit/intransparent/boss/csam-reports-per-capita.svg)
 
 
-## Dataset 4: Meta's Quarterly Transparency Data (Q1 2021 onward)
+## Dataset 5: Meta's Quarterly Transparency Data (Q1 2021 onward)
 
 Meta's quarterly transparency disclosures include a CSV file with data for the
 current and all previous quarters in machine-readable form. Presumably, for just
@@ -143,3 +162,13 @@ the [unchanging URL](https://transparency.fb.com/sr/community-standards/) for
 the data and files for that and later quarters were manually downloaded from the
 URL. The files are included because a small but significant number of historical
 quantities changed every quarter until 2023.
+
+
+## Dataset 6: Relationship between Offender and Victim
+
+The [CSAM pieces by relationship to
+victim](data/csam-pieces-by-relationship-to-victim.csv) dataset captures the
+relationship between suspected offenders and victims as determined by law
+enforcement agencies and tabulated by NCMEC. It is included in NCMEC's [CY 2022
+Report to the Committees on
+Appropriations](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf).
