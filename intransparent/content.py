@@ -5,14 +5,15 @@ import pandas as pd
 
 class ReportContents(NamedTuple):
     pieces: pd.DataFrame
+    overreports: pd.DataFrame
     violations: pd.DataFrame
     relationships: pd.DataFrame
 
 
 def report_contents(data: pd.DataFrame) -> ReportContents:
     totals = (
-        data.query('category == "reports" and entry == "reports"')
-        .drop(columns=['category', 'entry'])
+        data.query('category == "reports" and label == "reports"')
+        .drop(columns=['category', 'label'])
         .set_index('year')['quantity']
     )
 
@@ -21,7 +22,7 @@ def report_contents(data: pd.DataFrame) -> ReportContents:
     pieces = (
         data.query('category == "attachments"')
         .drop(columns='category')
-        .pivot(index='year', columns='entry', values='quantity')
+        .pivot(index='year', columns='label', values='quantity')
     )
 
     pieces['reports'] = totals
@@ -45,10 +46,33 @@ def report_contents(data: pd.DataFrame) -> ReportContents:
 
     # • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • •
 
+    overreports = (
+        data.query('category == "reports"')
+        .drop(columns='category')
+        .pivot(index='year', columns='label', values='quantity')
+    )
+    overreports['π(⏴)'] = (
+        overreports['reports'] / overreports['with unique photos/videos']
+    )
+    overreports['π(⏴⏴)'] = (
+        overreports['reports'] / overreports['with similar photos/videos']
+    )
+    overreports = overreports[
+        [
+            'reports',
+            'π(⏴)',
+            'with unique photos/videos',
+            'π(⏴⏴)',
+            'with similar photos/videos',
+        ]
+    ]
+
+    # • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • •
+
     prep = (
         data.query('category == "kind of exploitation"')
         .drop(columns='category')
-        .pivot(index='entry', columns='year', values='quantity')
+        .pivot(index='label', columns='year', values='quantity')
     )
     assert totals.equals(prep.sum())
 
@@ -61,19 +85,13 @@ def report_contents(data: pd.DataFrame) -> ReportContents:
 
     rel = (
         pd.read_csv('./data/csam-pieces-by-relationship-to-victim.csv', thousands=',')
-        .drop(columns=['2020 Pieces', '2021 Pieces', '2022 Pieces'])
-        .rename(
-            columns={
-                '2020 Unique Pieces': '2020',
-                '2021 Unique Pieces': '2021',
-                '2022 Unique Pieces': '2022',
-            }
-        )
-        .set_index('Relationship')
+        .set_index("Relationship")
+        .rename(columns=lambda c: tuple(c.split(maxsplit=1)))
+        .pipe(lambda df: df.drop(columns=[c for c in df.columns if c[1] == "Pieces"]))
+        .rename(columns=lambda c: c[0])
     )
 
     piece_totals = rel.sum()
-
     relationships = pd.DataFrame(index=rel.index)
     for year, entries in rel.items():
         relationships[year] = entries
@@ -95,4 +113,4 @@ def report_contents(data: pd.DataFrame) -> ReportContents:
 
     # • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • •
 
-    return ReportContents(pieces, violations, relationships)
+    return ReportContents(pieces, overreports, violations, relationships)
