@@ -24,12 +24,9 @@ def _annualize(df: pd.DataFrame) -> pd.DataFrame:
         columns=['year', 'start_month', 'end_month'],
     )
     yearly = pd.concat([df, aux], axis=1).groupby('year')
-    return (
-        yearly
-        .sum(min_count=1)
-        [(yearly['start_month'].min() == 1) & (yearly['end_month'].max() == 12)]
-        .drop(columns=['start_month', 'end_month'])
-    )
+    return yearly.sum(min_count=1)[
+        (yearly['start_month'].min() == 1) & (yearly['end_month'].max() == 12)
+    ].drop(columns=['start_month', 'end_month'])
 
 
 def compare_platform_reports(

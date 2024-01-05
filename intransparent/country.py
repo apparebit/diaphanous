@@ -246,21 +246,23 @@ def summarize_arab_league(frame: pd.DataFrame) -> pd.DataFrame:
         year_in_league = frame.query(f'year == "{year}" and arab_league == True')
         reports = year_in_league['reports'].sum()
         population = year_in_league['population'].sum()
-        rows.append({
-            'iso3': '\u262A',
-            'year': year,
-            'reports': reports,
-            'reports_pct': year_in_league['reports_pct'].sum(),
-            'reports_per_capita': reports / population,
-            'population': population,
-            'population_pct': year_in_league['population_pct'].sum(),
-            'country': 'Arab League',
-            'iso2': '\u262A',
-            'region': None,
-            'superregion': None,
-            'continent': None,
-            'arab_league': False, # Only True for members, not a synthetic summary
-        })
+        rows.append(
+            {
+                'iso3': '\u262A',
+                'year': year,
+                'reports': reports,
+                'reports_pct': year_in_league['reports_pct'].sum(),
+                'reports_per_capita': reports / population,
+                'population': population,
+                'population_pct': year_in_league['population_pct'].sum(),
+                'country': 'Arab League',
+                'iso2': '\u262A',
+                'region': None,
+                'superregion': None,
+                'continent': None,
+                'arab_league': False,  # Only True for members, not a synthetic summary
+            }
+        )
 
     addendum = pd.DataFrame(rows).set_index(['iso3', 'year'])
     return pd.concat([frame, addendum])

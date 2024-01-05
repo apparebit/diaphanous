@@ -13,6 +13,7 @@ Dtype: TypeAlias = np.dtype | pd.api.extensions.ExtensionDtype
 
 # --------------------------------------------------------------------------------------
 
+
 def show(
     value: str | pd.DataFrame,
     *,
@@ -66,7 +67,9 @@ def show(
 
     display(style)
 
+
 # --------------------------------------------------------------------------------------
+
 
 def to_schema(frame: pd.DataFrame) -> pd.DataFrame:
     schema = []
@@ -82,7 +85,9 @@ def to_schema(frame: pd.DataFrame) -> pd.DataFrame:
         )
     return pd.DataFrame(schema, columns=['kind', 'name', 'dtype', '', 'nulls'])
 
+
 # --------------------------------------------------------------------------------------
+
 
 def format_table(
     frame: pd.DataFrame,
@@ -121,7 +126,8 @@ def format_table(
     # Handle alignment
     select_verticals = all_verticals if show_row_header else all_columns
     align_left = ','.join(
-        v.selector for v in select_verticals(frame) if not is_numeric_dtype(v.dtype))
+        v.selector for v in select_verticals(frame) if not is_numeric_dtype(v.dtype)
+    )
     if len(align_left) > 0:
         table_styles.append(
             {
@@ -163,19 +169,25 @@ def format_table(
 
     # Apply collected CSS
     if table_styles:
-        style.set_table_styles(table_styles, overwrite=False) # type: ignore[arg-type]
+        style.set_table_styles(table_styles, overwrite=False)  # type: ignore[arg-type]
 
     # Apply highlights to rows and columns
     if highlight_rows is not None:
         if not isinstance(highlight_rows, list):
             highlight_rows = [highlight_rows]
-        style.set_table_styles({
-            row_label: [{
-                'selector': '',
-                'props': [('background-color', '#feddb0')],
-            }]
-            for row_label in highlight_rows
-        }, overwrite=False, axis=1)
+        style.set_table_styles(
+            {
+                row_label: [
+                    {
+                        'selector': '',
+                        'props': [('background-color', '#feddb0')],
+                    }
+                ]
+                for row_label in highlight_rows
+            },
+            overwrite=False,
+            axis=1,
+        )
 
     if highlight_columns is not None:
         if isinstance(highlight_columns, str):
@@ -211,7 +223,7 @@ def highlight_magnitude(
         vmin=vmin,
         vmax=vmax,
         gmap=magnitude,
-        subset=(above_threshold, frame.columns), # type: ignore[arg-type]
+        subset=(above_threshold, frame.columns),  # type: ignore[arg-type]
     )
 
 
@@ -235,7 +247,9 @@ def format_nulls(nulls: object) -> str:
     quantity = 'no' if count == 0 else f'{count}'
     return f'({quantity} null{"" if count == 1 else "s"})'
 
+
 # --------------------------------------------------------------------------------------
+
 
 class Vertical(NamedTuple):
     kind: str
@@ -256,6 +270,7 @@ class Vertical(NamedTuple):
 def all_verticals(frame: pd.DataFrame) -> Iterator[Vertical]:
     yield from all_levels(frame)
     yield from all_columns(frame)
+
 
 def all_levels(frame: pd.DataFrame) -> Iterator[Vertical]:
     nlevels = frame.index.nlevels
@@ -279,6 +294,7 @@ def all_levels(frame: pd.DataFrame) -> Iterator[Vertical]:
                 cast(Dtype, dtype),
                 multi_index.levels[level_index],
             )
+
 
 def all_columns(frame: pd.DataFrame) -> Iterator[Vertical]:
     ncolumns = frame.shape[0]

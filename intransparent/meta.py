@@ -41,6 +41,7 @@ def _parse_percents(df: pd.DataFrame) -> pd.Series:
     """Parse all values that are percentages."""
     return df.loc[df['metric'].isin(PERCENT), 'value'].str.rstrip('%').astype('Float64')
 
+
 FIRST_REPORT_PERIOD = pd.Period('2021q2')
 LATEST_REPORT_PERIOD = pd.Period('2023q3')
 PATCH_REPORT_START = pd.Period('2022q4')
@@ -176,13 +177,7 @@ def age_of_divergence(delta: pd.DataFrame) -> pd.DataFrame:
     function does not create zero entries for periods without such measurements.
     It returns the result as a data frame.
     """
-    return (
-        delta
-        .groupby('period')
-        .size()
-        .to_frame()
-        .rename(columns={0: 'divergent'})
-    )
+    return delta.groupby('period').size().to_frame().rename(columns={0: 'divergent'})
 
 
 def rate_of_divergence(
@@ -207,12 +202,14 @@ def rate_of_divergence(
         total = len(disclosures[cursor])
         cursor = next_cursor
 
-        data.append({
-            'period': next_cursor,
-            'changed': changed,
-            'total': total,
-            'rate_of_divergence': changed / total * 100,
-        })
+        data.append(
+            {
+                'period': next_cursor,
+                'changed': changed,
+                'total': total,
+                'rate_of_divergence': changed / total * 100,
+            }
+        )
 
     return pd.DataFrame(data)
 

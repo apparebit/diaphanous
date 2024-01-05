@@ -27,13 +27,17 @@ import intransparent.meta as meta
 
 # ======================================================================================
 
+
 def just_map() -> None:
     country_data = ingest_reports_per_country('./data')
     map_data = country_data.reports_per_capita.reset_index()
     map_data['labels'] = (
-        map_data['country'].astype(str) + ':<br>' +
-        map_data['reports_per_capita'].apply(lambda v: f'{v:.5f}') + ' (' +
-        map_data['year'].astype(str) + ')'
+        map_data['country'].astype(str)
+        + ':<br>'
+        + map_data['reports_per_capita'].apply(lambda v: f'{v:.5f}')
+        + ' ('
+        + map_data['year'].astype(str)
+        + ')'
     )
     fig = create_map(
         map_data,
@@ -43,7 +47,9 @@ def just_map() -> None:
     )
     fig.write_image(f'csam-reports-per-capita.svg')
 
+
 # ======================================================================================
+
 
 def reports_overview(section: int) -> None:
     contents = pd.read_csv('./data/csam-report-contents.csv', thousands=',')
@@ -68,7 +74,8 @@ def reports_overview(section: int) -> None:
         relationships.drop(columns='Distance'),
         caption='Relationship to Victim per Piece',
     )
-    show("""
+    show(
+        """
         <p>For each unique piece of content, i.e., photo or video, the above
         table determines the relationship of the suspected offender to the
         victimized child. It is <em>not</em> based on CSAM reports to NCMEC's
@@ -78,12 +85,14 @@ def reports_overview(section: int) -> None:
         categorization of relationships by emotional/social distance. It would
         seem that drag queens aren't the biggest threat to the welfare of
         children.</p>
-    """)
+        """
+    )
     show(
         relationships.groupby('Distance').sum(),
         caption='Summary of Relationship Data',
-        highlight_columns=['2020 %', '2021 %', '2022 %']
+        highlight_columns=['2020 %', '2021 %', '2022 %'],
     )
+
 
 def reports_per_country(section: int) -> None:
     # ----------------------------------------------------------------------------------
@@ -93,17 +102,19 @@ def reports_per_country(section: int) -> None:
     logger = partial(show, show_schema=True, margin_bottom=2)
     country_data = ingest_reports_per_country('./data', logger=logger)
 
-    countries_without, reports_without = (
-        without_populations(country_data.reports, country_data.populations))
-    show(f'{countries_without.shape[0]} countries have reports but not population '
-        'statistics. They also account for very few reports.')
+    countries_without, reports_without = without_populations(
+        country_data.reports, country_data.populations
+    )
+    show(
+        f'{countries_without.shape[0]} countries have reports but not population '
+        'statistics. They also account for very few reports.'
+    )
     show(reports_without, caption='Reports for Countries<br>w/o Population Stats')
 
     # ----------------------------------------------------------------------------------
     show(f'<h2>{section}.2 Regions Ranked by CSAM Reports</h2>')
     most_reports = (
-        country_data.reports_per_capita
-        .groupby(['year', 'region'])
+        country_data.reports_per_capita.groupby(['year', 'region'])
         .sum(numeric_only=True)
         .sort_values(by='reports', ascending=False)
         .drop(columns=['arab_league'])
@@ -133,7 +144,8 @@ def reports_per_country(section: int) -> None:
     # ----------------------------------------------------------------------------------
     show(f'<h2>{section}.3 Countries Ranked by CSAM Reports per Capita</h2>')
     rpc_range = country_data.reports_per_capita.agg(
-        {'reports_per_capita': ['min', 'max']})
+        {'reports_per_capita': ['min', 'max']}
+    )
     show(rpc_range, caption='Range of Reports per Capita', margin_bottom=0)
 
     for year, year_data in reports_per_capita_country_year(country_data):
@@ -152,16 +164,19 @@ def reports_per_country(section: int) -> None:
         if year == '2022':
             assert top.tail(10)['arab_league'].sum() == 0
 
-        show(f"""
+        show(
+            f"""
             {in_arab_league} out of 20 countries with the most CSAM reports per
             capita in {year} are members of the Arab League. If the Arab League
             were a country, its rank would be {rank}.<br><br>
-        """)
+            """
+        )
 
         if year != YEAR_LABELS[-1]:
             show('<hr>')
 
-    show("""
+    show(
+        """
         <p>Member countries of the Arab League feature unusually prominently
         when ranking countries by CSAM reports per capita. Notably, Libya and
         the United Arab Emirates each rank worst for two out of four years
@@ -175,7 +190,8 @@ def reports_per_country(section: int) -> None:
         difference in attitudes towards CSAM or is the result of biases in
         content moderation. In either case, the data for 2022 shows that other
         countries are rapidly closing the gap in CSAM reports per capita.</p>
-    """)
+        """
+    )
 
     # ----------------------------------------------------------------------------------
     show(f'<h2>{section}.4 Mapping CSAM Reports per Capita and Year</h2>')
@@ -185,16 +201,16 @@ def reports_per_country(section: int) -> None:
 
     # The text for hover labels (without clunky hover data)
     map_data['labels'] = (
-        map_data['country'].astype(str) + ':<br>' +
-        map_data['reports_per_capita'].apply(lambda v: f'{v:.5f}') + ' (' +
-        map_data['year'].astype(str) + ')'
+        map_data['country'].astype(str)
+        + ':<br>'
+        + map_data['reports_per_capita'].apply(lambda v: f'{v:.5f}')
+        + ' ('
+        + map_data['year'].astype(str)
+        + ')'
     )
 
     fig = create_map(
-        map_data,
-        with_panels=False,
-        with_antarctica=True,
-        with_animation=True
+        map_data, with_panels=False, with_antarctica=True, with_animation=True
     )
     show_map(fig)
 
@@ -225,15 +241,17 @@ def reports_per_platform(section: int) -> dict[str, pd.DataFrame]:
         yearly['reports_pct'] = yearly['reports'] / total * 100
         show(
             yearly.drop(columns='year'),
-            caption=f'Social Media by Reports Filed in {year}'
+            caption=f'Social Media by Reports Filed in {year}',
         )
 
     # ----------------------------------------------------------------------------------
     show(f'<h2>{section}.2 Transparency Data Quality per Social Medium</h2>')
-    show(f"""
+    show(
+        f"""
         Out of {len(disclosures) - 2} companies and brands, only
         {len(comparisons)} disclose the number of CSAM reports made to NCMEC.
-    """)
+        """
+    )
 
     for platform, data in comparisons.items():
         show(data, caption=platform)
@@ -252,32 +270,36 @@ def meta_disclosures(section: int, disclosures: dict[str, pd.DataFrame]) -> None
     show(f'<h1>{section}.  Meta’s Troublesome Transparency</h1>')
     show(f'<h2>{section}.1 Meta is a “<a href="{_TDB_URL}">Hotbed of CSAM</a>”</h2>')
 
-    show("""
+    show(
+        """
         Meta does not disclose the number of CSAM reports made to NCMEC, only
         CSAM pieces. That is surprising given that from 2020 onward two Meta
         employees have been serving as NCMEC directors. Furthermore, Meta makes
         no transparency disclosures for WhatsApp. In contrast, NCMEC started
         distinguishing between Facebook, Instagram, and WhatsApp in its own
         disclosures in 2021. Also see Section 2.1 above.
-    """)
+        """
+    )
 
     meta_reports = meta.csam_reports(disclosures['NCMEC'])
     show(
         meta_reports,
         caption="Meta's Share of CSAM Reports",
         highlight_columns=['%', '% Meta'],
-        margin_bottom=0
+        margin_bottom=0,
     )
 
     # ----------------------------------------------------------------------------------
     show(f'<h2>{section}.2 Meta Rewrites History</h2>')
-    show("""
+    show(
+        """
         While testing an update to my data analysis code, I discovered that Meta
         had changed seemingly arbitrary entries for previously disclosed
         transparency statistics. This section tracks the extent of these
         unacknowledged and unexplained changes by comparing Meta's CSV files
         quarter over quarter.
-    """)
+        """
+    )
 
     meta_disclosures = meta.read_all('data')
     meta_differences = meta.diff_all(meta_disclosures)
@@ -292,14 +314,18 @@ def meta_disclosures(section: int, disclosures: dict[str, pd.DataFrame]) -> None
     # ----------------------------------------------------------------------------------
     show(f'<h3>{section}.2.1 Quarterly rate of divergence</h3>')
     show(meta.rate_of_divergence(meta_disclosures, meta_differences))
-    show("""
+    show(
+        """
         For each quarter, the table shows the number of entries in that
         quarter's data that are <em>changed</em> from the previous quarter's
         <em>total</em> number of entries. The rate of divergence simply is the
         percentage fraction of changed over total entries.
-    """)
+        """
+    )
+
 
 # ======================================================================================
+
 
 def logger(df: pd.DataFrame, caption: None | str = None) -> None:
     if caption is not None:
@@ -322,11 +348,18 @@ def _main(args: Sequence[str]) -> int:
         'data/csam-reports-per-year-country-capita.csv',
         index=False,
         columns=[
-            'year', 'iso2', 'iso3', 'country',
-            'reports', 'reports_pct',
-            'population', 'population_pct',
+            'year',
+            'iso2',
+            'iso3',
+            'country',
+            'reports',
+            'reports_pct',
+            'population',
+            'population_pct',
             'reports_per_capita',
-            'region', 'superregion', 'continent',
+            'region',
+            'superregion',
+            'continent',
             'arab_league',
         ],
     )

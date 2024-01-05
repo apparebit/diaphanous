@@ -2,6 +2,7 @@ from typing import NamedTuple
 
 import pandas as pd
 
+
 class ReportContents(NamedTuple):
     pieces: pd.DataFrame
     violations: pd.DataFrame
@@ -10,18 +11,15 @@ class ReportContents(NamedTuple):
 
 def report_contents(data: pd.DataFrame) -> ReportContents:
     totals = (
-        data
-        .query('category == "reports" and entry == "reports"')
+        data.query('category == "reports" and entry == "reports"')
         .drop(columns=['category', 'entry'])
-        .set_index('year')
-        ['quantity']
+        .set_index('year')['quantity']
     )
 
     # • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • •
 
     pieces = (
-        data
-        .query('category == "attachments"')
+        data.query('category == "attachments"')
         .drop(columns='category')
         .pivot(index='year', columns='entry', values='quantity')
     )
@@ -33,15 +31,22 @@ def report_contents(data: pd.DataFrame) -> ReportContents:
     pieces['π(⏵)'] = pieces['pieces'] / totals
     pieces['π(⏴)'] = pieces['pieces'] / pieces['unique pieces']
     pieces['π(⏴⏴)'] = pieces['pieces'] / pieces['similar pieces']
-    pieces = pieces[[
-        'reports','π(⏵)','pieces','π(⏴)','unique pieces','π(⏴⏴)','similar pieces',
-    ]]
+    pieces = pieces[
+        [
+            'reports',
+            'π(⏵)',
+            'pieces',
+            'π(⏴)',
+            'unique pieces',
+            'π(⏴⏴)',
+            'similar pieces',
+        ]
+    ]
 
     # • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • •
 
     prep = (
-        data
-        .query('category == "kind of exploitation"')
+        data.query('category == "kind of exploitation"')
         .drop(columns='category')
         .pivot(index='entry', columns='year', values='quantity')
     )
@@ -57,11 +62,13 @@ def report_contents(data: pd.DataFrame) -> ReportContents:
     rel = (
         pd.read_csv('./data/csam-pieces-by-relationship-to-victim.csv', thousands=',')
         .drop(columns=['2020 Pieces', '2021 Pieces', '2022 Pieces'])
-        .rename(columns={
-            '2020 Unique Pieces': '2020',
-            '2021 Unique Pieces': '2021',
-            '2022 Unique Pieces': '2022',
-        })
+        .rename(
+            columns={
+                '2020 Unique Pieces': '2020',
+                '2021 Unique Pieces': '2021',
+                '2022 Unique Pieces': '2022',
+            }
+        )
         .set_index('Relationship')
     )
 
@@ -72,16 +79,18 @@ def report_contents(data: pd.DataFrame) -> ReportContents:
         relationships[year] = entries
         relationships[f'{year} %'] = entries / piece_totals[year] * 100
 
-    relationships.loc[[
-        'Online Enticement/Self & Offender Produced',
-        'Trafficking',
-        'Stranger'
-    ], ['Distance']] = 'Remote'
-    relationships.loc[[
-        'Babysitter, Mentor, Coach, Teacher',
-        'Neighbor/Family friend',
-        'Photographer',
-    ], ['Distance']] = 'Socially Close'
+    relationships.loc[
+        ['Online Enticement/Self & Offender Produced', 'Trafficking', 'Stranger'],
+        ['Distance'],
+    ] = 'Remote'
+    relationships.loc[
+        [
+            'Babysitter, Mentor, Coach, Teacher',
+            'Neighbor/Family friend',
+            'Photographer',
+        ],
+        ['Distance'],
+    ] = 'Socially Close'
     relationships.loc[relationships['Distance'].isnull(), 'Distance'] = 'Family'
 
     # • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • •

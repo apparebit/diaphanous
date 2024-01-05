@@ -50,19 +50,17 @@ def create_map(
 
     # -------------------- Collect arguments for choropleth constructor
     kwargs = dict(
-        #title='<b>CSAM Reports per Capita, Country, Year</b>',
+        # title='<b>CSAM Reports per Capita, Country, Year</b>',
         locations='iso3',
         color=color_column,
-        color_continuous_scale=px.colors.sequential.Hot_r, # Plasma_r,
+        color_continuous_scale=px.colors.sequential.Hot_r,  # Plasma_r,
         range_color=color_range,
-        #hover_name='labels',
-        #hover_data={'iso3': False, 'reports_per_capita': False, 'year': False},
+        # hover_name='labels',
+        # hover_data={'iso3': False, 'reports_per_capita': False, 'year': False},
         labels={'reports_per_capita': 'Reports<br>per Capita'},
     )
     if with_equal_earth:
-        kwargs |= dict(
-            projection='equal earth'
-        )
+        kwargs |= dict(projection='equal earth')
     if with_panels:
         kwargs |= dict(
             facet_row='year',
@@ -77,14 +75,14 @@ def create_map(
 
     # -------------------- Update overall appearance
     fig.update_traces(
-        marker_line_width=0.4, # See "countrywidth" below
+        marker_line_width=0.4,  # See "countrywidth" below
         selector=dict(
             type='choropleth',
         ),
     )
 
     fig.update_geos(
-        resolution=110, # 50 is too much detail
+        resolution=110,  # 50 is too much detail
         showframe=False,
         showlakes=False,
         showocean=True,
@@ -120,21 +118,17 @@ def create_map(
                 xref='paper',
                 # pad=dict(t=20, b=20),
             ),
-            #coloraxis_showscale=False,
+            # coloraxis_showscale=False,
         )
     else:
         kwargs = dict(
             margin=dict(t=40, r=0, b=0, l=0),
-            #paper_bgcolor='#000', # Can be helpful when debugging size issues
+            # paper_bgcolor='#000', # Can be helpful when debugging size issues
         )
         if with_animation:
-            kwargs |= dict(
-                coloraxis_colorbar_len=1.1 if with_antarctica else 0.9
-            )
+            kwargs |= dict(coloraxis_colorbar_len=1.1 if with_antarctica else 0.9)
         else:
-            kwargs |= dict(
-                coloraxis_colorbar_len=0.8 if with_antarctica else 0.7
-            )
+            kwargs |= dict(coloraxis_colorbar_len=0.8 if with_antarctica else 0.7)
 
         fig.update_layout(**kwargs)
 
@@ -160,7 +154,8 @@ def create_map(
             # We really need that mapping!
             if year is None:
                 raise ValueError(
-                    f'could not match {trace} with year, need another heuristic')
+                    f'could not match {trace} with year, need another heuristic'
+                )
 
             trace_by_year[year] = trace
 

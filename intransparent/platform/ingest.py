@@ -225,9 +225,7 @@ _AUTO_BRANDS = ('Tumblr', 'Wordpress')
 _META_BRANDS = ('Facebook', 'Instagram', 'WhatsApp')
 
 
-def reshape_reports_per_platform(
-    disclosures: dict[str, pd.DataFrame]
-) -> pd.DataFrame:
+def reshape_reports_per_platform(disclosures: dict[str, pd.DataFrame]) -> pd.DataFrame:
     return (
         disclosures["NCMEC"]
         .fillna(0)
