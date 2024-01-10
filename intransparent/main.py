@@ -12,17 +12,13 @@ from intransparent import (
     create_map,
     show_map,
     REPORTS_PER_PLATFORM,
-    ingest_reports_per_platform,
-    reshape_reports_per_platform,
     encode_reports_per_platform,
-    compare_all_platform_reports,
     without_populations,
     YEAR_LABELS,
     show,
     to_schema,
 )
 
-import intransparent.meta as meta
 
 # ======================================================================================
 
@@ -82,12 +78,12 @@ def reports_per_country(section: int) -> None:
     for year in YEAR_LABELS:
         show(f'<h3>{year}</h3>')
         show(
-            most_reports.query(f'year == "{year}"'),
+            most_reports[most_reports.index.get_level_values('year') == year],
             caption=f'Regions by CSAM Reports {year}',
             highlight_columns=['reports', 'reports_pct'],
         )
         show(
-            adjusted_reports.query(f'year == "{year}"'),
+            adjusted_reports[adjusted_reports.index.get_level_values('year') == year],
             caption=f'Regions by Population-Adjusted CSAM Reports {year}',
             highlight_columns='pct_ratio',
         )
@@ -175,106 +171,6 @@ def reports_per_country(section: int) -> None:
     )
     show_map(fig)
     fig.write_image(f'../figure/csam-reports-per-capita.svg')
-
-
-def reports_per_platform(section: int) -> dict[str, pd.DataFrame]:
-    # ----------------------------------------------------------------------------------
-    disclosures = ingest_reports_per_platform(
-        REPORTS_PER_PLATFORM, include_redundant=True
-    )
-    comparisons = compare_all_platform_reports(disclosures)
-
-    show(f'<h1>{section}.  CSAM Reports per Platform</h1>')
-    show(f'<h2>{section}.1 Ranking of Social Media Firms</h2>')
-
-    reshaped = reshape_reports_per_platform(disclosures)
-    for year in YEAR_LABELS:
-        yearly = reshaped.query(f'year == {year}').copy()
-        total = yearly.at['Total', 'reports']
-        yearly['reports_pct'] = yearly['reports'] / total * 100
-        show(
-            yearly.drop(columns='year'),
-            caption=f'Social Media by Reports Filed in {year}',
-        )
-
-    # ----------------------------------------------------------------------------------
-    show(f'<h2>{section}.2 Transparency Data Quality per Social Medium</h2>')
-    show(
-        f"""
-        Out of {len(disclosures) - 2} companies and brands, only
-        {len(comparisons)} disclose the number of CSAM reports made to NCMEC.
-        """
-    )
-
-    for platform, data in comparisons.items():
-        show(data, caption=platform)
-
-    return disclosures
-
-
-_TDB_URL = (
-    'https://www.thedailybeast.com/facebook-a-hotbed-of-child-sexual-abuse-material-'
-    'with-203-million-reports-far-more-than-pornhub'
-)
-
-
-def meta_disclosures(section: int, disclosures: dict[str, pd.DataFrame]) -> None:
-    # ----------------------------------------------------------------------------------
-    show(f'<h1>{section}.  Meta’s Troublesome Transparency</h1>')
-    show(f'<h2>{section}.1 Meta is a “<a href="{_TDB_URL}">Hotbed of CSAM</a>”</h2>')
-
-    show(
-        """
-        Meta does not disclose the number of CSAM reports made to NCMEC, only
-        CSAM pieces. That is surprising given that from 2020 onward two Meta
-        employees have been serving as NCMEC directors. Furthermore, Meta makes
-        no transparency disclosures for WhatsApp. In contrast, NCMEC started
-        distinguishing between Facebook, Instagram, and WhatsApp in its own
-        disclosures in 2021. Also see Section 2.1 above.
-        """
-    )
-
-    meta_reports = meta.csam_reports(disclosures['NCMEC'])
-    show(
-        meta_reports,
-        caption="Meta's Share of CSAM Reports",
-        highlight_columns=['%', '% Meta'],
-        margin_bottom=0,
-    )
-
-    # ----------------------------------------------------------------------------------
-    show(f'<h2>{section}.2 Meta Rewrites History</h2>')
-    show(
-        """
-        While testing an update to my data analysis code, I discovered that Meta
-        had changed seemingly arbitrary entries for previously disclosed
-        transparency statistics. This section tracks the extent of these
-        unacknowledged and unexplained changes by comparing Meta's CSV files
-        quarter over quarter.
-        """
-    )
-
-    meta_disclosures = meta.read_all('../data')
-    meta_differences = meta.diff_all(meta_disclosures)
-
-    for p1, delta in meta_differences.items():
-        p2 = p1 + 1
-
-        show(f'<h2>Δ(Q{p2.quarter}-{p2.year} / Q{p1.quarter}-{p1.year})</h2>')
-        show(meta.age_of_divergence(delta), margin_bottom=0)
-        show(meta.descriptors_of_divergence(delta))
-
-    # ----------------------------------------------------------------------------------
-    show(f'<h3>{section}.2.1 Quarterly rate of divergence</h3>')
-    show(meta.rate_of_divergence(meta_disclosures, meta_differences))
-    show(
-        """
-        For each quarter, the table shows the number of entries in that
-        quarter's data that are <em>changed</em> from the previous quarter's
-        <em>total</em> number of entries. The rate of divergence simply is the
-        percentage fraction of changed over total entries.
-        """
-    )
 
 
 # ======================================================================================
