@@ -1,7 +1,6 @@
 # You are not drunk. Python is.
 __all__ = (
     '__version__',
-    'report_contents',
     'REPORTS_PER_PLATFORM',
     'ingest_reports_per_platform',
     'reshape_reports_per_platform',
@@ -19,10 +18,6 @@ __all__ = (
 )
 
 __version__ = "1.0b1"
-
-# CSAM Report Contents
-
-from .content import report_contents
 
 # CSAM Reports per Platform
 from .platform.data import REPORTS_PER_PLATFORM
