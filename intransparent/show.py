@@ -15,7 +15,7 @@ Dtype: TypeAlias = np.dtype | pd.api.extensions.ExtensionDtype
 
 
 def show(
-    value: str | pd.DataFrame,
+    value: str | pd.Series | pd.DataFrame,
     *,
     show_schema: bool = False,
     caption: None | str = None,
@@ -27,6 +27,9 @@ def show(
     if isinstance(value, str):
         display(HTML(value))
         return
+
+    if isinstance(value, pd.Series):
+        value = value.to_frame()
 
     if show_schema:
         caption = 'Table ' + '' if caption is None else f'<strong>{caption}</strong> '
