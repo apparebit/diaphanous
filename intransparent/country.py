@@ -127,6 +127,28 @@ def read_populations(path: str | Path) -> pd.DataFrame:
     return populations
 
 
+def read_online(path: str | Path) -> pd.DataFrame:
+    online = (
+        pd.
+        read_csv(
+            path,
+            usecols=['iso3', 'year', 'online'],
+            dtype={'iso3': 'category', 'year': 'category', 'online': 'int'},
+        )
+        .set_index(['iso3', 'year'])
+    )
+
+    total_yearly_online = online.groupby(level='year')['online'].sum()
+    online['online_pct'] = online['online'] / total_yearly_online * 100
+
+    if len(online) != 6_406:
+        raise AssertionError(
+            f'{len(online)} instead of 6,406 rows for online populations'
+        )
+
+    return online
+
+
 def read_countries(path: str | Path) -> pd.DataFrame:
     return pd.read_csv(path, index_col='iso3', dtype='category')
 
@@ -213,15 +235,22 @@ def without_populations(
 def merge_reports_per_country(
     reports: pd.DataFrame,
     populations: pd.DataFrame,
+    online: pd.DataFrame,
     countries: pd.DataFrame,
     regions: pd.DataFrame,
     arab_league: pd.DataFrame,
 ) -> pd.DataFrame:
     df = (
         reports.merge(populations, how='inner', left_index=True, right_index=True)
+        # index is (iso3, year)
+        .merge(online, how='left', on=['iso3', 'year'])
+        .pipe(lambda df: (print(df.info()), df)[1])
+        # index still is (iso3, year)
         .reset_index(level='year')
+        # index is iso3
         .merge(countries, how='left', on='iso3')
         .reset_index()
+        # index is row number
         .merge(regions, how='left', on='region')
         .astype({'region': 'category'})  # Restore category lost on merge
     )
@@ -272,6 +301,7 @@ class ReportsPerCountry(NamedTuple):
     reports_per_capita: pd.DataFrame
     reports: pd.DataFrame
     populations: pd.DataFrame
+    online: pd.DataFrame
     countries: pd.DataFrame
     regions: pd.DataFrame
     arab_league: pd.DataFrame
@@ -295,6 +325,9 @@ def ingest_reports_per_country(
     populations = read_populations(path / 'populations.csv')
     logger(populations, caption='populations')
 
+    online = read_online(path / 'internet-users.csv')
+    logger(online, caption='online')
+
     countries = read_countries(path / 'countries.csv')
     logger(countries, caption='countries')
 
@@ -312,7 +345,7 @@ def ingest_reports_per_country(
         logger(geometries, caption='geometries')
 
     reports_per_capita = merge_reports_per_country(
-        reports, populations, countries, regions, arab_league
+        reports, populations, online, countries, regions, arab_league
     )
     logger(reports_per_capita, caption='reports per capita')
 
@@ -322,6 +355,7 @@ def ingest_reports_per_country(
         reports_per_capita,
         reports,
         populations,
+        online,
         countries,
         regions,
         arab_league,
