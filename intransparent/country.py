@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Any, Iterator, NamedTuple
 
+import numpy as np
 import pandas as pd
 import geopandas as geo  # type: ignore
 
@@ -227,8 +228,21 @@ def without_populations(
     countries_without = reports.index.get_level_values('iso3').difference(
         populations.index.get_level_values('iso3')
     )
-    country_names = ', '.join(f'"{country}"' for country in countries_without.values)
-    reports_without = reports.query(f'iso3 in [{country_names}]').groupby('year').sum()
+    reports_without = (
+        reports[reports.index.get_level_values('iso3').isin(countries_without)]
+        .groupby('year')
+        .sum()
+    )
+
+    expected = [28, 97, 243, 117]
+    actual = reports_without['reports']
+    if not np.array_equal(actual, expected):
+        raise AssertionError(
+            'reports for countries without population'
+            f' {",".join(str(n) for n in actual)} does not match expected '
+            f' {",".join(str(n) for n in expected)}'
+        )
+
     return countries_without, reports_without
 
 
@@ -244,7 +258,6 @@ def merge_reports_per_country(
         reports.merge(populations, how='inner', left_index=True, right_index=True)
         # index is (iso3, year)
         .merge(online, how='left', on=['iso3', 'year'])
-        .pipe(lambda df: (print(df.info()), df)[1])
         # index still is (iso3, year)
         .reset_index(level='year')
         # index is iso3
