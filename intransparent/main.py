@@ -7,7 +7,6 @@ import traceback
 import pandas as pd
 
 from intransparent import (
-    report_contents,
     ingest_reports_per_country,
     reports_per_capita_country_year,
     create_map,
@@ -45,101 +44,7 @@ def just_map() -> None:
         with_panels=True,
         with_antarctica=True,
     )
-    fig.write_image(f'csam-reports-per-capita.svg')
-
-
-# ======================================================================================
-
-
-def reports_overview(section: int) -> None:
-    contents = pd.read_csv('./data/csam-report-contents.csv', thousands=',')
-    pieces, overreports, violations, relationships = report_contents(contents)
-
-    show(f'<h1>{section}. CSAM Report Contents</h1>')
-    show(f'<h2>{section}.1 Reported Activities</h2>')
-    show(
-        """
-        Per <a href="https://www.law.cornell.edu/uscode/text/18/2258A">18 US
-        Code §2258A</a>, a number of activities related to the sexual
-        exploitation of children must be reported to NCMEC. However, most of
-        them are far harder to detect than child pornography, which is the
-        subject of almost all reports.
-        """
-    )
-    show(
-        violations,
-        caption='Reported Activities',
-        highlight_columns=['2020 %', '2021 %', '2022 %'],
-        highlight_rows='child pornography',
-    )
-
-    # ----------------------------------------------------------------------------------
-    show(f'<h2>{section}.2 Reported CSAM Pieces')
-    show(
-        """
-        <p>On average, each report has about three pieces of CSAM, that is,
-        photos or videos attached. NCMEC determines the number of unique pieces
-        with the MD5 hash function and number of perceptually similar pieces
-        with PhotoDNA and Videntity.</p>
-
-        <p>Given that <a
-        href="https://marc-stevens.nl/research/papers/StLdW%20-%20Chosen-Prefix%20Collisions%20for%20MD5%20and%20Applications.pdf">chosen
-        prefix attacks against MD5</a> are eminently practical, the continued
-        use of MD5 by NCMEC is deeply concerning. Worse, NCMEC has publicly
-        claimed the opposite in 2023, stating that <a
-        href="https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf">[i]mages
-        that share the same MD5 hash are identical</a>.</p>
-
-        <p>The columns labeled with "π(...)" (for product) contain the
-        multiplicative factors relating reports, unique pieces, and similar
-        pieces with the number of pieces in the highlighted column. Clearly, the
-        same CSAM pieces are reported over and over again.</p>
-        """
-    )
-    show(
-        pieces,
-        caption='Reported Pieces (Photos & Videos)',
-        highlight_columns='pieces',
-    )
-    show(
-        """
-        As the next table shows, the same holds for reports and all attached
-        pieces together.
-        """
-    )
-    show(
-        overreports,
-        caption='Total, Unique, and Similar Reports',
-        highlight_columns='reports',
-    )
-
-    # ----------------------------------------------------------------------------------
-    show(f'<h2>{section}.3 Relationship to Victim</h2>')
-    show(
-        """
-        For each unique piece of content, i.e., photo or video, the next table
-        identifies the relationship of the suspected offender to the victimized
-        child. The data is <em>not</em> based on CSAM reports to NCMEC's
-        CyberTipline but separate law enforcement reports.
-        """
-    )
-    show(
-        relationships.drop(columns='Distance'),
-        caption='Relationship to Victim per Unique Piece',
-    )
-    show(
-        """
-        The table below summarizes the same data based on a coarse
-        categorization of relationships by emotional/social distance.
-        Apparently, drag queens aren't the threat some people claim they are.
-        """
-    )
-    show(
-        relationships.groupby('Distance').sum(),
-        caption='Summary of Relationship Data',
-        highlight_columns=['2020 %', '2021 %', '2022 %'],
-        highlight_rows='Family',
-    )
+    fig.write_image(f'./figure/csam-reports-per-capita.svg')
 
 
 def reports_per_country(section: int) -> None:
@@ -148,7 +53,7 @@ def reports_per_country(section: int) -> None:
     show(f'<h2>{section}.1 Data Schemas</h2>')
 
     logger = partial(show, show_schema=True, margin_bottom=2)
-    country_data = ingest_reports_per_country('./data', logger=logger)
+    country_data = ingest_reports_per_country('../data', logger=logger)
 
     countries_without, reports_without = without_populations(
         country_data.reports, country_data.populations
@@ -269,7 +174,7 @@ def reports_per_country(section: int) -> None:
         with_antarctica=True,
     )
     show_map(fig)
-    fig.write_image(f'csam-reports-per-capita.svg')
+    fig.write_image(f'../figure/csam-reports-per-capita.svg')
 
 
 def reports_per_platform(section: int) -> dict[str, pd.DataFrame]:
@@ -349,7 +254,7 @@ def meta_disclosures(section: int, disclosures: dict[str, pd.DataFrame]) -> None
         """
     )
 
-    meta_disclosures = meta.read_all('data')
+    meta_disclosures = meta.read_all('../data')
     meta_differences = meta.diff_all(meta_disclosures)
 
     for p1, delta in meta_differences.items():
