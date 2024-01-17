@@ -1,6 +1,8 @@
+from collections.abc import Sequence
 from dataclasses import dataclass
+from itertools import chain
 import re
-from typing import cast, Callable, ClassVar
+from typing import cast, Callable, ClassVar, Literal, NamedTuple, TypeAlias
 
 import pandas as pd
 
@@ -9,14 +11,12 @@ from .type import (
     DisclosureType,
     DisclosureCollectionType,
     RowType,
+    SchemaEntryType,
 )
+
 
 # --------------------------------------------------------------------------------------
 # Index Values
-
-
-def _ingest_name(platform: str, name: str) -> str:
-    return name
 
 
 _PERIOD_FORMAT = re.compile(r"^(?P<year>\d{4})(?:[ ](?P<tag>(?:H[12])|(?:Q[1-4])))?$")
@@ -39,6 +39,15 @@ def _ingest_period(platform: str, period: str) -> pd.Period:
 # Cell Values
 
 
+_InternalSchemaEntry: TypeAlias = Literal["Int64", "float64", "string"]
+
+_SCHEMA_ENTRIES: dict[SchemaEntryType, _InternalSchemaEntry] = {
+    "int": "Int64",
+    "float": "float64",
+    "string": "string",
+}
+
+
 @dataclass(frozen=True)
 class Percentage(float):
     FORMAT: ClassVar[re.Pattern] = re.compile(
@@ -55,18 +64,47 @@ class Percentage(float):
         return f"{self.percent} / 100 * {self.total}"
 
 
-def _ingest_number(
-    platform: str, number: None | int | float | str
-) -> None | int | float:
-    if not isinstance(number, str):
-        return number
+def _ingest_cell(
+    platform: str,
+    cell: CellType,
+    column: str,
+    typed: _InternalSchemaEntry,
+) -> CellType:
+    # All columns are implicitly nullable.
+    if cell is None:
+        return None
 
-    match = Percentage.FORMAT.match(number)
-    if match is None:
+    # If the schema requires strings, the cell must be a string.
+    if typed == "string":
+        if not isinstance(cell, str):
+            raise ValueError(
+                f'{platform}\'s "{column}" column contains non-string "{cell}"'
+            )
+        return cell
+
+    # If the schema requires integers, the cell must be an integer.
+    if typed == "Int64":
+        if not isinstance(cell, int):
+            raise ValueError(
+                f'{platform}\'s "{column}" column contains non-integer "{cell}"'
+            )
+        return cell
+
+    # The schema requires a float. Both int and float cells will do.
+    if isinstance(cell, (int, float)):
+        return cell
+
+    # The cell better be a valid percentage expression.
+    if not isinstance(cell, str):
         raise ValueError(
-            f'{platform}\'s string "{number}" is not a valid percentage expression'
+            f'{platform}\'s "{column}" contains invalidly typed "{cell}"'
         )
 
+    match = Percentage.FORMAT.match(cell)
+    if match is None:
+        raise ValueError(
+            f'{platform}\'s "{column}" contains invalid percentage expression "{cell}"'
+        )
     percent, total = match.groups()
     return Percentage(float(percent), int(total.replace(",", "")))
 
@@ -80,11 +118,11 @@ _REDUNDANT = frozenset({"redundant"})
 
 def _ingest_row(
     platform: str,
-    width: int,
     row: RowType,
-    ingest_index: Callable[[str, str], str | pd.Period],
+    columns: Sequence[str],
+    schema: dict[str, _InternalSchemaEntry],
     include_redundant: bool = False,
-) -> None | tuple[str | pd.Period, list[None | int | float]]:
+) -> None | tuple[pd.Period, list[CellType]]:
     keys = row.keys() - _REDUNDANT
     if len(keys) != 1:
         raise ValueError(f'{platform}\'s row "{row}" does not have expected entries')
@@ -92,14 +130,18 @@ def _ingest_row(
         return None
 
     (index,) = keys
-    numbers = cast(list[CellType], row[index])
-    if len(numbers) != width:
+    cells = cast(list[CellType], row[index])
+    if len(cells) != len(columns):
         raise ValueError(
-            f"{platform}'s row has {len(numbers)} elements instead of {width}"
+            f"{platform}'s row has {len(cells)} cells instead of {len(columns)}"
         )
 
-    row_index = ingest_index(platform, index)
-    row_data = [_ingest_number(platform, num) for num in numbers]
+    row_index = _ingest_period(platform, index)
+    row_data = [
+        _ingest_cell(platform, cell, column, schema[column])
+        for cell, column in zip(cells, columns)
+    ]
+
     if include_redundant:
         return (row_index, [*row_data, is_redundant])
     return (row_index, row_data)
@@ -108,83 +150,64 @@ def _ingest_row(
 def _ingest_table(
     platform: str, data: DisclosureType, include_redundant: bool = False
 ) -> pd.DataFrame:
-    # Determine columns and function to ingest index values.
-    columns: list[str | pd.Period]
-    ingest_index: Callable[[str, str], str | pd.Period]
+    # Warm up.
+    columns = list(data["columns"])
+    raw_schema = data.get("schema", {})
 
-    if data["row_index"] == "period":
-        columns = [column for column in data["columns"]]
-        ingest_index = _ingest_period
-    elif include_redundant:
-        raise ValueError(
-            f"{platform}: including redundant rows requires periods as row index"
-        )
-    else:
-        columns = [_ingest_period(platform, period) for period in data["columns"]]
-        ingest_index = _ingest_name
-    width = len(columns)
+    # Elaborate schema.
+    schema: dict[str, _InternalSchemaEntry] = {}
+    for column in columns:
+        if column == "redundant":
+            raise ValueError(f'{platform} has column named "redundant"')
+
+        type_name = raw_schema.get(column, "int")
+        if type_name not in _SCHEMA_ENTRIES:
+            raise ValueError(
+                f'{platform}\'s schema for "{column}" has invalid type "{type_name}"'
+            )
+        schema[column] = _SCHEMA_ENTRIES[type_name]
 
     # Ingest rows.
-    all_rows = []
+    indexed_rows = []
     for row_data in data["rows"]:
-        labelled_row = _ingest_row(
-            platform, width, row_data, ingest_index, include_redundant=include_redundant
+        row = _ingest_row(
+            platform, row_data, columns, schema, include_redundant=include_redundant
         )
-        if labelled_row:
-            all_rows.append(labelled_row)
-    index, plain_rows = zip(*all_rows)
+        if row:
+            indexed_rows.append(row)
+    index, rows = zip(*indexed_rows)
 
-    # Create dataframe and then coerce integer columns to more restrictive type.
-    nonintegers = set(data["nonintegers"]) if "nonintegers" in data else set()
-    schema = {c: ("float64" if c in nonintegers else "Int64") for c in columns}
+    # When preserving redundant rows, patch columns and schema.
     if include_redundant:
-        schema['redundant'] = 'bool'
-        columns.append('redundant')
-    return pd.DataFrame(plain_rows, index=index, columns=columns).astype(schema)
+        columns.append("redundant")
+        schema["redundant"] = "bool"
+
+    # Leverage schema for better dataframe typing.
+    df = pd.DataFrame(rows, index=index, columns=columns).astype(schema)
+    df.index.name = 'period'
+    return df
 
 
-def _combine_tables(
-    disclosures: dict[str, pd.DataFrame], target: str, *sources: str
-) -> dict[str, pd.DataFrame]:
-    """
-    Compute a new version of the disclosures that has the same entries as the
-    given one but without the source platforms and with the target platform as
-    the sum of the source and target platforms. The target platform need not
-    exist originally. All source and target platform tables should have the same
-    columns and row index.
-    """
-    combined = disclosures.get(target)
-    new_disclosures = {}
-
-    for platform, table in disclosures.items():
-        if platform == target:
-            pass
-        elif platform in sources:
-            if combined is None:
-                combined = table
-            else:
-                combined += table
-        else:
-            new_disclosures[platform] = table
-
-    assert combined is not None
-    new_disclosures[target] = combined
-    return new_disclosures
+class PlatformData(NamedTuple):
+    disclosures: dict[str, pd.DataFrame]
+    brands: dict[str, tuple[str,...]]
 
 
-_TABLE_FIELDS = frozenset(["row_index", "columns", "rows", "nonintegers"])
+_TABLE_FIELDS = frozenset(["columns", "rows", "schema"])
 
 
 def ingest_reports_per_platform(
     raw_data: DisclosureCollectionType,
     include_redundant: bool = False,
     logger: None | Callable[..., None] = None,
-) -> dict[str, pd.DataFrame]:
+) -> PlatformData:
     # Define verbose logger.
     if logger is None:
         logger = lambda *args, **kwargs: None
 
     disclosures = {}
+    brands = {}
+
     for platform, record in raw_data.items():
         # Skip metadata and platforms without disclosure record.
         if platform == "@":
@@ -194,47 +217,101 @@ def ingest_reports_per_platform(
             logger("Skipping {}: no transparency disclosures", platform)
             continue
 
-        # Check that disclosure record has either no or all required table properties.
+        # Record brand relationships.
         record = cast(DisclosureType, record)
+        if "brands" in record:
+            brands[platform] = record["brands"]
 
+        # Check that disclosure record has either no or all required table properties.
         missing = _TABLE_FIELDS - record.keys()
         if missing == _TABLE_FIELDS:
             logger("Skipping {}: no CSAM data", platform)
             continue
-        if len(missing) > 0 and missing != {"nonintegers"}:
-            s = ", ".join(set(missing) - set(["nonintegers"]))
+        if len(missing) > 0 and missing != {"schema"}:
+            s = ", ".join(set(missing) - set(["schema"]))
             raise ValueError(f"{platform}'s disclosure record lacks field(s) {s}")
 
         # Ingest table with platform's CSAM disclosures.
         logger("Ingesting CSAM data for {}", platform)
         redundant = include_redundant
-        if record['row_index'] != 'period':
-            redundant = False
         table = _ingest_table(platform, record, include_redundant=redundant)
-        if record["row_index"] != "period":
-            table = table.transpose()
-            table.index.name = 'period'
         if platform == 'NCMEC':
             table = table.sort_index()
         disclosures[platform] = table
 
-    return _combine_tables(disclosures, "Google/YouTube", "Google", "YouTube")
+    return PlatformData(disclosures, brands)
 
 
-_AUTO_BRANDS = ('Tumblr', 'Wordpress')
-_META_BRANDS = ('Facebook', 'Instagram', 'WhatsApp')
+def combine_brands(data: PlatformData) -> dict[str, pd.DataFrame]:
+    """
+    Compute a new version of the disclosures that has the same entries as the
+    original version but with only entries for individual firms and not brands.
+    """
+    disclosures = dict(data.disclosures)
+    for firm_name, brands in data.brands.items():
+        firm_data = disclosures.get(firm_name)
+        schema = None if firm_data is None else firm_data.dtypes
+
+        for brand in brands:
+            if brand not in disclosures:
+                continue
+
+            table = disclosures[brand]
+            if firm_data is None:
+                firm_data = table
+                schema = table.dtypes
+            else:
+                firm_data = firm_data.add(table, fill_value=0)
+
+            del disclosures[brand]
+
+        if firm_data is not None:
+            disclosures[firm_name] = firm_data.astype(schema)
+
+    return disclosures
 
 
-def reshape_reports_per_platform(disclosures: dict[str, pd.DataFrame]) -> pd.DataFrame:
-    return (
-        disclosures["NCMEC"]
-        .fillna(0)
-        .assign(Automattic=lambda df: df[['Automattic', *_AUTO_BRANDS]].sum(axis=1))
-        .assign(Meta=lambda df: df[['Meta', *_META_BRANDS]].sum(axis=1))
-        .drop(columns=[*_AUTO_BRANDS, *_META_BRANDS])
-        .transpose()
-        .melt(var_name='year', value_name='reports', ignore_index=False)
-        .assign(year=lambda df: df['year'].dt.year)
-        .astype({'reports': 'int64'})
-        .sort_values('reports', ascending=False)
+def wide_ncmec_reports(
+    data: PlatformData,
+    combine_brands: bool = True,
+    drop_brands: bool = True,
+) -> pd.DataFrame:
+    ncmec = (
+        data.disclosures['NCMEC']
+        .drop(columns=['notifications_sent', 'response_time'])
+        # Without dropna=False, Google and YouTube are dropped, complicating loop below
+        .pivot_table(values='reports', index='period', columns='platform', dropna=False)
+        # pivot_table() produces float64 columns, likely because of dropna=False. Undo.
+        .astype('Int64')
     )
+
+    if combine_brands:
+        for firm, brands in data.brands.items():
+            ncmec = ncmec.assign(**{firm: lambda df: df[[firm, *brands]].sum(axis=1)})
+            if drop_brands:
+                ncmec = ncmec.drop(columns=list(brands))
+
+    return ncmec
+
+def long_ncmec_reports(
+    data: PlatformData,
+    combine_brands: bool = True,
+    drop_brands: bool = True,
+) -> pd.DataFrame:
+    ncmec = (
+        data.disclosures['NCMEC']
+        .drop(columns=['notifications_sent', 'response_time'])
+    )
+
+    if combine_brands:
+        for firm, brands in data.brands.items():
+            ncmec.loc[ncmec['platform'] == firm, 'reports'] = (
+                ncmec
+                .loc[ncmec['platform'].isin([firm, *brands]), 'reports']
+                .groupby('period')
+                .sum()
+            )
+            if drop_brands:
+                ncmec = ncmec.loc[~ncmec['platform'].isin(brands)]
+
+    return ncmec.sort_values(['period', 'platform'])

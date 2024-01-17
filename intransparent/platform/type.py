@@ -1,8 +1,10 @@
 from collections.abc import Sequence
-from typing import Literal, TypedDict
+from typing import Literal, TypeAlias, TypedDict
 
-CellType = None | int | float | str
-RowType = dict[str, bool | Sequence[CellType]]
+
+CellType: TypeAlias = None | int | float | str
+RowType: TypeAlias = dict[str, bool | Sequence[CellType]]
+SchemaEntryType: TypeAlias = Literal["int", "float", "string"]
 
 
 class MetadataType(TypedDict):
@@ -23,10 +25,9 @@ class DisclosureType(TypedDict, total=False):
     sources: Sequence[str]
 
     # Table with quantitative data
-    row_index: Literal["period", "platform"]
     columns: Sequence[str]
     rows: Sequence[RowType]
-    nonintegers: Sequence[str]
+    schema: dict[str, SchemaEntryType]
 
 
 # The dictionary with social media transparency disclosures.

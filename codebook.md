@@ -62,19 +62,23 @@ transparency disclosures.
 Most importantly, it may contain a platform's quantitative CSAM disclosures in a
 table with labeled columns and labeled rows.
 
-One of the table's dimensions are **time periods**. Individual periods may have
-different lengths, be repeated, or overlap with others. Valid period durations
-are quarter, half, and full calendar years. Quarter and half years are written
-as the four-digit year, a space, the letter `Q` or `H`, respectively, and the
-one digit ordinal. Years are written as four digits. Examples include `2021 Q1`,
-`2022 H2`, and `2017`.
+Row labels are **time periods**. Individual periods may have different lengths,
+be repeated, or overlap with others. Valid period durations are quarter, half,
+and full calendar years. Quarter and half years are written as the four-digit
+year, a space, the letter `Q` or `H`, respectively, and the one digit ordinal.
+Years are written as four digits. Examples include `2021 Q1`, `2022 H2`, and
+`2017`. All row labels, including years, are formatted as strings.
 
-While the entities for the other dimension differ considerably between
-individual platforms, three names have the same consistent meaning:
+Column labels differ significantly between platforms and hence are explicitly
+declared for each platform. Still, three labels have the same consistent meaning
+across all platforms:
 
   * `reports`: the number of reports submitted to or received by NCMEC
   * `pieces`: the number of intercepted or removed CSAM photos or videos
   * `accounts`: the number of terminated or "permanently suspended" accounts
+
+Any cell may be null but all non-null cells belonging to the same column are
+either integers, floating point numbers, or strings.
 
 
 ### 3.2 Encoding: Disclosure Record Properties
@@ -82,27 +86,35 @@ individual platforms, three names have the same consistent meaning:
 A disclosure record may include the following properties:
 
   * `brands`: a list of strings naming subsidiary platforms
-  * `comments`: a list of strings with human-readable comments
   * `sources`: a list of strings with the URLs of transparency disclosures
+  * `comments`: a list of strings with human-readable comments
 
-  * `row_index`: the string `period` or `platform`
   * `columns`: a list of strings serving as column labels
+  * `schema`: a dictionary mapping column labels to their types
   * `rows`: a list of row records with the row labels and cell data
-  * `nonintegers`: a list of strings naming columns with floating point values
 
-All properties are optional. Since `row_index`, `columns`, `rows`, and
-`nonintegers` encode the same table, a disclosure record contains either none or
-all of them. To avoid clutter, the record may omit the `nonintegers` if the
-table does not contain floating point numbers.
+All properties are optional. Since `columns`, `schema`, and `rows` encode the
+same table, a disclosure record contains either none or all of them. Valid
+schema types are `int`, `float`, and `string`. To avoid clutter, integer columns
+need not be included and the schema may be omitted altogether if all columns
+contain integers.
 
 
 ### 3.3 Encoding: Row Records
 
 A row record has one or two properties:
 
- 1. The first, mandatory property has the row index entry as key and the list of
-    cells as value. Each cell contains either `null`, an integer, or a floating
-    point number.
+ 1. The first, mandatory property has the row label as key and the list of cells
+    as value.
+
+    The row label determines the period, i.e., a year, half-year, or quarter.
+    Like other periods, years are written as strings. Half-years are written as
+    the year followed by a space and `H1` or `H2`. Quarters are written as the
+    year followed by a space and `Q1`, `Q2`, `Q3`, or `Q4`.
+
+    Each cell contains either `null`, an integer, a floating point number, or
+    string. Note that a floating point column may contain integer cells as well
+    as string cells formatted as follows.
 
     To preserve information presented as "*x*% out of *y* entities," a floating
     point value can also be written as a string with format "`F / 100 * N`,"
@@ -111,29 +123,25 @@ A row record has one or two properties:
     separators, and the three tokens `/`, `100`, and `*` between _F_ and _N_
     appear as written, with arbitrary spacing in between.
 
-    In the future, percentage values may be automatically coerced to integers
-    when appearing in columns that are not included in the nonintegers.
-
  2. The second, optional property has `redundant` as key and either `true` or
     `false` as value. It indicates that a platform's transparency disclosure
     contained the same quantity for the same time period more than once. While
     all such redundant data points should be the same, in practice they may not.
-    The `redundant` property helps preserve them.
+    The `redundant` property helps preserve such divergent disclosures.
 
 
 ### 3.4 Well-Formed Disclosure and Row Records
 
 The dataset format imposes the following constraints:
 
-  * If the row index is `period`, every row has a valid period as label.
-  * If the row index is `platform`, every column is a valid period and every row
-    label is a valid platform.
-  * If any rows are marked as redundant, the row index is `period`.
-  * The number of columns in a disclosure record is the same as the number of
-    cells in each of its row records.
-  * All nonintegers are column labels.
-  * Cells with floating point values appear only in columns that also are
-    nonintegers.
+  * Schema keys are distinct and also column names. The corresponding values are
+    `int`, `float`, or `string`.
+  * Every row has a valid period as key.
+  * Every row has exactly the same number of cell values as there are columns.
+  * Cell values are consistent with the column's implicit or explicit schema.
+  * Row periods may overlap. They also may have gaps.
+  * If two or more rows include non-null entries for the same column and period,
+    all but one row are marked as `redundant`.
 
 Due to the application domain, all integral quantities in the dataset represent
 counts. As such, integral quantities in different, non-redundant rows with

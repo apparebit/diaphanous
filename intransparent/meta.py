@@ -236,14 +236,12 @@ def csam_reports(ncmec: pd.DataFrame) -> pd.DataFrame:
     and enrich with percentage shares for Meta vs Total as well as WhatsApp vs
     Meta.
     """
-
-    meta = ncmec[['Facebook', 'Instagram', 'Meta', 'WhatsApp']].sum(axis=1)
     return (
         ncmec['Total']
         .to_frame()
         .rename(columns={0: 'Total'})
-        .assign(**{'%': lambda df: meta / df['Total'] * 100})
-        .assign(Meta=meta)
+        .assign(**{'%': lambda df: ncmec['Meta'] / df['Total'] * 100})
+        .assign(Meta=ncmec['Meta'])
         .assign(Facebook=ncmec['Facebook'])
         .assign(Instagram=ncmec['Instagram'])
         .assign(WhatsApp=ncmec['WhatsApp'])

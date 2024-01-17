@@ -1,5 +1,7 @@
 import pandas as pd
 
+from .ingest import combine_brands, PlatformData, wide_ncmec_reports
+
 
 def _components(p: pd.Period) -> tuple[pd.Period, int, int]:
     return pd.Period(p.year, freq='Y'), p.start_time.month, p.end_time.month
@@ -33,9 +35,9 @@ def compare_platform_reports(
     platform: str, table: pd.DataFrame, NCMEC: pd.DataFrame
 ) -> None | pd.DataFrame:
     if platform == "NCMEC":
-        return None
+        raise ValueError('cannot compare NCMEC with itself')
     if table is None or "reports" not in table.columns:
-        return None
+        raise ValueError(f'nothing to compare for {platform}')
     if platform not in NCMEC.columns:
         raise ValueError(f"{platform} does not appear in NCMEC's disclosures")
 
@@ -53,13 +55,13 @@ def compare_platform_reports(
     return comparison
 
 
-def compare_all_platform_reports(
-    disclosures: dict[str, pd.DataFrame]
-) -> dict[str, pd.DataFrame]:
-    NCMEC = disclosures["NCMEC"]
+def compare_all_platform_reports(data: PlatformData) -> dict[str, pd.DataFrame]:
+    NCMEC = wide_ncmec_reports(data)
     comparisons = {}
 
-    for platform, table in disclosures.items():
+    for platform, table in combine_brands(data).items():
+        if platform == 'NCMEC' or table is None or "reports" not in table.columns:
+            continue
         comparison = compare_platform_reports(platform, table, NCMEC)
         if comparison is not None:
             comparisons[platform] = comparison

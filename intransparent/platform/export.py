@@ -8,6 +8,7 @@ from .type import (
     DisclosureCollectionType,
     DisclosureType,
     RowType,
+    SchemaEntryType,
 )
 
 
@@ -95,9 +96,14 @@ def encode_reports_per_platform(
             if key == "brands":
                 s = ", ".join([json.dumps(item) for item in cast(list[str], value)])
                 yield from emit_line(f'    "brands": [{s}]')
-            elif key == "row_index":
-                yield from emit_line(f'    "row_index": {json.dumps(value)}')
-            elif key in ("columns", "comments", "rows", "nonintegers", "sources"):
+            elif key == "schema":
+                yield from emit_line(f'    "{key}": {{')
+                first_entry = True
+                for column, typ in cast(dict[str, SchemaEntryType], value).items():
+                    first_entry = append_comma_to_line_if_not(first_entry)
+                    yield from emit_line(f'        "{column}": "{typ}"')
+                yield from emit_line('    }')
+            elif key in ("columns", "comments", "rows", "sources"):
                 yield from emit_line(f'    "{key}": [')
                 first_item = True
                 for item in cast(list, value):

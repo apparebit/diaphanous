@@ -7,6 +7,9 @@
            "version": "1.0b1",
     "|": "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
   },
+  "Alphabet": {
+    "brands": ["Google", "YouTube"]
+  },
   "Automattic": {
     "sources": [
       "https://transparency.automattic.com"
@@ -17,7 +20,6 @@
     "sources": [
       "https://transparency.fb.com/sr/community-standards/"
     ],
-    "row_index": "period",
     "columns": [
       "pieces (Child Nudity & Sexual Exploitation)",
       "pieces (Child Endangerment: Nudity and Physical Abuse)",
@@ -57,7 +59,6 @@
     "sources": [
       "https://transparencyreport.google.com/child-sexual-abuse-material/"
     ],
-    "row_index": "period",
     "columns": [
       "pieces",
       "reports",
@@ -77,7 +78,6 @@
     "sources": [
       "https://transparency.fb.com/sr/community-standards/"
     ],
-    "row_index": "period",
     "columns": [
       "pieces (Child Nudity & Sexual Exploitation)",
       "pieces (Child Endangerment: Nudity and Physical Abuse)",
@@ -117,7 +117,6 @@
     "comments": [
       "numbers disclosed under 'content removed', hence pieces"
     ],
-    "row_index": "period",
     "columns": [
       "pieces"
     ],
@@ -147,7 +146,6 @@
       "our CSE policy. Of these, we determined that c distinct images, which",
       "comprised d Pins, were illegal CSAM, and we reported them to NCMEC."
     ],
-    "row_index": "period",
     "columns": [
       "reports",
       "distinct images",
@@ -195,7 +193,6 @@
       "https://www.redditinc.com/policies/transparency-report-2019-1",
       "https://www.redditinc.com/policies/transparency"
     ],
-    "row_index": "period",
     "columns": [
       "pieces",
       "reports",
@@ -220,15 +217,14 @@
       "https://www.snap.com/en-US/privacy/transparency/2020-6-30",
       "https://www.snap.com/en-US/privacy/transparency/2019-12-31"
     ],
-    "row_index": "period",
     "columns": [
       "pieces",
       "accounts",
       "reports"
     ],
-    "nonintegers": [
-      "accounts"
-    ],
+    "schema": {
+        "accounts": "float"
+    },
     "rows": [
       {"2022 H2": [527787, 204490, 265285]},
       {"2022 H1": [746051, 201527, 285470]},
@@ -263,7 +259,6 @@
       "category: minor safety; subcategory: sexual exploitation of minors",
       "category share only being given for human moderation renders data meaningless"
     ],
-    "row_index": "period",
     "columns": [
       "pieces (human moderation)",
       "category share (human moderation)",
@@ -274,13 +269,13 @@
       "removal rate before any views (human moderation)",
       "proactive removal rate (human moderation)"
     ],
-    "nonintegers": [
-      "category share (human moderation)",
-      "minor safety category share of total",
-      "removal rate within 24 hours (human moderation)",
-      "removal rate before any views (human moderation)",
-      "proactive removal rate (human moderation)"
-    ],
+    "schema": {
+        "category share (human moderation)": "float",
+        "minor safety category share of total": "float",
+        "removal rate within 24 hours (human moderation)": "float",
+        "removal rate before any views (human moderation)": "float",
+        "proactive removal rate (human moderation)": "float"
+    },
     "rows": [
       {"2023 Q1": [null, 0.023000, 0.306000, 53494911, 91003510, 0.869000, 0.784000, 0.927000]},
       {"2022 Q4": [415278, 0.033000, 0.333000, 46836047, 85680819, 0.887000, 0.821000, 0.931000]},
@@ -302,7 +297,6 @@
     "comments": [
       "'child sexual exploitation' is reported to NCMEC, hence CSAM"
     ],
-    "row_index": "period",
     "columns": [
       "accounts actioned",
       "accounts suspended",
@@ -336,7 +330,6 @@
     "sources": [
       "https://transparencyreport.google.com/child-sexual-abuse-material/"
     ],
-    "row_index": "period",
     "columns": [
       "pieces",
       "reports"
@@ -355,32 +348,105 @@
       "https://www.missingkids.org/content/dam/missingkids/pdfs/2019-reports-by-esp.pdf",
       "https://www.missingkids.org/content/dam/missingkids/pdfs/2020-reports-by-esp.pdf",
       "https://www.missingkids.org/content/dam/missingkids/pdfs/2021-reports-by-esp.pdf",
-      "https://www.missingkids.org/content/dam/missingkids/pdfs/2022-reports-by-esp.pdf"
+      "https://www.missingkids.org/content/dam/missingkids/pdfs/2022-reports-by-esp.pdf",
+      "https://www.missingkids.org/content/dam/missingkids/pdfs/2021-notifications-by-ncmec-per-esp.pdf",
+      "https://www.missingkids.org/content/dam/missingkids/pdfs/2022-notifications-by-ncmec-per-esp.pdf"
     ],
-    "row_index": "platform",
+    "comments": [
+      "reports: number of reports *received* by NCMEC from a platform",
+      "notifications_sent: number of hosted CSAM notices *sent* by NCMEC",
+      "response_time: average days platform takes to respond/takedown",
+      "missing response_time implies no action despite repeated notices",
+      "original reports has entries for Google only, listed here under Alphabet",
+      "notifications_sent & response_time have entries for Google and YouTube"
+    ],
     "columns": [
-      "2022",
-      "2021",
-      "2020",
-      "2019"
+      "platform",
+      "reports",
+      "notifications_sent",
+      "response_time"
     ],
+    "schema": {
+        "platform": "string",
+        "response_time": "float"
+    },
     "rows": [
-      {"Total": [31802525, 29157083, 21447786, 16836694]},
-      {"Automattic": [null, null, 9130, 10443]},
-      {"Facebook": [21165208, 22118952, null, null]},
-      {"Google/YouTube": [2174548, 875783, 546704, 449283]},
-      {"Instagram": [5007902, 3393654, null, null]},
-      {"LinkedIn": [201, 110, 60, 88]},
-      {"Meta": [null, null, 20307216, 15884511]},
-      {"Pinterest": [34310, 2283, 3432, 7360]},
-      {"Quora": [2242, 25, 2, 1]},
-      {"Reddit": [52592, 10059, 2233, 724]},
-      {"Snap": [551086, 512522, 144095, 82030]},
-      {"TikTok": [288125, 154618, 22692, 596]},
-      {"Tumblr": [4845, 4511, null, null]},
-      {"Twitter": [98050, 86666, 65062, 45726]},
-      {"WhatsApp": [1017555, 1372696, null, null]},
-      {"Wordpress": [190, 310, null, null]}
+      {"2019": ["Total", 16836694, null, null]},
+      {"2020": ["Total", 21447786, null, null]},
+      {"2021": ["Total", 29157083, 75038, 1.220000]},
+      {"2022": ["Total", 31802525, 80969, null]},
+      {"2019": ["Alphabet", 449283, null, null]},
+      {"2020": ["Alphabet", 546704, null, null]},
+      {"2021": ["Alphabet", 875783, null, null]},
+      {"2022": ["Alphabet", 2174548, null, null]},
+      {"2019": ["Automattic", 10443, null, null]},
+      {"2020": ["Automattic", 9130, null, null]},
+      {"2021": ["Automattic", null, null, null]},
+      {"2022": ["Automattic", null, null, null]},
+      {"2019": ["Facebook", null, null, null]},
+      {"2020": ["Facebook", null, null, null]},
+      {"2021": ["Facebook", 22118952, 28, 7.270000]},
+      {"2022": ["Facebook", 21165208, 10, 4.400000]},
+      {"2019": ["Google", null, null, null]},
+      {"2020": ["Google", null, null, null]},
+      {"2021": ["Google", null, 975, 6.770000]},
+      {"2022": ["Google", null, 916, 4.200000]},
+      {"2019": ["Instagram", null, null, null]},
+      {"2020": ["Instagram", null, null, null]},
+      {"2021": ["Instagram", 3393654, 22, 4.450000]},
+      {"2022": ["Instagram", 5007902, 13, 3.700000]},
+      {"2019": ["LinkedIn", 88, null, null]},
+      {"2020": ["LinkedIn", 60, null, null]},
+      {"2021": ["LinkedIn", 110, null, null]},
+      {"2022": ["LinkedIn", 201, null, null]},
+      {"2019": ["Meta", 15884511, null, null]},
+      {"2020": ["Meta", 20307216, null, null]},
+      {"2021": ["Meta", null, null, null]},
+      {"2022": ["Meta", null, null, null]},
+      {"2019": ["Pinterest", 7360, null, null]},
+      {"2020": ["Pinterest", 3432, null, null]},
+      {"2021": ["Pinterest", 2283, 56, 0.690000]},
+      {"2022": ["Pinterest", 34310, 46, 1.100000]},
+      {"2019": ["Quora", 1, null, null]},
+      {"2020": ["Quora", 2, null, null]},
+      {"2021": ["Quora", 25, 1, 0.710000]},
+      {"2022": ["Quora", 2242, null, null]},
+      {"2019": ["Reddit", 724, null, null]},
+      {"2020": ["Reddit", 2233, null, null]},
+      {"2021": ["Reddit", 10059, 233, 1.390000]},
+      {"2022": ["Reddit", 52592, 275, 2.400000]},
+      {"2019": ["Snap", 82030, null, null]},
+      {"2020": ["Snap", 144095, null, null]},
+      {"2021": ["Snap", 512522, null, null]},
+      {"2022": ["Snap", 551086, null, null]},
+      {"2019": ["Telegram", null, null, null]},
+      {"2020": ["Telegram", null, null, null]},
+      {"2021": ["Telegram", null, 229, 8]},
+      {"2022": ["Telegram", null, 73, 5.100000]},
+      {"2019": ["TikTok", 596, null, null]},
+      {"2020": ["TikTok", 22692, null, null]},
+      {"2021": ["TikTok", 154618, null, null]},
+      {"2022": ["TikTok", 288125, 1, 0.200000]},
+      {"2019": ["Tumblr", null, null, null]},
+      {"2020": ["Tumblr", null, null, null]},
+      {"2021": ["Tumblr", 4511, 52, 0.490000]},
+      {"2022": ["Tumblr", 4845, 92, 0.900000]},
+      {"2019": ["Twitter", 45726, null, null]},
+      {"2020": ["Twitter", 65062, null, null]},
+      {"2021": ["Twitter", 86666, 1017, 1.820000]},
+      {"2022": ["Twitter", 98050, 1278, 1.800000]},
+      {"2019": ["WhatsApp", null, null, null]},
+      {"2020": ["WhatsApp", null, null, null]},
+      {"2021": ["WhatsApp", 1372696, 2, 3.320000]},
+      {"2022": ["WhatsApp", 1017555, 2, 5.200000]},
+      {"2019": ["Wordpress", null, null, null]},
+      {"2020": ["Wordpress", null, null, null]},
+      {"2021": ["Wordpress", 310, 26, 1.950000]},
+      {"2022": ["Wordpress", 190, 155, 1.600000]},
+      {"2019": ["YouTube", null, null, null]},
+      {"2020": ["YouTube", null, null, null]},
+      {"2021": ["YouTube", null, 10, 2.200000]},
+      {"2022": ["YouTube", null, 14, 3.600000]}
     ]
   }
 }

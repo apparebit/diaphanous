@@ -3,7 +3,9 @@ __all__ = (
     '__version__',
     'REPORTS_PER_PLATFORM',
     'ingest_reports_per_platform',
-    'reshape_reports_per_platform',
+    'wide_ncmec_reports',
+    'long_ncmec_reports',
+    'combine_brands',
     'encode_reports_per_platform',
     'compare_all_platform_reports',
     'YEAR_LABELS',
@@ -21,7 +23,12 @@ __version__ = "1.0b1"
 
 # CSAM Reports per Platform
 from .platform.data import REPORTS_PER_PLATFORM
-from .platform.ingest import ingest_reports_per_platform, reshape_reports_per_platform
+from .platform.ingest import (
+    ingest_reports_per_platform,
+    wide_ncmec_reports,
+    long_ncmec_reports,
+    combine_brands,
+)
 from .platform.export import encode_reports_per_platform
 from .platform.compare import compare_all_platform_reports
 
