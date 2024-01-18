@@ -45,22 +45,9 @@ def just_map() -> None:
 
 def reports_per_country(section: int) -> None:
     # ----------------------------------------------------------------------------------
-    show(f'<h1>{section}.  CSAM Reports per Country</h1>')
-    show(f'<h2>{section}.1 Data Schemas</h2>')
 
-    logger = partial(show, show_schema=True, margin_bottom=2)
-    country_data = ingest_reports_per_country('../data', logger=logger)
+    country_data = ingest_reports_per_country('../data')
 
-    countries_without, reports_without = without_populations(
-        country_data.reports, country_data.populations
-    )
-    show(
-        f'{countries_without.shape[0]} countries have reports but not population '
-        'statistics. They also account for very few reports.'
-    )
-    show(reports_without, caption='Reports for Countries<br>w/o Population Stats')
-
-    # ----------------------------------------------------------------------------------
     show(f'<h2>{section}.2 Regions Ranked by CSAM Reports</h2>')
     most_reports = (
         country_data.reports_per_capita.groupby(['year', 'region'])

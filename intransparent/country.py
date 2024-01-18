@@ -226,13 +226,20 @@ def read_geometries(path: str | Path) -> pd.DataFrame:
 
 
 def without_populations(
-    reports: pd.DataFrame, populations: pd.DataFrame
-) -> tuple[pd.Index, pd.DataFrame]:
-    countries_without = reports.index.get_level_values('iso3').difference(
-        populations.index.get_level_values('iso3')
+    reports: pd.DataFrame, populations: pd.DataFrame, countries: pd.DataFrame
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    countries_without = (
+        reports.index
+        .get_level_values('iso3')
+        .difference(populations.index.get_level_values('iso3'))
+        .to_frame()
+        .drop(columns='iso3')
+        .merge(countries, how='left', on='iso3')
+        .drop(columns='iso2')
     )
+
     reports_without = (
-        reports[reports.index.get_level_values('iso3').isin(countries_without)]
+        reports[reports.index.get_level_values('iso3').isin(countries_without.index)]
         .groupby('year')
         .sum()
     )
