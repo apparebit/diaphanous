@@ -47,6 +47,9 @@ def compare_platform_reports(
     selection = ["pieces", "reports"] if "pieces" in table.columns else ["reports"]
     comparison = _annualize(table[selection])
 
+    if "pieces" in comparison.columns:
+        comparison.insert(1, "π", comparison["pieces"] / comparison["reports"])
+
     sent = comparison["reports"]
     received = NCMEC[platform]
     comparison["Δ%"] = (received - sent) / sent * 100
