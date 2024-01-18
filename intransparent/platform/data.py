@@ -201,26 +201,33 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "https://www.redditinc.com/policies/transparency-report-2019-1",
             "https://www.redditinc.com/policies/transparency",
         ),
+        "comments": [
+            "pieces includes posts and comments but not private messages"
+        ],
         "columns": (
             "pieces",
             "reports",
-            "temporary account suspensions",
-            "accounts",
-            "account appeals",
-            "account reversals percent",
+            "pieces (minor sexualization)",
+            "private messages (minor sexualization)",
+            "subreddits (minor sexualization)",
+            "temporary account suspensions (minor sexualization)",
+            "accounts (minor sexualization)",
+            "account appeals (minor sexualization)",
+            "account reversals percent (minor sexualization)",
         ),
         "schema": {
-            "account reversals percent": "float",
+            "account reversals percent (minor sexualization)": "float",
         },
         "rows": (
             # fmt: off
-            {"2023 H1": (181_083, None, 27_219, 68_900, 2_924, 7.8)},
-            {"2022 H2": (31_574, 40_243, None, None, None, None), "redundant": True},
-            {"2022 H1": (None, 12_349, None, None, None, None), "redundant": True},
-            {"2022": (80_888, 52_592, None, None, None, None)},
-            {"2021": (9_258, 10_059, 0, 4_659, None, None)},
-            {"2020": (None, 2_233, None, None, None, None)},
-            {"2019": (None, 724, None, None, None, None)},
+            {"2023 H1": (149_084, 156_533, 181_083, 296, 987, 27_219, 68_900, 2_924, 7.8)},
+            {"2022 H2": (31_574, 40_243, None, None, None, None, None, None, None), "redundant": True},
+            {"2022 H1": (None, 12_349, None, None, None, None, None, None, None), "redundant": True},
+            {"2022": (80_888, 52_592, 266_473, 390, 5_149, 70_201, 93_997, 7_513, 9.5)},
+            {"2021": (9_258, 10_059, 117_093, 243, 1_914, 0, 4_659, None, None)},
+            {"2020": (None, 2_233, None, None, None, 15_940, 21_946, None, None)},
+            {"2019": (None, 724, 38_410, None, 280, None, 10_781, None, None)},
+            # fmt: on
         ),
     },
     "Snap": {
