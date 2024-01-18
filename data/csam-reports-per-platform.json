@@ -197,6 +197,7 @@
   },
   "Reddit": {
     "sources": [
+      "https://www.redditinc.com/policies/2023-h1-transparency-report",
       "https://www.redditinc.com/policies/2022-transparency-report",
       "https://www.redditinc.com/policies/mid-year-transparency-report-2022-2",
       "https://www.redditinc.com/policies/transparency-report-2021",
@@ -208,20 +209,28 @@
       "pieces",
       "reports",
       "temporary account suspensions",
-      "accounts"
+      "accounts",
+      "account appeals",
+      "account reversals percent"
     ],
+    "schema": {
+        "account reversals percent": "float"
+    },
     "rows": [
-      {"2022 H2": [31574, 40243, null, null], "redundant": true},
-      {"2022 H1": [null, 12349, null, null], "redundant": true},
-      {"2022": [80888, 52592, null, null]},
-      {"2021": [9258, 10059, 0, 4659]},
-      {"2020": [null, 2233, null, null]},
-      {"2019": [null, 724, null, null]}
+      {"2023 H1": [181083, null, 27219, 68900, 2924, 7.800000]},
+      {"2022 H2": [31574, 40243, null, null, null, null], "redundant": true},
+      {"2022 H1": [null, 12349, null, null, null, null], "redundant": true},
+      {"2022": [80888, 52592, null, null, null, null]},
+      {"2021": [9258, 10059, 0, 4659, null, null]},
+      {"2020": [null, 2233, null, null, null, null]},
+      {"2019": [null, 724, null, null, null, null]}
     ]
   },
   "Snap": {
     "sources": [
       "https://values.snap.com/privacy/transparency",
+      "https://values.snap.com/privacy/transparency-h2-2022",
+      "https://values.snap.com/privacy/transparency-h1-2022",
       "https://www.snap.com/en-US/privacy/transparency/2021-12-31",
       "https://www.snap.com/en-US/privacy/transparency/2021-6-30",
       "https://www.snap.com/en-US/privacy/transparency/2020-12-31",
@@ -237,6 +246,7 @@
         "accounts": "float"
     },
     "rows": [
+      {"2023 H1": [548509, 228897, 292489]},
       {"2022 H2": [527787, 204490, 265285]},
       {"2022 H1": [746051, 201527, 285470]},
       {"2021 H2": [null, 198109, null]},

@@ -193,6 +193,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
     },
     "Reddit": {
         "sources": (
+            "https://www.redditinc.com/policies/2023-h1-transparency-report",
             "https://www.redditinc.com/policies/2022-transparency-report",
             "https://www.redditinc.com/policies/mid-year-transparency-report-2022-2",
             "https://www.redditinc.com/policies/transparency-report-2021",
@@ -200,21 +201,33 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "https://www.redditinc.com/policies/transparency-report-2019-1",
             "https://www.redditinc.com/policies/transparency",
         ),
-        "columns": ("pieces", "reports", "temporary account suspensions", "accounts"),
+        "columns": (
+            "pieces",
+            "reports",
+            "temporary account suspensions",
+            "accounts",
+            "account appeals",
+            "account reversals percent",
+        ),
+        "schema": {
+            "account reversals percent": "float",
+        },
         "rows": (
             # fmt: off
-            {"2022 H2": (31_574, 40_243, None, None), "redundant": True},
-            {"2022 H1": (None, 12_349, None, None), "redundant": True},
-            {"2022": (80_888, 52_592, None, None)},
-            {"2021": (9_258, 10_059, 0, 4_659)},
-            {"2020": (None, 2_233, None, None)},
-            {"2019": (None, 724, None, None)},
-            # fmt: on
+            {"2023 H1": (181_083, None, 27_219, 68_900, 2_924, 7.8)},
+            {"2022 H2": (31_574, 40_243, None, None, None, None), "redundant": True},
+            {"2022 H1": (None, 12_349, None, None, None, None), "redundant": True},
+            {"2022": (80_888, 52_592, None, None, None, None)},
+            {"2021": (9_258, 10_059, 0, 4_659, None, None)},
+            {"2020": (None, 2_233, None, None, None, None)},
+            {"2019": (None, 724, None, None, None, None)},
         ),
     },
     "Snap": {
         "sources": (
             "https://values.snap.com/privacy/transparency",
+            "https://values.snap.com/privacy/transparency-h2-2022",
+            "https://values.snap.com/privacy/transparency-h1-2022",
             "https://www.snap.com/en-US/privacy/transparency/2021-12-31",
             "https://www.snap.com/en-US/privacy/transparency/2021-6-30",
             "https://www.snap.com/en-US/privacy/transparency/2020-12-31",
@@ -225,6 +238,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
         "schema": {"accounts": "float"},
         "rows": (
             # fmt: off
+            {"2023 H1": (548_509, 228_897, 292_489)},
             {"2022 H2": (527_787, 204_490, 265_285)},
             {"2022 H1": (746_051, 201_527, 285_470)},
             {"2021 H2": (None, 198_109, None)},
