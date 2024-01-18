@@ -151,7 +151,10 @@ def read_online(path: str | Path) -> pd.DataFrame:
 
 
 def read_countries(path: str | Path) -> pd.DataFrame:
-    return pd.read_csv(path, index_col='iso3', dtype='category')
+    countries = pd.read_csv(path, index_col='iso3', dtype='category', na_filter=False)
+    if countries.at['NAM', 'iso2'] != 'NA':
+        raise AssertionError("Namibia's ISO2 code (NA) is *not* null")
+    return countries
 
 
 def read_regions(path: str | Path) -> pd.DataFrame:
