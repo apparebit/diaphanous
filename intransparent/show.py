@@ -68,6 +68,10 @@ def show(
             vmax=600,
         )
 
+        style.format('≡', subset=pd.IndexSlice[
+            pd.IndexSlice[value['reports'] == value['NCMEC']], 'Δ%'
+        ])
+
     display(style)
 
 
@@ -228,6 +232,9 @@ def highlight_magnitude(
         gmap=magnitude,
         subset=(above_threshold, frame.columns),  # type: ignore[arg-type]
     )
+
+
+# --------------------------------------------------------------------------------------
 
 
 def format_schema(style: Styler) -> Styler:
