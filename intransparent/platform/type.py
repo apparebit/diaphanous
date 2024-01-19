@@ -26,6 +26,9 @@ class FeatureType(TypedDict):
     history: None | HistoryType
     terms: tuple[str, ...]
     quantities: Literal["counts", "fractions", "rounded"]
+    granularity: str
+    frequency: str
+    coverage: str
 
 
 class DisclosureType(TypedDict, total=False):

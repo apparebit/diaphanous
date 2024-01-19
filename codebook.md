@@ -116,6 +116,11 @@ If a platform releases transparency reports, its disclosure record includes a
     content and/or behavior;
   * `quantities`: a string indicating whether reported quantities are `counts`,
     `rounded`, or `fractions`.
+  * `granularity`: a string indicating the granularity of disclosures, `Q`, `H`,
+    or `Y` for quarterly, semiannually, and yearly, respectively;
+  * `frequency`: a string indicating the frequency of disclosures, `Q`, `H`, or
+    `Y`;
+  * `coverage`: a string indicating the coverage of CSAM disclosures;
 
 
 

@@ -22,8 +22,11 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
         "features": {
             "data": "csv",
             "history": "data",
-            "terms": ("child nudity & sexual exploitation", "sexual exploitation",),
+            "terms": ("child nudity & sexual exploitation", "child sexual exploitation",),
             "quantities": "rounded",
+            "granularity": "Q",
+            "frequency": "Q",
+            "coverage": "2018 Q3",
         },
         "columns": (
             "pieces (Child Nudity & Sexual Exploitation)",
@@ -74,6 +77,9 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "history": "same page (dropdown)",
             "terms": ("CSAM",),
             "quantities": "counts",
+            "granularity": "H",
+            "frequency": "H",
+            "coverage": "2020 H1",
         },
         "columns": ("pieces", "reports", "accounts", "urls"),
         "rows": (
@@ -95,6 +101,9 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "history": "data",
             "terms": ("child nudity & sexual exploitation", "sexual exploitation",),
             "quantities": "rounded",
+            "granularity": "Q",
+            "frequency": "Q",
+            "coverage": "2019 Q2",
         },
         "columns": (
             "pieces (Child Nudity & Sexual Exploitation)",
@@ -140,6 +149,9 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "history": "same page (tabs)",
             "terms": ("child exploitation",),
             "quantities": "counts",
+            "granularity": "H",
+            "frequency": "H",
+            "coverage": "2019 H1",
         },
         "comments": ("numbers disclosed under 'content removed', hence pieces",),
         "columns": ("pieces",),
@@ -167,9 +179,12 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
         ),
         "features": {
             "data": None,
-            "history": "page archive",
+            "history": "same page (tabs)",
             "terms": ("child safety", "child sexual exploitation", "CSAM"),
             "quantities": "counts",
+            "granularity": "Q",
+            "frequency": "H",
+            "coverage": "2020 H1",
         },
         "comments": (
             "Pin is lingo for a media card with picture, hence pin with CSAM is piece.",
@@ -236,6 +251,9 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "history": "page archive",
             "terms": ("minor sexualization", "child sexual exploitation", "CSAM"),
             "quantities": "counts",
+            "granularity": "H",
+            "frequency": "H",
+            "coverage": "2021",
         },
         "comments": [
             "pieces includes posts and comments but not private messages"
@@ -282,6 +300,9 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "history": "page archive",
             "terms": ("child sexual exploitation and abuse imagery",),
             "quantities": "counts",
+            "granularity": "H",
+            "frequency": "H",
+            "coverage": "2019 H2",
         },
         "columns": ("pieces", "accounts", "reports"),
         "schema": {"accounts": "float"},
@@ -310,6 +331,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
     "Telegram": None,
     "TikTok": {
         "sources": (
+            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-3/",
+            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-2/",
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-1/",
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-4/",
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-3/",
@@ -323,6 +346,9 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "history": "page archive",
             "terms": ("sexual exploitation of minors", "CSAM"),
             "quantities": "fractions",
+            "granularity": "Q",
+            "frequency": "Q",
+            "coverage": "2022 Q1",
         },
         "comments": (
             "TikTok's minor safety category has five subcategories:",
@@ -333,6 +359,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "  * nudity and sexual activity involving minors;",
             "The latter most comprises 'minors in minimal clothing' ",
             "and 'sexually explicit dancing'.",
+            "From 2021 Q3 through 2022 Q3, TikTok publshed data as Excel spreadsheets."
         ),
         "columns": (
             "pieces (human moderation)",
@@ -353,6 +380,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
         },
         "rows": (
             # fmt: off
+            #{"2023 Q3": None},
+            #{"2023 Q2": None},
             {"2023 Q1": (None, 0.023, 0.306, 53_494_911, 91_003_510, 0.869, 0.784, 0.927)},
             {"2022 Q4": (415_278, 0.033, 0.333, 46_836_047, 85_680_819, 0.887, 0.821, 0.931)},
             {"2022 Q3": (792_473, 0.033, 0.429, 53_287_839, 110_954_663, 0.925, 0.883, 0.951,)},
@@ -374,6 +403,9 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "history": "same page (dropdown)",
             "terms": ("child sexual exploitation",),
             "quantities": "counts",
+            "granularity": "H",
+            "frequency": "H",
+            "coverage": "2018 H2 - 2022 H1",
         },
         "comments": ("CSV download feature does not work in any browser",),
         "columns": (
@@ -414,6 +446,9 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "history": "same page (dropdown)",
             "terms": ("CSAM",),
             "quantities": "counts",
+            "granularity": "H",
+            "frequency": "H",
+            "coverage": "2020 H1",
         },
         "columns": ("pieces", "reports"),
         "rows": (
@@ -442,6 +477,9 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "history": "page archive",
             "terms": ("CSAM",),
             "quantities": "counts",
+            "granularity": "Y",
+            "frequency": "Y",
+            "coverage": "2019",
         },
         "comments": (
             "reports: number of reports *received* by NCMEC from a platform",

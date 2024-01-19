@@ -195,7 +195,8 @@ class PlatformData(NamedTuple):
 
 
 _TABLE_FIELDS = frozenset(["columns", "rows", "schema"])
-_FEATURE_FIELDS = frozenset(["data", "history", "terms", "quantities"])
+_FEATURE_FIELDS = frozenset([
+    "data", "history", "terms", "quantities", "granularity", "frequency", "coverage"])
 
 
 def ingest_reports_per_platform(
