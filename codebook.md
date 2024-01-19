@@ -88,6 +88,7 @@ A disclosure record may include the following properties:
   * `brands`: a list of strings naming subsidiary platforms
   * `sources`: a list of strings with the URLs of transparency disclosures
   * `comments`: a list of strings with human-readable comments
+  * `features`: a dictionary with high-level properties of transparency reports
 
   * `columns`: a list of strings serving as column labels
   * `schema`: a dictionary mapping column labels to their types
@@ -100,7 +101,25 @@ need not be included and the schema may be omitted altogether if all columns
 contain integers.
 
 
-### 3.3 Encoding: Row Records
+### 3.3 Encoding: Features
+
+If a platform releases transparency reports, its disclosure record includes a
+`features` dictionary with the following keys and values:
+
+  * `data`: `null` or a string identifying the file format of machine-readable
+    data, notably `csv`;
+  * `history`: a string describing the historical information provided:
+      * `data`: as part of machine-readable data;
+      * `same page`: on the same, possibly dynamic HTML page;
+      * `page archive`: through a list of linked reports;
+  * `terms`: a list of strings containing terms used to describe violative
+    content and/or behavior;
+  * `quantities`: a string indicating whether reported quantities are `counts`,
+    `rounded`, or `fractions`.
+
+
+
+### 3.4 Encoding: Row Records
 
 A row record has one or two properties:
 
@@ -130,7 +149,7 @@ A row record has one or two properties:
     The `redundant` property helps preserve such divergent disclosures.
 
 
-### 3.4 Well-Formed Disclosure and Row Records
+### 3.5 Well-Formed Disclosure and Row Records
 
 The dataset format imposes the following constraints:
 

@@ -96,12 +96,19 @@ def encode_reports_per_platform(
             if key == "brands":
                 s = ", ".join([json.dumps(item) for item in cast(list[str], value)])
                 yield from emit_line(f'    "brands": [{s}]')
-            elif key == "schema":
+            elif key in ("features", "schema"):
                 yield from emit_line(f'    "{key}": {{')
-                first_entry = True
-                for column, typ in cast(dict[str, SchemaEntryType], value).items():
-                    first_entry = append_comma_to_line_if_not(first_entry)
-                    yield from emit_line(f'        "{column}": "{typ}"')
+                first_item = True
+                for k, v in cast(dict, value).items():
+                    first_item = append_comma_to_line_if_not(first_item)
+                    if v is None:
+                        s = "null"
+                    elif isinstance(v, str):
+                        s = f'"{v}"'
+                    else:
+                        s = ", ".join(f'"{el}"' for el in v)
+                        s = f'[{s}]'
+                    yield from emit_line(f'        "{k}": {s}')
                 yield from emit_line('    }')
             elif key in ("columns", "comments", "rows", "sources"):
                 yield from emit_line(f'    "{key}": [')

@@ -191,9 +191,11 @@ def _ingest_table(
 class PlatformData(NamedTuple):
     disclosures: dict[str, pd.DataFrame]
     brands: dict[str, tuple[str,...]]
+    features: pd.DataFrame
 
 
 _TABLE_FIELDS = frozenset(["columns", "rows", "schema"])
+_FEATURE_FIELDS = frozenset(["data", "history", "terms", "quantities"])
 
 
 def ingest_reports_per_platform(
@@ -207,6 +209,7 @@ def ingest_reports_per_platform(
 
     disclosures = {}
     brands = {}
+    all_features = {}
 
     for platform, record in raw_data.items():
         # Skip metadata and platforms without disclosure record.
@@ -215,12 +218,27 @@ def ingest_reports_per_platform(
             continue
         if record is None:
             logger("Skipping {}: no transparency disclosures", platform)
+            all_features[platform] = {}
             continue
 
         # Record brand relationships.
         record = cast(DisclosureType, record)
         if "brands" in record:
             brands[platform] = record["brands"]
+
+        # Record features.
+        features = record.get("features", {})
+        if len(features):
+            if _FEATURE_FIELDS != features.keys():
+                raise ValueError(
+                    f'feature keys are {", ".join(features.keys())} and not '
+                    f'{", ".join(_FEATURE_FIELDS)}'
+                )
+            features["terms"] = "; ".join(features["terms"])
+            features["has_reports"] = "reports" in record.get("columns", [])
+        if "brands" not in record:
+            # Only record features for individual brands, not brand owners.
+            all_features[platform] = features
 
         # Check that disclosure record has either no or all required table properties.
         missing = _TABLE_FIELDS - record.keys()
@@ -239,7 +257,10 @@ def ingest_reports_per_platform(
             table = table.sort_index()
         disclosures[platform] = table
 
-    return PlatformData(disclosures, brands)
+    features = pd.DataFrame(all_features).transpose()
+    features.index.name = 'platform'
+
+    return PlatformData(disclosures, brands, features)
 
 
 def combine_brands(data: PlatformData) -> dict[str, pd.DataFrame]:

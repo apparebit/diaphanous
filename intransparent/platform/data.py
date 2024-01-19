@@ -19,6 +19,12 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
     },
     "Facebook": {
         "sources": ("https://transparency.fb.com/sr/community-standards/",),
+        "features": {
+            "data": "csv",
+            "history": "data",
+            "terms": ("child nudity & sexual exploitation", "sexual exploitation",),
+            "quantities": "rounded",
+        },
         "columns": (
             "pieces (Child Nudity & Sexual Exploitation)",
             "pieces (Child Endangerment: Nudity and Physical Abuse)",
@@ -63,6 +69,12 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
         "sources": (
             "https://transparencyreport.google.com/child-sexual-abuse-material/",
         ),
+        "features": {
+            "data": None,
+            "history": "same page (dropdown)",
+            "terms": ("CSAM",),
+            "quantities": "counts",
+        },
         "columns": ("pieces", "reports", "accounts", "urls"),
         "rows": (
             # fmt: off
@@ -78,6 +90,12 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
     },
     "Instagram": {
         "sources": ("https://transparency.fb.com/sr/community-standards/",),
+        "features": {
+            "data": "csv",
+            "history": "data",
+            "terms": ("child nudity & sexual exploitation", "sexual exploitation",),
+            "quantities": "rounded",
+        },
         "columns": (
             "pieces (Child Nudity & Sexual Exploitation)",
             "pieces (Child Endangerment: Nudity and Physical Abuse)",
@@ -117,6 +135,12 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
     },
     "LinkedIn": {
         "sources": ("https://about.linkedin.com/transparency/community-report",),
+        "features": {
+            "data": None,
+            "history": "same page (tabs)",
+            "terms": ("child exploitation",),
+            "quantities": "counts",
+        },
         "comments": ("numbers disclosed under 'content removed', hence pieces",),
         "columns": ("pieces",),
         "rows": (
@@ -141,6 +165,12 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "https://policy.pinterest.com/en/transparency-report",
             "https://help.pinterest.com/en/guide/transparency-report-archive",
         ),
+        "features": {
+            "data": None,
+            "history": "page archive",
+            "terms": ("child safety", "child sexual exploitation", "CSAM"),
+            "quantities": "counts",
+        },
         "comments": (
             "Pin is lingo for a media card with picture, hence pin with CSAM is piece.",
             "Pinterest's disclosure language explains 2nd through 5th columns:",
@@ -201,6 +231,12 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "https://www.redditinc.com/policies/transparency-report-2019-1",
             "https://www.redditinc.com/policies/transparency",
         ),
+        "features": {
+            "data": None,
+            "history": "page archive",
+            "terms": ("minor sexualization", "child sexual exploitation", "CSAM"),
+            "quantities": "counts",
+        },
         "comments": [
             "pieces includes posts and comments but not private messages"
         ],
@@ -241,6 +277,12 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "https://www.snap.com/en-US/privacy/transparency/2020-6-30",
             "https://www.snap.com/en-US/privacy/transparency/2019-12-31",
         ),
+        "features": {
+            "data": None,
+            "history": "page archive",
+            "terms": ("child sexual exploitation and abuse imagery",),
+            "quantities": "counts",
+        },
         "columns": ("pieces", "accounts", "reports"),
         "schema": {"accounts": "float"},
         "rows": (
@@ -276,9 +318,21 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "https://sf16-va.tiktokcdn.com/obj/eden-va2/nuvlojeh7ryht/Transparency_CGE_2022Q4/2022Q4_raw_data_cger_English.csv",
             "https://sf16-va.tiktokcdn.com/obj/eden-va2/nuvlojeh7ryht/Transparency_CGE_2022Q3/English_CGE_2022Q3.xlsx",
         ),
+        "features": {
+            "data": "csv",
+            "history": "page archive",
+            "terms": ("sexual exploitation of minors", "CSAM"),
+            "quantities": "fractions",
+        },
         "comments": (
-            "category: minor safety; subcategory: sexual exploitation of minors",
-            "category share only being given for human moderation renders data meaningless",
+            "TikTok's minor safety category has five subcategories:",
+            "  * sexual exploitation of minors;",
+            "  * grooming behavior;",
+            "  * physical and psychological harm of minors;",
+            "  * harmful activities by minors;",
+            "  * nudity and sexual activity involving minors;",
+            "The latter most comprises 'minors in minimal clothing' ",
+            "and 'sexually explicit dancing'.",
         ),
         "columns": (
             "pieces (human moderation)",
@@ -315,7 +369,13 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "https://transparency.twitter.com",
             "https://blog.twitter.com/en_us/topics/company/2023/an-update-on-twitter-transparency-reporting",
         ),
-        "comments": ("'child sexual exploitation' is reported to NCMEC, hence CSAM",),
+        "features": {
+            "data": None,
+            "history": "same page (dropdown)",
+            "terms": ("child sexual exploitation",),
+            "quantities": "counts",
+        },
+        "comments": ("CSV download feature does not work in any browser",),
         "columns": (
             "accounts actioned",
             "accounts suspended",
@@ -349,6 +409,12 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
         "sources": (
             "https://transparencyreport.google.com/child-sexual-abuse-material/",
         ),
+        "features": {
+            "data": None,
+            "history": "same page (dropdown)",
+            "terms": ("CSAM",),
+            "quantities": "counts",
+        },
         "columns": ("pieces", "reports"),
         "rows": (
             # fmt: off
@@ -371,6 +437,12 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "https://www.missingkids.org/content/dam/missingkids/pdfs/2021-notifications-by-ncmec-per-esp.pdf",
             "https://www.missingkids.org/content/dam/missingkids/pdfs/2022-notifications-by-ncmec-per-esp.pdf",
         ),
+        "features": {
+            "data": None,
+            "history": "page archive",
+            "terms": ("CSAM",),
+            "quantities": "counts",
+        },
         "comments": (
             "reports: number of reports *received* by NCMEC from a platform",
             "notifications_sent: number of hosted CSAM notices *sent* by NCMEC",
