@@ -226,8 +226,8 @@ def ingest_reports_per_platform(
         if "brands" in record:
             brands[platform] = record["brands"]
 
-        # Record features.
-        features = record.get("features", {})
+        # Record (a copy of the) features.
+        features = dict(record.get("features", {}))
         if len(features):
             if _FEATURE_FIELDS != features.keys():
                 raise ValueError(
