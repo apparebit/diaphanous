@@ -1,5 +1,7 @@
 from collections.abc import Iterator
+import io
 import math
+from pathlib import Path
 from typing import cast, NamedTuple, TypeAlias
 
 from IPython.display import display, HTML
@@ -11,7 +13,12 @@ from pandas.io.formats.style import Styler
 
 Dtype: TypeAlias = np.dtype | pd.api.extensions.ExtensionDtype
 
+
 # --------------------------------------------------------------------------------------
+
+
+ROOTDIR = Path(__file__).parent.parent
+EMIT_LATEX = False
 
 
 def show(
@@ -57,7 +64,8 @@ def show(
     )
 
     columns = value.columns
-    if 'reports' in columns and 'Δ%' in columns and 'NCMEC' in columns:
+    is_reports_table = 'reports' in columns and 'Δ%' in columns and 'NCMEC' in columns
+    if is_reports_table:
         style = highlight_magnitude(
             value,
             style,
@@ -73,6 +81,25 @@ def show(
         ])
 
     display(style)
+
+    if not EMIT_LATEX:
+        return
+
+    # Restyle without any colors.
+    style = format_table(value, caption=caption)
+    if is_reports_table:
+        style.format('≡', subset=pd.IndexSlice[
+            pd.IndexSlice[value['reports'] == value['NCMEC']], 'Δ%'
+        ])
+
+    with open(ROOTDIR / 'tables.tex', mode='at', encoding='utf8') as file:
+        style.to_latex(
+            file,
+            position_float='centering',
+            caption=caption,
+            convert_css=False,
+        )
+        file.flush()
 
 
 # --------------------------------------------------------------------------------------
