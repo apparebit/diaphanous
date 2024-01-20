@@ -23,8 +23,11 @@
     "features": {
         "data": "csv",
         "history": "data",
-        "terms": ["child nudity & sexual exploitation", "sexual exploitation"],
-        "quantities": "rounded"
+        "terms": ["child nudity & sexual exploitation", "child sexual exploitation"],
+        "quantities": "rounded",
+        "granularity": "Q",
+        "frequency": "Q",
+        "coverage": "2018 Q3"
     },
     "columns": [
       "pieces (Child Nudity & Sexual Exploitation)",
@@ -72,7 +75,10 @@
         "data": null,
         "history": "same page (dropdown)",
         "terms": ["CSAM"],
-        "quantities": "counts"
+        "quantities": "counts",
+        "granularity": "H",
+        "frequency": "H",
+        "coverage": "2020 H1"
     },
     "columns": [
       "pieces",
@@ -98,7 +104,10 @@
         "data": "csv",
         "history": "data",
         "terms": ["child nudity & sexual exploitation", "sexual exploitation"],
-        "quantities": "rounded"
+        "quantities": "rounded",
+        "granularity": "Q",
+        "frequency": "Q",
+        "coverage": "2019 Q2"
     },
     "columns": [
       "pieces (Child Nudity & Sexual Exploitation)",
@@ -143,7 +152,10 @@
         "data": null,
         "history": "same page (tabs)",
         "terms": ["child exploitation"],
-        "quantities": "counts"
+        "quantities": "counts",
+        "granularity": "H",
+        "frequency": "H",
+        "coverage": "2019 H1"
     },
     "comments": [
       "numbers disclosed under 'content removed', hence pieces"
@@ -173,9 +185,12 @@
     ],
     "features": {
         "data": null,
-        "history": "page archive",
+        "history": "same page (tabs)",
         "terms": ["child safety", "child sexual exploitation", "CSAM"],
-        "quantities": "counts"
+        "quantities": "counts",
+        "granularity": "Q",
+        "frequency": "H",
+        "coverage": "2020 H1"
     },
     "comments": [
       "Pin is lingo for a media card with picture, hence pin with CSAM is piece.",
@@ -239,7 +254,10 @@
         "data": null,
         "history": "page archive",
         "terms": ["minor sexualization", "child sexual exploitation", "CSAM"],
-        "quantities": "counts"
+        "quantities": "counts",
+        "granularity": "H",
+        "frequency": "H",
+        "coverage": "2021"
     },
     "comments": [
       "pieces includes posts and comments but not private messages"
@@ -283,7 +301,10 @@
         "data": null,
         "history": "page archive",
         "terms": ["child sexual exploitation and abuse imagery"],
-        "quantities": "counts"
+        "quantities": "counts",
+        "granularity": "H",
+        "frequency": "H",
+        "coverage": "2019 H2"
     },
     "columns": [
       "pieces",
@@ -316,6 +337,8 @@
   "Telegram": null,
   "TikTok": {
     "sources": [
+      "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-3/",
+      "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-2/",
       "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-1/",
       "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-4/",
       "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-3/",
@@ -327,18 +350,31 @@
     "features": {
         "data": "csv",
         "history": "page archive",
-        "terms": ["sexual exploitation of minors", "CSAM"],
-        "quantities": "fractions"
+        "terms": ["sexual exploitation of minors", "CSAM", "youth exploitation and abuse"],
+        "quantities": "fractions",
+        "granularity": "Q",
+        "frequency": "Q",
+        "coverage": "2022 Q1"
     },
     "comments": [
-      "TikTok's minor safety category has five subcategories:",
+      "TikTok's minor safety category used to have five subcategories:",
       "  * sexual exploitation of minors;",
       "  * grooming behavior;",
       "  * physical and psychological harm of minors;",
       "  * harmful activities by minors;",
       "  * nudity and sexual activity involving minors;",
-      "The latter most comprises 'minors in minimal clothing' ",
-      "and 'sexually explicit dancing'."
+      "The latter mostly comprises 'minors in minimal clothing' ",
+      "and 'sexually explicit dancing'.",
+      "TikTok released Excel files from 2021 Q3 through 2022 Q3.",
+      "Starting 2023 Q2, TikTok completely renamed categories.",
+      "Safety & Civility now comprises:",
+      "  * Harassment & bullying",
+      "  * Human exploitation, incl. trafficking and smuggling",
+      "  * Violent behaviors & criminal activities",
+      "  * Sexual exploitation & gender-based violence, incl.",
+      "    physical, sexual, or image-based abuse, sextortion, sexual harassment  * Violent & hateful orgs & individuals, incl. promotion and material support",
+      "  * Hate speech and hateful behavior, incl. hateful ideologies",
+      "  * Youth exploitation & abuse, incl. CSAM, pedophilia, youth nudity"
     ],
     "columns": [
       "pieces (human moderation)",
@@ -358,6 +394,8 @@
         "proactive removal rate (human moderation)": "float"
     },
     "rows": [
+      {"2023 Q3": [null, null, null, 88721552, 136530418, null, null, null]},
+      {"2023 Q2": [null, null, null, 66440775, 106476032, null, null, null]},
       {"2023 Q1": [null, 0.023000, 0.306000, 53494911, 91003510, 0.869000, 0.784000, 0.927000]},
       {"2022 Q4": [415278, 0.033000, 0.333000, 46836047, 85680819, 0.887000, 0.821000, 0.931000]},
       {"2022 Q3": [792473, 0.033000, 0.429000, 53287839, 110954663, 0.925000, 0.883000, 0.951000]},
@@ -379,7 +417,10 @@
         "data": null,
         "history": "same page (dropdown)",
         "terms": ["child sexual exploitation"],
-        "quantities": "counts"
+        "quantities": "counts",
+        "granularity": "H",
+        "frequency": "H",
+        "coverage": "2018 H2 - 2022 H1"
     },
     "comments": [
       "CSV download feature does not work in any browser"
@@ -421,7 +462,10 @@
         "data": null,
         "history": "same page (dropdown)",
         "terms": ["CSAM"],
-        "quantities": "counts"
+        "quantities": "counts",
+        "granularity": "H",
+        "frequency": "H",
+        "coverage": "2020 H1"
     },
     "columns": [
       "pieces",
@@ -450,7 +494,10 @@
         "data": null,
         "history": "page archive",
         "terms": ["CSAM"],
-        "quantities": "counts"
+        "quantities": "counts",
+        "granularity": "Y",
+        "frequency": "Y",
+        "coverage": "2019"
     },
     "comments": [
       "reports: number of reports *received* by NCMEC from a platform",

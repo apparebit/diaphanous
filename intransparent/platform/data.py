@@ -344,22 +344,32 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
         "features": {
             "data": "csv",
             "history": "page archive",
-            "terms": ("sexual exploitation of minors", "CSAM"),
+            "terms": ("sexual exploitation of minors", "CSAM", "youth exploitation and abuse"),
             "quantities": "fractions",
             "granularity": "Q",
             "frequency": "Q",
             "coverage": "2022 Q1",
         },
         "comments": (
-            "TikTok's minor safety category has five subcategories:",
+            "TikTok's minor safety category used to have five subcategories:",
             "  * sexual exploitation of minors;",
             "  * grooming behavior;",
             "  * physical and psychological harm of minors;",
             "  * harmful activities by minors;",
             "  * nudity and sexual activity involving minors;",
-            "The latter most comprises 'minors in minimal clothing' ",
+            "The latter mostly comprises 'minors in minimal clothing' ",
             "and 'sexually explicit dancing'.",
-            "From 2021 Q3 through 2022 Q3, TikTok publshed data as Excel spreadsheets."
+            "TikTok released Excel files from 2021 Q3 through 2022 Q3.",
+            "Starting 2023 Q2, TikTok completely renamed categories.",
+            "Safety & Civility now comprises:",
+            "  * Harassment & bullying",
+            "  * Human exploitation, incl. trafficking and smuggling",
+            "  * Violent behaviors & criminal activities",
+            "  * Sexual exploitation & gender-based violence, incl.",
+            "    physical, sexual, or image-based abuse, sextortion, sexual harassment"
+            "  * Violent & hateful orgs & individuals, incl. promotion and material support",
+            "  * Hate speech and hateful behavior, incl. hateful ideologies",
+            "  * Youth exploitation & abuse, incl. CSAM, pedophilia, youth nudity",
         ),
         "columns": (
             "pieces (human moderation)",
@@ -380,8 +390,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
         },
         "rows": (
             # fmt: off
-            #{"2023 Q3": None},
-            #{"2023 Q2": None},
+            {"2023 Q3": (None, None, None, 88_721_552, 136_530_418, None, None, None)},
+            {"2023 Q2": (None, None, None, 66_440_775, 106_476_032, None, None, None)},
             {"2023 Q1": (None, 0.023, 0.306, 53_494_911, 91_003_510, 0.869, 0.784, 0.927)},
             {"2022 Q4": (415_278, 0.033, 0.333, 46_836_047, 85_680_819, 0.887, 0.821, 0.931)},
             {"2022 Q3": (792_473, 0.033, 0.429, 53_287_839, 110_954_663, 0.925, 0.883, 0.951,)},
