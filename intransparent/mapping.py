@@ -110,14 +110,14 @@ def create_map(
             width=640,
             height=1100 if with_antarctica else 960,
             coloraxis_colorbar_len=0.3,
-            title=dict(
-                text='<i>CSAM Reports per Capita, Country, and Year</i>',
-                font_size=22,
-                x=0.5,
-                xanchor='center',
-                xref='paper',
-                # pad=dict(t=20, b=20),
-            ),
+            # title=dict(
+            #     text='<i>CSAM Reports per Capita, Country, and Year</i>',
+            #     font_size=22,
+            #     x=0.5,
+            #     xanchor='center',
+            #     xref='paper',
+            #     # pad=dict(t=20, b=20),
+            # ),
             # coloraxis_showscale=False,
         )
     else:
