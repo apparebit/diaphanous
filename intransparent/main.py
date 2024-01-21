@@ -40,7 +40,7 @@ def just_map() -> None:
         with_panels=True,
         with_antarctica=True,
     )
-    fig.write_image(f'./figure/csam-reports-per-capita.svg')
+    fig.write_image(f'./figure/reports-per-capita.svg')
 
 
 def reports_per_country(section: int) -> None:
@@ -157,7 +157,7 @@ def reports_per_country(section: int) -> None:
         with_antarctica=True,
     )
     show_map(fig)
-    fig.write_image(f'../figure/csam-reports-per-capita.svg')
+    fig.write_image(f'../figure/reports-per-capita.svg')
 
 
 # ======================================================================================
