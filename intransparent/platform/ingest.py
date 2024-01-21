@@ -261,6 +261,19 @@ def ingest_reports_per_platform(
     features = pd.DataFrame(all_features).transpose()
     features.index.name = 'platform'
 
+    # For now, fix Microsoft's repeated rows
+    ncmec = disclosures['NCMEC']
+    ms = (
+        ncmec[ncmec['platform'] == 'Microsoft']
+        .groupby('period')
+        .sum(numeric_only=True)
+    )
+    ms['platform'] = 'Microsoft'
+    disclosures['NCMEC'] = pd.concat([
+        ncmec[~(ncmec['platform'] == 'Microsoft')],
+        ms,
+    ])
+
     return PlatformData(disclosures, brands, features)
 
 

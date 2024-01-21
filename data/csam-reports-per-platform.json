@@ -178,6 +178,46 @@
   "Meta": {
     "brands": ["Facebook", "Instagram", "WhatsApp"]
   },
+  "Microsoft": {
+    "sources": [
+      "https://www.microsoft.com/en-us/corporate-responsibility/digital-safety-content-report"
+    ],
+    "features": {
+        "data": "xls",
+        "history": "same page (dropdown)",
+        "terms": ["CSAM"],
+        "quantities": "counts",
+        "granularity": "H",
+        "frequency": "H",
+        "coverage": "2020 H1"
+    },
+    "columns": [
+      "pieces",
+      "automatically detected pieces",
+      "accounts",
+      "reinstated accounts"
+    ],
+    "schema": {
+        "automatically detected pieces": "float",
+        "reinstated accounts": "float"
+    },
+    "rows": [
+      {"2023 H1": [227823, 94.700000, null, null]},
+      {"2023 H1": [46856, 99.200000, 7456, 1.400000]},
+      {"2022 H2": [200000, 98.500000, null, null]},
+      {"2022 H2": [31663, 99.200000, 6461, 1.600000]},
+      {"2022 H1": [176125, 93.500000, null, null]},
+      {"2022 H1": [40722, 98.700000, 10207, 0.560000]},
+      {"2021 H2": [274392, 97.200000, null, null]},
+      {"2021 H2": [36918, 99.400000, 11805, 0.040000]},
+      {"2021 H1": [176560, 97.200000, null, null]},
+      {"2021 H1": [76061, 99.700000, 18568, 0.020000]},
+      {"2020 H2": [360338, 99.000000, null, null]},
+      {"2020 H2": [92419, 99.900000, 17434, 0.000000]},
+      {"2020 H1": [718908, 99.800000, null, null]},
+      {"2020 H1": [84581, 99.800000, 15935, 0.010000]}
+    ]
+  },
   "Pinterest": {
     "sources": [
       "https://policy.pinterest.com/en/transparency-report",
@@ -525,6 +565,7 @@
       {"2019": ["Instagram", null, null, null]},
       {"2019": ["LinkedIn", 88, null, null]},
       {"2019": ["Meta", 15884511, null, null]},
+      {"2019": ["Microsoft", 123839, null, null]},
       {"2019": ["Pinterest", 7360, null, null]},
       {"2019": ["Quora", 1, null, null]},
       {"2019": ["Reddit", 724, null, null]},
@@ -544,6 +585,7 @@
       {"2020": ["Instagram", null, null, null]},
       {"2020": ["LinkedIn", 60, null, null]},
       {"2020": ["Meta", 20307216, null, null]},
+      {"2020": ["Microsoft", 96776, null, null]},
       {"2020": ["Pinterest", 3432, null, null]},
       {"2020": ["Quora", 2, null, null]},
       {"2020": ["Reddit", 2233, null, null]},
@@ -563,6 +605,10 @@
       {"2021": ["Instagram", 3393654, 22, 4.450000]},
       {"2021": ["LinkedIn", 110, null, null]},
       {"2021": ["Meta", null, null, null]},
+      {"2021": ["Microsoft", 78603, null, null]},
+      {"2021": ["Microsoft", 170, null, null]},
+      {"2021": ["Microsoft", null, 2, 8.860000]},
+      {"2021": ["Microsoft", null, 128, 2.210000]},
       {"2021": ["Pinterest", 2283, 56, 0.690000]},
       {"2021": ["Quora", 25, 1, 0.710000]},
       {"2021": ["Reddit", 10059, 233, 1.390000]},
@@ -582,6 +628,12 @@
       {"2022": ["Instagram", 5007902, 13, 3.700000]},
       {"2022": ["LinkedIn", 201, null, null]},
       {"2022": ["Meta", null, null, null]},
+      {"2022": ["Microsoft", 107274, null, null]},
+      {"2022": ["Microsoft", 138, null, null]},
+      {"2022": ["Microsoft", 1185, null, null]},
+      {"2022": ["Microsoft", null, 29, 2.800000]},
+      {"2022": ["Microsoft", null, 136, 5.100000]},
+      {"2022": ["Microsoft", null, 577, 5.200000]},
       {"2022": ["Pinterest", 34310, 46, 1.100000]},
       {"2022": ["Quora", 2242, null, null]},
       {"2022": ["Reddit", 52592, 275, 2.400000]},
