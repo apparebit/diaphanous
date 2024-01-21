@@ -15,6 +15,7 @@ __all__ = (
     'create_map',
     'DisplayMethod',
     'show_map',
+    'delete_latex_tables',
     'show',
     'to_schema',
 )
@@ -42,4 +43,4 @@ from .country import (
 from .mapping import create_map, DisplayMethod, show_map
 
 # Help display things
-from .show import show, to_schema
+from .show import delete_latex_tables, show, to_schema

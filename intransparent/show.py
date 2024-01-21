@@ -17,8 +17,11 @@ Dtype: TypeAlias = np.dtype | pd.api.extensions.ExtensionDtype
 # --------------------------------------------------------------------------------------
 
 
-ROOTDIR = Path(__file__).parent.parent
-EMIT_LATEX = False
+LATEX_TABLES = Path(__file__).parent.parent / 'tables.tex'
+
+
+def delete_latex_tables() -> None:
+    LATEX_TABLES.unlink(missing_ok=True)
 
 
 def show(
@@ -30,6 +33,8 @@ def show(
     highlight_rows: None | int | list[int] = None,
     margin_top: float = 0,
     margin_bottom: float = 2.0,
+    with_index: bool = True,
+    emit_latex: bool = False,
 ) -> None:
     if isinstance(value, str):
         display(HTML(value))
@@ -61,6 +66,7 @@ def show(
         highlight_rows=highlight_rows,
         margin_top=margin_top,
         margin_bottom=margin_bottom,
+        show_row_header=with_index,
     )
 
     columns = value.columns
@@ -82,23 +88,25 @@ def show(
 
     display(style)
 
-    if not EMIT_LATEX:
+    if not emit_latex:
         return
 
-    # Restyle without any colors.
-    style = format_table(value, caption=caption)
+    # Restyle without colors.
+    style = format_table(value, caption=caption, show_row_header=with_index)
     if is_reports_table:
         style.format('≡', subset=pd.IndexSlice[
             pd.IndexSlice[value['reports'] == value['NCMEC']], 'Δ%'
         ])
 
-    with open(ROOTDIR / 'tables.tex', mode='at', encoding='utf8') as file:
+    with open(LATEX_TABLES, mode='at', encoding='utf8') as file:
+        file.write('% ' + ('=' * 80))
         style.to_latex(
             file,
             position_float='centering',
             caption=caption,
             convert_css=False,
         )
+        file.write('\n')
         file.flush()
 
 
