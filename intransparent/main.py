@@ -13,7 +13,6 @@ from intransparent import (
     show_map,
     REPORTS_PER_PLATFORM,
     encode_reports_per_platform,
-    without_populations,
     YEAR_LABELS,
     show,
     to_schema,
@@ -157,7 +156,6 @@ def reports_per_country(section: int) -> None:
         with_antarctica=True,
     )
     show_map(fig)
-    fig.write_image(f'../figure/reports-per-capita.svg')
 
 
 # ======================================================================================
