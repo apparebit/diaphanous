@@ -99,7 +99,7 @@ def show(
         ])
 
     with open(LATEX_TABLES, mode='at', encoding='utf8') as file:
-        file.write('% ' + ('=' * 80))
+        file.write('% ' + ('=' * 80) + '\n')
         style.to_latex(
             file,
             position_float='centering',
