@@ -63,8 +63,9 @@ def create_map(
         kwargs |= dict(projection='equal earth')
     if with_panels:
         kwargs |= dict(
-            facet_row='year',
-            facet_row_spacing=0.005,
+            facet_col='year',
+            facet_col_wrap=2,
+            #facet_row_spacing=0.005,
         )
     if with_animation:
         kwargs |= dict(
@@ -100,6 +101,7 @@ def create_map(
         fig.update_geos(lataxis_range=[-58, 90])
 
     # -------------------- Adjust display of legend
+
     fig.update_layout(
         coloraxis_colorbar_tickformat='.3f',
     )
@@ -107,8 +109,8 @@ def create_map(
     if with_panels:
         fig.update_layout(
             margin=dict(t=54, r=10, b=10, l=10),
-            width=640,
-            height=1100 if with_antarctica else 960,
+            #width=640,
+            #height=1100 if with_antarctica else 960,
             coloraxis_colorbar_len=0.3,
             # title=dict(
             #     text='<i>CSAM Reports per Capita, Country, and Year</i>',
@@ -132,8 +134,10 @@ def create_map(
 
         fig.update_layout(**kwargs)
 
+    fig.update_layout(coloraxis_showscale=False)
+
     # -------------------- Add year label to each panel
-    if with_panels:
+    if with_panels and False:
         # Heuristically determine the effective mapping from year to geo axis.
         trace_by_year = {}
         for obj in fig.data:
