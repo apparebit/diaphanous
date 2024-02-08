@@ -179,7 +179,22 @@ victim](data/csam-pieces-by-relationship-to-victim.csv) dataset captures the
 relationship between suspected offenders and victims as determined by law
 enforcement agencies and tabulated by NCMEC. It is included in NCMEC's [CY 2022
 Report to the Committees on
-Appropriations](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf).
+Appropriations](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf)
+as part of a grant by the Office for Juvenile Justice and Delinquency
+Prevention (OJJDP).
+
+Since the number of victims in NCMEC's database seems to be very small, I pulled
+in two more datasets characterizing relationships as well. [The
+first](data/ojjdp-qa02403-2019.csv) stems from [OJJDP's Statistical Briefing
+Book](https://www.ojjdp.gov/ojstatbb/victims/qa02403.asp?qaDate=2019) and covers
+years 2018 and 2019. The data was originally extracted from the FBI's National
+Incident-Based Reporting System Master Files. Note that all counts are relative
+to "typical 1,000 sexual assaults." [The
+second](data/learcat-relationship-2016.csv) stems from
+[LEARCAT](https://learcat.bjs.ojp.gov) and covers the year 2016. It also draws
+on the FBI's National Incident-Based Reporting System. While the Briefing Book
+data is helpful indeed, the choice of relationship bins for the LEARCAT data
+renders it close to useless in this context.
 
 
 ## Repository Layout
