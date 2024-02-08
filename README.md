@@ -203,10 +203,15 @@ In addition to the data, this repository also contains the Python code for
 analyzing it as well as resulting figures. In particular:
 
   - The `analysis` directory contains notebooks with the high-level analysis
-    code.
-  - The `intransparent` directory contains the Python library code used by
-    notebooks. It also contains code (notably in the `main` module) that really
-    needs to be refactored into notebooks.
+    code. The `index.ipynb` notebook includes almost all other notebooks.
+  - The `intransparent` directory contains the Python library code used by the
+    notebooks.
+      - The remaining code in `intransparent.main` should be refactored into
+        notebooks.
+      - The `show()` function in `intransparent.show` is more generally useful.
+        Most of this functionality should be up-streamed to Pandas because it
+        significantly improves on the default table format.
   - The `figure` directory contains SVG figures.
   - The `stubs` directory contains typing stubs.
-
+  - The `report` directory contains the LaTeX sources for the article discussing
+    the work.
