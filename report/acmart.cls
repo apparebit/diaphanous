@@ -38,7 +38,7 @@
 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{acmart}
-[2023/12/29 v2.01 Typesetting articles for the Association for Computing Machinery]
+[2024/01/21 v2.02 Typesetting articles for the Association for Computing Machinery]
 \def\@classname{acmart}
 \InputIfFileExists{acmart-preload-hook.tex}{%
   \ClassWarning{\@classname}{%
@@ -1201,7 +1201,7 @@
   \def\@journalNameShort{ACM J. Data Inform. Quality}%
   \def\@permissionCodeOne{1936-1955}%
 \or % JDS
-  \def\@journalName{ACM/JMS Journal of Data Science}%
+  \def\@journalName{ACM/IMS Journal of Data Science}%
   \def\@journalNameShort{ACM/IMS J. Data Sci.}%
   \def\@permissionCodeOne{2831-3194}%
   \def\@permissionCodeTwo{2831-3194}%
@@ -1477,6 +1477,11 @@
     \gdef\acmConference@shortname{#2}%
   \fi
   \global\@ACM@journal@bibstripfalse
+  \ifx\@acmBooktitle\@empty\relax
+    \acmBooktitle{Proceedings of \acmConference@name
+      \ifx\acmConference@name\acmConference@shortname\else
+      \ (\acmConference@shortname)\fi}%
+  \fi
 }
 \if@ACM@journal\else
 \acmConference[Conference'17]{ACM Conference}{July 2017}{Washington,
@@ -1484,11 +1489,6 @@
 \fi
 \def\acmBooktitle#1{\gdef\@acmBooktitle{#1}}
 \acmBooktitle{}
-\ifx\acmConference@name\@undefined\else
-\acmBooktitle{Proceedings of \acmConference@name
-       \ifx\acmConference@name\acmConference@shortname\else
-       \ (\acmConference@shortname)\fi}
-\fi
 \def\@editorsAbbrev{(Ed.)}
 \def\@acmEditors{}
 \def\editor#1{\ifx\@acmEditors\@empty
