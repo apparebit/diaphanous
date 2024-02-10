@@ -50,7 +50,7 @@ used technologies for the automated detection of images and videos depicting
 sexual abuse of minors. Overall, the data shows an alarming growth in such
 material over the last decade. However, there also are several, strong
 indicators that current statistics, which treat all such material the same, are
-vast and unhelpful overcounts. Many technical violations of the law, e.g.,
+large and unhelpful overcounts. Many technical violations of the law, e.g.,
 teenagers sexting, are not necessarily grounded in actual harm to minors but
 still reported as such.
 \end{abstract}
@@ -121,28 +121,28 @@ operational for at least a decade and engage in surveillance
 capitalism~\cite{Zuboff2019}. In other words, they should excel at the data
 collection and analysis tasks necessary for transparency disclosures. Yet the
 failures are substantial. Notably, in the case of Meta's \V{CSV} files,
-differences for the previous quarter only might, in theory, stem from
-corrections applied after the quarterly reporting deadline. But in manifest
-reality, seven successive pairs of quarters have substantial differences across
-all kinds of metrics dating back up to two years. Hence Facebook and Instagram
-clearly fail that audit.
+differences for the previous quarter might, in theory, stem from corrections
+applied after the quarterly reporting deadline. But \V{IRL}, seven successive
+pairs of quarters have substantial differences across all kinds of metrics
+dating back up to two years. Hence Facebook and Instagram clearly fail that
+audit.
 
 This paper makes three contributions. First, previous audits of social media
-tranparency disclosures focus either on overall design and semantics of such
+tranparency disclosures focus either on overall scope and semantics of such
 disclosures including metrics or compare measured user experience with
 platforms' claims~\cite{AccessNow2021,CrockerGebhartea2019,Francoisdouek2021,
-StoughtonRosenzweig2022,WagnerRozgonyiea2020}. That also is the case for the two
-audits Meta commissioned~\cite{BradfordGriselea2019,Plumb2019,Sarang2022}. As
-far as I know, the focus on auditing the data itself is unique to this work. It
-also is complementary and thereby contributes towards a more holistic
-understanding of social media transparency disclosures. Second, a critical
-preparatory aspect of the work was the curation of transparency data in
-machine-readable form and the development of the analysis code. Both have been
-released as open source.\footnote{See footnote~\ref{fn:intransparent}} Third,
-right-wing activists have been instrumentalizing the sexual exploitation of
-minors as a political
-cudgel~\cite{BuntainBarlowea2022,Feffer2021,Gilbert2023,Romano2022}. To counter
-their manipulative appeals based on strong emotions, I provide an evidence-based
+StoughtonRosenzweig2022,WagnerRozgonyiea2020}. That also seems to be the case
+for the two audits Meta commissioned~\cite{BradfordGriselea2019,Meta2022,
+Plumb2019,Sarang2022}. As far as I know, the focus on auditing the data itself
+is unique to this work. It also is complementary to previous work and thereby
+contributes towards a more holistic understanding of social media transparency
+disclosures. Second, a critical preparatory aspect of the work was the curation
+of transparency data in machine-readable form and the development of the
+analysis code. Both have been released as open source.\footnote{See
+footnote~\ref{fn:intransparent}} Third, right-wing activists have been
+instrumentalizing the sexual exploitation of minors as a political
+cudgel~\cite{BuntainBarlowea2022,Feffer2021,Gilbert2023, Romano2022}. To counter
+their manipulative appeals to strong emotions, I provide an evidence-based
 overview of what transparency disclosures tell us about the online sexual
 exploitation of minors, with a focus on social media from 2019 to 2022. Along
 the way, I am careful to identify threats to validity and topics missing
@@ -209,22 +209,22 @@ medical and public-health misinformation during the \V{COVID-19}
 pandemic~\cite{ChoLiea2023,FoleyGurakar2022,GreenhalghOzbilginea2022},
 misinformation during the 2020 \V{US} presidential election and the subsequent
 attempted coup, as well as the trove of Meta's internal documents released by
-Frances Haugen~\cite{CameronWodinskyea2023,ElliottChristopherea2021} keep
+Frances Haugen~\cite{CameronWodinskyea2023,ElliottChristopherea2021} kept
 reminding the public of social media's corrosive influence and increasing
 demands for better accountability about content
 moderation~\cite{HaimsonDelmonacoea2021,KozyrevaHerzogea2023}. Increasing use of
 algorithmic decision systems, notably at the beginning of the pandemic, only
-intensifies the pressure on social media~\cite{ScottKayali2020}.
+intensified the pressure on social media~\cite{ScottKayali2020}.
 
 Second, while researchers used to have broad \V{API}-based access to platform
 data including individual posts, social media firms severely restricted or
 phased out bulk access in the aftermath of the scandal caused by Cambridge
 Analytica siphoning huge amounts of user data from
 Facebook~\cite{Bruns2019,Puschmann2019,WalkerMerceaea2019}. When \V{AI} startups
-leveraged Reddit's and Twitter's content for training large language models, the
-affected platforms responded by instituting hefty charges for access to
-remaining \V{API}s, making them unaffordable even for most commercial
-applications~\cite{Isaac2023}.
+leveraged, amongst many other sources, Reddit's and Twitter's content for
+training large language models, the affected platforms responded by instituting
+hefty charges for access to remaining \V{API}s, making them unaffordable even
+for most commercial applications~\cite{Isaac2023}.
 
 Third, internet platforms originally started making transparency reports to hold
 governments accountable after Edward Snowden's leak of secret government
@@ -237,230 +237,97 @@ of the 16~platforms surveyed for this article regularly disclose government
 requests for user information as well as content removal.
 
 Etsy was the first internet platform to release a transparency report about
-content moderation for 2014 during 2015. Two years later, Germany's NetzDG law
-required them for actions performed in response to its dedicated flagging
+content moderation in 2015. Two years later, Germany's NetzDG law required them
+for actions performed in response to its dedicated flagging
 mechanism~\cite{TrustSafetyProfessionalAssociation2022}. YouTube was the first
 social media platform to release a transparency report about content moderation
 in 2018, followed by Facebook and Twitter that same year, Reddit in 2019, and
 Pinterest, Snap, as well as TikTok in 2021~\cite{Binder2018,York2018}. While
 some civil society organizations have been content at simply tracking firms that
-make any transparency disclosures~\cite{AccessNow2021}, the Santa Clara
-Principles, first released in 2018 and then revised in 2021, reflect a detailed
-consensus for best
-practices~\cite{AccessNowACLUFoundationOfNorthernCaliforniaea2021}. Alas,
-despite lip service by some social media including Reddit and Twitter, none come
-even close to complying with them.
+make any transparency disclosures~\cite{AccessNow2021,StoughtonRosenzweig2022},
+the Santa Clara Principles, released in 2018 and revised in 2021, capture the
+civil society consensus on best
+practices~\cite{AccessNowACLUFoundationOfNorthernCaliforniaea2021}. At least
+Reddit and Twitter acknowledged as much by paying lip service to the Santa Clara
+Principles in their transparency disclosures~\cite{Reddit2022,Twitter2022}.
+Alas, no social media platform comes even close to complying with them
+\V{IRL}~\cite{UrmanMakhortykh2023}.
 
 That is not surprising given that transparency disclosures about content
 moderation, unlike earlier disclosures about government requests, always played
 a more ambiguous role. While academics and civil society would like to treat
 them as an accountability mechanism, social media also treat them as a means for
 deflecting criticism. Hence Meta's and Twitter's disclosures prominently
-highlight seemingly random metrics that are favorable for the platform or Reddit
-seemingly can't commit to the metrics it discloses, changing some of them every
-reporting period. The latter even managed to bamboozle the Electronic Frontier
-Foundation into believing that it provided notifications for all its content
-takedowns when it simply doesn't~\cite{CrockerGebhartea2019,Hawkins2023}.
+highlight seemingly random metrics that make them look good. Meanwhile Reddit
+can't commit to the metrics it discloses, changing some of them every reporting
+period. Reddit also managed to bamboozle the Electronic Frontier Foundation into
+believing that it provided notifications for all its content takedowns when it
+simply doesn't~\cite{CrockerGebhartea2019,Hawkins2023}.
 
 The obvious means for addressing the low quality and disparity of transparency
 disclosures would seem to be legal mandates. However, so far, extreme
 polarization and the resulting political gridlock in Washington, \V{DC} have
-proven stronger. Scholarly debate in, say, the Harvard Law Review hasn't been
-particularly productive either. Meanwhile, the European Union's Digital Services
-Act or \V{DSA} was phased in from November 2022 to February 2024 and now is
-fully in effect~\cite{EuropeanParliamentAndCouncil2022}. Its requirements are
-differentiated by service functionality---from all intermediary services to
-hosting services to online platforms---and service size---from small to regular
-to very large---with small services generally exempted and very large online
-platforms having the most obligations.
+proven stronger. Judging by the Harvard Law Review debate about the straw man of
+a non-existent ``standard picture'' for content
+moderation~\cite{Douek2022,Kadri2022,Klonick2023,MinowMinow2023}, American legal
+scholars are just as gridlocked.
 
-Critically, the \V{DSA} mandates that online platforms notify users of content
-moderation decisions and provide a \emph{statement of reason} or \V{SoR}.
-Furthermore, it requires that online platforms make at least yearly transparency
-disclosures with aggregate information in machine-readable form in addition to
-submitting those same statements of reasons ``without undue delay'' to the
-\V{EU} Commission's database at \url{https://transparency.dsa.ec.europa.eu}.
-Very large online platforms also need to provide accredited researchers with
-access to their data and identify and mitigate systemic risks, while submitting
-to external audits for their overall compliance with the \V{DSA}.
+Meanwhile the \V{EU} has been moving ahead with comprehensive regulation of the
+technology industry, leading to the Brussels effect~\cite{Bradford2020}. For
+purposes of this paper, the relevant law is the Digital Services Act or
+\V{DSA}~\cite{EuropeanParliamentAndCouncil2022}. To achieve its goal of creating
+``a safer digital space,'' the law places comprehensive obligations on platforms
+with respect to identifying and managing systemic risks, flagging illegal
+content, fairness and transparency of content moderation, assured compliance
+with the act, and so on. At the same time, the \V{DSA} is designed to be
+proportionate and differentiates by service functionality---from all
+intermediary services to hosting services to online platforms---and service
+size---from small to regular to very large---with small services generally
+exempted and very large online platforms having the most obligations.
+Additionally, requirements were gradually phased in between November 2022 and
+February 2024.
+
+Critically, the \V{DSA} mandates that online platforms including social media
+notify users of content moderation decisions and provide a \emph{statement of
+reason} or \V{SoR}. Furthermore, it requires that online platforms make at least
+yearly transparency disclosures with aggregate information in machine-readable
+form in addition to submitting those same statements of reasons ``without undue
+delay'' to the \V{EU} Commission's database at
+\url{https://transparency.dsa.ec.europa.eu}. Very large online platforms also
+need to identify and mitigate systemic risks (arguably the \V{DSA}'s most
+flexible and substantial instrument), provide accredited researchers with access
+to their data, and submit to external audits for their overall compliance with
+the \V{DSA}.
 
 The inclusion of audits in the \V{DSA}'s obligations prompted civil society
-organizations to publish reports on audits and methodology. Alas, the \V{EU}
-Commisssion sidestepped questions about audit methodology in its final rules by
-largely focusing on systemic risks~\cite{EuropeanCommission2023}. Interestingly,
-a first examination of the statements of reasons database shows distinct degrees
-of compliance and significant divergence from initial \V{DSA} transparency
-disclosures, thus pointing to another opportunity for scrappy
-audits~\cite{TrujilloFagniea2024}.
-
-
-\hidden{
-
-
-taxonomy of content categories \cite{BankoMacKeenea2020}
-
-
------------------------ auditing
-
-
-transparency essential for effective legislation \cite{MacCarthy2022}
-
-transparency first \cite{Krass2022} what does it mean \cite{TworekWanless2022}
-
-requirements \cite{MacCarthy2020}
-
-survey of remedies~\cite{Goldman2021}
-
-
-risk assessment \cite{TheActionCoalitionOnMeaningfulTransparency2023}
-survey of audit techniques~\cite{AdaLovelaceInstitute2021}
-
-complexity of AI audits, survey~\cite{CostanzaChockRajiea2022}
-
-techniques for auditing recommender systems with eye towards DSA
-\cite{MessmerDegeling2023}
-
-considerable uncertainty about DSA audits at end of 2023 \cite{BhatiaAllen2023}
-
-
-audit of search headlines \cite{ZadeWackea2022}
-
-
-reviewability \cite{CobbeLeeea2021}
-accountability \cite{Bovens2006}
-
-
-
-
-hard to find, misleading metrics \cite{AntiDefamationLeague2021}
-
-EFF recommendations \cite{WindwehrYork2020}
-
-
-
-
-Facebook category audit \cite{BradfordGriselea2019} \cite{Plumb2019}
-pipeline and controls audit \cite{Sarang2022}
-
-
-
-
-
-EFF \cite{CrockerGebhartea2019}
-
-
------------ Legal
-
-\cite{} responses \cite{Kadri2022,MinowMinow2023}
-
-be careful \cite{Douek2022}   new governors \cite{Klonick2018}
-
-
-social media and other platforms discredit the US \cite{GeltzerGhosh2018}
-
----------- Audits
-
-different policies for online harassment  \cite{PaterKimea2016} \cite{PerkinsCrystea2021}
-self harm
-
-
----------- Detection
-
-platforms clearly prefer automated detection \cite{Pfefferkorn2022}
-
--------- transparency
-
-\cite{Francoisdouek2021}   information operations
-
-Lots of firms do it \cite{AccessNow}
-
-
-catalog of transparency reports \cite{StoughtonRosenzweig2022}
-
-
-Meta announces more fine-grained data \cite{MetaTransparencyCenter}
-
-Despite their efforts, Facebook and Instagram still have a CSAM problem
-\cite{HorwitzBlunt2023,HorwitzBlunt2023a}
-
-Facebook: "Hotbed of 'Child Sexual Abuse Material'" \cite{Hitt2021}
-
-Hard to distinguish adults from children \cite{Keller2022}
-
-Likewise for Twitter \cite{BrewsterLevine2022,DangPaul2022,KellerConger2023}
-
-
-
-differing claims about where most CSAM is hosted: US \cite{Williams2022} (2022)
-Netherlands \cite{Dance2019} (2019)
-
-
-
-Clearview helps identify CSAM victims \cite{HillDance2020}
-Towards building better detectors with AI \cite{LaranjeiraMacedoea2022}
-
-
-suggest collaborative efforts \cite{Leerssen2020}
-
-
-Visibility vs transparency \cite{StohlStohlea2016}
-hard to get consent \cite{Obar2020}
-
-
-some humility \cite{Keller2021}
-
-
-
-Not all detection is automatic and UI differs a lot
-\cite{CanadianCentreForChildProtection2020}
-
-
-
-Costs of false accusation are tremendous \cite{Hill2022}
-
-parents perceptions play significant role \cite{SetoRocheea2022}
-
-
-self-generated CSAM \cite{Nottingham2022,ThielDiRestaea2023}
-
-LGBTQ+ censored \cite{Prince2020,York2021}
-
-
-
-Facebook prohibits sex offenders \cite{FacebookHelpCenter2012}
-\cite{DePompa2019} overreach of sex offender registries
-\cite{Bebernes2022,MellemaSethiea2014,Sethi2014}
-e.g., gay youths \cite{Cramer2021}
-
-dubious stings \cite{Winerip2020}
-
-
-manufactured scandals \cite{Hitt2020,Masnick2017a}
-
-
-
-NY Times \cite{KellerDance2019}, hard to take down \cite{Dance2019a} in
-part because Cloudflare isolates servers (incl their IP addresses).
-
-
-
-Risk factors for users   \cite{InsollOvaskaea2022}
-
-still partnering with users is necessary to counteract power disbalance
-\cite{Halavais2019}
-
-previous audit focuses on the presence/absence of a metric but
-does not further investigate their accuracy \cite{UrmanMakhortykh2023}
-
-
-}
+organizations to explore audits and their
+methodologies~\cite{ActionCoalitionOnMeaningfulTransparency2023,AdaLovelaceInstitute2021,
+BhatiaAllen2023,CostanzaChockRajiea2022,MessmerDegeling2023}. Alas, the \V{EU}
+Commisssion sidestepped questions about the details of audit methodology in its
+final rules by largely focusing on the elaboration of platform and audit
+risks~\cite{EuropeanCommission2023}. Interestingly, a first examination of the
+statements of reasons database shows distinct degrees of compliance and
+significant divergence from initial \V{DSA} transparency disclosures, thus
+pointing to more opportunities for scrappy audits~\cite{TrujilloFagniea2024}.
+
+Alas, Meta's two voluntary audits of its transparency disclosures nicely
+illustrate how scope determines effectiveness. The first audit questioned a
+panel of academic experts on suitable metrics and resulted in an informative,
+well-reasoned document~\cite{BradfordGriselea2019,Plumb2019}. The second audit
+asked certified public accountants to review ``Meta's management assertion'' of
+the transparency disclosures for \V{Q4}~2021~\cite{Meta2022,Sarang2022}. While
+Meta's blog post suggests a comprehensive review, the actual management
+assertion and public accountants' letter are both silent on any concrete
+``controls'' that were, in fact, investigated. That raises significant doubt
+about the extent of the audit. Hence it also isn't surprising that the audit
+missed all short-comings identified in this paper.
 
 
 \subsection{Terminology}
 
 While the title of Chapter~110, 18~\V{US} Code references ``children,'' section
-paragraphs are expressed in terms of \emph{minor} or, as \S2256 specifies, ``any
-person under the age of eighteen years.'' The same section also defines
+paragraphs are expressed in terms of \emph{minor}, i.e., as specified in \S2256
+``any person under the age of eighteen years.'' The same section also defines
 \emph{child pornography} in terms of minor. In contrast, \V{NCMEC} uses
 \emph{child sexual abuse material} or \V{CSAM}. Others use \emph{child sexual
 exploitation and abuse imagery} or \V{CSEAI}. In my mind, the two terms are
@@ -469,15 +336,18 @@ clearly delineate illegal imagery featuring minors from legal adult pornography.
 In contrast, \emph{child sexual exploitation} or \V{CSE} is more general and
 covers, for example, grooming and trafficking as well.
 
-Otherwise, I generally follow \V{NCMEC}'s practice and use the acronym \V{CSAM},
-though I use platforms' terminology when describing their disclosures. However,
-since informal usage of child typically implies prepubescence and child sexual
-anything has inflammatory, politicized impact, I generally prefer the legally
-more accurate minor even if \V{ECPAT}'s terminology guidelines make a rather
-convoluted argument for the opposite~\cite{GreijerDoek2016}. Furthermore, since
-CyberTipline reports are called just that, reports, I use the term
-\emph{transparency disclosure} to avoid confusion between the two types of
-reports.
+In this paper,
+
+
+I generally follow \V{NCMEC}'s practice and use the acronym
+\V{CSAM}. Though when discussing a particular platform, I also use that
+platform's terminology. Otherwise, since informal usage of child typically
+implies prepubescence and child sexual anything has inflammatory, politicized
+impact, I prefer the legally more accurate minor---even if \V{ECPAT}'s
+terminology guidelines make a rather convoluted argument for the
+opposite~\cite{GreijerDoek2016}. Furthermore, since CyberTipline reports are
+called just that, reports, I use the term \emph{transparency disclosure} to
+avoid confusion between the two types of reports.
 
 While researching this project, I encountered a number of press reports
 referring to the National Center on Sexual Exploitation (\V{NCOSE}) as if it was
@@ -827,12 +697,13 @@ In the Electronic Frontier Foundation's latest audit in 2019, Reddit fared best,
 receiving five out of five possible stars~\cite{CrockerGebhartea2019}. That
 ranking is undeserved. First, Reddit changes some number of disclosed metrics
 every report, which makes tracking changes impossible. Second, Reddit got one
-star for providing meaningful notice upon taking down content. While it may
-commit to that, it doesn't do so in practice. Instead, Reddit makes extensive
-use of shadow-banning, with content long deleted from Reddit still appearing as
-visible to the users who posted it. Changing ``\texttt{reddit}'' to
-``\texttt{reveddit}'' for any Reddit \V{URL} surfaces such content for
-everyone~\cite{Hawkins2023}.
+star for providing meaningful notice upon taking down content. While it
+committed to doing so when it touted its adherence to the Santa Clara Principles
+in 2019~\cite{Reddit2022}, the firm doesn't do so in practice. Instead, Reddit
+makes extensive use of shadow-banning, with content long deleted from Reddit
+still appearing as visible to the users who posted it. Changing
+``\texttt{reddit}'' to ``\texttt{reveddit}'' for any Reddit \V{URL} surfaces
+such content for everyone~\cite{Hawkins2023}.
 
 
 \subsection{Snap}
@@ -1106,41 +977,41 @@ relating grouped counts to the number of pieces in the fourth column. Alas, the
 sixth and eighth column also count pieces:
 \begin{itemize}
     \item Column \#4 contains the total number of pieces.
-    \item Column \#6 contains the number of unique pieces, filtered with MD5.
+    \item Column \#6 contains the number of unique pieces, filtered with \V{MD5}.
     \item Column \#8 contains the number of perceptually similar pieces,
     filtered with PhotoDNA and Videntifier.
 \end{itemize}
-In other words, the sixth column doesn't count a photo or video if the MD5 hash
-function produces the same value as for a previously counted photo or video.
-Likewise, the eighth column doesn't count a photo or video if the PhotoDNA or
-Videntifier perceptual hash function produces a similar value. The critical
-difference between the two kinds of hash functions is that a small change in
-input to MD5 produces a completely different value, whereas a small change in
-input to PhotoDNA or Videntifier produces almost the same value, thus allowing
-for the detection of visually similar material~\cite{Farid2021}. Alas, the use
-of MD5, PhotoDNA, and Videntifier also is highly problematic.
+In other words, the sixth column doesn't count a photo or video if the \V{MD5}
+hash function produces the same value as for a previously counted photo or
+video. Likewise, the eighth column doesn't count a photo or video if the
+PhotoDNA or Videntifier perceptual hash function produces a similar value. The
+critical difference between the two kinds of hash functions is that a small
+change in input to \V{MD5} produces a completely different value, whereas a
+small change in input to PhotoDNA or Videntifier produces almost the same value,
+thus allowing for the detection of visually similar material~\cite{Farid2021}.
+Alas, the use of \V{MD5}, PhotoDNA, and Videntifier also is highly problematic.
 
 First, cryptographically secure hash functions should make it practically
 impossible to construct an input for a given output. While that isn't practical
-for MD5 in the most general case, so-called preimage attacks, it \emph{is}
+for \V{MD5} in the most general case, so-called preimage attacks, it \emph{is}
 practical for more restricted cases, notably chosen prefix
 attacks~\cite{StevensLenstraea2012}. But even a single known pair of colliding
-inputs, which have been published for MD5 and SHA1, suffices for constructing
-pairs of documents with different content in format such as \V{PDF} and
-identical hashes~\cite{LeurentPeyrin2020,StevensBurszteinea2017}. With some
+inputs, which have been published for \V{MD5} and \V{SHA1}, suffices for
+constructing pairs of documents with different content in format such as \V{PDF}
+and identical hashes~\cite{LeurentPeyrin2020,StevensBurszteinea2017}. With some
 limitations, images in the \V{JPG} and \V{PNG} formats as well as videos in the
 \V{MP4} format are vulnerable to such attacks as
 well.\footnote{\url{https://github.com/corkami/collisions}}
 
-If internet platforms and \V{NCMEC} use MD5 hashes to identify \V{CSAM} without
-human intervention, as they apparently do already, that opens up the possibility
-of attacks akin to swatting, i.e., triggering a law enforcement investigation of
-a user for sharing \V{CSAM} even though they have not done so. The possibility
-of such attacks argues strongly against the continued use of MD5---and SHA1 for
-that matter. However, even though these attacks aren't particularly new, dating
-back to 2012 and 2017, \V{NCMEC} was still asserting in 2023 that ``[i]mages
-that share the same MD5 hash are identical,'' displaying no awareness of the
-problem~\cite{NCMEC2024}.
+If internet platforms and \V{NCMEC} use \V{MD5} hashes to identify \V{CSAM}
+without human intervention, as they apparently do already, that opens up the
+possibility of attacks akin to swatting, i.e., triggering a law enforcement
+investigation of a user for sharing \V{CSAM} even though they have not done so.
+The possibility of such attacks argues strongly against the continued use of
+\V{MD5}---and \V{SHA1} for that matter. However, even though these attacks
+aren't particularly new, dating back to 2012 and 2017, \V{NCMEC} was still
+asserting in 2023 that ``[i]mages that share the same \V{MD5} hash are
+identical,'' displaying no awareness of the problem~\cite{NCMEC2024}.
 
 Second, Microsoft's PhotoDNA~\cite{Farid2018} is widely used for \V{CSAM}
 detection, probably as a result of the firm making the technology freely
@@ -1151,7 +1022,7 @@ documented~\cite{ProkosJoisea2021}. Furthermore, despite Microsoft's claims
 otherwise, it may be possible to recreate low resolution versions of the
 original images from PhotoDNA hashes, i.e., \V{CSAM}~\cite{Athalye2021}. In
 other words, PhotoDNA is even more susceptible to adversarial abuse than
-MD5~\cite{Steinebach2023}.
+\V{MD5}~\cite{Steinebach2023}.
 
 Third, little is known about Videntifier's algorithm, which was developed by the
 eponymous Icelandic firm in collaboration with \V{NCMEC}. That makes it
@@ -1170,11 +1041,13 @@ Snap's numbers are fairly close to the overall ratio. But Google's and YouTube's
 are significantly larger, whereas Pinterest's and Reddit's are significantly
 smaller. Since Google, Reddit, and YouTube passed audits of their report counts
 and Pinterest's report counts aren't that far off, these discrepancies might
-point towards errors in tabulating pieces. But since those discrepancies appear
-for several platforms and in both directions, it seems more likely that they are
-caused by differences in content moderation as well as platform usage. Alas, the
-latter also is clearly outside the scope of transparency disclosures about the
-former.
+point towards errors in tabulating pieces. But four platforms more or less
+correctly tabulating reports and not pieces seems improbable. A more likely
+explanation is that the differences in piece to report count ratios stem from
+differences in content moderation and platform usage. Unfortunately, Google,
+Pinterest, Reddit, and YouTube provide no explanation, even though such
+divergences between platform-specific and industry-wide statistics are just the
+phenomena warranting attention in meaningful transparency disclosures.
 
 
 \subsection{Global Distribution of CyberTipline Reports}
@@ -1361,23 +1234,37 @@ indifference to the topic and the lack of data on its share amongst CyberTipline
 reports is positively troubling.
 
 
+\subsection{Summary}
+
+Overall, the analysis of available transparency data on the sexual exploitation
+of minors shows an alarming growth of detected imagery and other activities over
+the last decade and hence is in line with similar observations by, say, the New
+York Times~\cite{Dance2019,KellerDance2019}. In particular, since the vast
+majority of that growth is due to a single organization, Meta, much of that
+growth is very likely true growth and not attributable to improved awareness and
+detection technology. The analysis also suggests that existing detection
+technology, notably \V{\V{MD5}} and PhotoDNA, is easily abused and hence should
+be phased out. At the same time, Meta's investigation of apparent intent and the
+lack of data on teenage sexting also suggest that current statistics are not
+sufficiently differentiated and hence significant overcounts. Clearly, more
+robust detection technology and more fine-grained statistics are urgently
+needed!
+
+
 % ======================================================================================
 
 \section{Discussion}
 \label{sec:discussion}
 
-In the introduction, I positioned the previous section as leveraging already
-collected statistics to present a clinical response to unfounded agitation and
-hence as an example of data-driven story telling. That speaks to the previous
-section's relevance and hence is well placed in the introduction (as is this
-reminder). But the history connecting this paper's two main parts, audits and
-analysis, is far more direct and organic: I kept poking at the data to identify
-more opportunities for auditing. To me, the experience of going from poking
-quantities to telling a coherent story grounded in the data is similar to what
-needs to happen for transparency disclosures to result in meaningful
-accountability. That suggests several takeaways, both about transparency
-disclosures in general and about their presentation. I start with higher-level
-observations.
+Since audits and analysis have different overall thrusts, distinguishing between
+them for structuring this paper's exposition made eminent sense. But in
+practice, the distinction between audits and analysis was far less clear and
+their connection more organic: I simply kept poking at the data to make sense of
+available statistics. In my mind, the transition from just poking quantities to
+telling a coherent story grounded in the data is just what needs to happen for
+transparency disclosures to result in meaningful accountability. That suggests
+several takeaways about transparency disclosures in general and about their
+presentation. I start with higher-level observations.
 
 First and not surprisingly, there is a bottom threshold for metrics and data to
 be useable in data-driven story telling. In particular, without having overall
@@ -1388,40 +1275,46 @@ Prevention (\V{OJJDP}) not only filled that hole but provided several more
 helpful statistics.
 
 Second and more unexpectedly, there is value even in incomplete or buggy
-transparency disclosures when they can be combined with similar disclosures by
-other organizations. It helps when one organization's disclosures are general
-and robust enough to form the foundation, as \V{NCMEC}'s \V{OJJDP} report did
-for the previous section. But with that backbone in place, I could rely on
-platform-specific disclosures to add detail, even if they, like Pinterest's,
-were not entirely accurate. That should serve as warning against, as Evelyn
-Douek did~\cite{Douek2022}, dismissing existing disclosures as ``transparency
-theater.''
+transparency disclosures \emph{as long as} they can be combined with similar
+disclosures by other organizations. It helps when one organization's disclosures
+are general and robust enough to provide a foundation, as \V{NCMEC}'s \V{OJJDP}
+report did for the previous section. But with that backbone in place, I could
+rely on platform-specific disclosures to add detail, even if they, like
+Pinterest's, were not entirely accurate. That should serve as warning against
+simply dismissing existing disclosures as ``transparency
+theater''~\cite{Douek2022}.
 
 Third, transparency disclosures run counter the scientific method. Quite
 literally: The latter requires the formulation of hypothesis and research
 questions before the selection of metrics and, if not already available, the
 collection of data. Yet here, civil society and other interested outsiders need
 to make do with the data already collected and disclosed by platforms. While
-actual practice isn't quite as lopsided as that, this frequently is the
-\emph{modus operandi} of data ``science,'' with predictably less precise
-results. To stick to theatrical metaphors: If you were performing to an empty
-room every night, how much effort would you put into your performance?
+actual practice isn't quite as lopsided as that (with civil society influencing
+platforms' practices to some degree), this \emph{modus operandi} is reflective
+of data ``science'' in general and leads to predictably imprecise results. To
+stick to theatrical metaphors: If you were performing to an empty room every
+night, how much effort would you put into your performance?
 
-In other words, meaningful transparency requires \emph{continuous} engagement
-with outside stakeholders. It also requires adding or switching metrics in
-response, such as my questions about teenage sexting. That does complicate life
-for regulators, who would love to just pick from a menu of internationally
-agreed upon metrics~\cite{HarlingHenesyea2023} such as the Santa Clara
+The implication is that meaningful platform transparency requires
+\emph{continuous} engagement with outside stakeholders. It also requires adding
+or switching metrics in response, such as my questions about teenage sexting.
+That does complicate life for regulators, who would love to just pick from a
+menu of internationally agreed upon metrics~\cite{HarlingHenesyea2023} such as
+the Santa Clara
 Principles~\cite{AccessNowACLUFoundationOfNorthernCaliforniaea2021}. However,
 keeping disclosure requirements adaptable does not mean that regulation is
 inadvisable or impossible~\cite{Douek2022,Klonick2023}. On the contrary, as I
 argued above, Meta sticking with its historical disclosures after two years of
-significant churn illustrates the beneficial impact of regulation. Furthermore,
-even though not all platforms make complete use of the schema, the \V{EU}'s
-statements of reasons database promises to enable more scrappy audits for all of
-content moderation~\cite{TrujilloFagniea2024}. At the same time, an effective
-regulator really requires their own research and data divisions to engage
-platforms~\cite{Jaursch2022a,Jaursch2023}.
+significant churn illustrates the beneficial impact of regulation. Similarly,
+the \V{EU}'s statements of reasons database promises to enable more scrappy
+audits for all of content moderation~\cite{TrujilloFagniea2024}. At the same
+time, an effective regulator really needs to have their own research and data
+divisions to engage platforms~\cite{Jaursch2022a,Jaursch2023}.
+
+\hidden{
+This need for continuous engagement should be taken into account when
+considering the value and impact of transparency reporting.
+}
 
 In addition to these more general observations, I do have concrete suggestions
 for improving transparency disclosures. Notably, fancy, irregular layouts and
@@ -1430,11 +1323,14 @@ reporting violative activities and attached pieces a year earlier, in its
 CyberTipline 2021 Report~\cite{NcmecCyberTipline2021}. But that didn't register
 when I scanned the written report because of the layout and long passages of
 low-information text. Meanwhile, the more focused presentation of the \V{OJJDP}
-report registered immediately.
+report with its simple, inline tables registered immediately.
 
 Having said that, raw counts in machine-readable form, i.e., \V{CSV}, are
-\emph{much} preferrable. Having to write that feels a bit surreal. Do not round
-numbers. They are inaccurate and (literally) do not add up. Do not include
+\emph{much} preferrable. Having to say so for data originating from some of the
+largest technology firms in the world feels a bit surreal. But the fact that
+many of them fail to do so even for \V{DSA} disclosures despite the act's
+explicit requirement only underlines the importance of this point. Also, do not
+round numbers. They are inaccurate and (literally) do not add up. Do not include
 (percentage) fractions. They almost always are rounded as well and hence
 inaccurate. Worse, if the original denominator isn't readily available, they get
 in the way of recovering counts. That is the case for TikTok's \V{CSE}
@@ -1468,7 +1364,7 @@ Based on my experiences with audits and analysis, I argued that meaningful
 transparency disclosures require continuous engagement by platforms and
 interested outside parties alike. But getting social media firms to fully
 embrace such an iterative transparency process and make good faith disclosures
-may turn out to be difficult. Meta nicely illustrates why. The firm has been
+may turn out to be difficult. Meta illustrates why. The firm has been
 industry-leading in its efforts to suppress the spread of \V{CSAM}. Not only
 does it detect the vast majority of cases, but it has the longest track record
 of releasing statistics to the public, has consistently supported \V{NCMEC} over
@@ -1482,17 +1378,16 @@ customers~\cite{BruellPatel2020,Hutchinson2016,Hutchinson2016b,Hutchinson2017,
 VranicaMarshall2016}, platform usage data to a Harvard-based research
 consortium~\cite{Timberg2021}, and adverts in its transparency
 database~\cite{Rosenberg2019,ScottMontellaro2021,SilvermanMac2020a}. Human error
-certainly is a plausible explanation for these cases of faulty data. Though one
-research group that had access to Meta's data through the research consortium
-also published a rather pointed critique about available
-data~\cite{Hegelich2020,HegelichMarcoea2020}. It did so well before the
-discovery of a major omission from shared data that invalidated the findings of
-several research projects and prompted even the consortium head to call for
-industry-wide regulation~\cite{PersilyTucker2021}.
+is a plausible explanation in all these cases. Though one research group with
+consortium access to Meta's data also published a rather pointed critique about
+its quality well before the discovery that the dataset was incomplete and hence
+unusable~\cite{Hegelich2020,HegelichMarcoea2020}. That experience prompted even
+the consortium head to call for industry-wide
+regulation~\cite{PersilyTucker2021}.
 
-Meanwhile, moving too fast does not suffice for explaining several other cases.
-Notably, Meta kept violating non-discrimination laws in advertising for years,
-despite having been repeatedly notified of its
+Meanwhile, moving too fast simply does not suffice for explaining several other
+cases. Notably, Meta kept violating non-discrimination laws in advertising for
+years, despite having been repeatedly notified of its
 noncompliance~\cite{AngwinParrisJr2016,AngwinScheiberea2017,AngwinTobinea2017,
 KofmanTobin2019,Kofman2022,Merrill2020,TobinMerrill2018}. Next, as I discovered
 during my employment, the firm also manipulated view impressions, only the most
@@ -1524,7 +1419,8 @@ accountable. Luckily, the \V{EU} Commission has already provided us with a new
 tool for doing so through the statements of reasons database. While other
 researchers have already performed a first comparison of database entries with
 aggregate \V{DSA} transparency disclosures, I am particularly interested in
-fully automating these audits and turning them into a readily available tool.
+fully automating these audits to hold social media accountable for correct
+counts when it comes to transparency!
 
 
 % ======================================================================================
