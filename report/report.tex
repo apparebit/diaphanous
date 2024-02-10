@@ -1,5 +1,5 @@
 \documentclass[nonacm,screen]{acmart}
-
+\pdfoutput=1
 \usepackage{graphicx}
 \usepackage{pifont}
 
@@ -24,11 +24,6 @@
     \country{United States}
 }
 \email{rgrimm@alum.mit.edu}
-
-\keywords{social media, content moderation, transparency report, audit, minor
-safety, sexual exploitation of minors, child sexual abuse material, CSAM,
-CyberTipline, CyberTipline report, National Center for Missing and Exploited
-Children, NCMEC, teenage sexting}
 
 \begin{abstract}
 This paper explores a lightweight, quantitative audit methodology for
@@ -55,6 +50,29 @@ overcounts. Notably, many technical violations of the law, e.g., teenagers
 sexting, are not necessarily grounded in actual harm to minors but still
 reported as such.
 \end{abstract}
+
+\begin{CCSXML}
+<ccs2012>
+<concept>
+<concept_id>10003456.10003462</concept_id>
+<concept_desc>Social and professional topics~Computing / technology policy</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10002951.10003227.10003233.10010519</concept_id>
+<concept_desc>Information systems~Social networking sites</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Social and professional topics~Computing / technology policy}
+\ccsdesc[500]{Information systems~Social networking sites}
+
+\keywords{social media, content moderation, transparency reporting, audit, minor
+safety, sexual exploitation of minors, child sexual exploitation, child sexual
+abuse material, CSAM, CyberTipline, National Center for Missing and Exploited
+Children, NCMEC, teenage sexting}
 
 \maketitle
 
@@ -531,7 +549,7 @@ per year from 2019 to 2022. Hence I dropped them.
 
 \begin{figure}
 \centering\libertineLF
-\includegraphics[scale=0.6]{figure/fb-insta-pieces}
+\includegraphics[scale=0.6]{figure-meta-pieces}
 \caption{Pieces maybe containing \V{CSE} on Facebook and Instagram (Meta)}
 \label{fig:meta-pieces}
 \end{figure}
@@ -910,7 +928,7 @@ degree.
 
 \begin{figure}
 \centering
-\includegraphics[scale=0.6]{figure/reports-per-year}
+\includegraphics[scale=0.6]{figure-reports-per-year}
 \caption{Yearly CyberTipline reports (per NCMEC)}
 \label{fig:yearly-reports}
 \end{figure}
@@ -1134,7 +1152,7 @@ half of humanity counting as the firm's monthly users.
 
 \begin{figure}
 \centering
-\includegraphics[scale=0.8]{figure/reports-per-capita}
+\includegraphics[scale=0.8]{figure-reports-per-capita}
 \caption{Reports per capita, country, and year. The four choropleth panels plot
 \V{NCMEC} reports per country and year over \V{UN} population size per country
 and year using an Equal Earth projection. Colors continuously range between
