@@ -62,20 +62,39 @@ and contain the same information.
 
 The dataset incorporates information about these platforms:
 
-  * Facebook
-  * Instagram
-  * LinkedIn
+  * Facebook (Meta)
+  * Google (Google)
+  * Instagram (Meta)
+  * LinkedIn (Microsoft)
+  * Microsoft (Microsoft)
   * Pinterest
   * Quora
   * Reddit
   * Snap
   * Telegram
   * TikTok
-  * Tumblr
+  * Tumblr (Automattic)
   * Twitter
-  * WhatsApp
-  * Wordpress
-  * YouTube
+  * WhatsApp (Meta)
+  * Wordpress (Automattic)
+  * YouTube (Google)
+
+If a corporation runs more than one platform, the corporation's name is provided
+in parentheses. The EU's list of [very large online platforms and very large
+online search
+engines](https://digital-strategy.ec.europa.eu/en/policies/list-designated-vlops-and-vloses)
+includes all of the above platforms with exception of Quora, Reddit, Telegram,
+Tumblr, WhatsApp, and Wordpress. Inclusion activates all of the Digital Services
+Act requirements.
+
+All but Quora, Telegram, Tumblr of the above platforms are also on the EU's list of very
+large online platforms and very large online search engines, which activates the
+most expansive requirements of the Digital Services Act.
+
+
+ subjects them
+to the most expansive requirements for the Digital Services Act.
+
 
 It also incorporates information about the following companies operating one or
 more of the above platforms:
