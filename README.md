@@ -152,7 +152,7 @@ The following choropleths using the Equal Earth projection visualize normalized
 per country CSAM reports:
 
 ![CSAM reports per capita per country per
-year](https://raw.githubusercontent.com/apparebit/intransparent/boss/csam-reports-per-capita.svg)
+year](https://raw.githubusercontent.com/apparebit/intransparent/boss/figure/reports-per-capita.svg)
 
 
 ### Dataset 5: Meta's Quarterly Transparency Data (Q1 2021 onward)
