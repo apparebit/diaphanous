@@ -1,17 +1,13 @@
 # Intransparent: Independent Validation of Social Media Transparency Data
 
-This repository curates transparency data published by social media firms, with
-a focus on child sexual abuse material (CSAM), and the code to analyze that same
-data, with a focus on assessing its quality. The focus on CSAM is not arbitrary:
-As "electronic communication service providers," all US-based social media firms
-are [legally required](https://www.law.cornell.edu/uscode/text/18/2258A) to
-report such material to the National Center for Missing and Exploited Children
-(NCMEC). The Center receives reports through its CyberTipline, triages them, and
-then routes them to appropriate national and international law enforcement
-agencies. Similar to social media companies, NCMEC started making transparency
-disclosures has startThat raises
-the possibility of validating social media firms' transparency disclosures by
-comparing them to those made by NCMEC.
+This repository curates machine-readable versions of transparency disclosures
+about the online sexual exploitation of minors. It focuses on social media
+platforms and the national clearinghouse for reports of such activities and
+imagery, the National Center for Missing and Exploited Children or NCMEC. In
+addition to the data, the repository also includes Python modules and notebooks
+for analyzing the data. The report [Putting the Count Back Into Accountability:
+An Audit of Social Media Transparency Disclosures, Focusing on Sexual
+Exploitation of Minors](report/report.pdf) provides the details.
 
 
 ## The Data
