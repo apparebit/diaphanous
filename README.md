@@ -87,22 +87,6 @@ includes all of the above platforms with exception of Quora, Reddit, Telegram,
 Tumblr, WhatsApp, and Wordpress. Inclusion activates all of the Digital Services
 Act requirements.
 
-All but Quora, Telegram, Tumblr of the above platforms are also on the EU's list of very
-large online platforms and very large online search engines, which activates the
-most expansive requirements of the Digital Services Act.
-
-
- subjects them
-to the most expansive requirements for the Digital Services Act.
-
-
-It also incorporates information about the following companies operating one or
-more of the above platforms:
-
-  * Automattic (Tumblr and Wordpress)
-  * Meta (Facebook, Instagram, WhatsApp)
-  * Google (YouTube)
-
 A separate [codebook](codebook.md) documents the JSON and Python formats.
 Basically, they consist of a top-level object that maps organization names to an
 object with the data about that organization. Since platforms vary widely in
