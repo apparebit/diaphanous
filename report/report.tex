@@ -89,11 +89,11 @@ broader relevance, applying to people interested in performing open source
 intelligence or strengthening civil society just as well. By exploring the
 limits of individual agency, the question may have broader relevance still. But
 the posture of underdog fighting corporate behemoths would also be misleading,
-since I worked as software engineer for Facebook from 2018 to 2019. However, I
-did \emph{not} work on content moderation and I do \emph{not} retain any
-financial interest in the firm.
+since the author worked as a software engineer for Facebook from 2018 to 2019.
+However, the author did \emph{not} work on content moderation and does
+\emph{not} retain any financial interest in the firm.
 
-In looking for such \emph{scrappy audits}, I soon realized that redundant and
+In looking for such \emph{scrappy audits}, we soon realized that redundant and
 repeated disclosures of the same metric, especially when originating from
 different organizations, provide just the desired opportunities for validating
 disclosed statistics because every divergence is a true positive error. That
@@ -102,22 +102,22 @@ disclosed by social media with those by the national clearinghouse receiving the
 reports, the National Center for Missing and Exploited Children or \V{NCMEC}.
 
 The second audit was the result of a series of fortunate events, even if they
-didn't look it at first. After refactoring my code for analyzing Meta's \V{CSV}
-files, I carefully compared outputs to ensure that the new version still worked
-as expected. When numbers didn't match, I first reviewed my code and, finding
-nothing wrong, next checked the programs' inputs. After noticing that I was
-using the \V{CSV} file for \V{Q3}~2022 instead of \V{Q2}~2022, I compared all
-quantities between the two files besides values newly added in \V{Q3} and
-discovered that 113 out of 2,633 or 4.3\% of quantities differed, 77 of them
-dating back to \V{Q4}~2020. I had found the cause for the divergent
-outputs---and the second audit for this paper!
+didn't look it at first. After refactoring the code for analyzing Meta's \V{CSV}
+files, we carefully compared outputs to ensure that the new version still worked
+as expected. When numbers didn't match, we first reviewed the code and, finding
+nothing wrong, next checked the programs' input. When that turned out to be the
+\V{CSV} file for \V{Q3}~2022 instead of \V{Q2}~2022, we compared all quantities
+between the two files besides values newly added in \V{Q3} and discovered that
+113 out of 2,633 or 4.3\% of quantities differed, 77 of them dating back to
+\V{Q4}~2020. We had found the cause for the divergent outputs---and the second
+audit for this paper!
 
 Neither of the two audits requires more than a computer capable of running basic
 data analysis tasks---datasets easily fit into memory and the most ``complex''
 math in this paper is a least-squares-fit over a log function---as well as as
 some time and attention to detail while extracting statistics from \V{HTML} and
 \V{PDF} files to make them machine-readable. In case of disclosures about the
-sexual exploitation of minors, you wouldn't even need the latter, since I
+sexual exploitation of minors, you wouldn't even need the latter, since we
 already did the work and publicly released all code and
 data.\footnote{\label{fn:intransparent}\url{https://github.com/apparebit/intransparent}}
 In short, the two audits definitely qualify as scrappy and enable interested
@@ -126,7 +126,7 @@ associated with just that phrase. Yet despite the methodology's simplicity, this
 type of investigation still is novel. Besides a parallel investigation comparing
 transparency disclosures under the \V{EU}'s Digital Services Act and the
 corresponding statements of reasons database
-statistics~\cite{TrujilloFagniea2024}, I am not aware of similar studies.
+statistics~\cite{TrujilloFagniea2024}, we am not aware of similar studies.
 
 The audits also are effective. Out of 16~surveyed social media platforms, 11
 make transparency disclosures about content moderation and 8 meet the
@@ -148,7 +148,7 @@ disclosures including metrics or compare measured user experience with
 platforms' claims~\cite{AccessNow2021,CrockerGebhartea2019,Francoisdouek2021,
 StoughtonRosenzweig2022,WagnerRozgonyiea2020}. That also seems to be the case
 for the two audits Meta commissioned~\cite{BradfordGriselea2019,Meta2022,
-Plumb2019,Sarang2022}. As far as I know, the focus on auditing the data itself
+Plumb2019,Sarang2022}. As far as we know, the focus on auditing the data itself
 is unique to this work. It also is complementary to previous work and thereby
 contributes towards a more holistic understanding of social media transparency
 disclosures. Second, a critical preparatory aspect of the work was the curation
@@ -157,10 +157,10 @@ analysis code. Both have been released as open source.\footnote{See
 footnote~\ref{fn:intransparent}} Third, right-wing activists have been
 instrumentalizing the sexual exploitation of minors as a political
 cudgel~\cite{BuntainBarlowea2022,Feffer2021,Gilbert2023, Romano2022}. To counter
-their manipulative appeals to strong emotions, I provide an evidence-based
+their manipulative appeals to strong emotions, we provide an evidence-based
 overview of what transparency disclosures tell us about the online sexual
 exploitation of minors, with a focus on social media from 2019 to 2022. Along
-the way, I am careful to identify threats to validity and topics missing
+the way, we are careful to identify threats to validity and topics missing
 entirely from the data, while also validating previously published work.
 
 
@@ -344,20 +344,20 @@ illegal imagery featuring minors from legal adult pornography. In contrast,
 \emph{child sexual exploitation} or \V{CSE} is more general and covers, for
 example, grooming and trafficking as well.
 
-Throughout this paper, I generally use minor instead of child---even if
-\V{ECPAT}'s terminology guidelines make a rather convoluted argument for the
+This paper generally uses minor instead of child---even if \V{ECPAT}'s
+terminology guidelines make a rather convoluted argument for the
 opposite~\cite{GreijerDoek2016}. Not only is minor the legally accurate term,
 but informal usage of child tends to imply prepubescence and child sexual
 anything increasingly has inflammatory, politicized impact. Nonetheless, when
-referring to imagery depicting the sexual abuse of minors, I follow \V{NCMEC}'s
-precendent and use the acronym \V{CSAM}. Furthermore, when discussing the
-transparency disclosures of a particular platform, I use the platform's
-terminology, including the acronyms defined in the previous paragraph. Finally,
-since CyberTipline reports are called just that, reports, I use the term
-\emph{transparency disclosure} to avoid confusion between the two types of
-reports.
+referring to imagery depicting the sexual abuse of minors, this paper follows
+\V{NCMEC}'s precendent and uses the acronym \V{CSAM}. Furthermore, when
+discussing the transparency disclosures of a particular platform, this paper
+uses the platform's terminology, including the acronyms defined in the previous
+paragraph. Finally, since CyberTipline reports are called just that, reports,
+this paper used the term \emph{transparency disclosure} to avoid confusion
+between the two types of reports.
 
-During my research, I encountered a number of news articles referring to the
+During the research, the author saw a number of news articles referring to the
 National Center on Sexual Exploitation (\V{NCOSE}) as if it was \V{NCMEC}.
 Previously known as Morality in Media, that organization is a right-wing
 advocacy group with a deeply homophobic and sexphobic
@@ -434,7 +434,7 @@ WhatsApp & $\cdots$ & $\cdots$ & $\cdots$ & $\cdots$ & $\cdots$ & $\cdots$  \\
 \end{tabular}
 \end{table}
 
-In selecting platforms for my scrappy audits, I started with Buffer's list of
+In selecting platforms for my scrappy audits, we started with Buffer's list of
 the 20 most popular platforms in 2022~\cite{Lua2022}, dropped the five platforms
 targeting China because they are unlikely to adhere to the same governance
 standards, dropped Facebook Messenger because it is part of the already included
@@ -442,7 +442,7 @@ Facebook, replaced Microsoft Teams and Skype with Microsoft because the firm
 does not offer more granular transparency disclosures, and added Tumblr because
 it became a destination for users leaving Twitter as well as employees laid off
 by the firm in the wake of Elon Musk's takeover~\cite{Patel2022}. Finally, to
-cover all platforms owned by the same corporate parent, I added Google and
+cover all platforms owned by the same corporate parent, we added Google and
 Wordpress. When compared to the \V{EU}'s list of very large online platforms and
 search engines, my list does not include five e-commerce firms, three
 adult-oriented platforms, and one not-for-profit. However, it does include
@@ -481,16 +481,16 @@ disclosures in machine-readable format. Meta has been releasing \V{CSV} files
 for Facebook and Instagram since \V{Q2}~2021. TikTok released Excel files from
 \V{Q3}~2021 to \V{Q3}~2022 and has been releasing \V{CSV} files since. The
 project's GitHub repository collects these \V{CSV} files. Since Meta simply
-updates the file accessible through the same link every quarter, I have been
+updates the file accessible through the same link every quarter, we have been
 collecting quarterly snapshots since \V{Q2}~2022 and filled in previous releases
 through the Internet
 Archive.\footnote{\url{https://web.archive.org/web/20240000000000*/https://transparency.fb.com/sr/community-standards/}}
 Microsoft's use of Excel files is curious because they only contain the data
 points for the reporting period in a nicely formatted spreadsheet. Twitter's
-transparency reports include a menu item to download \V{CSV} data but I never
+transparency reports include a menu item to download \V{CSV} data but we never
 could get that to work, even before Musk's takeover of the firm. The GitHub
 repository also contains machine-readable versions of all other transparency
-disclosures. I extracted them with ad-hoc scripts and advanced text editor
+disclosures. We extracted them with ad-hoc scripts and advanced text editor
 features where possible and otherwise fell back onto manual data entry.
 
 Out of the sixteen platforms, Telegram is the only platform based outside of the
@@ -505,7 +505,7 @@ platforms belonging to two corporations disclose their transparency data in
 machine-readable form, enabling a comparison with previous disclosures. They are
 Facebook, Instagram, and TikTok. The rest of this section discusses the detailed
 audit findings; it is organized by platform but combines those owned by the same
-corporation. I start with \V{NCMEC}.
+corporation. We start with \V{NCMEC}.
 
 
 \subsection{The National Center for Missing and Exploited Children}
@@ -526,16 +526,16 @@ the Department of Justice's Office of Juvenile Justice and Delinquency
 Prevention~\cite{NCMEC2023}. Section~\ref{sec:global-spread} makes extensive use
 of the report and its data.
 
-While making the data in \V{NCMEC}'s \V{PDF} files machine-readable again, I did
-encounter data quality issues with the organization's breakdown of CyberTipline
-reports by country. In particular, the data included two entries for the same
-country, labelled ``French Guiana'' and ``Guiana, French;'' entries for the
-Netherlands Antilles in addition to the three island states resulting from the
-Antilles' split in 2010; Bouvet Island even though this subantarctic Norwegian
-territory is an uninhabited nature preserve; and ``Europe,'' presumably meaning
-the continent, in addition to pretty much all European countries. Taken
-together, problematic countries account for less than 250 CyberTipline reports
-per year from 2019 to 2022. Hence I dropped them.
+While scraping the data from \V{NCMEC}'s \V{PDF} files, we did encounter data
+quality issues with the organization's breakdown of CyberTipline reports by
+country. In particular, the data included two entries for the same country,
+labelled ``French Guiana'' and ``Guiana, French;'' entries for the Netherlands
+Antilles in addition to the three island states resulting from the Antilles'
+split in 2010; Bouvet Island even though this subantarctic Norwegian territory
+is an uninhabited nature preserve; and ``Europe,'' presumably meaning the
+continent, in addition to pretty much all European countries. Taken together,
+problematic countries account for less than 250 CyberTipline reports per year
+from 2019 to 2022. Hence we dropped them.
 
 
 \subsection{Meta: Facebook, Instagram, and WhatsApp}
@@ -568,7 +568,7 @@ While the names suggest that the former includes the latter metric, the jump in
 piece counts that quarter suggests otherwise.
 
 By searching for ``Meta Community Standards Enforcement Report \V{\V{Q2}}~2021''
-with an external search engine, I eventually found a blog
+with an external search engine, we eventually found a blog
 post~\cite{Facebook2021a} linking a \V{PDF} document with the
 explanation~\cite{Facebook2021}. The latter metric also includes ``Sexualization
 of children'' and ``Inappropriate interactions with Children.'' While these
@@ -625,12 +625,11 @@ quantities differ every quarter, affecting a wide range of metrics and going
 back years. But in \V{Q1}~2023, the number of affected values dropped sharply,
 to 18 or 0.6\% and the next two quarters see no such divergent quantities. These
 counts may very well be undercounts because of Meta's practice of rounding
-quantities. If I were to speculate, timing points to the \V{EU}'s Digital
-Services Act, with Meta reigning in data fluctuations just before the \V{EU}
-Commission designated Facebook and Instagram as very large online platforms on
-April 25, 2023 (which started the four-month clock to come into
-compliance)~\cite{EuropeanCommission2023a}. Still, the verdict is clear:
-Facebook and Instagram fail the audit.
+quantities. The timing of this improvement in data handling points to the
+\V{EU}'s Digital Services Act, with Meta reigning in data fluctuations just
+before the \V{EU} Commission designated Facebook and Instagram as very large
+online platforms on April 25, 2023~\cite{EuropeanCommission2023a}. Still, the
+verdict is clear: Facebook and Instagram fail the audit.
 
 Meta does not make meaningful transparency disclosures for WhatsApp. However, as
 \V{NCMEC}'s disclosures for 2021 and 2022 demonstrate, Meta does file
@@ -695,7 +694,7 @@ impossible to determine with certainty which side, Pinterest or \V{NCMEC} or
 both, made tabulation errors. However, Pinterest is the more likely party, given
 that \V{NCMEC}'s counts agree with those for the other audited platforms. While
 both organizations would be well advised to validate disclosed quantities for
-2021 and 2022, I attribute the failure to the likely culprit: Pinterest fails
+2021 and 2022, we attribute the failure to the likely culprit: Pinterest fails
 the audit.
 
 
@@ -869,7 +868,7 @@ reporting period.
 \section{Online Sexual Exploitation of Minors}
 \label{sec:global-spread}
 
-Having performed the scrappy audits, I now describe what those disclosures tell
+Having performed the scrappy audits, we now describe what those disclosures tell
 us about the sexual exploitation of minors online, with a focus on social media
 from 2019 to 2022. This section builds on the data contained in \V{NCMEC}'s
 report to the Office of Juvenile Justice and Delinquency
@@ -877,7 +876,7 @@ Prevention~\cite{NCMEC2023}, but also draws on \V{NCMEC}'s disclosures of
 reports per country~\cite{NcmecByCountry2019,NcmecByCountry2020,
 NcmecByCountry2021,NcmecByCountry2022} and platforms' disclosures of
 CyberTipline reports and pieces, as presented in the previous section. To better
-contextualize my overview, I also draw on the computer-science literature about
+contextualize my overview, we also draw on the computer-science literature about
 cryptographic as well as perceptual hashes and the legal as well as medical
 literature on teenage sexting.
 
@@ -890,40 +889,73 @@ sexual exploitation of minors to \V{NCMEC}, independent of users' locations, and
 hence produce data for most countries on Earth.
 
 
-\subsection{Caveats}
+\subsection{Key Metrics}
 
-Before discussing the data and its implications, I need to immediately register
-three important caveats that apply to almost all metrics used in this section.
-First, the primary goal for any effort in curtailing the sexual exploitation of
-minors should, of course, be minimizing harm to minors. One way of measuring
-potential harm is the \emph{prevalence} of \V{CSAM} and violative activities on
-the internet. Alas, we have no data on prevalence. Even Meta, which is unique
-amongst surveyed platform in using random sampling to provide prevalence
-statistics for other violative content, has not done so for \V{CSAM}.
+Before diving into the data, however, it helps to define key metrics. For
+completeness, that includes important metrics not included in current
+transparency disclosures. The foundational metric for this paper are
+CyberTipline report counts. They record \emph{detected incidents}, that is,
+prohibited activities and materials that have already come to a platform's
+attention (and hence have also been curtailed). As such, they are roughly
+indicative of the spread of sexual exploitation of minors across internet
+platforms, but we'd need additional metrics for prevalence, pieces, victims, and
+reach to provide a complete baseline.
 
-Second, CyberTipline reports reflect \emph{detected incidents} of such materials
-and activities. They very likely are correlated with prevalence, but they
-nonetheless measure something different. Furthermore, I emphasized ``incidents''
-because CyberTipline reports are not the same as \emph{pieces} of \V{CSAM}. A
-report about child grooming may have no attachments or pieces, while a report
-about a distributor of \V{CSAM} may have a large number of attachments or
-pieces. While we have no data to characterize the relationship between
-prevalence and CyberTipline reports, we do have data on the relationship between
-pieces and such reports. I have already included some of that in the previous
-section and will discuss it below in Section~\ref{sec:pieces-and-reports}.
+First, \emph{prevalence} is the fraction of content with a given characteristic,
+in this case the sexual exploitation of minors. That makes prevalence the most
+direct metric for characterizing the spread of such content. However, we have no
+data on prevalence. Even Meta, which is unique amongst surveyed platforms in
+using random sampling to provide prevalence statistics for other violative
+content, has not done so for \V{CSAM}. Still, it seems safe to assume that
+\V{CSAM} imagery is more likely to be detected with increasing prevalence.
 
-Third, over the last few decades, people interested in \V{CSAM} have used
-various technologies to find each other and to exchange such
+Second, \emph{pieces} represent the volume of such imagery, i.e., count photos
+and videos with \V{CSAM}. CyberTipline reports include such imagery as
+attachments, but their number depends on the reported activity or content. For
+example, a CyberTipline report about a misleading domain name has no
+attachments, whereas a report about a distributor of \V{CSAM} may have a large
+number of attachments. Unlike for prevalence, we do have data on the
+relationship between reports and pieces. Section~\ref{sec:audits} already
+included platform-specific \emph{pieces per report} in table columns labelled
+$\pi$. Section~\ref{sec:report-contents} below explores the distribution of
+reported activities. Section~\ref{sec:pieces-and-reports} explores global pieces
+per report counts, including unique as well as visually similar pieces.
+
+Third, \emph{victims} counts exploited minors. Whereas unique and similar pieces
+provide deduplicated counts for imagery, victims provides deduplicated counts
+for all activities and focuses on the human impact. Its rate of change, of
+course, characterizes how rapidly a violative activity is changing. But since it
+reflects the number of minors newly impacted by online sexual exploitation, it
+probably also comes closest to characterizing its human harm---especially when
+combined with basic demographic data. \V{NCMEC} apparently does track victims
+and uses that information during triage of reports, prioritizing those with
+unknown victims. But no statistics covering the victims of CyberTipline reports
+are publicly available. In the absence of such statistics, we'd do well to treat
+other metrics with healthy skepticism when they are used as proxies, as this
+paper does.
+
+Fourth, \emph{reach} characterizes characterizes the exposure of others to
+violative content, which qualifies as a secondary harm. Like for digital ads,
+reach is best measured in view impressions---until content takedown, in this
+case. Meanwhile, the uptime of violative content is not an accurate measure of
+reach but rather the operational efficiency of a platform's content moderation.
+For that reason, it may be interesting as a secondary metric. Starting with
+YouTube in 2021, many social media platforms are now reporting reach as view
+impressions~\cite{OConnor2021}. This paper doesn't further explore the metric
+besides noting that histogram binning strategy matters: Google and Pinterest use
+cutoffs at 1, 10, and 100 views~\cite{Google2022,Pinterest2022}, which are not
+only suitably small but also isolate the semantically important zero views.
+Meanwhile, Twitter used cutoffs of 100 and 1,000 views~\cite{Twitter2022}, which
+mostly speaks to the inadequacy of its content moderation.
+
+When collecting metrics, the measured population obviously matters. When it
+comes to \V{CSAM}, people interested in acquiring such imagery have used various
+technologies to find each other and exchange such
 material~\cite{SteelNewmanea2020}. Even relatively recently, such modalities
 included peer-to-peer systems and the dark web. While mobile communication tools
 currently appear to be the dominant technology, people very likely continue to
 use peer-to-peer systems and the dark web. Alas, \emph{none} of the data in this
 paper reflects activities on peer-to-peer systems or the dark web.
-
-To put this differently, succinctly: I am only painting a partial picture in
-this section. Furthermore, I am painting a distorted picture in this section.
-But I can't fully tell which parts of the picture are distorted and to what
-degree.
 
 
 \subsection{CyberTipline Reports and Their Topics}
@@ -1097,19 +1129,19 @@ examining transparency disclosures.
 \subsection{Global Distribution of CyberTipline Reports}
 \label{sec:spread}
 
-To consider the global spread of \V{CSAM}, I turn to \V{NCMEC}'s reports per
+To consider the global spread of \V{CSAM}, we turn to \V{NCMEC}'s reports per
 country covering 2019--2022~\cite{NcmecByCountry2019,NcmecByCountry2020,
 NcmecByCountry2021,NcmecByCountry2020}. As discussed above, the data does have
 minor quality issues, but they impact less than 0.001\% of the reports, i.e.,
 are negligible. However, making meaningful comparisons between countries also
 requires normalizing the data. While the number of countries' internet users
-would form the most suitable denominator, I could not find an up-to-date and
+would form the most suitable denominator, we could not find an up-to-date and
 accurate dataset with that information. Almost all datasets claiming to do so,
 including the Worldbank's, trace back to the International Telecommunication
 Union (\V{ITU}). But that dataset has not been updated for years for many
 countries and provides percentage fractions of countries' populations only.
 Instead of scaling population counts by outdated and hence unreliable fractions,
-I instead decided to use population counts by themselves. In particular, the
+we instead decided to use population counts by themselves. In particular, the
 United Nations provide up-to-date, yearly statistics, even if they often are
 (informed) estimates.
 
@@ -1152,16 +1184,16 @@ tool\footnote{\url{https://www.top10vpn.com/tools/blocked-in-china/}} in January
 data: Its maximum was 9 reports in 2020. By comparison, South Korea, with about
 double the population, had 100,709 reports that same year.
 
-I believe that a comparison based on reports per capita, country, and year still
-is meaningful thanks to Meta's astounding global reach and its overwhelming lead
-in reporting \V{CSAM}. Notably, over the four years covered by \V{NCMEC}'s
-disclosures, the size of Meta's family monthly active people grew from 2.69
-billion during \V{Q1}~2019 to 3.74 billion during \V{Q4}~2022. That is 35--47\%
-of the world population including China---or 43--57\% excluding China! Meta also
-was responsible for 94.3\% of all \V{CSAM} reports in 2019, 94.7\% in 2020,
-92.2\% in 2021, and 85.5\% in 2022. In other words, the vast majority of
-CyberTipline reports reflect Meta's screening for \V{CSAM} amongst the roughly
-half of humanity counting as the firm's monthly users.
+A comparison based on reports per capita, country, and year still is meaningful
+thanks to Meta's astounding global reach and its overwhelming lead in reporting
+\V{CSAM}. Notably, over the four years covered by \V{NCMEC}'s disclosures, the
+size of Meta's family monthly active people grew from 2.69 billion during
+\V{Q1}~2019 to 3.74 billion during \V{Q4}~2022. That is 35--47\% of the world
+population including China---or 43--57\% excluding China! Meta also was
+responsible for 94.3\% of all \V{CSAM} reports in 2019, 94.7\% in 2020, 92.2\%
+in 2021, and 85.5\% in 2022. In other words, the vast majority of CyberTipline
+reports reflect Meta's screening for \V{CSAM} amongst the roughly half of
+humanity counting as the firm's monthly users.
 
 \begin{figure}
 \centering
@@ -1208,7 +1240,7 @@ most reports per capita for each of the four years. Meanwhile the decline
 becomes obvious if we treat the Arab League as a country: It would rank 15th,
 18th, 19th, and 26th, respectively. Furthermore, per capita rates for those
 countries do not increase whereas those for the rest of the world do increase,
-with the total number of reports doubling from 2019 to 2022. While I cannot
+with the total number of reports doubling from 2019 to 2022. While we cannot
 explain this oddity, the fact that the United Arab Emirates and Libya are
 highest ranked for two out of four years even though they are polar opposites
 when its comes to wealth and political stability does point to some shared
@@ -1230,9 +1262,9 @@ down by pieces and unique pieces but not by person. Furthermore, while yearly
 piece counts are just below or well over one million, the number of minors in
 the database appears to be much smaller. In particular, \V{NCMEC} added 773
 minors in 2020, 1,477 minors in 2021, and 4,464 minors in 2022. Given the small
-number of victims, I also report equivalent statistics published by \V{OJJDP}
-based on the \V{FBI}'s National Incident Reporting System Master Files for 2018
-and 2019~\cite{OJJDPStats2022}.
+number of victims, this section also draws on equivalent statistics published by
+\V{OJJDP} based on the \V{FBI}'s National Incident Reporting System Master Files
+for 2018 and 2019~\cite{OJJDPStats2022}.
 
 The majority of suspects are members of the victim's extended family, accounting
 for 64.2\% of all unique pieces in 2022. That includes fathers with 30.4\%,
@@ -1257,13 +1289,12 @@ relationships!
 \V{NCMEC} provides statistics on age and gender only for minors newly added to
 its Child Victim Identification Program but not for CyberTipline reports. But
 even if it did, that wouldn't suffice for separating out reports about voluntary
-and consensual teenage sexting. I am highlighting sexting because it is very
-popular, with prevalences in a recent meta-analysis at 19.3\% for sending,
-34.8\% for receiving, and 14.5\% for forwarding without
-consent~\cite{MoriParkea2022}. While the latter is ethically problematic, the
-harsh penalties of Chapter~110 hardly seem an appropriate tool to foster teenage
-learning. Yet according to federal law, teenage sexting qualifies as \V{CSAM}
-all the same.
+and consensual teenage sexting. Sexting matters because it is very popular, with
+prevalences in a recent meta-analysis at 19.3\% for sending, 34.8\% for
+receiving, and 14.5\% for forwarding without consent~\cite{MoriParkea2022}.
+While the latter is ethically problematic, the harsh penalties of Chapter~110
+hardly seem an appropriate tool to foster teenage learning. Yet according to
+federal law, teenage sexting qualifies as \V{CSAM} all the same.
 
 Advocating an abstinence-only approach to sexting is bound to fail just like
 prior abstinence-only sex education did, despite the \V{US} spending over \$2
@@ -1321,12 +1352,12 @@ needed!
 Since audits and analysis have different overall thrusts, distinguishing between
 them for structuring this paper's exposition made eminent sense. But in
 practice, the distinction between audits and analysis was far less clear and
-their connection more organic: I simply kept poking at the data to make sense of
-available statistics. In my mind, the transition from just poking quantities to
-telling a coherent story grounded in the data is just what needs to happen for
+their connection more organic: We simply kept poking at the data to make sense
+of available statistics. The transition from just poking quantities to telling a
+coherent story grounded in the data is just what needs to happen for
 transparency disclosures to result in meaningful accountability. That suggests
 several takeaways about transparency disclosures in general and about their
-presentation. I start with higher-level observations.
+presentation. We start with higher-level observations.
 
 First and not surprisingly, there is a bottom threshold for metrics and data to
 be useable in data-driven story telling. In particular, without having overall
@@ -1340,7 +1371,7 @@ Second and more unexpectedly, there is value even in incomplete or buggy
 transparency disclosures \emph{as long as} they can be combined with similar
 disclosures by other organizations. It helps when one organization's disclosures
 are general and robust enough to provide a foundation, as \V{NCMEC}'s \V{OJJDP}
-report did for the previous section. But with that backbone in place, I could
+report did for the previous section. But with that backbone in place, we could
 rely on platform-specific disclosures to add interesting detail, even if they,
 like Pinterest's, were not entirely accurate. That should serve as warning
 against simply dismissing existing disclosures as ``transparency
@@ -1364,20 +1395,20 @@ teenage sexting. That does complicate life for regulators, who would prefer to
 just pick from a menu of internationally agreed upon
 metrics~\cite{HarlingHenesyea2023}. However, keeping disclosure requirements
 adaptable does not mean that regulation is inadvisable or
-impossible~\cite{Douek2022,Klonick2023}. On the contrary, as I argued above,
-Meta sticking with its historical disclosures after two years of significant
-churn illustrates the beneficial impact of regulation. Similarly, the \V{EU}'s
+impossible~\cite{Douek2022,Klonick2023}. On the contrary, as argued above, Meta
+sticking with its historical disclosures after two years of significant churn
+illustrates the beneficial impact of regulation. Similarly, the \V{EU}'s
 statements of reasons database promises to enable more scrappy audits for all of
 content moderation~\cite{TrujilloFagniea2024}. At the same time, an effective
 regulator really needs to have their own research and data divisions to engage
 platforms~\cite{Jaursch2022a,Jaursch2023}.
 
-In addition to these more general observations, I do have concrete suggestions
+In addition to these more general observations, we do have concrete suggestions
 for improving transparency disclosures. Notably, fancy, irregular layouts and
 statistics embedded in text obfuscate the data. \V{NCMEC} actually did start
 reporting violative activities and attached pieces a year earlier, in its
 CyberTipline 2021 Report~\cite{NcmecCyberTipline2021}. But that didn't register
-when I scanned the written report because of the layout and long passages of
+when we scanned the written report because of the layout and long passages of
 low-information text. Meanwhile, the more focused presentation of the \V{OJJDP}
 report with its simple, inline tables registered immediately.
 
@@ -1396,12 +1427,12 @@ disclosures as well as for the \V{ITU}'s data on internet users per country.
 \section{Outlook}
 \label{sec:outlook}
 
-To improve the accountability of social media platforms, I audited the
-transparency disclosures of 16 major platforms by comparing redundantly or
-repeatedly disclosed quantities. Even though the audit methodology is rather
-basic and I focused on an area with clear legal reporting mandates, the sexual
-exploitation of minors, audit results were not exactly encouraging. Out of the
-16 surveyed platforms operated by 11 technology firms:
+To improve the accountability of social media platforms, this paper presented an
+audit of transparency disclosures for 16 major platforms by comparing
+redundantly or repeatedly disclosed quantities. Even though the audit
+methodology is rather basic and focused on an area with legal reporting
+mandates, the sexual exploitation of minors, audit results were not exactly
+encouraging. Out of the 16 surveyed platforms operated by 11 technology firms:
 \begin{itemize}
 \item[\ding{56}] 3 platforms do not make transparency disclosures;
 \item[\ding{56}] 2 platforms do not make transparency disclosures about content moderation;
@@ -1416,7 +1447,7 @@ countries. At the same time, the overview would have been impossible without
 more comprehensive disclosures by the clearing house for reporting such
 activities, \V{NCMEC}.
 
-Based on my experiences with audits and analysis, I argued that meaningful
+Based on experience with audits and analysis, this paper argued that meaningful
 transparency disclosures require continuous engagement by platforms and civil
 society alike. But getting social media firms to fully embrace such an iterative
 transparency process and make good faith disclosures may turn out to be
@@ -1444,22 +1475,22 @@ Meanwhile, moving too fast does not suffice for explaining several other cases.
 Notably, Meta kept violating non-discrimination laws in advertising for years,
 despite having been repeatedly notified of its
 noncompliance~\cite{AngwinParrisJr2016,AngwinScheiberea2017,AngwinTobinea2017,
-KofmanTobin2019,Kofman2022,Merrill2020,TobinMerrill2018}. Next, as I discovered
-during my employment, the firm also manipulated view impressions, only the most
-basic advertising metric, to its own economic benefit~\cite{Grimm2022c}. Despite
-its significant efforts on minor safety, the firm did run an advertising
-campaign (for TikTok nonetheless) that sexualized teenage girls for the benefit
-of middle-aged straight men. When employees raised concerns, the firm cut off
-their access to information about the ad campaign but otherwise continued
-running the ads~\cite{SilvermanMac2020}. In the aftermath of the \V{US}
-presidential election and attempted coup and facing a barrage of criticism, Meta
-deplatformed the academics who had been collecting the data enabling many of the
-above news reports about the firm's ad database~\cite{EdelsonMcCoy2021,
-EdelsonMcCoy2021a}. At that time, the firm also disbanded the team responsible
-for its CrowdTangle transparency tool~\cite{Roose2021a}, with the project's
-founder leaving the firm a few months later~\cite{Heath2021} and Meta
-``pausing'' sign-ups for new users a few more months
-later~\cite{PatelCulliford2022}.
+KofmanTobin2019,Kofman2022,Merrill2020,TobinMerrill2018}. Next, as the author
+discovered during their employment, the firm also manipulated view impressions,
+only the most basic advertising metric, to its own economic
+benefit~\cite{Grimm2022c}. Despite its significant efforts on minor safety, the
+firm did run an advertising campaign (for TikTok nonetheless) that sexualized
+teenage girls for the benefit of middle-aged straight men. When employees raised
+concerns, the firm cut off their access to information about the ad campaign but
+otherwise continued running the ads~\cite{SilvermanMac2020}. In the aftermath of
+the \V{US} presidential election and attempted coup and facing a barrage of
+criticism, Meta deplatformed the academics who had been collecting the data
+enabling many of the above news reports about the firm's ad
+database~\cite{EdelsonMcCoy2021, EdelsonMcCoy2021a}. At that time, the firm also
+disbanded the team responsible for its CrowdTangle transparency
+tool~\cite{Roose2021a}, with the project's founder leaving the firm a few months
+later~\cite{Heath2021} and Meta ``pausing'' sign-ups for new users a few more
+months later~\cite{PatelCulliford2022}.
 
 With the Digital Services Act, the \V{EU} created a powerful but measured,
 multipronged oversight and enforcement mechanism. On paper, the \V{DSA} more
@@ -1473,9 +1504,9 @@ to grow the arsenal of scrappy audits and other means for holding social media
 accountable. Luckily, the \V{EU} Commission has already provided us with a new
 tool for doing so through the statements of reasons database. While other
 researchers have already performed a first comparison of database entries with
-aggregate \V{DSA} transparency disclosures, I am particularly interested in
-fully automating these audits to hold social media accountable for correct
-counts when it comes to transparency!
+aggregate \V{DSA} transparency disclosures, full automation of these audits
+seems an important next step for holding social media accountable for counts in
+their transparency disclosures!
 
 
 % ======================================================================================
