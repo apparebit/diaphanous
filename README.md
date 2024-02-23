@@ -20,18 +20,19 @@ correctness of data transcription. This repository's Python code illustrates how
 to tidy up such data.
 
 
-### Dataset 1: CSAM Reports per Year (1998 onward)
+### Dataset 1: CyberTipline Reports per Year (1998 onward)
 
-The [CSAM reports per year](data/csam-reports-per-year.csv) dataset captures the
-number of reports NCMEC received on its CyberTipline since inception in March
-1998, as disclosed in Appendix A of its [CY 2022 Report to the Committees on
+The [CyberTipline reports per year](data/csam-reports-per-year.csv) dataset
+captures the number of reports NCMEC received on its CyberTipline since
+inception in March 1998, as disclosed in Appendix A of its [CY 2022 Report to
+the Committees on
 Appropriations](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf).
 
 
-### Dataset 2: CSAM Report Contents (2020 onward)
+### Dataset 2: CyberTipline Report Contents (2020 onward)
 
-The [CSAM report contents](data/csam-report-contents.csv) dataset breaks down
-the reports NCMEC received by:
+The [CyberTipline report contents](data/csam-report-contents.csv) dataset breaks
+down the reports NCMEC received by:
 
   * the category of sexual exploitation, e.g., whether a report concerns child
     pornography, misleading words/images, online enticement, child sex
@@ -47,10 +48,10 @@ several tables from NCMEC's [CY 2022 Report to the Committees on
 Appropriations](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf).
 
 
-### Dataset 3: CSAM Reports per Platform (2019 onward)
+### Dataset 3: CyberTipline Reports per Platform (2019 onward)
 
-The [CSAM reports per platform](data/csam-reports-per-platform.json) dataset is
-the main dataset provided by this repository. It collects:
+The [CyberTipline reports per platform](data/csam-reports-per-platform.json)
+dataset is the main dataset provided by this repository. It collects:
 
   * the CSAM disclosures by major non-Chinese social networks;
   * corresponding disclosures about platforms' reporting by NCMEC.
@@ -102,7 +103,7 @@ collects all of a platform's quantitative disclosures within one table:
     entries.
   * Where possible, the table uses standard labels for equivalent metrics:
 
-      * _reports_ tallies CSAM reports to NCMEC;
+      * _reports_ tallies CyberTipline reports to NCMEC;
       * _pieces_ tallies instances of CSAM such as pictures and videos;
       * _accounts_ tallies user registrations implicated *and* terminated
         for CSAM;
@@ -112,10 +113,10 @@ collects all of a platform's quantitative disclosures within one table:
     under *accounts*. However, temporarily impacted registrations are not.
 
 
-### Dataset 4: CSAM Reports per Country (2019 onward)
+### Dataset 4: CyberTipline Reports per Country (2019 onward)
 
-[CSAM reports per country](data/csam-reports-per-country.csv) collects NCMEC's
-per-country breakdown of CSAM reports for
+[CyberTipline reports per country](data/csam-reports-per-country.csv) collects
+NCMEC's per-country breakdown of CyberTipline reports for
 [2019](https://www.missingkids.org/content/dam/missingkids/pdfs/2019-cybertipline-reports-by-country.pdf),
 [2020](https://www.missingkids.org/content/dam/missingkids/pdfs/2020-reports-by-country.pdf),
 [2021](https://www.missingkids.org/content/dam/missingkids/pdfs/2021-reports-by-country.pdf),
@@ -154,7 +155,7 @@ geometries, and region/continent information. It leverages the following data:
 The following choropleths using the Equal Earth projection visualize normalized
 per country CSAM reports:
 
-![CSAM reports per capita per country per
+![CyberTipline reports per capita per country per
 year](https://raw.githubusercontent.com/apparebit/intransparent/boss/figure/reports-per-capita.svg)
 
 
@@ -214,3 +215,14 @@ analyzing it as well as resulting figures. In particular:
   - The `stubs` directory contains typing stubs.
   - The `report` directory contains the LaTeX sources for the article discussing
     the work.
+
+
+## Licensing
+
+The code in this repository is ©️ 2023–2024 by Robert Grimm has been released
+under the [Apache 2.0](LICENSE) open source license. The datasets in this
+repository combine transparency data released by several social media platforms
+as well as the National Center for Missing and Exploited Children (NCMEC) and
+make this data more easily accessible in machine-readable form. It has been
+released under the [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+license.
