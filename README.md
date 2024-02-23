@@ -7,7 +7,7 @@ imagery, the National Center for Missing and Exploited Children or NCMEC. In
 addition to the data, the repository also includes Python modules and notebooks
 for analyzing the data. The report [Putting the Count Back Into Accountability:
 An Audit of Social Media Transparency Disclosures, Focusing on Sexual
-Exploitation of Minors](report/report.pdf) provides the details.
+Exploitation of Minors](https://arxiv.org/abs/2402.14625) provides the details.
 
 
 ## The Data
