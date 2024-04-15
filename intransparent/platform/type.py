@@ -43,6 +43,7 @@ class DisclosureType(TypedDict, total=False):
     columns: Sequence[str]
     rows: Sequence[RowType]
     schema: dict[str, SchemaEntryType]
+    aggregates: dict[str, Sequence[str]]
 
 
 # The dictionary with social media transparency disclosures.
@@ -51,11 +52,13 @@ DisclosureCollectionType = TypedDict(
     {
         "@": "MetadataType",
         "Automattic": "DisclosureType",
+        "Discord": "DisclosureType",
         "Facebook": "DisclosureType",
         "Google": "DisclosureType",
         "Instagram": "DisclosureType",
         "LinkedIn": "DisclosureType",
         "Meta": "DisclosureType",
+        "Microsoft": "DisclosureType",
         "Pinterest": "DisclosureType",
         "Quora": "DisclosureType",
         "Reddit": "DisclosureType",
