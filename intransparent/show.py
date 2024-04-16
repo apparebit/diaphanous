@@ -31,6 +31,7 @@ def show(
     caption: None | str = None,
     highlight_columns: None | str | list[str] = None,
     highlight_rows: None | int | list[int] = None,
+    lowlight_columns: None | str | list[str] = None,
     margin_top: float = 0,
     margin_bottom: float = 2.0,
     with_index: bool = True,
@@ -59,18 +60,22 @@ def show(
         display(style)
         return
 
+    columns = value.columns
+    is_reports_table = 'reports' in columns and 'Δ%' in columns and 'NCMEC' in columns
+    if is_reports_table and lowlight_columns is None:
+        lowlight_columns = ['esp', 'total', 'esp/total%']
+
     style = format_table(
         value,
         caption=caption,
         highlight_columns=highlight_columns,
         highlight_rows=highlight_rows,
+        lowlight_columns=lowlight_columns,
         margin_top=margin_top,
         margin_bottom=margin_bottom,
         show_row_header=with_index,
     )
 
-    columns = value.columns
-    is_reports_table = 'reports' in columns and 'Δ%' in columns and 'NCMEC' in columns
     if is_reports_table:
         style = highlight_magnitude(
             value,
@@ -139,6 +144,7 @@ def format_table(
     show_row_header: bool = True,
     highlight_columns: None | str | list[str] = None,
     highlight_rows: None | int | list[int] = None,
+    lowlight_columns: None | str | list[str] = None,
     margin_top: float = 0,
     margin_bottom: float = 2,
 ) -> Styler:
@@ -213,19 +219,25 @@ def format_table(
     if table_styles:
         style.set_table_styles(table_styles, overwrite=False)  # type: ignore[arg-type]
 
+    if lowlight_columns is not None:
+        if isinstance(lowlight_columns, str):
+            lowlight_columns = [lowlight_columns]
+        style.set_table_styles(
+            {
+                c: [{ 'selector': '', 'props': [('color', '#999')] }]
+                for c in lowlight_columns
+            },
+            overwrite=False,
+        )
+
     # Apply highlights to rows and columns
     if highlight_rows is not None:
         if not isinstance(highlight_rows, list):
             highlight_rows = [highlight_rows]
         style.set_table_styles(
             {
-                row_label: [
-                    {
-                        'selector': '',
-                        'props': [('background-color', '#feddb0')],
-                    }
-                ]
-                for row_label in highlight_rows
+                r: [{'selector': '', 'props': [('background-color', '#feddb0')]}]
+                for r in highlight_rows
             },
             overwrite=False,
             axis=1,
