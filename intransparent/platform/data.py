@@ -103,6 +103,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
         },
         "rows": (
             # fmt: off
+            {"2023 Q4": (None, 1_900_000, 16_200_000, None, 135_100, 1_000_000, None, 36_100, 317_500, None, 279_500, 1_200_000)},
             {"2023 Q3": (None, 1_800_000, 16_900_000, None, 112_200, 266_600, None, 20_300, 87_800, None, 1_800, 116_600)},
             {"2023 Q2": (None, 1_700_000, 7_200_000, None, 94_400, 146_800, None, 20_500, 38_700, None, 1_400, 41_300)},
             {"2023 Q1": (None, 1_900_000, 8_900_000, None, 91_800, 104_500, None, 12_300, 20_800, None, 5_400, 17_200)},
@@ -188,6 +189,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
         },
         "rows": (
             # fmt: off
+            {"2023 Q4": (None, 198_500, 2_100_000, None, 34_700, 79_100, None, 4_600, 26_500, None, 11_900, 86_800)},
             {"2023 Q3": (None, 227_700, 1_600_000, None, 44_400, 38_200, None, 5_600, 14_300, None, 1_100, 3_100)},
             {"2023 Q2": (None, 320_700, 1_700_000, None, 22_000, 22_800, None, 5_200, 6_300, None, 700, 700)},
             {"2023 Q1": (None, 567_100, 8_700_000, None, 29_100, 20_600, None, 4_300, 2_100, None, 2_400, 1_600)},
@@ -666,7 +668,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2019": ("WhatsApp", None, None, None)},
             {"2019": ("Wordpress", None, None, None)},
             {"2019": ("YouTube", None, None, None)},
-            {"2019": ("Total", 16_836_694, None, None)},
+            {"2019": ("ESP Total", 16_836_694, None, None)},
+            {"2019": ("Total", 16_987_361, None , None)},
 
             {"2020": ("Alphabet", 546_704, None, None)},
             {"2020": ("Automattic", 9_130, None, None)},
@@ -689,7 +692,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2020": ("WhatsApp", None, None, None)},
             {"2020": ("Wordpress", None, None, None)},
             {"2020": ("YouTube", None, None, None)},
-            {"2020": ("Total", 21_447_786, None, None)},
+            {"2020": ("ESP Total", 21_447_786, None, None)},
+            {"2020": ("Total", 21_751_085, None, None)},
 
             {"2021": ("Alphabet", 875_783, None, None)},
             {"2021": ("Automattic", None, None, None)},
@@ -715,7 +719,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2021": ("WhatsApp", 1_372_696, 2, 3.32)},
             {"2021": ("Wordpress", 310, 26, 1.95)},
             {"2021": ("YouTube", None, 10, 2.2)},
-            {"2021": ("Total", 29_157_083, 75_038, 1.22)},
+            {"2021": ("ESP Total", 29_157_083, 75_038, 1.22)},
+            {"2021": ("Total", 29_397_681, None, None)},
 
             {"2022": ("Alphabet", 2_174_548, None, None)},
             {"2022": ("Automattic", None, None, None)},
@@ -743,7 +748,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2022": ("WhatsApp", 1_017_555, 2, 5.2)},
             {"2022": ("Wordpress", 190, 155, 1.6)},
             {"2022": ("YouTube", None, 14, 3.6)},
-            {"2022": ("Total", 31_802_525, 80_969, None)},
+            {"2022": ("ESP Total", 31_802_525, 80_969, None)},
+            {"2022": ("Total", 32_059_029, None, None)},
 
             {"2023": ("Alphabet", 1_470_958, None, None)},
             {"2023": ("Automattic", None, None, None)},
@@ -769,7 +775,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2023": ("Wordpress", 256, None, None)},
             {"2023": ("X", 273_416, None, None)},
             {"2023": ("YouTube", None, None, None)},
-            {"2023": ("Total", 35_944_826, None, None)},
+            {"2023": ("ESP Total", 35_944_826, None, None)},
+            {"2023": ("Total", 36_210_368, None, None)},
             # fmt: on
         ),
     },

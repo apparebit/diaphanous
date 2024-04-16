@@ -78,6 +78,13 @@ def compare_platform_reports(
 
     comparison["Δ%"] = ((received - sent) / sent * 100) if has_sent else None
     comparison["NCMEC"] = received
+    industry = NCMEC["ESP Total"]
+    comparison["esp%"] = received / industry * 100
+    comparison["esp"] = industry
+    total = NCMEC["Total"]
+    comparison["total%"] = received / total * 100
+    comparison["total"] = total
+    comparison["esp/total%"] = industry / total * 100
     return comparison
 
 
