@@ -8,10 +8,7 @@ import geopandas as geo  # type: ignore
 from .frame_logger import FrameLogger, silent_logger
 
 
-MIN_YEAR = 2019
-MAX_YEAR = 2022
-YEARS = range(MIN_YEAR, MAX_YEAR + 1)
-YEAR_LABELS = tuple(str(year) for year in YEARS)
+YEAR_LABELS = tuple(str(year) for year in range(2019, 2023))
 
 EXPECTED_REPORT_TOTALS = {
     '2019': 16_987_361,
