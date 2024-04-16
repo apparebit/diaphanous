@@ -8,7 +8,6 @@ from .type import (
     DisclosureCollectionType,
     DisclosureType,
     RowType,
-    SchemaEntryType,
 )
 
 
