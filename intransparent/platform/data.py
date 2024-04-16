@@ -10,13 +10,66 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
         "version": __version__,
         # ──────────────────────────────────────────────────────────────
     },
+    # ==================================================================================
     "Alphabet": {
         "brands": ("Google", "YouTube"),
     },
+    # ==================================================================================
     "Automattic": {
         "sources": ("https://transparency.automattic.com",),
         "brands": ("Tumblr", "Wordpress"),
     },
+    # ==================================================================================
+    "Discord": {
+        "sources": (
+            "https://discord.com/blog/discord-transparency-report-july-dec-2020",
+            "https://discord.com/blog/discord-transparency-report-h1-2021",
+            "https://discord.com/blog/discord-transparency-report-h2-2021",
+            "https://discord.com/blog/discord-transparency-report-q1-2022",
+            "https://discord.com/blog/discord-transparency-report-q2-2022",
+            "https://discord.com/blog/discord-transparency-report-q3-2022",
+            "https://discord.com/safety-transparency-reports/2022-q4",
+            "https://discord.com/safety-transparency-reports/2023-q1",
+            "https://discord.com/safety-transparency-reports/2023-q2",
+            "https://discord.com/safety-transparency-reports/2023-q3",
+            "https://discord.com/safety-transparency-reports/2023-q4"
+        ),
+        "features": {
+            "data": "csv",
+            "history": "same page (dropdown)",
+            "terms": ("child safety", "CSAM"),
+            "quantities": "counts",
+            "granularity": "Q",
+            "frequency": "Q",
+            "coverage": "2020 H2",
+        },
+        "columns": (
+            "reports (about CSAM)",
+            "reports (about grooming or endangerment)"
+        ),
+        "aggregates": {
+            "reports": (
+                "reports (about CSAM)",
+                "reports (about grooming or endangerment)"
+            ),
+        },
+        "rows": (
+            #fmt: off
+            {"2023 Q4": (55_638, 317)},
+            {"2023 Q3": (51_674, 242)},
+            {"2023 Q2": (36_323, 158)},
+            {"2023 Q1": (20_001, 125)},
+            {"2022 Q4": (11_520,  69)},
+            {"2022 Q3": (14_303,  63)},
+            {"2022 Q2": (21_425, 104)},
+            {"2022 Q1": (10_641,  54)},
+            {"2021 H2": (14_906, 220)},
+            {"2021 H1": ( 9_347, 150)},
+            {"2020 H2": ( 6_865,  83)},
+            #fmt: on
+        ),
+    },
+    # ==================================================================================
     "Facebook": {
         "sources": ("https://transparency.fb.com/sr/community-standards/",),
         "features": {
@@ -42,6 +95,12 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "reversals w/o appeal (Child Endangerment: Nudity and Physical Abuse)",
             "reversals w/o appeal (Child Endangerment: Sexual Exploitation)",
         ),
+        "aggregates": {
+            "pieces": (
+                "pieces (Child Nudity & Sexual Exploitation)",
+                "pieces (Child Endangerment: Sexual Exploitation)",
+            ),
+        },
         "rows": (
             # fmt: off
             {"2023 Q3": (None, 1_800_000, 16_900_000, None, 112_200, 266_600, None, 20_300, 87_800, None, 1_800, 116_600)},
@@ -68,6 +127,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             # fmt: on
         ),
     },
+    # ==================================================================================
     "Google": {
         "sources": (
             "https://transparencyreport.google.com/child-sexual-abuse-material/",
@@ -94,6 +154,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             # fmt: on
         ),
     },
+    # ==================================================================================
     "Instagram": {
         "sources": ("https://transparency.fb.com/sr/community-standards/",),
         "features": {
@@ -119,6 +180,12 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "reversals w/o appeal (Child Endangerment: Nudity and Physical Abuse)",
             "reversals w/o appeal (Child Endangerment: Sexual Exploitation)",
         ),
+        "aggregates": {
+            "pieces": [
+                "pieces (Child Nudity & Sexual Exploitation)",
+                "pieces (Child Endangerment: Sexual Exploitation)",
+            ],
+        },
         "rows": (
             # fmt: off
             {"2023 Q3": (None, 227_700, 1_600_000, None, 44_400, 38_200, None, 5_600, 14_300, None, 1_100, 3_100)},
@@ -142,6 +209,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             # fmt: on
         ),
     },
+    # ==================================================================================
     "LinkedIn": {
         "sources": ("https://about.linkedin.com/transparency/community-report",),
         "features": {
@@ -169,9 +237,17 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             # fmt: on
         ),
     },
+    # ==================================================================================
     "Meta": {
         "brands": ("Facebook", "Instagram", "WhatsApp"),
+        "aggregates": {
+            "pieces": [
+                "pieces (Child Nudity & Sexual Exploitation)",
+                "pieces (Child Endangerment: Sexual Exploitation)",
+            ],
+        },
     },
+    # ==================================================================================
     "Microsoft": {
         "sources": (
             "https://www.microsoft.com/en-us/corporate-responsibility/digital-safety-content-report",
@@ -185,33 +261,43 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "frequency": "H",
             "coverage": "2020 H1",
         },
+        "brands": ["LinkedIn"],
         "columns": (
             "pieces",
             "automatically detected pieces",
             "accounts",
             "reinstated accounts",
+            "reports",
         ),
         "schema": {
             "automatically detected pieces": "float",
             "reinstated accounts": "float",
         },
         "rows": (
-            {"2023 H1": (227_823, 94.7, None, None)},
-            {"2023 H1": (46_856, 99.2, 7_456, 1.4)},
-            {"2022 H2": (200_000, 98.5, None, None)},
-            {"2022 H2": (31_663, 99.2, 6_461, 1.6)},
-            {"2022 H1": (176_125, 93.5, None, None)},
-            {"2022 H1": (40_722, 98.7, 10_207, 0.56)},
-            {"2021 H2": (274_392, 97.2, None, None)},
-            {"2021 H2": (36_918, 99.4, 11_805, 0.04)},
-            {"2021 H1": (176_560, 97.2, None, None)},
-            {"2021 H1": (76_061, 99.7, 18_568, 0.02)},
-            {"2020 H2": (360_338, 99.0, None, None)},
-            {"2020 H2": (92_419, 99.9, 17_434, 0.0)},
-            {"2020 H1": (718_908, 99.8, None, None)},
-            {"2020 H1": (84_581, 99.8, 15_935, 0.01)},
+            {"2023 H1": (227_823, 94.7, None, None, None)},
+            {"2023 H1": (46_856, 99.2, 7_456, 1.4, None)},
+            {"2023 H1": (None, None, None, None, 79_971)},
+            {"2022 H2": (200_000, 98.5, None, None, None)},
+            {"2022 H2": (31_663, 99.2, 6_461, 1.6, None)},
+            {"2022 H2": (None, None, None, None, 53_642)},
+            {"2022 H1": (176_125, 93.5, None, None, None)},
+            {"2022 H1": (40_722, 98.7, 10_207, 0.56, None)},
+            {"2022 H1": (None, None, None, None, 53_957)},
+            {"2021 H2": (274_392, 97.2, None, None, None)},
+            {"2021 H2": (36_918, 99.4, 11_805, 0.04, None)},
+            {"2021 H2": (None, None, None, None, 36_445)},
+            {"2021 H1": (176_560, 97.2, None, None, None)},
+            {"2021 H1": (76_061, 99.7, 18_568, 0.02, None)},
+            {"2021 H1": (None, None, None, None, 42_481)},
+            {"2020 H2": (360_338, 99.0, None, None, None)},
+            {"2020 H2": (92_419, 99.9, 17_434, 0.0, None)},
+            {"2020 H2": (None, None, None, None, 63_813)},
+            {"2020 H1": (718_908, 99.8, None, None, None)},
+            {"2020 H1": (84_581, 99.8, 15_935, 0.01, None)},
+            {"2020 H1": (None, None, None, None, 32_622)},
         ),
     },
+    # ==================================================================================
     "Pinterest": {
         "sources": (
             "https://policy.pinterest.com/en/transparency-report",
@@ -268,6 +354,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             # fmt: on
         ),
     },
+    # ==================================================================================
     "Quora": {
         "sources": (
             "https://help.quora.com/hc/en-us/articles/13294268051732-DSA-Transparency",
@@ -276,6 +363,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "Quora's first and only transparency report so far, with user numbers only",
         ),
     },
+    # ==================================================================================
     "Reddit": {
         "sources": (
             "https://www.redditinc.com/policies/2023-h1-transparency-report",
@@ -324,6 +412,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             # fmt: on
         ),
     },
+    # ==================================================================================
     "Snap": {
         "sources": (
             "https://values.snap.com/privacy/transparency",
@@ -368,9 +457,12 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "* total accounts enforced EU 366,609; NorthAm 730,147; RestWorld 258,407",
         ),
     },
+    # ==================================================================================
     "Telegram": None,
+    # ==================================================================================
     "TikTok": {
         "sources": (
+            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-4/",
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-3/",
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-2/",
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-1/",
@@ -440,9 +532,11 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             # fmt: on
         ),
     },
+    # ==================================================================================
     "Tumblr": {
         "sources": ("https://www.tumblr.com/transparency",),
     },
+    # ==================================================================================
     "Twitter": {
         "sources": (
             "https://transparency.twitter.com",
@@ -476,6 +570,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             # fmt: on
         ),
     },
+    # ==================================================================================
     "WhatsApp": {
         "sources": (
             "https://www.whatsapp.com/legal/california-privacy-notice/transparency-report/",
@@ -484,9 +579,11 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "That appears to be the only transparency report WhatsApp ever released, as in 1.",
         ),
     },
+    # ==================================================================================
     "Wordpress": {
         "sources": ("https://transparency.automattic.com",),
     },
+    # ==================================================================================
     "YouTube": {
         "sources": (
             "https://transparencyreport.google.com/child-sexual-abuse-material/",
@@ -513,12 +610,14 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             # fmt: on
         ),
     },
+    # ==================================================================================
     "NCMEC": {
         "sources": (
             "https://www.missingkids.org/content/dam/missingkids/pdfs/2019-reports-by-esp.pdf",
             "https://www.missingkids.org/content/dam/missingkids/pdfs/2020-reports-by-esp.pdf",
             "https://www.missingkids.org/content/dam/missingkids/pdfs/2021-reports-by-esp.pdf",
             "https://www.missingkids.org/content/dam/missingkids/pdfs/2022-reports-by-esp.pdf",
+            "https://www.missingkids.org/content/dam/missingkids/pdfs/2023-reports-by-esp.pdf",
             "https://www.missingkids.org/content/dam/missingkids/pdfs/2021-notifications-by-ncmec-per-esp.pdf",
             "https://www.missingkids.org/content/dam/missingkids/pdfs/2022-notifications-by-ncmec-per-esp.pdf",
         ),
@@ -548,12 +647,14 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             # fmt: off
             {"2019": ("Alphabet", 449_283, None, None)},
             {"2019": ("Automattic", 10_443, None, None)},
+            {"2019": ("Discord", 19_480, None, None)},
             {"2019": ("Facebook", None, None, None)},
             {"2019": ("Google", None, None, None)},
             {"2019": ("Instagram", None, None, None)},
             {"2019": ("LinkedIn", 88, None, None)},
             {"2019": ("Meta", 15_884_511, None, None)},
             {"2019": ("Microsoft", 123_839, None, None)},
+            {"2019": ("Omegle", 3_470, None, None)},
             {"2019": ("Pinterest", 7_360, None, None)},
             {"2019": ("Quora", 1, None, None)},
             {"2019": ("Reddit", 724, None, None)},
@@ -569,12 +670,14 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
 
             {"2020": ("Alphabet", 546_704, None, None)},
             {"2020": ("Automattic", 9_130, None, None)},
+            {"2020": ("Discord", 15_324, None, None)},
             {"2020": ("Facebook", None, None, None)},
             {"2020": ("Google", None, None, None)},
             {"2020": ("Instagram", None, None, None)},
             {"2020": ("LinkedIn", 60, None, None)},
             {"2020": ("Meta", 20_307_216, None, None)},
             {"2020": ("Microsoft", 96_776, None, None)},
+            {"2020": ("Omegle", 20_265, None, None)},
             {"2020": ("Pinterest", 3_432, None, None)},
             {"2020": ("Quora", 2, None, None)},
             {"2020": ("Reddit", 2_233, None, None)},
@@ -590,6 +693,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
 
             {"2021": ("Alphabet", 875_783, None, None)},
             {"2021": ("Automattic", None, None, None)},
+            {"2021": ("Discord", 29_606, 68, 3.21)},
             {"2021": ("Facebook", 22_118_952, 28, 7.27)},
             {"2021": ("Google", None, 975, 6.77)},
             {"2021": ("Instagram", 3_393_654, 22, 4.45)},
@@ -599,6 +703,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2021": ("Microsoft", 170, None, None)},
             {"2021": ("Microsoft", None, 2, 8.86)},
             {"2021": ("Microsoft", None, 128, 2.21)},
+            {"2021": ("Omegle", 46_924, None, None)},
             {"2021": ("Pinterest", 2_283, 56, 0.69)},
             {"2021": ("Quora", 25, 1, 0.71)},
             {"2021": ("Reddit", 10_059, 233, 1.39)},
@@ -614,6 +719,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
 
             {"2022": ("Alphabet", 2_174_548, None, None)},
             {"2022": ("Automattic", None, None, None)},
+            {"2022": ("Discord", 169_800, 1_533, 4.7)},
             {"2022": ("Facebook", 21_165_208, 10, 4.4)},
             {"2022": ("Google", None, 916, 4.2)},
             {"2022": ("Instagram", 5_007_902, 13, 3.7)},
@@ -625,6 +731,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2022": ("Microsoft", None, 29, 2.8)},
             {"2022": ("Microsoft", None, 136, 5.1)},
             {"2022": ("Microsoft", None, 577, 5.2)},
+            {"2022": ("Omegle", 608_601, None, None)},
             {"2022": ("Pinterest", 34_310, 46, 1.1)},
             {"2022": ("Quora", 2_242, None, None)},
             {"2022": ("Reddit", 52_592, 275, 2.4)},
@@ -637,6 +744,32 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2022": ("Wordpress", 190, 155, 1.6)},
             {"2022": ("YouTube", None, 14, 3.6)},
             {"2022": ("Total", 31_802_525, 80_969, None)},
+
+            {"2023": ("Alphabet", 1_470_958, None, None)},
+            {"2023": ("Automattic", None, None, None)},
+            {"2023": ("Discord", 339_412, None, None)},
+            {"2023": ("Facebook", 17_838_422, None, None)},
+            {"2023": ("Google", None, None, None)},
+            {"2023": ("Instagram", 11_430_007, None, None)},
+            {"2023": ("LinkedIn", 209, None, None)},
+            {"2023": ("Meta", None, None, None)},
+            {"2023": ("Microsoft", 139_265, None, None)},
+            {"2023": ("Microsoft", 1_537, None, None)},
+            {"2023": ("Microsoft", 225, None, None)},
+            {"2023": ("Omegle", 188_102, None, None)},
+            {"2023": ("Pinterest", 52_356, None, None)},
+            {"2023": ("Quora", 6_135, None, None)},
+            {"2023": ("Reddit", 290_141, None, None)},
+            {"2023": ("Snap", 713_055, None, None)},
+            {"2023": ("Telegram", None, None, None)},
+            {"2023": ("TikTok", 590_376, None, None)},
+            {"2023": ("Tumblr", 19_335, None, None)},
+            {"2023": ("Twitter", 597_087, None, None)},
+            {"2023": ("WhatsApp", 1_389_618, None, None)},
+            {"2023": ("Wordpress", 256, None, None)},
+            {"2023": ("X", 273_416, None, None)},
+            {"2023": ("YouTube", None, None, None)},
+            {"2023": ("Total", 35_944_826, None, None)},
             # fmt: on
         ),
     },
