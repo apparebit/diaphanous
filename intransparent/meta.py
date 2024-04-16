@@ -42,26 +42,20 @@ def _parse_percents(df: pd.DataFrame) -> pd.Series:
     return df.loc[df['metric'].isin(PERCENT), 'value'].str.rstrip('%').astype('Float64')
 
 
-FIRST_REPORT_PERIOD = pd.Period('2021q2')
-LATEST_REPORT_PERIOD = pd.Period('2023q3')
-PATCH_REPORT_START = pd.Period('2022q4')
+_PATCH_REPORT_START = pd.Period('2022q4')
 
 
-def _read(path: str | Path, quarter: str | pd.Period) -> pd.DataFrame:
+def _read(path: Path, quarter: pd.Period) -> pd.DataFrame:
     """
     Read Meta's transparency disclosures for the given quarter. The prevalence
     of fake accounts for Q4 2022 and Q1 2023 is not a percentage but the range
     "4%-5%". This function normalizes the value to 4.5%.
     """
-    if isinstance(quarter, str):
-        quarter = pd.Period(quarter)
-
-    path = Path(path) / f'meta-{quarter.year}-q{quarter.quarter}.csv'
     # mypy madness: read_csv's dtype accepts defaultdict but not dict.
     data = pd.read_csv(path, dtype=SCHEMA)
 
     # Quick and dirty mitigation against unusual value "4%-5%":
-    if quarter >= PATCH_REPORT_START:
+    if quarter >= _PATCH_REPORT_START:
         fake_account_prevalence = (data['policy_area'] == 'Fake Accounts') & (
             data['metric'] == 'Prevalence'
         )
@@ -78,30 +72,15 @@ def _read(path: str | Path, quarter: str | pd.Period) -> pd.DataFrame:
 
 def read_all(
     path: str | Path,
-    first: str | pd.Period = FIRST_REPORT_PERIOD,
-    last: str | pd.Period = LATEST_REPORT_PERIOD,
 ) -> dict[pd.Period, pd.DataFrame]:
-    """
-    Read Meta's transparency disclosures.
-
-    This function ingests all transparency disclosures between `first` and
-    `last` (inclusive) and returns a `dict` mapping periods to data frames.
-    Meta's CSV files have a straightforward schema with five columns identifying
-    the application, policy area, metric, period, and finally exactly one value.
-    Data frames mirror this simplicity but use Pandas' categories for the first
-    three columns, Pandas' periods for the fourth, and the value as a `float`.
-    """
-    if isinstance(first, str):
-        first = pd.Period(first)
-    if isinstance(last, str):
-        last = pd.Period(last)
-
+    """Read Meta's transparency disclosures."""
     disclosures = {}
 
-    cursor = first
-    while cursor <= last:
-        disclosures[cursor] = _read(path, cursor)
-        cursor += 1
+    for file in Path(path).glob("meta-????-q?.csv"):
+        year = int(file.name[5:9])
+        quarter = int(file.name[11])
+        period = pd.Period(f'{year}q{quarter}')
+        disclosures[period] = _read(file, period)
 
     return disclosures
 
