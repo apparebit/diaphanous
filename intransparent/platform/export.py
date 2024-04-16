@@ -110,7 +110,7 @@ def encode_reports_per_platform(
                         s = f'[{s}]'
                     yield from emit_line(f'        "{k}": {s}')
                 yield from emit_line('    }')
-            elif key in ("columns", "comments", "rows", "sources"):
+            elif key in ("aggregates", "columns", "comments", "rows", "sources"):
                 yield from emit_line(f'    "{key}": [')
                 first_item = True
                 for item in cast(list, value):
