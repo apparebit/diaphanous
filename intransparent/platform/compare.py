@@ -34,39 +34,66 @@ def _annualize(df: pd.DataFrame) -> pd.DataFrame:
 def compare_platform_reports(
     platform: str, table: pd.DataFrame, NCMEC: pd.DataFrame
 ) -> None | pd.DataFrame:
-    if platform == "NCMEC":
-        raise ValueError('cannot compare NCMEC with itself')
-    if table is None or "reports" not in table.columns:
-        raise ValueError(f'nothing to compare for {platform}')
-    if platform not in NCMEC.columns:
-        raise ValueError(f"{platform} does not appear in NCMEC's disclosures")
+    """
+    Create a table comparing a platform's disclosures with those of NCMEC for
+    the same platform.
+
+    This function only includes platforms that disclose either *pieces* or
+    *reports*; otherwise it returns `None`. The resulting table has the
+    following columns:
+
+      - pieces: as disclosed by platform
+      - π: average number of pieces per report
+      - reports: as disclosed by platform
+      - Δ%: the signed percentage difference between the platform's and NCMEC's
+        report counts
+      - NCMEC: the report counts disclosed by NCMEC
+
+    Columns are filled with NaN when data is unavailable.
+
+    Since NCMEC makes only yearly disclosures, the returned table also has
+    yearly granularity.
+    """
+    if (
+        platform == "NCMEC"
+        or table is None
+        or not ("reports" in table.columns or "pieces" in table.columns)
+        or platform not in NCMEC.columns
+    ):
+        return None
 
     if "redundant" in table.columns:
         table = table[~table["redundant"]]
 
-    selection = ["pieces", "reports"] if "pieces" in table.columns else ["reports"]
-    comparison = _annualize(table[selection])
+    # reindex() creates non-existent columns
+    comparison = _annualize(table.reindex(columns=["pieces", "π", "reports"]))
 
-    if "pieces" in comparison.columns:
-        comparison.insert(1, "π", comparison["pieces"] / comparison["reports"])
-
+    has_sent = "reports" in table.columns
     sent = comparison["reports"]
     received = NCMEC[platform]
-    comparison["Δ%"] = (received - sent) / sent * 100
-    comparison["NCMEC"] = received
 
+    # Update π (pieces per report) only if pieces are available
+    if "pieces" in table.columns:
+        comparison["π"] = comparison["pieces"] / (sent if has_sent else received)
+
+    comparison["Δ%"] = ((received - sent) / sent * 100) if has_sent else None
+    comparison["NCMEC"] = received
     return comparison
 
 
 def compare_all_platform_reports(data: PlatformData) -> dict[str, pd.DataFrame]:
+    """
+    Create tables comparing platforms' disclosures with those of NCMEC for the
+    same platforms. Since NCMEC only discloses yearly counts and did not
+    distinguish between social media brands for 2019 and 2020, this function
+    combines the data for all of a firm's brands.
+    """
     NCMEC = wide_ncmec_reports(data)
     comparisons = {}
 
     for platform, table in combine_brands(data).items():
-        if platform == 'NCMEC' or table is None or "reports" not in table.columns:
-            continue
         comparison = compare_platform_reports(platform, table, NCMEC)
         if comparison is not None:
             comparisons[platform] = comparison
 
-    return comparisons
+    return dict(sorted(comparisons.items()))
