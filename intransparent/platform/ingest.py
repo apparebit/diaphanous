@@ -218,7 +218,7 @@ def ingest_reports_per_platform(
             logger("Skipping metadata")
             continue
         if record is None:
-            logger("Skipping {}: no transparency disclosures", platform)
+            logger("❌ {} (no transparency disclosures)", platform)
             all_features[platform] = {}
             continue
 
@@ -236,24 +236,29 @@ def ingest_reports_per_platform(
                     f'{", ".join(_FEATURE_FIELDS)}'
                 )
             features["terms"] = "; ".join(features["terms"])
-            features["has_reports"] = "reports" in record.get("columns", [])
-        if "brands" not in record:
-            # Only record features for individual brands, not brand owners.
-            all_features[platform] = features
+            features["has_reports"] = (
+                "reports" in record.get("columns", [])
+                or "reports" in record.get("aggregates", {})
+            )
 
-        # Check that disclosure record has either no or all required table properties.
+        all_features[platform] = features
+
+        # Check that disclosure record has either none or all required table properties.
         missing = _TABLE_FIELDS - record.keys()
-        if missing == _TABLE_FIELDS:
-            logger("Skipping {}: no CSAM data", platform)
+        if missing == _TABLE_FIELDS or len(record["rows"]) == 0:
+            logger("❌ {} (no CSAM data)", platform)
             continue
         if len(missing) > 0 and missing != {"schema"}:
             s = ", ".join(set(missing) - set(["schema"]))
             raise ValueError(f"{platform}'s disclosure record lacks field(s) {s}")
 
         # Ingest table with platform's CSAM disclosures.
-        logger("Ingesting CSAM data for {}", platform)
-        redundant = include_redundant
-        table = _ingest_table(platform, record, include_redundant=redundant)
+        logger("✅ {}", platform)
+        table = _ingest_table(platform, record, include_redundant=include_redundant)
+        if "aggregates" in record:
+            for target, sources in record["aggregates"].items():
+                # Selecting multiple columns requires a list argument!
+                table[target] = table[list(sources)].fillna(0).sum(axis=1)
         if platform == 'NCMEC':
             table = table.sort_index()
         disclosures[platform] = table
@@ -261,18 +266,15 @@ def ingest_reports_per_platform(
     features = pd.DataFrame(all_features).transpose()
     features.index.name = 'platform'
 
-    # For now, fix Microsoft's repeated rows
-    ncmec = disclosures['NCMEC']
-    ms = (
-        ncmec[ncmec['platform'] == 'Microsoft']
-        .groupby('period')
-        .sum(numeric_only=True)
+    # Drop notifications_sent and response_time columns.
+    # Combine rows for same year and platform.
+    disclosures["NCMEC"] = (
+        disclosures["NCMEC"]
+        .groupby(["period", "platform"])
+        ["reports"]
+        .sum()
+        .reset_index(level="platform")
     )
-    ms['platform'] = 'Microsoft'
-    disclosures['NCMEC'] = pd.concat([
-        ncmec[~(ncmec['platform'] == 'Microsoft')],
-        ms,
-    ])
 
     return PlatformData(disclosures, brands, features)
 
@@ -313,7 +315,7 @@ def wide_ncmec_reports(
 ) -> pd.DataFrame:
     ncmec = (
         data.disclosures['NCMEC']
-        .drop(columns=['notifications_sent', 'response_time'])
+        #.drop(columns=['notifications_sent', 'response_time'])
         # Without dropna=False, Google and YouTube are dropped, complicating loop below
         .pivot_table(values='reports', index='period', columns='platform', dropna=False)
         # pivot_table() produces float64 columns, likely because of dropna=False. Undo.
@@ -335,7 +337,7 @@ def long_ncmec_reports(
 ) -> pd.DataFrame:
     ncmec = (
         data.disclosures['NCMEC']
-        .drop(columns=['notifications_sent', 'response_time'])
+        #.drop(columns=['notifications_sent', 'response_time'])
     )
 
     if combine_brands:
