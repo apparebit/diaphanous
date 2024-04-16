@@ -35,6 +35,7 @@ from .platform.compare import compare_all_platform_reports
 
 # CSAM Reports per Country
 from .country import (
+    REPORT_TOTALS,
     YEAR_LABELS,
     ingest_reports_per_country,
     without_populations,

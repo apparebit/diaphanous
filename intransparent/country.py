@@ -10,11 +10,12 @@ from .frame_logger import FrameLogger, silent_logger
 
 YEAR_LABELS = tuple(str(year) for year in range(2019, 2023))
 
-EXPECTED_REPORT_TOTALS = {
+REPORT_TOTALS = {
     '2019': 16_987_361,
     '2020': 21_751_085,
     '2021': 29_397_681,
     '2022': 32_059_029,
+    '2023': 36_210_368,
 }
 
 _PROBLEMATIC_GEOMETRIES = set(['France', 'Kosovo', 'N. Cyprus', 'Norway', 'Somaliland'])
@@ -72,7 +73,7 @@ def read_reports(path: str | Path) -> pd.DataFrame:
     reports['reports_pct'] = reports['reports'] / total_yearly_reports * 100
 
     # Validate totals.
-    for year, expected_total in EXPECTED_REPORT_TOTALS.items():
+    for year, expected_total in REPORT_TOTALS.items():
         actual_total = total_yearly_reports[year]
         if actual_total != expected_total:
             raise AssertionError(
