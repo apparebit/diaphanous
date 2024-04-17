@@ -3,6 +3,19 @@ from pathlib import Path
 import pandas as pd
 
 
+CSAM_POLICIES = [
+    'Child Nudity & Sexual Exploitation',
+    'Child Endangerment: Sexual Exploitation',
+]
+
+
+# The names of the two columns capturing CSAM pieces.
+CSAM_PIECES = [
+    'pieces (Child Nudity & Sexual Exploitation)',
+    'pieces (Child Endangerment: Sexual Exploitation)',
+]
+
+
 # Meta metrics with counts as values.
 COUNT = (
     'Content Actioned',
