@@ -81,10 +81,10 @@ def show(
             value,
             style,
             column='Δ%',
-            threshold=1,
+            threshold=1.5,
             low=0.1,
             vmin=0,
-            vmax=600,
+            vmax=200,
         )
 
         style.format('≡', subset=pd.IndexSlice[
