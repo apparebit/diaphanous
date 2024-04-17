@@ -74,6 +74,8 @@ def read_reports(path: str | Path) -> pd.DataFrame:
 
     # Validate totals.
     for year, expected_total in REPORT_TOTALS.items():
+        if year not in total_yearly_reports.index:
+            continue
         actual_total = total_yearly_reports[year]
         if actual_total != expected_total:
             raise AssertionError(
