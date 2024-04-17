@@ -300,6 +300,15 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
         ),
     },
     # ==================================================================================
+    "Omegle": {
+        "comments": (
+            "A website offering video chat between unregistered users. It was shut",
+            "down in 2023 to settle a lawsuit by the victim of online child sexual",
+            "exploitation. See https://www.bbc.com/news/technology-67485561 and",
+            "https://www.bbc.com/news/business-67364634.",
+        ),
+    },
+    # ==================================================================================
     "Pinterest": {
         "sources": (
             "https://policy.pinterest.com/en/transparency-report",
@@ -539,6 +548,38 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
         "sources": ("https://www.tumblr.com/transparency",),
     },
     # ==================================================================================
+    "Twitch": {
+        "sources": (
+            "https://safety.twitch.tv/s/article/H1-2023-Transparency-Report",
+            "https://safety.twitch.tv/s/article/H2-2022-Transparency-Report",
+            "https://safety.twitch.tv/s/article/H1-2022-Transparency-Report",
+            "https://safety.twitch.tv/s/article/H2-2021-Transparency-Report",
+            "https://safety.twitch.tv/s/article/Transparency-Reports#5H12021TransparencyReport",
+            "https://safety.twitch.tv/s/article/Transparency-Reports#62020TransparencyReport",
+        ),
+        "features": {
+            "data": None,
+            "history": "page",
+            "terms": ("youth safety", "child sexual exploitation and abuse"),
+            "quantities": "counts",
+            "granularity": "H",
+            "frequency": "H",
+            "coverage": "2020",
+        },
+        "columns": ("reports",),
+        "rows": (
+            # fmt: off
+            {"2023 H1": (3_285,)},
+            {"2022 H2": (7_585,)},
+            {"2022 H1": (6_711,)},
+            {"2021 H2": (4_006,)},
+            {"2021 H1": (2_615,)},
+            {"2020 H2": (1_346,)},
+            {"2020 H1": (812,)},
+            # fmt: on
+        ),
+    },
+    # ==================================================================================
     "Twitter": {
         "sources": (
             "https://transparency.twitter.com",
@@ -584,6 +625,10 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
     # ==================================================================================
     "Wordpress": {
         "sources": ("https://transparency.automattic.com",),
+    },
+    # ==================================================================================
+    "X": {
+        "brands": ("Twitter",),
     },
     # ==================================================================================
     "YouTube": {
@@ -640,7 +685,12 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "original reports has entries for Google only, listed here under Alphabet",
             "notifications_sent & response_time have entries for Google and YouTube",
         ),
-        "columns": ("platform", "reports", "notifications_sent", "response_time"),
+        "columns": (
+            "platform",
+            "reports",
+            "notifications_sent",
+            "response_time",
+        ),
         "schema": {
             "platform": "string",
             "response_time": "float"
@@ -664,9 +714,11 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2019": ("Telegram", None, None, None)},
             {"2019": ("TikTok", 596, None, None)},
             {"2019": ("Tumblr", None, None, None)},
+            {"2019": ("Twitch", 541, None, None)},
             {"2019": ("Twitter", 45_726, None, None)},
             {"2019": ("WhatsApp", None, None, None)},
             {"2019": ("Wordpress", None, None, None)},
+            {"2019": ("X", None, None, None)},
             {"2019": ("YouTube", None, None, None)},
             {"2019": ("ESP Total", 16_836_694, None, None)},
             {"2019": ("Total", 16_987_361, None , None)},
@@ -688,9 +740,11 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2020": ("Telegram", None, None, None)},
             {"2020": ("TikTok", 22_692, None, None)},
             {"2020": ("Tumblr", None, None, None)},
+            {"2020": ("Twitch", None, None, None)},
             {"2020": ("Twitter", 65_062, None, None)},
             {"2020": ("WhatsApp", None, None, None)},
             {"2020": ("Wordpress", None, None, None)},
+            {"2020": ("X", None, None, None)},
             {"2020": ("YouTube", None, None, None)},
             {"2020": ("ESP Total", 21_447_786, None, None)},
             {"2020": ("Total", 21_751_085, None, None)},
@@ -715,9 +769,11 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2021": ("Telegram", None, 229, 8.0)},
             {"2021": ("TikTok", 154_618, None, None)},
             {"2021": ("Tumblr", 4_511, 52, 0.49)},
+            {"2021": ("Twitch", 6_629, None, None)},
             {"2021": ("Twitter", 86_666, 1_017, 1.82)},
             {"2021": ("WhatsApp", 1_372_696, 2, 3.32)},
             {"2021": ("Wordpress", 310, 26, 1.95)},
+            {"2021": ("X", None, None, None)},
             {"2021": ("YouTube", None, 10, 2.2)},
             {"2021": ("ESP Total", 29_157_083, 75_038, 1.22)},
             {"2021": ("Total", 29_397_681, None, None)},
@@ -744,9 +800,11 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2022": ("Telegram", None, 73, 5.1)},
             {"2022": ("TikTok", 288_125, 1, 0.2)},
             {"2022": ("Tumblr", 4_845, 92, 0.9)},
+            {"2022": ("Twitch", 14_508, None, None)},
             {"2022": ("Twitter", 98_050, 1_278, 1.8)},
             {"2022": ("WhatsApp", 1_017_555, 2, 5.2)},
             {"2022": ("Wordpress", 190, 155, 1.6)},
+            {"2022": ("X", None, None, None)},
             {"2022": ("YouTube", None, 14, 3.6)},
             {"2022": ("ESP Total", 31_802_525, 80_969, None)},
             {"2022": ("Total", 32_059_029, None, None)},
@@ -770,6 +828,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2023": ("Telegram", None, None, None)},
             {"2023": ("TikTok", 590_376, None, None)},
             {"2023": ("Tumblr", 19_335, None, None)},
+            {"2023": ("Twitch", 6_665, None, None)},
             {"2023": ("Twitter", 597_087, None, None)},
             {"2023": ("WhatsApp", 1_389_618, None, None)},
             {"2023": ("Wordpress", 256, None, None)},
