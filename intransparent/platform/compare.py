@@ -8,27 +8,20 @@ def _components(p: pd.Period) -> tuple[pd.Period, int, int]:
 
 
 def _annualize(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Downsample the given dataframe, which must have a period index, to yearly
-    periods by summing up the columns for each year. The period index must cover
-    a continuous time period without redundant entries.
-    """
-    # When periods are uniform, Pandas uses PeriodIndex as index and
-    # downsampling is as easy as df.groupby(df.index.year). For our non-uniform
-    # index, we need to manually extract the year first. Furthermore, to ensure
-    # that we only include full years in the result, we check the minimum start
-    # month and maximum end month for each year. This does assume that the
-    # period index is continuous (but not uniform).
-
+    # If periods have uniform length, Pandas uses PeriodIndex and hence supports
+    # expressions such as `df.index.year` that simplify aggregation by year.
+    # This function still works in the more general case.
     aux = pd.DataFrame.from_records(
         [_components(p) for p in df.index],
         index=df.index,
         columns=['year', 'start_month', 'end_month'],
     )
+
     yearly = pd.concat([df, aux], axis=1).groupby('year')
+    # Don't drop start_month and end_month here since we reindex anyways.
     return yearly.sum(min_count=1)[
         (yearly['start_month'].min() == 1) & (yearly['end_month'].max() == 12)
-    ].drop(columns=['start_month', 'end_month'])
+    ]
 
 
 def compare_platform_reports(
@@ -36,23 +29,7 @@ def compare_platform_reports(
 ) -> None | pd.DataFrame:
     """
     Create a table comparing a platform's disclosures with those of NCMEC for
-    the same platform.
-
-    This function only includes platforms that disclose either *pieces* or
-    *reports*; otherwise it returns `None`. The resulting table has the
-    following columns:
-
-      - pieces: as disclosed by platform
-      - π: average number of pieces per report
-      - reports: as disclosed by platform
-      - Δ%: the signed percentage difference between the platform's and NCMEC's
-        report counts
-      - NCMEC: the report counts disclosed by NCMEC
-
-    Columns are filled with NaN when data is unavailable.
-
-    Since NCMEC makes only yearly disclosures, the returned table also has
-    yearly granularity.
+    the same platform or return `None` if no such comparison can be made.
     """
     if (
         platform == "NCMEC"
@@ -66,7 +43,7 @@ def compare_platform_reports(
         table = table[~table["redundant"]]
 
     # reindex() creates non-existent columns
-    comparison = _annualize(table.reindex(columns=["pieces", "π", "reports"]))
+    comparison = _annualize(table).reindex(columns=["pieces", "π", "reports"])
 
     has_sent = "reports" in table.columns
     sent = comparison["reports"]
