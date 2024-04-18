@@ -258,7 +258,7 @@ def ingest_reports_per_platform(
         if "aggregates" in record:
             for target, sources in record["aggregates"].items():
                 # Selecting multiple columns requires a list argument!
-                table[target] = table[list(sources)].fillna(0).sum(axis=1)
+                table[target] = table[list(sources)].sum(axis=1, min_count=1)
         if platform == 'NCMEC':
             table = table.sort_index()
         disclosures[platform] = table
@@ -272,7 +272,7 @@ def ingest_reports_per_platform(
         disclosures["NCMEC"]
         .groupby(["period", "platform"])
         ["reports"]
-        .sum()
+        .sum(min_count=1)
         .reset_index(level="platform")
     )
 
