@@ -34,6 +34,7 @@ def show(
     lowlight_columns: None | str | list[str] = None,
     margin_top: float = 0,
     margin_bottom: float = 2.0,
+    min_precision: int = 1,
     with_index: bool = True,
     emit_latex: bool = False,
 ) -> None:
@@ -73,6 +74,7 @@ def show(
         lowlight_columns=lowlight_columns,
         margin_top=margin_top,
         margin_bottom=margin_bottom,
+        min_precision=min_precision,
         show_row_header=with_index,
     )
 
@@ -147,6 +149,7 @@ def format_table(
     lowlight_columns: None | str | list[str] = None,
     margin_top: float = 0,
     margin_bottom: float = 2,
+    min_precision: int = 1,
 ) -> Styler:
     style = frame.style
     table_styles = []
@@ -207,7 +210,7 @@ def format_table(
         if pd.api.types.is_float_dtype(v.dtype):
             minval = cast(pd.Series, v.data).abs().pipe(lambda c: c[c > 0].min())
             logmin = 2 if pd.isna(minval) else math.ceil(math.log10(minval))
-            precision = max(1, 3 - logmin)
+            precision = max(min_precision, 3 - logmin)
             style.format(
                 thousands=',',
                 na_rep='⋯',
