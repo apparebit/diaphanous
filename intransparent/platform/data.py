@@ -476,13 +476,6 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-4/",
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-3/",
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-2/",
-            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-1/",
-            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-4/",
-            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-3/",
-            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-2/",
-            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-1/",
-            "https://sf16-va.tiktokcdn.com/obj/eden-va2/nuvlojeh7ryht/Transparency_CGE_2022Q4/2022Q4_raw_data_cger_English.csv",
-            "https://sf16-va.tiktokcdn.com/obj/eden-va2/nuvlojeh7ryht/Transparency_CGE_2022Q3/English_CGE_2022Q3.xlsx",
         ),
         "features": {
             "data": "csv",
@@ -494,25 +487,51 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "coverage": "2022 Q1",
         },
         "comments": (
-            "TikTok's minor safety category used to have five subcategories:",
-            "  * sexual exploitation of minors;",
-            "  * grooming behavior;",
-            "  * physical and psychological harm of minors;",
-            "  * harmful activities by minors;",
-            "  * nudity and sexual activity involving minors;",
-            "The latter mostly comprises 'minors in minimal clothing' ",
-            "and 'sexually explicit dancing'.",
-            "TikTok released Excel files from 2021 Q3 through 2022 Q3.",
-            "Starting 2023 Q2, TikTok completely renamed categories.",
-            "Safety & Civility now comprises:",
-            "  * Harassment & bullying",
-            "  * Human exploitation, incl. trafficking and smuggling",
-            "  * Violent behaviors & criminal activities",
-            "  * Sexual exploitation & gender-based violence, incl.",
-            "    physical, sexual, or image-based abuse, sextortion, sexual harassment"
-            "  * Violent & hateful orgs & individuals, incl. promotion and material support",
-            "  * Hate speech and hateful behavior, incl. hateful ideologies",
-            "  * Youth exploitation & abuse, incl. CSAM, pedophilia, youth nudity",
+            "Unfortunately, the current version of TikTok's disclosures does not",
+            "even include a subcategory for CSAM specifically anymore. Though we",
+            "can now compute the count of pieces actioned for youth exploitation",
+            "and abuse",
+        ),
+        "columns": (
+            "share of policy category (Youth Exploitation & Abuse)",
+            "proactive removal rate (Youth Exploitation & Abuse)",
+            "removal rate before any views (Youth Exploitation & Abuse)",
+            "removal rate within 24 hours (Youth Exploitation & Abuse)",
+            "share of total removals (Safety & Civility)",
+            "total videos removed",
+            "videos removed by automation",
+            "videos restored",
+        ),
+        "schema": {
+            "share of policy category (Youth Exploitation & Abuse)": "float",
+            "proactive removal rate (Youth Exploitation & Abuse)": "float",
+            "removal rate before any views (Youth Exploitation & Abuse)": "float",
+            "removal rate within 24 hours (Youth Exploitation & Abuse)": "float",
+            "share of total removals (Safety & Civility)": "float",
+        },
+        "rows": (
+            # fmt: off
+            {"2023 Q4": (0.232, 0.981, 0.781, 0.902, 0.135, 176_461_963, 128_300_584, 8_038_106)},
+            {"2023 Q3": (0.279, 0.987, 0.792, 0.916, 0.161, 136_530_418,  88_721_552, 7_084_629)},
+            {"2023 Q2": (0.308, 0.986, 0.836, 0.911, 0.145, 106_476_032,  66_440_775, 6_750_002)},
+            # fmt: on
+        ),
+    },
+    # ----------------------------------------------------------------------------------
+    "TikTok (original version)": {
+        "comments": [
+            "TikTok reorganized its classification of violative behaviors",
+            "for Q2 2023. While the firm claims that doing so 'added granularity,'",
+            "that is not the case, at least for child sexual abuse materials.",
+            "While the incomplete disclosure of the subcategory made it impossible",
+            "to compute counts, it was at least acknowledged in the data."
+        ],
+        "sources": (
+            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-1/",
+            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-4/",
+            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-3/",
+            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-2/",
+            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-1/",
         ),
         "columns": (
             "pieces (human moderation)",
@@ -533,8 +552,6 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
         },
         "rows": (
             # fmt: off
-            {"2023 Q3": (None, None, None, 88_721_552, 136_530_418, None, None, None)},
-            {"2023 Q2": (None, None, None, 66_440_775, 106_476_032, None, None, None)},
             {"2023 Q1": (None, 0.023, 0.306, 53_494_911, 91_003_510, 0.869, 0.784, 0.927)},
             {"2022 Q4": (415_278, 0.033, 0.333, 46_836_047, 85_680_819, 0.887, 0.821, 0.931)},
             {"2022 Q3": (792_473, 0.033, 0.429, 53_287_839, 110_954_663, 0.925, 0.883, 0.951,)},
