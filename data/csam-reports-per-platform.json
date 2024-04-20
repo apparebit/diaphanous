@@ -16,6 +16,50 @@
     ],
     "brands": ["Tumblr", "Wordpress"]
   },
+  "Discord": {
+    "sources": [
+      "https://discord.com/blog/discord-transparency-report-july-dec-2020",
+      "https://discord.com/blog/discord-transparency-report-h1-2021",
+      "https://discord.com/blog/discord-transparency-report-h2-2021",
+      "https://discord.com/blog/discord-transparency-report-q1-2022",
+      "https://discord.com/blog/discord-transparency-report-q2-2022",
+      "https://discord.com/blog/discord-transparency-report-q3-2022",
+      "https://discord.com/safety-transparency-reports/2022-q4",
+      "https://discord.com/safety-transparency-reports/2023-q1",
+      "https://discord.com/safety-transparency-reports/2023-q2",
+      "https://discord.com/safety-transparency-reports/2023-q3",
+      "https://discord.com/safety-transparency-reports/2023-q4"
+    ],
+    "features": {
+        "data": "csv",
+        "history": "same page (dropdown)",
+        "terms": ["child safety", "CSAM"],
+        "quantities": "counts",
+        "granularity": "Q",
+        "frequency": "Q",
+        "coverage": "2020 H2"
+    },
+    "columns": [
+      "reports (about CSAM)",
+      "reports (about grooming or endangerment)"
+    ],
+    "aggregates": [
+      "reports"
+    ],
+    "rows": [
+      {"2023 Q4": [55638, 317]},
+      {"2023 Q3": [51674, 242]},
+      {"2023 Q2": [36323, 158]},
+      {"2023 Q1": [20001, 125]},
+      {"2022 Q4": [11520, 69]},
+      {"2022 Q3": [14303, 63]},
+      {"2022 Q2": [21425, 104]},
+      {"2022 Q1": [10641, 54]},
+      {"2021 H2": [14906, 220]},
+      {"2021 H1": [9347, 150]},
+      {"2020 H2": [6865, 83]}
+    ]
+  },
   "Facebook": {
     "sources": [
       "https://transparency.fb.com/sr/community-standards/"
@@ -43,7 +87,11 @@
       "reversals w/o appeal (Child Endangerment: Nudity and Physical Abuse)",
       "reversals w/o appeal (Child Endangerment: Sexual Exploitation)"
     ],
+    "aggregates": [
+      "pieces"
+    ],
     "rows": [
+      {"2023 Q4": [null, 1900000, 16200000, null, 135100, 1000000, null, 36100, 317500, null, 279500, 1200000]},
       {"2023 Q3": [null, 1800000, 16900000, null, 112200, 266600, null, 20300, 87800, null, 1800, 116600]},
       {"2023 Q2": [null, 1700000, 7200000, null, 94400, 146800, null, 20500, 38700, null, 1400, 41300]},
       {"2023 Q1": [null, 1900000, 8900000, null, 91800, 104500, null, 12300, 20800, null, 5400, 17200]},
@@ -123,7 +171,11 @@
       "reversals w/o appeal (Child Endangerment: Nudity and Physical Abuse)",
       "reversals w/o appeal (Child Endangerment: Sexual Exploitation)"
     ],
+    "aggregates": [
+      "pieces"
+    ],
     "rows": [
+      {"2023 Q4": [null, 198500, 2100000, null, 34700, 79100, null, 4600, 26500, null, 11900, 86800]},
       {"2023 Q3": [null, 227700, 1600000, null, 44400, 38200, null, 5600, 14300, null, 1100, 3100]},
       {"2023 Q2": [null, 320700, 1700000, null, 22000, 22800, null, 5200, 6300, null, 700, 700]},
       {"2023 Q1": [null, 567100, 8700000, null, 29100, 20600, null, 4300, 2100, null, 2400, 1600]},
@@ -176,7 +228,10 @@
     ]
   },
   "Meta": {
-    "brands": ["Facebook", "Instagram", "WhatsApp"]
+    "brands": ["Facebook", "Instagram", "WhatsApp"],
+    "aggregates": [
+      "pieces"
+    ]
   },
   "Microsoft": {
     "sources": [
@@ -191,31 +246,48 @@
         "frequency": "H",
         "coverage": "2020 H1"
     },
+    "brands": ["LinkedIn"],
     "columns": [
       "pieces",
       "automatically detected pieces",
       "accounts",
-      "reinstated accounts"
+      "reinstated accounts",
+      "reports"
     ],
     "schema": {
         "automatically detected pieces": "float",
         "reinstated accounts": "float"
     },
     "rows": [
-      {"2023 H1": [227823, 94.700000, null, null]},
-      {"2023 H1": [46856, 99.200000, 7456, 1.400000]},
-      {"2022 H2": [200000, 98.500000, null, null]},
-      {"2022 H2": [31663, 99.200000, 6461, 1.600000]},
-      {"2022 H1": [176125, 93.500000, null, null]},
-      {"2022 H1": [40722, 98.700000, 10207, 0.560000]},
-      {"2021 H2": [274392, 97.200000, null, null]},
-      {"2021 H2": [36918, 99.400000, 11805, 0.040000]},
-      {"2021 H1": [176560, 97.200000, null, null]},
-      {"2021 H1": [76061, 99.700000, 18568, 0.020000]},
-      {"2020 H2": [360338, 99.000000, null, null]},
-      {"2020 H2": [92419, 99.900000, 17434, 0.000000]},
-      {"2020 H1": [718908, 99.800000, null, null]},
-      {"2020 H1": [84581, 99.800000, 15935, 0.010000]}
+      {"2023 H1": [227823, 94.700000, null, null, null]},
+      {"2023 H1": [46856, 99.200000, 7456, 1.400000, null]},
+      {"2023 H1": [null, null, null, null, 79971]},
+      {"2022 H2": [200000, 98.500000, null, null, null]},
+      {"2022 H2": [31663, 99.200000, 6461, 1.600000, null]},
+      {"2022 H2": [null, null, null, null, 53642]},
+      {"2022 H1": [176125, 93.500000, null, null, null]},
+      {"2022 H1": [40722, 98.700000, 10207, 0.560000, null]},
+      {"2022 H1": [null, null, null, null, 53957]},
+      {"2021 H2": [274392, 97.200000, null, null, null]},
+      {"2021 H2": [36918, 99.400000, 11805, 0.040000, null]},
+      {"2021 H2": [null, null, null, null, 36445]},
+      {"2021 H1": [176560, 97.200000, null, null, null]},
+      {"2021 H1": [76061, 99.700000, 18568, 0.020000, null]},
+      {"2021 H1": [null, null, null, null, 42481]},
+      {"2020 H2": [360338, 99.000000, null, null, null]},
+      {"2020 H2": [92419, 99.900000, 17434, 0.000000, null]},
+      {"2020 H2": [null, null, null, null, 63813]},
+      {"2020 H1": [718908, 99.800000, null, null, null]},
+      {"2020 H1": [84581, 99.800000, 15935, 0.010000, null]},
+      {"2020 H1": [null, null, null, null, 32622]}
+    ]
+  },
+  "Omegle": {
+    "comments": [
+      "A website offering video chat between unregistered users. It was shut",
+      "down in 2023 to settle a lawsuit by the victim of online child sexual",
+      "exploitation. See https://www.bbc.com/news/technology-67485561 and",
+      "https://www.bbc.com/news/business-67364634."
     ]
   },
   "Pinterest": {
@@ -377,15 +449,9 @@
   "Telegram": null,
   "TikTok": {
     "sources": [
+      "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-4/",
       "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-3/",
-      "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-2/",
-      "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-1/",
-      "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-4/",
-      "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-3/",
-      "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-2/",
-      "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-1/",
-      "https://sf16-va.tiktokcdn.com/obj/eden-va2/nuvlojeh7ryht/Transparency_CGE_2022Q4/2022Q4_raw_data_cger_English.csv",
-      "https://sf16-va.tiktokcdn.com/obj/eden-va2/nuvlojeh7ryht/Transparency_CGE_2022Q3/English_CGE_2022Q3.xlsx"
+      "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-2/"
     ],
     "features": {
         "data": "csv",
@@ -397,24 +463,48 @@
         "coverage": "2022 Q1"
     },
     "comments": [
-      "TikTok's minor safety category used to have five subcategories:",
-      "  * sexual exploitation of minors;",
-      "  * grooming behavior;",
-      "  * physical and psychological harm of minors;",
-      "  * harmful activities by minors;",
-      "  * nudity and sexual activity involving minors;",
-      "The latter mostly comprises 'minors in minimal clothing' ",
-      "and 'sexually explicit dancing'.",
-      "TikTok released Excel files from 2021 Q3 through 2022 Q3.",
-      "Starting 2023 Q2, TikTok completely renamed categories.",
-      "Safety & Civility now comprises:",
-      "  * Harassment & bullying",
-      "  * Human exploitation, incl. trafficking and smuggling",
-      "  * Violent behaviors & criminal activities",
-      "  * Sexual exploitation & gender-based violence, incl.",
-      "    physical, sexual, or image-based abuse, sextortion, sexual harassment  * Violent & hateful orgs & individuals, incl. promotion and material support",
-      "  * Hate speech and hateful behavior, incl. hateful ideologies",
-      "  * Youth exploitation & abuse, incl. CSAM, pedophilia, youth nudity"
+      "Unfortunately, the current version of TikTok's disclosures does not",
+      "even include a subcategory for CSAM specifically anymore. Though we",
+      "can now compute the count of pieces actioned for youth exploitation",
+      "and abuse"
+    ],
+    "columns": [
+      "share of policy category (Youth Exploitation & Abuse)",
+      "proactive removal rate (Youth Exploitation & Abuse)",
+      "removal rate before any views (Youth Exploitation & Abuse)",
+      "removal rate within 24 hours (Youth Exploitation & Abuse)",
+      "share of total removals (Safety & Civility)",
+      "total videos removed",
+      "videos removed by automation",
+      "videos restored"
+    ],
+    "schema": {
+        "share of policy category (Youth Exploitation & Abuse)": "float",
+        "proactive removal rate (Youth Exploitation & Abuse)": "float",
+        "removal rate before any views (Youth Exploitation & Abuse)": "float",
+        "removal rate within 24 hours (Youth Exploitation & Abuse)": "float",
+        "share of total removals (Safety & Civility)": "float"
+    },
+    "rows": [
+      {"2023 Q4": [0.232000, 0.981000, 0.781000, 0.902000, 0.135000, 176461963, 128300584, 8038106]},
+      {"2023 Q3": [0.279000, 0.987000, 0.792000, 0.916000, 0.161000, 136530418, 88721552, 7084629]},
+      {"2023 Q2": [0.308000, 0.986000, 0.836000, 0.911000, 0.145000, 106476032, 66440775, 6750002]}
+    ]
+  },
+  "TikTok (original schema)": {
+    "comments": [
+      "TikTok reorganized its classification of violative behaviors",
+      "for Q2 2023. While the firm claims that doing so 'added granularity,'",
+      "that is not the case, at least for child sexual abuse materials.",
+      "While the incomplete disclosure of the subcategory made it impossible",
+      "to compute counts, it was at least acknowledged in the data."
+    ],
+    "sources": [
+      "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-1/",
+      "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-4/",
+      "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-3/",
+      "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-2/",
+      "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-1/"
     ],
     "columns": [
       "pieces (human moderation)",
@@ -434,8 +524,6 @@
         "proactive removal rate (human moderation)": "float"
     },
     "rows": [
-      {"2023 Q3": [null, null, null, 88721552, 136530418, null, null, null]},
-      {"2023 Q2": [null, null, null, 66440775, 106476032, null, null, null]},
       {"2023 Q1": [null, 0.023000, 0.306000, 53494911, 91003510, 0.869000, 0.784000, 0.927000]},
       {"2022 Q4": [415278, 0.033000, 0.333000, 46836047, 85680819, 0.887000, 0.821000, 0.931000]},
       {"2022 Q3": [792473, 0.033000, 0.429000, 53287839, 110954663, 0.925000, 0.883000, 0.951000]},
@@ -446,6 +534,37 @@
   "Tumblr": {
     "sources": [
       "https://www.tumblr.com/transparency"
+    ]
+  },
+  "Twitch": {
+    "sources": [
+      "https://safety.twitch.tv/s/article/H1-2023-Transparency-Report",
+      "https://safety.twitch.tv/s/article/H2-2022-Transparency-Report",
+      "https://safety.twitch.tv/s/article/H1-2022-Transparency-Report",
+      "https://safety.twitch.tv/s/article/H2-2021-Transparency-Report",
+      "https://safety.twitch.tv/s/article/Transparency-Reports#5H12021TransparencyReport",
+      "https://safety.twitch.tv/s/article/Transparency-Reports#62020TransparencyReport"
+    ],
+    "features": {
+        "data": null,
+        "history": "page",
+        "terms": ["youth safety", "child sexual exploitation and abuse"],
+        "quantities": "counts",
+        "granularity": "H",
+        "frequency": "H",
+        "coverage": "2020"
+    },
+    "columns": [
+      "reports"
+    ],
+    "rows": [
+      {"2023 H1": [3285]},
+      {"2022 H2": [7585]},
+      {"2022 H1": [6711]},
+      {"2021 H2": [4006]},
+      {"2021 H1": [2615]},
+      {"2020 H2": [1346]},
+      {"2020 H1": [812]}
     ]
   },
   "Twitter": {
@@ -494,6 +613,9 @@
       "https://transparency.automattic.com"
     ]
   },
+  "X": {
+    "brands": ["Twitter"]
+  },
   "YouTube": {
     "sources": [
       "https://transparencyreport.google.com/child-sexual-abuse-material/"
@@ -527,6 +649,7 @@
       "https://www.missingkids.org/content/dam/missingkids/pdfs/2020-reports-by-esp.pdf",
       "https://www.missingkids.org/content/dam/missingkids/pdfs/2021-reports-by-esp.pdf",
       "https://www.missingkids.org/content/dam/missingkids/pdfs/2022-reports-by-esp.pdf",
+      "https://www.missingkids.org/content/dam/missingkids/pdfs/2023-reports-by-esp.pdf",
       "https://www.missingkids.org/content/dam/missingkids/pdfs/2021-notifications-by-ncmec-per-esp.pdf",
       "https://www.missingkids.org/content/dam/missingkids/pdfs/2022-notifications-by-ncmec-per-esp.pdf"
     ],
@@ -560,12 +683,14 @@
     "rows": [
       {"2019": ["Alphabet", 449283, null, null]},
       {"2019": ["Automattic", 10443, null, null]},
+      {"2019": ["Discord", 19480, null, null]},
       {"2019": ["Facebook", null, null, null]},
       {"2019": ["Google", null, null, null]},
       {"2019": ["Instagram", null, null, null]},
       {"2019": ["LinkedIn", 88, null, null]},
       {"2019": ["Meta", 15884511, null, null]},
       {"2019": ["Microsoft", 123839, null, null]},
+      {"2019": ["Omegle", 3470, null, null]},
       {"2019": ["Pinterest", 7360, null, null]},
       {"2019": ["Quora", 1, null, null]},
       {"2019": ["Reddit", 724, null, null]},
@@ -573,19 +698,24 @@
       {"2019": ["Telegram", null, null, null]},
       {"2019": ["TikTok", 596, null, null]},
       {"2019": ["Tumblr", null, null, null]},
+      {"2019": ["Twitch", 541, null, null]},
       {"2019": ["Twitter", 45726, null, null]},
       {"2019": ["WhatsApp", null, null, null]},
       {"2019": ["Wordpress", null, null, null]},
+      {"2019": ["X", null, null, null]},
       {"2019": ["YouTube", null, null, null]},
-      {"2019": ["Total", 16836694, null, null]},
+      {"2019": ["ESP Total", 16836694, null, null]},
+      {"2019": ["Total", 16987361, null, null]},
       {"2020": ["Alphabet", 546704, null, null]},
       {"2020": ["Automattic", 9130, null, null]},
+      {"2020": ["Discord", 15324, null, null]},
       {"2020": ["Facebook", null, null, null]},
       {"2020": ["Google", null, null, null]},
       {"2020": ["Instagram", null, null, null]},
       {"2020": ["LinkedIn", 60, null, null]},
       {"2020": ["Meta", 20307216, null, null]},
       {"2020": ["Microsoft", 96776, null, null]},
+      {"2020": ["Omegle", 20265, null, null]},
       {"2020": ["Pinterest", 3432, null, null]},
       {"2020": ["Quora", 2, null, null]},
       {"2020": ["Reddit", 2233, null, null]},
@@ -593,13 +723,17 @@
       {"2020": ["Telegram", null, null, null]},
       {"2020": ["TikTok", 22692, null, null]},
       {"2020": ["Tumblr", null, null, null]},
+      {"2020": ["Twitch", null, null, null]},
       {"2020": ["Twitter", 65062, null, null]},
       {"2020": ["WhatsApp", null, null, null]},
       {"2020": ["Wordpress", null, null, null]},
+      {"2020": ["X", null, null, null]},
       {"2020": ["YouTube", null, null, null]},
-      {"2020": ["Total", 21447786, null, null]},
+      {"2020": ["ESP Total", 21447786, null, null]},
+      {"2020": ["Total", 21751085, null, null]},
       {"2021": ["Alphabet", 875783, null, null]},
       {"2021": ["Automattic", null, null, null]},
+      {"2021": ["Discord", 29606, 68, 3.210000]},
       {"2021": ["Facebook", 22118952, 28, 7.270000]},
       {"2021": ["Google", null, 975, 6.770000]},
       {"2021": ["Instagram", 3393654, 22, 4.450000]},
@@ -609,6 +743,7 @@
       {"2021": ["Microsoft", 170, null, null]},
       {"2021": ["Microsoft", null, 2, 8.860000]},
       {"2021": ["Microsoft", null, 128, 2.210000]},
+      {"2021": ["Omegle", 46924, null, null]},
       {"2021": ["Pinterest", 2283, 56, 0.690000]},
       {"2021": ["Quora", 25, 1, 0.710000]},
       {"2021": ["Reddit", 10059, 233, 1.390000]},
@@ -616,13 +751,17 @@
       {"2021": ["Telegram", null, 229, 8.000000]},
       {"2021": ["TikTok", 154618, null, null]},
       {"2021": ["Tumblr", 4511, 52, 0.490000]},
+      {"2021": ["Twitch", 6629, null, null]},
       {"2021": ["Twitter", 86666, 1017, 1.820000]},
       {"2021": ["WhatsApp", 1372696, 2, 3.320000]},
       {"2021": ["Wordpress", 310, 26, 1.950000]},
+      {"2021": ["X", null, null, null]},
       {"2021": ["YouTube", null, 10, 2.200000]},
-      {"2021": ["Total", 29157083, 75038, 1.220000]},
+      {"2021": ["ESP Total", 29157083, 75038, 1.220000]},
+      {"2021": ["Total", 29397681, null, null]},
       {"2022": ["Alphabet", 2174548, null, null]},
       {"2022": ["Automattic", null, null, null]},
+      {"2022": ["Discord", 169800, 1533, 4.700000]},
       {"2022": ["Facebook", 21165208, 10, 4.400000]},
       {"2022": ["Google", null, 916, 4.200000]},
       {"2022": ["Instagram", 5007902, 13, 3.700000]},
@@ -634,6 +773,7 @@
       {"2022": ["Microsoft", null, 29, 2.800000]},
       {"2022": ["Microsoft", null, 136, 5.100000]},
       {"2022": ["Microsoft", null, 577, 5.200000]},
+      {"2022": ["Omegle", 608601, null, null]},
       {"2022": ["Pinterest", 34310, 46, 1.100000]},
       {"2022": ["Quora", 2242, null, null]},
       {"2022": ["Reddit", 52592, 275, 2.400000]},
@@ -641,11 +781,41 @@
       {"2022": ["Telegram", null, 73, 5.100000]},
       {"2022": ["TikTok", 288125, 1, 0.200000]},
       {"2022": ["Tumblr", 4845, 92, 0.900000]},
+      {"2022": ["Twitch", 14508, null, null]},
       {"2022": ["Twitter", 98050, 1278, 1.800000]},
       {"2022": ["WhatsApp", 1017555, 2, 5.200000]},
       {"2022": ["Wordpress", 190, 155, 1.600000]},
+      {"2022": ["X", null, null, null]},
       {"2022": ["YouTube", null, 14, 3.600000]},
-      {"2022": ["Total", 31802525, 80969, null]}
+      {"2022": ["ESP Total", 31802525, 80969, null]},
+      {"2022": ["Total", 32059029, null, null]},
+      {"2023": ["Alphabet", 1470958, null, null]},
+      {"2023": ["Automattic", null, null, null]},
+      {"2023": ["Discord", 339412, null, null]},
+      {"2023": ["Facebook", 17838422, null, null]},
+      {"2023": ["Google", null, null, null]},
+      {"2023": ["Instagram", 11430007, null, null]},
+      {"2023": ["LinkedIn", 209, null, null]},
+      {"2023": ["Meta", null, null, null]},
+      {"2023": ["Microsoft", 139265, null, null]},
+      {"2023": ["Microsoft", 1537, null, null]},
+      {"2023": ["Microsoft", 225, null, null]},
+      {"2023": ["Omegle", 188102, null, null]},
+      {"2023": ["Pinterest", 52356, null, null]},
+      {"2023": ["Quora", 6135, null, null]},
+      {"2023": ["Reddit", 290141, null, null]},
+      {"2023": ["Snap", 713055, null, null]},
+      {"2023": ["Telegram", null, null, null]},
+      {"2023": ["TikTok", 590376, null, null]},
+      {"2023": ["Tumblr", 19335, null, null]},
+      {"2023": ["Twitch", 6665, null, null]},
+      {"2023": ["Twitter", 597087, null, null]},
+      {"2023": ["WhatsApp", 1389618, null, null]},
+      {"2023": ["Wordpress", 256, null, null]},
+      {"2023": ["X", 273416, null, null]},
+      {"2023": ["YouTube", null, null, null]},
+      {"2023": ["ESP Total", 35944826, null, null]},
+      {"2023": ["Total", 36210368, null, null]}
     ]
   }
 }

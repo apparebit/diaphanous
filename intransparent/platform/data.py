@@ -518,7 +518,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
         ),
     },
     # ----------------------------------------------------------------------------------
-    "TikTok (original version)": {
+    "TikTok (original schema)": {
         "comments": [
             "TikTok reorganized its classification of violative behaviors",
             "for Q2 2023. While the firm claims that doing so 'added granularity,'",
