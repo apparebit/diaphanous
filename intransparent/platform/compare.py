@@ -25,25 +25,25 @@ def _annualize(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def compare_platform_reports(
-    platform: str, table: pd.DataFrame, NCMEC: pd.DataFrame
+    platform: str, table: None | pd.DataFrame, NCMEC: pd.DataFrame
 ) -> None | pd.DataFrame:
     """
     Create a table comparing a platform's disclosures with those of NCMEC for
     the same platform or return `None` if no such comparison can be made.
     """
-    if (
-        platform == "NCMEC"
-        or table is None
-        or not ("reports" in table.columns or "pieces" in table.columns)
-        or platform not in NCMEC.columns
-    ):
+    if platform == "NCMEC" or platform not in NCMEC.columns:
         return None
+
+    if table is None:
+        table = pd.DataFrame(index=NCMEC.index)
 
     if "redundant" in table.columns:
         table = table[~table["redundant"]]
 
-    # reindex() creates non-existent columns
+    # The first reindex() fills in non-existent columns. The second one ensures
+    # that all comparisons include the full range of years.
     comparison = _annualize(table).reindex(columns=["pieces", "π", "reports"])
+    comparison = comparison.reindex(NCMEC.index)
 
     has_sent = "reports" in table.columns
     sent = comparison["reports"]
@@ -56,10 +56,10 @@ def compare_platform_reports(
     comparison["Δ%"] = ((received - sent) / sent * 100) if has_sent else None
     comparison["NCMEC"] = received
     industry = NCMEC["ESP Total"]
-    comparison["esp%"] = received / industry * 100
+    comparison["esp%"] = received.fillna(sent) / industry * 100
     comparison["esp"] = industry
     total = NCMEC["Total"]
-    comparison["total%"] = received / total * 100
+    comparison["total%"] = received.fillna(sent) / total * 100
     comparison["total"] = total
     comparison["esp/total%"] = industry / total * 100
     return comparison
@@ -73,9 +73,14 @@ def compare_all_platform_reports(data: PlatformData) -> dict[str, pd.DataFrame]:
     combines the data for all of a firm's brands.
     """
     NCMEC = wide_ncmec_reports(data)
+    firms = combine_brands(data)
     comparisons = {}
 
-    for platform, table in combine_brands(data).items():
+    for platform in NCMEC.columns:
+        if platform in ("Telegram", "ESP Total", "Total"):
+            continue
+
+        table = firms.get(platform)
         comparison = compare_platform_reports(platform, table, NCMEC)
         if comparison is not None:
             comparisons[platform] = comparison
