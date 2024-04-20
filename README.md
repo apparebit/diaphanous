@@ -24,15 +24,18 @@ to tidy up such data.
 
 The [CyberTipline reports per year](data/csam-reports-per-year.csv) dataset
 captures the number of reports NCMEC received on its CyberTipline since
-inception in March 1998, as disclosed in Appendix A of its [CY 2022 Report to
-the Committees on
-Appropriations](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf).
+inception in March 1998, largely based on the table included in Appendix A of
+its [CY 2022 Report to the Committee on
+Appropriations](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf)
+to the Office of Juvenile Justice and Delinquency Protection (OJJDP) at the
+Department of Justice.
 
 
-### Dataset 2: CyberTipline Report Contents (2020 onward)
+### Dataset 2: CyberTipline Report Contents and Recipients (2020 onward)
 
-The [CyberTipline report contents](data/csam-report-contents.csv) dataset breaks
-down the reports NCMEC received by:
+The CyberTipline report [contents](data/csam-report-contents.csv) and
+[recipients](data/csam-report-recipients.csv) dataset breaks down the reports
+NCMEC received by:
 
   * the category of sexual exploitation, e.g., whether a report concerns child
     pornography, misleading words/images, online enticement, child sex
@@ -40,12 +43,20 @@ down the reports NCMEC received by:
     child sexual molestation, or child sex tourism;
   * the kind of attachments, e.g., photos, videos, or other;
   * the uniqueness of attachments as determined by a precise hash (MD5) and a
-    perceptual hash (PhotoDNA, Videntifier).
+    perceptual hash (PhotoDNA, Videntifier);
+  * their level of detail, i.e., whether they are actionable or only
+    informational;
+  * their recipients in dedicated units, local, federal, or international law
+    enforcement.
 
-Labels for the latter classification use "unique" for precisely hashed
+Labels for the uniqueness classification use "unique" for precisely hashed
 attachments and "similar" for perceptually hashed ones. The dataset combines
-several tables from NCMEC's [CY 2022 Report to the Committees on
-Appropriations](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf).
+several tables from NCMEC's
+[2022](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf)
+and
+[2023](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency-CY-2023-Report.pdf)
+transparency reports to the Office for Juvenile Justice and Delinquency
+Prevention at the Department of Justice.
 
 
 ### Dataset 3: CyberTipline Reports per Platform (2019 onward)
@@ -63,11 +74,13 @@ and contain the same information.
 
 The dataset incorporates information about these platforms:
 
+  * Discord
   * Facebook (Meta)
   * Google (Google)
   * Instagram (Meta)
   * LinkedIn (Microsoft)
   * Microsoft (Microsoft)
+  * Omegle
   * Pinterest
   * Quora
   * Reddit
@@ -75,18 +88,17 @@ The dataset incorporates information about these platforms:
   * Telegram
   * TikTok
   * Tumblr (Automattic)
-  * Twitter
+  * Twitch
   * WhatsApp (Meta)
   * Wordpress (Automattic)
+  * X née Twitter
   * YouTube (Google)
 
 If a corporation runs more than one platform, the corporation's name is provided
 in parentheses. The EU's list of [very large online platforms and very large
 online search
 engines](https://digital-strategy.ec.europa.eu/en/policies/list-designated-vlops-and-vloses)
-includes all of the above platforms with exception of Quora, Reddit, Telegram,
-Tumblr, WhatsApp, and Wordpress. Inclusion activates all of the Digital Services
-Act requirements.
+includes several of the above platforms.
 
 A separate [codebook](codebook.md) documents the JSON and Python formats.
 Basically, they consist of a top-level object that maps organization names to an
@@ -159,17 +171,15 @@ per country CSAM reports:
 year](https://raw.githubusercontent.com/apparebit/intransparent/boss/figure/reports-per-capita.svg)
 
 
-### Dataset 5: Meta's Quarterly Transparency Data (Q1 2021 onward)
+### Dataset 5: Platform Data (2020 onward)
 
-Meta's quarterly transparency disclosures include a CSV file with data for the
-current and all previous quarters in machine-readable form. Presumably, for just
-reason Meta does not maintain an externally accessible archive of previously
-released CSV files. This dataset collects the quarterly CSV files from Q2 2021
-onward. Files prior to Q2 2022 were retrieved from archive.org's snapshots for
-the [unchanging URL](https://transparency.fb.com/sr/community-standards/) for
-the data and files for that and later quarters were manually downloaded from the
-URL. The files are included because a small but significant number of historical
-quantities changed every quarter until 2023.
+Discord, Meta, Microsoft, and TikTok have released (some) data in
+machine-readable form. This dataset contains the corresponding files. Discord's
+and Meta's data is in CSV format, Microsoft's in Excel format, and TikTok's in
+Excel and later on CSV format. Meta's and TikTok's files include historical data
+whereas Discord's and Microsoft's do not. Since Meta re-uses [the same
+URL](https://transparency.fb.com/sr/community-standards/) every quarter, files
+released before Q2 2022 were retrieved from the Internet Archive's snapshots.
 
 
 ### Dataset 6: Relationship between Offender and Victim

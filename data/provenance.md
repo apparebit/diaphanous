@@ -6,6 +6,33 @@
   * __`countries.csv`__: Country names and ISO-3166 Alpha-2/3 codes scraped from
     [ISO's website](https://www.iso.org/obp/ui/#search/code/)
 
+  * __`csam-pieces-by-relationship-to-victim.csv`__: Relationship between
+    victims and prepetrators. Based on the
+    [2022](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf)
+    and
+    [2023](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency-CY-2023-Report.pdf)
+    reports to the Office of Juvenile Justice and Delinquency Protection at the
+    Department of Justice.
+
+  * __`csam-report-contents.csv`__: Contents of CyberTipline reports, including
+    the kind of reported sexual exploitation, the kind of attachments, and the
+    uniqueness of attachments. Based on the
+    [2022](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf)
+    and
+    [2023](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency-CY-2023-Report.pdf)
+    reports to the Office of Juvenile Justice and Delinquency Protection at the
+    Department of Justice.
+
+  * __`csam-report-recipients.csv`__: The recipients of CyberTipline reports
+    after NCMEC's triage. Also includes NCMEC's assessment of reports' level of
+    detail, using *actionable* for more and *informational* for less detail.
+    Based on the
+    [2022](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf)
+    and
+    [2023](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency-CY-2023-Report.pdf)
+    reports to the Office of Juvenile Justice and Delinquency Protection at the
+    Department of Justice.
+
   * __`csam-reports-per-country.csv`__: CSAM reports received by NCMEC broken
     down by countries of reported users collects disclosures from
     [2019](https://www.missingkids.org/content/dam/missingkids/pdfs/2019-cybertipline-reports-by-country.pdf),
@@ -14,6 +41,14 @@
     and
     [2022](https://www.missingkids.org/content/dam/missingkids/pdfs/2022-reports-by-country.pdf),
     while also making them machine-readable and adding ISO-3166 Alpha-3 codes.
+
+  * __`csam-reports-per-platform.json`__: Transparency disclosures about CSAM by
+    major social media platforms and companies as well as the corresponding
+    disclosures by NCMEC. The dataset incorporates information about Alphabet
+    (Google and YouTube), Automattic (Tumblr and Wordpress), Discord, Meta
+    (Facebook, Instagram, and WhatsApp), Microsoft (including LinkedIn),
+    Pinterest, Quora, Reddit, Snap, Telegram, TikTok, Twitch, and X née Twitter.
+    Detailed source links are part of the dataset itself.
 
   * __`csam-reports-per-year-country-capita.csv`__: The result of cleaning up and
     merging the following datasets into one denormalized table:
@@ -29,72 +64,6 @@
     and reports per capita for all member countries of the Arab League. They are
     singled out because they account for an outsized share of CSAM reports both
     in absolute numbers and per capita.
-
-  * __`csam-reports-per-platform.json`__: Transparency disclosures about CSAM by
-    major social media platforms and companies as well as the corresponding
-    disclosures by NCMEC. The dataset incorporates information about the
-    following platforms:
-
-      * Platforms that make no or very limited disclosures
-          * [Automattic](https://transparency.automattic.com) (no disclosures on
-            content moderation)
-          * [Quora](https://help.quora.com/hc/en-us/articles/13294268051732-DSA-Transparency)
-            (only a single monthly user disclosure for EU's DSA)
-          * Telegram (no transparency disclosures)
-          * [Tumblr](https://www.tumblr.com/transparency) (no disclosures on
-            content moderation)
-          * [WhatsApp](https://www.whatsapp.com/legal/california-privacy-notice/transparency-report/")
-            (only a single disclosure for California's privacy law)
-
-      * Platforms that make disclosures about content moderation including CSAM
-        but not reports made to NCMEC
-          * [Facebook and
-            Instagram](https://transparency.fb.com/sr/community-standards/)
-          * [LinkedIn](https://about.linkedin.com/transparency/community-report)
-          * [TikTok](https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-4/)
-            including datasets released for [Q4
-            2022](https://sf16-va.tiktokcdn.com/obj/eden-va2/nuvlojeh7ryht/Transparency_CGE_2022Q4/2022Q4_raw_data_cger_English.csv)
-            and [Q3
-            2022](https://sf16-va.tiktokcdn.com/obj/eden-va2/nuvlojeh7ryht/Transparency_CGE_2022Q3/English_CGE_2022Q3.xlsx)
-          * [Twitter](https://transparency.twitter.com) (pre-Musk) and
-            [Twitter](https://blog.twitter.com/en_us/topics/company/2023/an-update-on-twitter-transparency-reporting) (current)
-
-      * Platforms that make disclosures about content moderation including CSAM
-        reports made to NCMEC
-          * [Discord](https://discord.com/safety-transparency-reports/2023-q4)
-          * [Google including
-            YouTube](https://transparencyreport.google.com/child-sexual-abuse-material/)
-          * [Microsoft](https://www.microsoft.com/en-us/corporate-responsibility/digital-safety-content-report?activetab=pivot_1%3aprimaryr3)
-          * [Pinterest](https://policy.pinterest.com/en/transparency-report) and
-            its [archive of past
-            disclosures](https://help.pinterest.com/en/guide/transparency-report-archive)
-          * [Reddit](https://www.redditinc.com/policies/transparency), in
-            particular its disclosures for
-            [2022](https://www.redditinc.com/policies/2022-transparency-report)
-            including [mid-year
-            update](https://www.redditinc.com/policies/mid-year-transparency-report-2022-2),
-            [2021](https://www.redditinc.com/policies/transparency-report-2021),
-            [2020](https://www.redditinc.com/policies/transparency-report-2020),
-            and
-            [2019](https://www.redditinc.com/policies/transparency-report-2019-1)
-          * [Snap](https://values.snap.com/privacy/transparency), in particular
-            its disclosures for [H2
-            2021](https://www.snap.com/en-US/privacy/transparency/2021-12-31),
-            [H1
-            2021](https://www.snap.com/en-US/privacy/transparency/2021-6-30),
-            [H2
-            2020](https://www.snap.com/en-US/privacy/transparency/2020-12-31),
-            [H1
-            2020](https://www.snap.com/en-US/privacy/transparency/2020-6-30),
-            and [H2
-            2019](https://www.snap.com/en-US/privacy/transparency/2019-12-31)
-
-      * NCMEC's per-platform disclosures for
-        [2019](https://www.missingkids.org/content/dam/missingkids/pdfs/2019-reports-by-esp.pdf),
-        [2020](https://www.missingkids.org/content/dam/missingkids/pdfs/2020-reports-by-esp.pdf),
-        [2021](https://www.missingkids.org/content/dam/missingkids/pdfs/2021-reports-by-esp.pdf),
-        and
-        [2022](https://www.missingkids.org/content/dam/missingkids/pdfs/2022-reports-by-esp.pdf)
 
   * __`discord/discord-2020-h2.csv`__ through __`discord/discord-2023-q4.csv`__:
     Discord's [machine-readable transparency
@@ -121,8 +90,3 @@
   * __`regions.csv`__: Countries and their geographical regions based on [Luke
     Duncalfe's ISO-3166
     dataset](https://github.com/lukes/ISO-3166-Countries-with-Regional-Codes)
-
-  * __`tiktok/tiktok-2022-q4.csv`__ through __`tiktok/tiktok-2023-q4.csv`__:
-    TikTok's [machine-readable transparency
-    disclosures](https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-4/)
-    from Q4 2022 through Q4 2023.
