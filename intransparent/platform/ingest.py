@@ -5,6 +5,7 @@ import re
 from typing import cast, Callable, ClassVar, Literal, NamedTuple, TypeAlias
 
 import pandas as pd
+from pandas.api.types import is_integer_dtype
 
 from .type import (
     CellType,
@@ -255,10 +256,21 @@ def ingest_reports_per_platform(
         # Ingest table with platform's CSAM disclosures.
         logger("✅ {}", platform)
         table = _ingest_table(platform, record, include_redundant=include_redundant)
+
         if "aggregates" in record:
             for target, sources in record["aggregates"].items():
+                if all(is_integer_dtype(table.dtypes[c]) for c in sources):
+                    dtype = "Int64"
+                else:
+                    dtype = "float64"
+
                 # Selecting multiple columns requires a list argument!
-                table[target] = table[list(sources)].sum(axis=1, min_count=1)
+                table[target] = (
+                    table[list(sources)]
+                    .sum(axis=1, min_count=1)
+                    .astype(dtype)
+                )
+
         if platform == 'NCMEC':
             table = table.sort_index()
         disclosures[platform] = table
