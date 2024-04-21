@@ -271,8 +271,15 @@ def ingest_reports_per_platform(
                     .astype(dtype)
                 )
 
-        if platform == 'NCMEC':
+        if platform == 'TikTok':
+            table['maybe pieces'] = (
+                table['total videos removed']
+                * table['share of total removals (Safety & Civility)']
+                * table['share of policy category (Youth Exploitation & Abuse)']
+            ).astype('Int64')
+        elif platform == 'NCMEC':
             table = table.sort_index()
+
         disclosures[platform] = table
 
     features = pd.DataFrame(all_features).transpose()
