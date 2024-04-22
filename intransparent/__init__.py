@@ -8,6 +8,7 @@ __all__ = (
     'combine_brands',
     'encode_reports_per_platform',
     'compare_all_platform_reports',
+    'REPORT_TOTALS',
     'YEAR_LABELS',
     'ingest_reports_per_country',
     'without_populations',
