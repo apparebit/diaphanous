@@ -27,7 +27,7 @@ def read_reports(path: str | Path) -> pd.DataFrame:
 
     # Validate data
     actual = reports.shape[0]
-    if actual != 250:
+    if actual != 252:
         raise AssertionError(f'{actual:,d} instead of 250 rows in "{path}"')
     actual = reports['iso3'].isna().sum()
     if actual != 1:
@@ -35,7 +35,7 @@ def read_reports(path: str | Path) -> pd.DataFrame:
             f'{actual:,d} instead of 1 row without ISO Alpha-3 code in "{path}"'
         )
 
-    for year, expected_nulls in zip(YEAR_LABELS, (8, 5, 5, 3)):
+    for year, expected_nulls in zip(YEAR_LABELS, (10, 7, 7, 5, 8)):
         actual_nulls = reports[year].isna().sum()
         if actual_nulls != expected_nulls:
             raise AssertionError(
@@ -61,11 +61,11 @@ def read_reports(path: str | Path) -> pd.DataFrame:
         .sum()
     )
 
-    # 250 rows - 1 extra row formerly without ISO3 then USA - 1 extra row GUF
+    # 252 rows - 1 extra row formerly without ISO3 then USA - 1 extra row GUF
     actual = reports.index.get_level_values('iso3').nunique()
-    if actual != 248:
+    if actual != 250:
         raise AssertionError(
-            f'{actual:,d} instead of 248 ISO Alpha-3 codes with reports'
+            f'{actual:,d} instead of 250 ISO Alpha-3 codes with reports'
         )
 
     # Sum up reports.
