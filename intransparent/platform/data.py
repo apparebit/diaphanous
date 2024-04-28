@@ -47,7 +47,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "reports (about CSAM)",
             "reports (about grooming or endangerment)"
         ),
-        "aggregates": {
+        "sums": {
             "reports": (
                 "reports (about CSAM)",
                 "reports (about grooming or endangerment)"
@@ -95,7 +95,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "reversals w/o appeal (Child Endangerment: Nudity and Physical Abuse)",
             "reversals w/o appeal (Child Endangerment: Sexual Exploitation)",
         ),
-        "aggregates": {
+        "sums": {
             "pieces": (
                 "pieces (Child Nudity & Sexual Exploitation)",
                 "pieces (Child Endangerment: Sexual Exploitation)",
@@ -181,7 +181,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "reversals w/o appeal (Child Endangerment: Nudity and Physical Abuse)",
             "reversals w/o appeal (Child Endangerment: Sexual Exploitation)",
         ),
-        "aggregates": {
+        "sums": {
             "pieces": [
                 "pieces (Child Nudity & Sexual Exploitation)",
                 "pieces (Child Endangerment: Sexual Exploitation)",
@@ -242,7 +242,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
     # ==================================================================================
     "Meta": {
         "brands": ("Facebook", "Instagram", "WhatsApp"),
-        "aggregates": {
+        "sums": {
             "pieces": [
                 "pieces (Child Nudity & Sexual Exploitation)",
                 "pieces (Child Endangerment: Sexual Exploitation)",
@@ -487,10 +487,12 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "coverage": "2022 Q1",
         },
         "comments": (
-            "Unfortunately, the current version of TikTok's disclosures does not",
-            "even include a subcategory for CSAM specifically anymore. Though we",
-            "can now compute the count of pieces actioned for youth exploitation",
-            "and abuse",
+            "The current version of TikTok's disclosures contains two category shares",
+            "for 'Youth Exploitation & Abuse', one relative to the Safety & Civility",
+            "super-category and the other without super-category. The meaning of the",
+            "second one is less than clear. The row for Q1 2023 repeats the totals",
+            "from the dataset with the original schema; it is included so that 2023",
+            "is included in the analysis.",
         ),
         "columns": (
             "share of policy category (Youth Exploitation & Abuse)",
@@ -509,11 +511,19 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "removal rate within 24 hours (Youth Exploitation & Abuse)": "float",
             "share of total removals (Safety & Civility)": "float",
         },
+        "products": {
+            "pieces": (
+                "share of policy category (Youth Exploitation & Abuse)",
+                "share of total removals (Safety & Civility)",
+                "total videos removed",
+            ),
+        },
         "rows": (
             # fmt: off
             {"2023 Q4": (0.232, 0.981, 0.781, 0.902, 0.135, 176_461_963, 128_300_584, 8_038_106)},
             {"2023 Q3": (0.279, 0.987, 0.792, 0.916, 0.161, 136_530_418,  88_721_552, 7_084_629)},
             {"2023 Q2": (0.308, 0.986, 0.836, 0.911, 0.145, 106_476_032,  66_440_775, 6_750_002)},
+            {"2023 Q1": (None,  None,  None,  None,  None,   91_003_510,  53_494_911, None     )},
             # fmt: on
         ),
     },

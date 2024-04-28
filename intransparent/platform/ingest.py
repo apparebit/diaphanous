@@ -189,6 +189,46 @@ def _ingest_table(
     return df
 
 
+def _compute_columns(
+    platform: str, data: DisclosureType, table: pd.DataFrame
+) -> pd.DataFrame:
+    if "sums" not in data and "products" not in data:
+        return table
+
+    for computation in ("sums", "products"):
+        if computation not in data:
+            continue
+
+        for target, sources in data[computation].items():
+            if target in table.columns:
+                raise ValueError(f"{platform} tries to recompute {target} column")
+            if len(sources) == 0:
+                raise ValueError(f"{platform} tries to compute {target} from nothing")
+            for source in sources:
+                if source not in table.columns:
+                    raise ValueError(
+                        f"{platform} tries to compute {target} "
+                        f"from non-existent {source} column"
+                    )
+
+    for computation in ("sums", "products"):
+        if computation not in data:
+            continue
+
+        for target, sources in data[computation].items():
+            if all(is_integer_dtype(table.dtypes[c]) for c in sources):
+                dtype = "Int64"
+            else:
+                dtype = "float64"
+
+            table[target] = (
+                getattr(table[list(sources)], computation[:-1])(axis=1, min_count=1)
+                .astype(dtype)
+            )
+
+    return table
+
+
 class PlatformData(NamedTuple):
     disclosures: dict[str, pd.DataFrame]
     brands: dict[str, tuple[str,...]]
@@ -239,7 +279,8 @@ def ingest_reports_per_platform(
             features["terms"] = "; ".join(features["terms"])
             features["has_reports"] = (
                 "reports" in record.get("columns", [])
-                or "reports" in record.get("aggregates", {})
+                or "reports" in record.get("sums", {})
+                or "reports" in record.get("products", {})
             )
 
         all_features[platform] = features
@@ -257,27 +298,10 @@ def ingest_reports_per_platform(
         logger("✅ {}", platform)
         table = _ingest_table(platform, record, include_redundant=include_redundant)
 
-        if "aggregates" in record:
-            for target, sources in record["aggregates"].items():
-                if all(is_integer_dtype(table.dtypes[c]) for c in sources):
-                    dtype = "Int64"
-                else:
-                    dtype = "float64"
+        # Compute sums and products.
+        table = _compute_columns(platform, record, table)
 
-                # Selecting multiple columns requires a list argument!
-                table[target] = (
-                    table[list(sources)]
-                    .sum(axis=1, min_count=1)
-                    .astype(dtype)
-                )
-
-        if platform == 'TikTok':
-            table['maybe pieces'] = (
-                table['total videos removed']
-                * table['share of total removals (Safety & Civility)']
-                * table['share of policy category (Youth Exploitation & Abuse)']
-            ).astype('Int64')
-        elif platform == 'NCMEC':
+        if platform == 'NCMEC':
             table = table.sort_index()
 
         disclosures[platform] = table

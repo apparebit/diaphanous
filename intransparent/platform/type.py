@@ -43,7 +43,10 @@ class DisclosureType(TypedDict, total=False):
     columns: Sequence[str]
     rows: Sequence[RowType]
     schema: dict[str, SchemaEntryType]
-    aggregates: dict[str, Sequence[str]]
+
+    # Computed columns
+    sums: dict[str, Sequence[str]]
+    products: dict[str, Sequence[str]]
 
 
 # The dictionary with social media transparency disclosures.

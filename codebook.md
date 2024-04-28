@@ -91,7 +91,8 @@ A disclosure record may include the following properties:
   * `features`: a dictionary with high-level properties of transparency reports
 
   * `columns`: a list of strings serving as column labels
-  * `aggregates`: a dictionary mapping column labels to lists of column labels
+  * `sums`: a dictionary mapping column labels to lists of column labels
+  * `products`: a dictionary mapping column labels to lists of column labels
   * `schema`: a dictionary mapping column labels to their types
   * `rows`: a list of row records with the row labels and cell data
 
@@ -101,11 +102,13 @@ schema types are `int`, `float`, and `string`. To avoid clutter, integer columns
 need not be included and the schema may be omitted altogether if all columns
 contain integers.
 
-Aggregates are useful for combining more granular columns into a single one,
-even if that implies some semantic loss. For example, Meta changed the
-definition of pieces in Q2 2021, which is reflected in the platform data.
+`Sums` and `products` are useful for combining more granular columns into a
+single one, even if that implies some semantic loss. For example, Meta changed
+the definition of pieces in Q2 2021, which is reflected in the platform data.
 However, for analysis, it is often convenient to treat both kinds of pieces as a
-single time series.
+single time series. More fundamentally, TikTok reports only fractions for the
+different content categories and subcategories. They need to be multiplied with
+the total number of videos removed before analysis.
 
 
 ### 3.3 Encoding: Features
