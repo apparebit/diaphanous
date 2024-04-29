@@ -16,6 +16,7 @@ from intransparent import (
     YEAR_LABELS,
     show,
     to_schema,
+    fetch_populations,
 )
 
 
@@ -171,9 +172,8 @@ def logger(df: pd.DataFrame, caption: None | str = None) -> None:
 
 
 def _main(args: Sequence[str]) -> int:
-    if 'map' in args:
-        just_map()
-        return 0
+    if "--fetch-populations" in args:
+        fetch_populations("data/populations.csv")
 
     # Export platform data
     print('1. Exporting "data/csam-reports-per-year-country-capita"\n')

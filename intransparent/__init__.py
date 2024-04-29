@@ -19,9 +19,10 @@ __all__ = (
     'delete_latex_tables',
     'show',
     'to_schema',
+    'fetch_populations',
 )
 
-__version__ = "1.0b1"
+__version__ = "2.0"
 
 # CSAM Reports per Platform
 from .platform.data import REPORTS_PER_PLATFORM
@@ -35,6 +36,8 @@ from .platform.export import encode_reports_per_platform
 from .platform.compare import compare_all_platform_reports
 
 # CSAM Reports per Country
+from .fetch import fetch_populations
+
 from .country import (
     REPORT_TOTALS,
     YEAR_LABELS,

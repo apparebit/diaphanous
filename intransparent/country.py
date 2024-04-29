@@ -8,7 +8,7 @@ import geopandas as geo  # type: ignore
 from .frame_logger import FrameLogger, silent_logger
 
 
-YEAR_LABELS = tuple(str(year) for year in range(2019, 2023))
+YEAR_LABELS = tuple(str(year) for year in range(2019, 2024))
 
 REPORT_TOTALS = {
     '2019': 16_987_361,
@@ -96,16 +96,21 @@ def read_populations(path: str | Path) -> pd.DataFrame:
     populations = (
         pd.read_csv(
             path,
-            usecols=['Iso3', 'Time', 'Value'],
-            dtype={'Iso3': 'category', 'Time': 'category', 'Value': 'int'},
+            sep="|",
+            usecols=['Iso3', 'VariantId', 'TimeLabel', 'SexId', 'Value'],
+            dtype={'Iso3': 'category', 'TimeLabel': 'category', 'Value': 'int'},
         )
-        .rename(columns={'Iso3': 'iso3', 'Time': 'year', 'Value': 'population'})
+        .rename(columns={'Iso3': 'iso3', 'TimeLabel': 'year', 'Value': 'population'})
+        .pipe(lambda df: df[(df['VariantId'] == 4) & (df['SexId'] == 3)])
+        .drop(columns=['VariantId', 'SexId'])
         .set_index(['iso3', 'year'])
     )
 
     row_no = populations.shape[0]
-    if row_no != 944:
-        raise AssertionError(f'{row_no:,d} instead of 944 rows with population counts')
+    if row_no != 1_180:
+        raise AssertionError(
+            f'{row_no:,d} instead of 1,180 rows with population counts'
+        )
     country_no = populations.index.get_level_values('iso3').nunique()
     if country_no != 236:
         raise AssertionError(
@@ -244,7 +249,7 @@ def without_populations(
         .sum()
     )
 
-    expected = [28, 97, 243, 117]
+    expected = [28, 97, 243, 117, 58]
     actual = reports_without['reports']
     if not np.array_equal(actual, expected):
         raise AssertionError(
