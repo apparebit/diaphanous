@@ -15,9 +15,57 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
         "brands": ("Google", "YouTube"),
     },
     # ==================================================================================
+    "Amazon": {
+        "brands": ("Twitch",),
+        "sources": (
+            "https://www.aboutamazon.com/news/policy-news-views/amazon-csam-transparency-report-2023",
+            "https://www.aboutamazon.com/news/policy-news-views/amazon-csam-transparency-report-2022",
+            "https://www.aboutamazon.com/news/policy-news-views/our-efforts-to-combat-child-sexual-abuse-material-in-2021",
+            "https://www.aboutamazon.com/news/community/ncmec-report",
+        ),
+        "features": {
+            "data": None,
+            "history": "linked list of pages",
+            "terms": ("CSAM",),
+            "quantities": "counts",
+            "granularity": "Y",
+            "frequency": "Y",
+            "coverage": "2020",
+        },
+        "columns": (
+            "reports",
+            "images",
+            "other content",
+            "reported by trusted parties",
+            "accounts",
+        ),
+        "sums": {
+            "pieces": ("images", "other content"),
+        },
+        "rows": (
+            #fmt: off
+            {"2023": (31_281, 24_653, 103, 611, 4_111)},
+            {"2022": (67_073, 52_633, 23, 398, 7_322)},
+            {"2021": (33_848, 25_540, 1_704, 780, 2_451)},
+            {"2020": (2_235, None, None, None, None)},
+            #fmt: on
+        ),
+    },
+    # ==================================================================================
+    "Apple": {
+        "sources": ["https://www.apple.com/legal/transparency/"],
+        "comments": [
+            "Transparency reports cover government requests only.",
+        ]
+    },
+    # ==================================================================================
     "Automattic": {
         "sources": ("https://transparency.automattic.com",),
         "brands": ("Tumblr", "Wordpress"),
+    },
+    # ==================================================================================
+    "Aylo": {
+        "brands": ("MindGeek", "Pornhub"),
     },
     # ==================================================================================
     "Discord": {
@@ -300,6 +348,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
         ),
     },
     # ==================================================================================
+    "MindGeek": None,  # Pornhub is listed as Aylo brand
+    # ==================================================================================
     "Omegle": {
         "comments": (
             "A website offering video chat between unregistered users. It was shut",
@@ -363,6 +413,50 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2020 H2": (1_794, None, None, None, None, None, None, None, None, None, None, None, None)},
             {"2020 H1": (1_638, None, None, None, None, None, None, None, None, None, None, None, None)},
             # fmt: on
+        ),
+    },
+    # ==================================================================================
+    "Pornhub": {
+        "sources": (
+            "https://help.pornhub.com/hc/en-us/articles/14666334117267-2022-Transparency-Report",
+            "https://help.pornhub.com/hc/en-us/articles/5357457259155-2021-Transparency-Report",
+            "https://help.pornhub.com/hc/en-us/articles/4419860718483-2020-Transparency-Report",
+        ),
+        "comments": (
+            "In March 2023, the Ottawa-based private equity firm ECP (Ethical Capital",
+            "Partners) acquired the Montreal-based MindGeek, Pornhub's parent company.",
+            "In August 2023, MindGreek rebranded as Aylo. Both Aylo's and Pornhub's",
+            "headquarters continue be in Montreal. However, Aylo's corporate structure",
+            "is reportedly spread over a number of jurisdictions including Curaçao,",
+            "Cyprus, and Luxembourg. Pornhub, in turn, seems to be domiciled in Cyprus.",
+            "While NCMEC includes the corporate parent and sibling brands in its",
+            "disclosures, only Pornhub makes its own disclosures.",
+        ),
+        "features": {
+            "data": None,
+            "history": "page archive",
+            "terms": ("CSAM"),
+            "quantities": "counts",
+            "granularity": "H",
+            "frequency": "H",
+            "coverage": "2020",
+        },
+        "columns": (
+            "reports",
+            "videos",
+            "photos",
+        ),
+        "sums": {
+            "pieces": ["videos", "photos"],
+        },
+        "rows": (
+            # fmt: off
+            {"2023 H2": (1_289, 2_344, 1_018)},
+            {"2023 H1": (1_214, 2_632, 1_319)},
+            {"2022": (1_996, 3_604, 5_984)},
+            {"2021": (9_029, 11_626, 8_775)},
+            {"2020": (4_171, None, None)},
+            # fmt:on
         ),
     },
     # ==================================================================================
@@ -596,13 +690,13 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
         "columns": ("reports",),
         "rows": (
             # fmt: off
-            {"2023 H1": (3_285,)},
-            {"2022 H2": (7_585,)},
-            {"2022 H1": (6_711,)},
-            {"2021 H2": (4_006,)},
-            {"2021 H1": (2_615,)},
-            {"2020 H2": (1_346,)},
-            {"2020 H1": (812,)},
+            {"2023 H1": (3_285,), "redundant": True},
+            {"2022 H2": (7_585,), "redundant": True},
+            {"2022 H1": (6_711,), "redundant": True},
+            {"2021 H2": (4_006,), "redundant": True},
+            {"2021 H1": (2_615,), "redundant": True},
+            {"2020 H2": (1_346,), "redundant": True},
+            {"2020 H1": (812,), "redundant": True},
             # fmt: on
         ),
     },
@@ -649,6 +743,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "That appears to be the only transparency report WhatsApp ever released, as in 1.",
         ),
     },
+    # ==================================================================================
+    "Wikimedia": None,
     # ==================================================================================
     "Wordpress": {
         "sources": ("https://transparency.automattic.com",),
@@ -725,7 +821,10 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
         "rows": (
             # fmt: off
             {"2019": ("Alphabet", 449_283, None, None)},
+            {"2019": ("Amazon", 8, None, None)},
+            {"2019": ("Apple", 205, None, None)},
             {"2019": ("Automattic", 10_443, None, None)},
+            {"2019": ("Aylo", None, None, None)},
             {"2019": ("Discord", 19_480, None, None)},
             {"2019": ("Facebook", None, None, None)},
             {"2019": ("Google", None, None, None)},
@@ -733,8 +832,10 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2019": ("LinkedIn", 88, None, None)},
             {"2019": ("Meta", 15_884_511, None, None)},
             {"2019": ("Microsoft", 123_839, None, None)},
+            {"2019": ("MindGeek", None, None, None)},
             {"2019": ("Omegle", 3_470, None, None)},
             {"2019": ("Pinterest", 7_360, None, None)},
+            {"2019": ("Pornhub", None, None, None)},
             {"2019": ("Quora", 1, None, None)},
             {"2019": ("Reddit", 724, None, None)},
             {"2019": ("Snap", 82_030, None, None)},
@@ -744,6 +845,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2019": ("Twitch", 541, None, None)},
             {"2019": ("Twitter", 45_726, None, None)},
             {"2019": ("WhatsApp", None, None, None)},
+            {"2019": ("Wikimedia", 13, None, None)},
             {"2019": ("Wordpress", None, None, None)},
             {"2019": ("X", None, None, None)},
             {"2019": ("YouTube", None, None, None)},
@@ -751,7 +853,10 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2019": ("Total", 16_987_361, None , None)},
 
             {"2020": ("Alphabet", 546_704, None, None)},
+            {"2020": ("Amazon", 2_235, None, None)},
+            {"2020": ("Apple", 265, None, None)},
             {"2020": ("Automattic", 9_130, None, None)},
+            {"2020": ("Aylo", None, None, None)},
             {"2020": ("Discord", 15_324, None, None)},
             {"2020": ("Facebook", None, None, None)},
             {"2020": ("Google", None, None, None)},
@@ -759,8 +864,10 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2020": ("LinkedIn", 60, None, None)},
             {"2020": ("Meta", 20_307_216, None, None)},
             {"2020": ("Microsoft", 96_776, None, None)},
+            {"2020": ("MindGeek", 13_229, None, None)},
             {"2020": ("Omegle", 20_265, None, None)},
             {"2020": ("Pinterest", 3_432, None, None)},
+            {"2020": ("Pornhub", None, None, None)},
             {"2020": ("Quora", 2, None, None)},
             {"2020": ("Reddit", 2_233, None, None)},
             {"2020": ("Snap", 144_095, None, None)},
@@ -770,6 +877,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2020": ("Twitch", None, None, None)},
             {"2020": ("Twitter", 65_062, None, None)},
             {"2020": ("WhatsApp", None, None, None)},
+            {"2020": ("Wikimedia", 11, None, None)},
             {"2020": ("Wordpress", None, None, None)},
             {"2020": ("X", None, None, None)},
             {"2020": ("YouTube", None, None, None)},
@@ -777,19 +885,29 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2020": ("Total", 21_751_085, None, None)},
 
             {"2021": ("Alphabet", 875_783, None, None)},
+            {"2021": ("Amazon", 99, None, None)},
+            {"2021": ("Amazon", 4, None, None)},
+            {"2021": ("Amazon", 27_101, None, None)},
+            {"2021": ("Apple", 160, None, None)},
             {"2021": ("Automattic", None, None, None)},
+            {"2021": ("Aylo", None, None, None)},
             {"2021": ("Discord", 29_606, 68, 3.21)},
             {"2021": ("Facebook", 22_118_952, 28, 7.27)},
             {"2021": ("Google", None, 975, 6.77)},
             {"2021": ("Instagram", 3_393_654, 22, 4.45)},
             {"2021": ("LinkedIn", 110, None, None)},
             {"2021": ("Meta", None, None, None)},
+            {"2021": ("MindGeek", 16, None, None)},
+            {"2021": ("MindGeek", 21, None, None)},  # Redtube
+            {"2021": ("MindGeek", 6, None, None)},  # Tube8
+            {"2021": ("MindGeek", 31, None, None)},  # YouPorn
             {"2021": ("Microsoft", 78_603, None, None)},
-            {"2021": ("Microsoft", 170, None, None)},
+            {"2021": ("Microsoft", 170, None, None)},  # Xbox
             {"2021": ("Microsoft", None, 2, 8.86)},
             {"2021": ("Microsoft", None, 128, 2.21)},
             {"2021": ("Omegle", 46_924, None, None)},
             {"2021": ("Pinterest", 2_283, 56, 0.69)},
+            {"2021": ("Pornhub", 9_029, None, None)},
             {"2021": ("Quora", 25, 1, 0.71)},
             {"2021": ("Reddit", 10_059, 233, 1.39)},
             {"2021": ("Snap", 512_522, None, None)},
@@ -799,6 +917,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2021": ("Twitch", 6_629, None, None)},
             {"2021": ("Twitter", 86_666, 1_017, 1.82)},
             {"2021": ("WhatsApp", 1_372_696, 2, 3.32)},
+            {"2021": ("Wikimedia", 8, None, None)},
             {"2021": ("Wordpress", 310, 26, 1.95)},
             {"2021": ("X", None, None, None)},
             {"2021": ("YouTube", None, 10, 2.2)},
@@ -806,13 +925,20 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2021": ("Total", 29_397_681, None, None)},
 
             {"2022": ("Alphabet", 2_174_548, None, None)},
+            {"2022": ("Amazon", 106, None, None)},
+            {"2022": ("Amazon", 55_543, None, None)},
+            {"2022": ("Apple", 234, None, None)},
             {"2022": ("Automattic", None, None, None)},
+            {"2022": ("Aylo", None, None, None)},
             {"2022": ("Discord", 169_800, 1_533, 4.7)},
             {"2022": ("Facebook", 21_165_208, 10, 4.4)},
             {"2022": ("Google", None, 916, 4.2)},
             {"2022": ("Instagram", 5_007_902, 13, 3.7)},
             {"2022": ("LinkedIn", 201, None, None)},
             {"2022": ("Meta", None, None, None)},
+            {"2022": ("MindGeek", 91, None, None)},
+            {"2022": ("MindGeek", 6, None, None)},  # Redtube
+            {"2022": ("MindGeek", 2, None, None)},  # YouPorn
             {"2022": ("Microsoft", 107_274, None, None)},
             {"2022": ("Microsoft", 138, None, None)},
             {"2022": ("Microsoft", 1_185, None, None)},
@@ -821,6 +947,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2022": ("Microsoft", None, 577, 5.2)},
             {"2022": ("Omegle", 608_601, None, None)},
             {"2022": ("Pinterest", 34_310, 46, 1.1)},
+            {"2022": ("Pornhub", 1_996, None, None)},
             {"2022": ("Quora", 2_242, None, None)},
             {"2022": ("Reddit", 52_592, 275, 2.4)},
             {"2022": ("Snap", 551_086, None, None)},
@@ -830,6 +957,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2022": ("Twitch", 14_508, None, None)},
             {"2022": ("Twitter", 98_050, 1_278, 1.8)},
             {"2022": ("WhatsApp", 1_017_555, 2, 5.2)},
+            {"2022": ("Wikimedia", 29, None, None)},
             {"2022": ("Wordpress", 190, 155, 1.6)},
             {"2022": ("X", None, None, None)},
             {"2022": ("YouTube", None, 14, 3.6)},
@@ -837,18 +965,29 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2022": ("Total", 32_059_029, None, None)},
 
             {"2023": ("Alphabet", 1_470_958, None, None)},
+            {"2023": ("Amazon", 197, None, None)},
+            {"2023": ("Amazon", 25_497, None, None)},
+            {"2023": ("Apple", 267, None, None)},
             {"2023": ("Automattic", None, None, None)},
+            {"2023": ("Aylo", 29, None, None)},  # Tube8
+            {"2023": ("Aylo", 4, None, None)},  # YouPorn
+            {"2023": ("Aylo", 8, None, None)},  # MyDirtyHobby
             {"2023": ("Discord", 339_412, None, None)},
             {"2023": ("Facebook", 17_838_422, None, None)},
             {"2023": ("Google", None, None, None)},
             {"2023": ("Instagram", 11_430_007, None, None)},
             {"2023": ("LinkedIn", 209, None, None)},
             {"2023": ("Meta", None, None, None)},
+            {"2023": ("MindGeek", 44, None, None)},
+            {"2023": ("MindGeek", 7, None, None)},  # Redtube
+            {"2023": ("MindGeek", 1, None, None)},  # Tube8
             {"2023": ("Microsoft", 139_265, None, None)},
             {"2023": ("Microsoft", 1_537, None, None)},
             {"2023": ("Microsoft", 225, None, None)},
             {"2023": ("Omegle", 188_102, None, None)},
             {"2023": ("Pinterest", 52_356, None, None)},
+            {"2023": ("Pornhub", 16, None, None)},  # Under Aylo
+            {"2023": ("Pornhub", 2_487, None, None)},  # Under MindGeek
             {"2023": ("Quora", 6_135, None, None)},
             {"2023": ("Reddit", 290_141, None, None)},
             {"2023": ("Snap", 713_055, None, None)},
@@ -858,6 +997,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2023": ("Twitch", 6_665, None, None)},
             {"2023": ("Twitter", 597_087, None, None)},
             {"2023": ("WhatsApp", 1_389_618, None, None)},
+            {"2023": ("Wikimedia", 34, None, None)},
             {"2023": ("Wordpress", 256, None, None)},
             {"2023": ("X", 273_416, None, None)},
             {"2023": ("YouTube", None, None, None)},

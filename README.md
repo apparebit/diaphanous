@@ -74,6 +74,9 @@ and contain the same information.
 
 The dataset incorporates information about these platforms:
 
+  * Amazon
+  * Apple
+  * Aylo née MindGeek
   * Discord
   * Facebook (Meta)
   * Google (Google)
@@ -82,14 +85,16 @@ The dataset incorporates information about these platforms:
   * Microsoft (Microsoft)
   * Omegle
   * Pinterest
+  * Pornhub (Aylo)
   * Quora
   * Reddit
   * Snap
   * Telegram
   * TikTok
   * Tumblr (Automattic)
-  * Twitch
+  * Twitch (Amazon)
   * WhatsApp (Meta)
+  * Wikimedia
   * Wordpress (Automattic)
   * X née Twitter
   * YouTube (Google)
