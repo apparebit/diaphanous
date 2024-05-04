@@ -1,6 +1,6 @@
 import pandas as pd
 
-from .ingest import combine_brands, PlatformData, wide_ncmec_reports
+from .ingest import PlatformData, wide_ncmec_reports
 
 
 def _components(p: pd.Period) -> tuple[pd.Period, int, int]:
@@ -21,48 +21,35 @@ def _annualize(df: pd.DataFrame) -> pd.DataFrame:
     # Don't drop start_month and end_month here since we reindex anyways.
     return yearly.sum(min_count=1)[
         (yearly['start_month'].min() == 1) & (yearly['end_month'].max() == 12)
-    ]
+    ].drop(columns=['start_month', 'end_month'])
 
 
-def compare_platform_reports(
+def _compare_platform_reports(
     platform: str, table: None | pd.DataFrame, NCMEC: pd.DataFrame
-) -> None | pd.DataFrame:
+) -> pd.DataFrame:
     """
     Create a table comparing a platform's disclosures with those of NCMEC for
     the same platform or return `None` if no such comparison can be made.
     """
-    if platform == "NCMEC" or platform not in NCMEC.columns:
-        return None
-
+    # Ensure that every comparison covers full range of years
     if table is None:
-        table = pd.DataFrame(index=NCMEC.index)
+        table = pd.DataFrame(index=NCMEC.index).reindex(columns=["pieces", "reports"])
 
-    if "redundant" in table.columns:
-        table = table[~table["redundant"]]
-
-    # The first reindex() fills in non-existent columns. The second one ensures
-    # that all comparisons include the full range of years.
-    comparison = _annualize(table).reindex(columns=["pieces", "π", "reports"])
-    comparison = comparison.reindex(NCMEC.index)
-
-    has_sent = "reports" in table.columns
-    sent = comparison["reports"]
+    # Fill in the rest of the table
+    sent = table['reports']
     received = NCMEC[platform]
 
-    # Update π (pieces per report) only if pieces are available
-    if "pieces" in table.columns:
-        comparison["π"] = comparison["pieces"] / (sent if has_sent else received)
-
-    comparison["Δ%"] = ((received - sent) / sent * 100) if has_sent else None
-    comparison["NCMEC"] = received
+    table.insert(1, 'π', table['pieces'] / sent.fillna(received))
+    table["Δ%"] = (received - sent) / sent * 100
+    table["NCMEC"] = received
     industry = NCMEC["ESP Total"]
-    comparison["esp%"] = received.fillna(sent) / industry * 100
-    comparison["esp"] = industry
+    table["esp%"] = received.fillna(sent) / industry * 100
+    table["esp"] = industry
     total = NCMEC["Total"]
-    comparison["total%"] = received.fillna(sent) / total * 100
-    comparison["total"] = total
-    comparison["esp/total%"] = industry / total * 100
-    return comparison
+    table["total%"] = received.fillna(sent) / total * 100
+    table["total"] = total
+    table["esp/total%"] = industry / total * 100
+    return table
 
 
 def compare_all_platform_reports(data: PlatformData) -> dict[str, pd.DataFrame]:
@@ -73,16 +60,44 @@ def compare_all_platform_reports(data: PlatformData) -> dict[str, pd.DataFrame]:
     combines the data for all of a firm's brands.
     """
     NCMEC = wide_ncmec_reports(data)
-    firms = combine_brands(data)
-    comparisons = {}
 
-    for platform in NCMEC.columns:
-        if platform in ("Telegram", "ESP Total", "Total"):
+    # Annualize all tables so that they have compatible indices
+    nonredundant = (
+        (p, t[~t["redundant"]] if "redundant" in t.columns else t)
+        for p, t in data.disclosures.items()
+        if t is not None and len(t) > 0
+    )
+
+    annualized = {
+        p: _annualize(t.reindex(columns=["pieces", "reports"])).reindex(NCMEC.index)
+        for p, t in nonredundant
+    }
+
+    # Sum data of each firm and its brands
+    for firm, brands in data.brands.items():
+        tables = [annualized.get(p) for p in (firm, *brands) if p in annualized]
+
+        for b in brands:
+            if b in annualized:
+                del annualized[b]
+
+        if not tables:
             continue
 
-        table = firms.get(platform)
-        comparison = compare_platform_reports(platform, table, NCMEC)
-        if comparison is not None:
-            comparisons[platform] = comparison
+        sum = tables[0]
+        for t in tables[1:]:
+            sum = sum.add(t, fill_value=0)
+
+        annualized[firm] = sum
+
+    comparisons = {}
+    for platform in NCMEC.columns:
+        if platform in ("NCMEC", "Telegram", "ESP Total", "Total"):
+            continue
+
+        comparison = _compare_platform_reports(
+            platform, annualized.get(platform), NCMEC
+        )
+        comparisons[platform] = comparison
 
     return dict(sorted(comparisons.items()))
