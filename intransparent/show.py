@@ -1,5 +1,4 @@
 from collections.abc import Iterator
-import io
 import math
 from pathlib import Path
 from typing import cast, NamedTuple, TypeAlias
@@ -90,7 +89,7 @@ def show(
         )
 
         style.format('≡', subset=pd.IndexSlice[
-            pd.IndexSlice[value['reports'] == value['NCMEC']], 'Δ%'
+            value['reports'] == value['NCMEC'], 'Δ%'
         ])
 
     display(style)
