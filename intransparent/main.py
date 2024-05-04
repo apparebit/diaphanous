@@ -43,12 +43,15 @@ def just_map() -> None:
     fig.write_image(f'./figure/reports-per-capita.svg')
 
 
-def reports_per_country(section: int) -> None:
+def reports_per_country(section: int = -1) -> None:
     # ----------------------------------------------------------------------------------
+
+    def secnum(subsection: int) -> str:
+        return '' if section == -1 else f'{section}.{subsection} '
 
     country_data = ingest_reports_per_country('../data')
 
-    show(f'<h2>{section}.2 Regions Ranked by CSAM Reports</h2>')
+    show(f'<h2>{secnum(2)}Regions Ranked by CSAM Reports</h2>')
     most_reports = (
         country_data.reports_per_capita.groupby(['year', 'region'])
         .sum(numeric_only=True)
@@ -56,11 +59,13 @@ def reports_per_country(section: int) -> None:
         .drop(columns=['arab_league'])
     )
 
-    adjusted_reports = most_reports.copy()
-    adjusted_reports['pct_ratio'] = (
-        adjusted_reports['reports_pct'] / adjusted_reports['population_pct']
+    # Recompute reports per capita because adding countries' values most
+    # certainly isn't the right thing to do...
+    most_reports['reports_per_capita'] = (
+        most_reports['reports'] / most_reports['population']
     )
-    adjusted_reports = adjusted_reports.sort_values(by='pct_ratio', ascending=False)
+
+    adjusted_reports = most_reports.sort_values('reports_per_capita', ascending=False)
 
     for year in YEAR_LABELS:
         show(f'<h3>{year}</h3>')
@@ -72,13 +77,13 @@ def reports_per_country(section: int) -> None:
         show(
             adjusted_reports[adjusted_reports.index.get_level_values('year') == year],
             caption=f'Regions by Population-Adjusted CSAM Reports {year}',
-            highlight_columns='pct_ratio',
+            highlight_columns='reports_per_capita',
         )
         if year != YEAR_LABELS[-1]:
             show('<hr>')
 
     # ----------------------------------------------------------------------------------
-    show(f'<h2>{section}.3 Countries Ranked by CSAM Reports per Capita</h2>')
+    show(f'<h2>{secnum(3)}Countries Ranked by CSAM Reports per Capita</h2>')
     rpc_range = country_data.reports_per_capita.agg(
         {'reports_per_capita': ['min', 'max']}
     )
@@ -130,7 +135,7 @@ def reports_per_country(section: int) -> None:
     )
 
     # ----------------------------------------------------------------------------------
-    show(f'<h2>{section}.4 Mapping CSAM Reports per Capita and Year</h2>')
+    show(f'<h2>{secnum(4)}Mapping CSAM Reports per Capita and Year</h2>')
     map_data = country_data.reports_per_capita.copy()
     map_data = map_data.reset_index()
     show(map_data, show_schema=True, caption='map_data')
@@ -157,7 +162,7 @@ def reports_per_country(section: int) -> None:
         with_antarctica=True,
     )
     show_map(fig)
-
+    fig.write_image(f'../figure/countries.svg')
 
 # ======================================================================================
 
