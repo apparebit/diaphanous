@@ -26,6 +26,12 @@ log() {
     print -u 2 "${STYLE}$1: $2${RESET}"
 }
 
+prepare_figures() {
+    for name in meta reports platforms countries; do
+        rsvg-convert -f pdf -o "figure-${name}.pdf" "../figure/${name}.svg"
+    done
+}
+
 check_bibtex() {
     # Surface actionable information from BibTeX's output
     local warnings=$(
@@ -71,4 +77,18 @@ do_build() {
     check_latex "$1"
 }
 
-do_build report
+target=${1:-report}
+shift
+
+case $target in
+    figure )
+        prepare_figures
+        ;;
+    report )
+        do_build report
+        ;;
+    *      )
+        log ERROR "\"$target\" is not a valid build target!"
+        exit 1
+        ;;
+esac

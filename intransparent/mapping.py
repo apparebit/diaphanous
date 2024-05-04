@@ -108,7 +108,7 @@ def create_map(
 
     if with_panels:
         fig.update_layout(
-            margin=dict(t=54, r=10, b=10, l=10),
+            margin=dict(t=2, r=0, b=2, l=0),
             #width=640,
             #height=1100 if with_antarctica else 960,
             coloraxis_colorbar_len=0.3,
@@ -137,7 +137,7 @@ def create_map(
     fig.update_layout(coloraxis_showscale=False)
 
     # -------------------- Add year label to each panel
-    if with_panels and False:
+    if with_panels:
         # Heuristically determine the effective mapping from year to geo axis.
         trace_by_year = {}
         for obj in fig.data:
@@ -169,27 +169,24 @@ def create_map(
             year = a.text.split('=')[-1]
             domain = fig.layout[trace_by_year[year]].domain
 
-            y = domain.y[0]
-            if with_antarctica and not with_equal_earth:
-                y += 0.005
-            else:
-                pass
+            x = 0.57 if int(year) % 2 == 0 else 0.06
+            y = domain.y[0] + 0.12
 
             a.update(
                 text=year,
                 textangle=0,
-                x=0.01,
+                x=x,
                 xanchor='left',
                 y=y,
                 yanchor='bottom',
-                font_size=18,
+                font_size=12,
             )
 
-            if with_antarctica and not with_equal_earth:
-                a.update(
-                    bgcolor='#ffffff',
-                    borderpad=2,
-                )
+            #if with_antarctica and not with_equal_earth:
+            a.update(
+                bgcolor='#ffffff',
+                borderpad=2,
+            )
 
         fig.for_each_annotation(format_annotation)
 
