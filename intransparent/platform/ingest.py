@@ -176,7 +176,8 @@ def _ingest_table(
         )
         if row:
             indexed_rows.append(row)
-    index, rows = zip(*indexed_rows)
+
+    index, rows = zip(*indexed_rows) if indexed_rows else ([], [])
 
     # When preserving redundant rows, patch columns and schema.
     if include_redundant:
@@ -356,22 +357,30 @@ def wide_ncmec_reports(
     combine_brands: bool = True,
     drop_brands: bool = True,
 ) -> pd.DataFrame:
+    # Pivot without dropna so that placeholder columns for brands can be
+    # combined. Force type to Int64 b/c Pandas gets confused by NA, typing
+    # columns as float64 (for pivot) or object (for sum).
     ncmec = (
         data.disclosures['NCMEC']
-        #.drop(columns=['notifications_sent', 'response_time'])
-        # Without dropna=False, Google and YouTube are dropped, complicating loop below
         .pivot_table(values='reports', index='period', columns='platform', dropna=False)
-        # pivot_table() produces float64 columns, likely because of dropna=False. Undo.
         .astype('Int64')
     )
 
     if combine_brands:
         for firm, brands in data.brands.items():
-            ncmec = ncmec.assign(**{firm: lambda df: df[[firm, *brands]].sum(axis=1)})
+            ncmec = ncmec.assign(**{
+                firm: lambda df: (
+                    df[[firm, *brands]]
+                    .sum(axis=1, min_count=1)
+                    .astype('Int64')
+                )
+            })
+
             if drop_brands:
                 ncmec = ncmec.drop(columns=list(brands))
 
     return ncmec
+
 
 def long_ncmec_reports(
     data: PlatformData,
@@ -389,7 +398,7 @@ def long_ncmec_reports(
                 ncmec
                 .loc[ncmec['platform'].isin([firm, *brands]), 'reports']
                 .groupby('period')
-                .sum()
+                .sum(min_count=1)
             )
             if drop_brands:
                 ncmec = ncmec.loc[~ncmec['platform'].isin(brands)]
