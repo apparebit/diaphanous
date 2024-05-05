@@ -193,6 +193,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
         "columns": ("pieces", "reports", "accounts", "urls"),
         "rows": (
             # fmt: off
+            {"2023 H2": (3_450_886, 496_105, 249_924, 381_103)},
             {"2023 H1": (4_025_703, 586_832, 259_576, 463_462)},
             {"2022 H2": (6_344_753, 891_215, 365_428, 437_020)},
             {"2022 H1": (6_426_749, 826_667, 270_487, 484_573)},
@@ -521,6 +522,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
     "Snap": {
         "sources": (
             "https://values.snap.com/privacy/transparency",
+            "https://values.snap.com/privacy/transparency-h2-2023",
+            "https://values.snap.com/privacy/transparency-h1-2023",
             "https://values.snap.com/privacy/transparency-h2-2022",
             "https://values.snap.com/privacy/transparency-h1-2022",
             "https://www.snap.com/en-US/privacy/transparency/2021-12-31",
@@ -542,6 +545,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
         "schema": {"accounts": "float"},
         "rows": (
             # fmt: off
+            {"2023 H2": (1_046_296, 343_865, 398_736)},
             {"2023 H1": (548_509, 228_897, 292_489)},
             {"2022 H2": (527_787, 204_490, 265_285)},
             {"2022 H1": (746_051, 201_527, 285_470)},
@@ -770,6 +774,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
         "columns": ("pieces", "reports"),
         "rows": (
             # fmt: off
+            {"2023 H2": (265_371, 225_440)},
             {"2023 H1": (213_209, 163_844)},
             {"2022 H2": (359_931, 238_827)},
             {"2022 H1": (271_452, 217_610)},

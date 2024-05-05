@@ -185,6 +185,7 @@
             "urls"
         ],
         "rows": [
+            {"2023 H2": [3450886, 496105, 249924, 381103]},
             {"2023 H1": [4025703, 586832, 259576, 463462]},
             {"2022 H2": [6344753, 891215, 365428, 437020]},
             {"2022 H1": [6426749, 826667, 270487, 484573]},
@@ -497,6 +498,8 @@
     "Snap": {
         "sources": [
             "https://values.snap.com/privacy/transparency",
+            "https://values.snap.com/privacy/transparency-h2-2023",
+            "https://values.snap.com/privacy/transparency-h1-2023",
             "https://values.snap.com/privacy/transparency-h2-2022",
             "https://values.snap.com/privacy/transparency-h1-2022",
             "https://www.snap.com/en-US/privacy/transparency/2021-12-31",
@@ -523,6 +526,7 @@
             "accounts": "float"
         },
         "rows": [
+            {"2023 H2": [1046296, 343865, 398736]},
             {"2023 H1": [548509, 228897, 292489]},
             {"2022 H2": [527787, 204490, 265285]},
             {"2022 H1": [746051, 201527, 285470]},
@@ -734,6 +738,7 @@
             "reports"
         ],
         "rows": [
+            {"2023 H2": [265371, 225440]},
             {"2023 H1": [213209, 163844]},
             {"2022 H2": [359931, 238827]},
             {"2022 H1": [271452, 217610]},
