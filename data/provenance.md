@@ -14,7 +14,7 @@
     reports to the Office of Juvenile Justice and Delinquency Protection at the
     Department of Justice.
 
-  * __`csam-report-contents.csv`__: Contents of CyberTipline reports, including
+  * __`ocse-report-contents.csv`__: Contents of CyberTipline reports, including
     the kind of reported sexual exploitation, the kind of attachments, and the
     uniqueness of attachments. Based on the
     [2022](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf)
@@ -23,7 +23,7 @@
     reports to the Office of Juvenile Justice and Delinquency Protection at the
     Department of Justice.
 
-  * __`csam-report-recipients.csv`__: The recipients of CyberTipline reports
+  * __`ocse-report-recipients.csv`__: The recipients of CyberTipline reports
     after NCMEC's triage. Also includes NCMEC's assessment of reports' level of
     detail, using *actionable* for more and *informational* for less detail.
     Based on the
@@ -33,7 +33,7 @@
     reports to the Office of Juvenile Justice and Delinquency Protection at the
     Department of Justice.
 
-  * __`csam-reports-per-country.csv`__: CSAM reports received by NCMEC broken
+  * __`ocse-reports-per-country.csv`__: CSAM reports received by NCMEC broken
     down by countries of reported users collects disclosures from
     [2019](https://www.missingkids.org/content/dam/missingkids/pdfs/2019-cybertipline-reports-by-country.pdf),
     [2020](https://www.missingkids.org/content/dam/missingkids/pdfs/2020-reports-by-country.pdf),
@@ -42,7 +42,7 @@
     [2022](https://www.missingkids.org/content/dam/missingkids/pdfs/2022-reports-by-country.pdf),
     while also making them machine-readable and adding ISO-3166 Alpha-3 codes.
 
-  * __`csam-reports-per-platform.json`__: Transparency disclosures about CSAM by
+  * __`ocse-reports-per-platform.json`__: Transparency disclosures about CSAM by
     major social media platforms and companies as well as the corresponding
     disclosures by NCMEC. The dataset incorporates information about Alphabet
     (Google and YouTube), Automattic (Tumblr and Wordpress), Discord, Meta
@@ -50,11 +50,11 @@
     Pinterest, Quora, Reddit, Snap, Telegram, TikTok, Twitch, and X née Twitter.
     Detailed source links are part of the dataset itself.
 
-  * __`csam-reports-per-year-country-capita.csv`__: The result of cleaning up and
+  * __`ocse-reports-per-year-country-capita.csv`__: The result of cleaning up and
     merging the following datasets into one denormalized table:
 
       - `countries.csv`
-      - `csam-reports-per-country.csv`
+      - `ocse-reports-per-country.csv`
       - `populations.csv`
       - `regions.csv`
       - `arab-league.csv`
@@ -83,9 +83,15 @@
     version
     5.1.1](https://www.naturalearthdata.com/downloads/110m-cultural-vectors/)
 
-  * __`populations.csv`__: Per-country population statistics for 2019–2022 from
-    the [United Nations Population
-    Division](https://population.un.org/dataportal/data/indicators/49/locations/4,8,12,16,20,24,660,28,32,51,533,36,40,31,44,48,50,52,112,56,84,204,60,64,68,535,70,72,76,92,96,100,854,108,132,116,120,124,136,140,148,152,156,344,446,158,170,174,178,184,188,384,191,192,531,196,203,408,180,208,262,212,214,218,818,222,226,232,233,748,231,238,234,242,246,250,254,258,266,270,268,276,288,292,300,304,308,312,316,320,831,324,624,328,332,336,340,348,352,356,360,364,368,372,833,376,380,388,392,832,400,398,404,296,412,414,417,418,428,422,426,430,434,438,440,442,450,454,458,462,466,470,584,474,478,480,175,484,583,492,496,499,500,504,508,104,516,520,524,528,540,554,558,562,566,570,807,580,578,512,586,585,591,598,600,604,608,616,620,630,634,410,498,638,642,643,646,652,654,659,662,663,666,670,882,674,678,682,686,688,690,694,702,534,703,705,90,706,710,728,724,144,275,729,740,752,756,760,762,764,626,768,772,776,780,788,792,795,796,798,800,804,784,826,834,840,850,858,860,548,862,704,876,732,887,894,716/start/2019/end/2022/table/pivotbylocation)
+  * __`populations.csv`__: Per-country population statistics for 2019–2023 from
+    the [United Nations Population Division](https://population.un.org/). That
+    data used to be trivially downloadable through a URL, but no more. The
+    `intransparent.fetch` module contains the code necessary for automating the
+    download. You can execute it as follows:
+
+    ```sh
+    python -m intransparent --fetch-populations
+    ```
 
   * __`regions.csv`__: Countries and their geographical regions based on [Luke
     Duncalfe's ISO-3166

@@ -181,10 +181,10 @@ def _main(args: Sequence[str]) -> int:
         fetch_populations("data/populations.csv")
 
     # Export platform data
-    print('1. Exporting "data/csam-reports-per-year-country-capita"\n')
+    print('1. Exporting "data/ocse-reports-per-year-country-capita"\n')
     country_data = ingest_reports_per_country('./data', logger=logger)
     country_data.reports_per_capita.reset_index().to_csv(
-        'data/csam-reports-per-year-country-capita.csv',
+        'data/ocse-reports-per-year-country-capita.csv',
         index=False,
         columns=[
             'year',
@@ -203,8 +203,8 @@ def _main(args: Sequence[str]) -> int:
         ],
     )
 
-    print('2. Exporting "data/csam-reports-per-platform.json"')
-    json_path = Path('data/csam-reports-per-platform.json')
+    print('2. Exporting "data/ocse-reports-per-platform.json"')
+    json_path = Path('data/ocse-reports-per-platform.json')
     tmp_path = json_path.with_suffix('.tmp.json')
     with open(tmp_path, mode='w', encoding='utf') as file:
         file.write('\n'.join(encode_reports_per_platform(REPORTS_PER_PLATFORM)))

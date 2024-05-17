@@ -1,21 +1,24 @@
+from types import MappingProxyType
 from .type import DisclosureCollectionType
 from .. import __version__
 
-REPORTS_PER_PLATFORM: DisclosureCollectionType = {
-    "@": {
+frozen = MappingProxyType
+
+REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
+    "@": frozen({
         # ──────────────────────────────────────────────────────────────
         "author": "Robert Grimm",
         "title": "Social Media CSAM Disclosures",
         "url": "https://github.com/apparebit/intransparent",
         "version": __version__,
         # ──────────────────────────────────────────────────────────────
-    },
-    # ==================================================================================
-    "Alphabet": {
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Alphabet": frozen({
         "brands": ("Google", "YouTube"),
-    },
-    # ==================================================================================
-    "Amazon": {
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Amazon": frozen({
         "brands": ("Twitch",),
         "sources": (
             "https://www.aboutamazon.com/news/policy-news-views/amazon-csam-transparency-report-2023",
@@ -23,7 +26,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "https://www.aboutamazon.com/news/policy-news-views/our-efforts-to-combat-child-sexual-abuse-material-in-2021",
             "https://www.aboutamazon.com/news/community/ncmec-report",
         ),
-        "features": {
+        "features": frozen({
             "data": None,
             "history": "linked list of pages",
             "terms": ("CSAM",),
@@ -31,7 +34,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "granularity": "Y",
             "frequency": "Y",
             "coverage": "2020",
-        },
+        }),
         "columns": (
             "reports",
             "images",
@@ -39,9 +42,9 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "reported by trusted parties",
             "accounts",
         ),
-        "sums": {
+        "sums": frozen({
             "pieces": ("images", "other content"),
-        },
+        }),
         "rows": (
             #fmt: off
             {"2023": (31_281, 24_653, 103, 611, 4_111)},
@@ -50,25 +53,25 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2020": (2_235, None, None, None, None)},
             #fmt: on
         ),
-    },
-    # ==================================================================================
-    "Apple": {
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Apple": frozen({
         "sources": ["https://www.apple.com/legal/transparency/"],
         "comments": [
             "Transparency reports cover government requests only.",
         ]
-    },
-    # ==================================================================================
-    "Automattic": {
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Automattic": frozen({
         "sources": ("https://transparency.automattic.com",),
         "brands": ("Tumblr", "Wordpress"),
-    },
-    # ==================================================================================
-    "Aylo": {
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Aylo": frozen({
         "brands": ("MindGeek", "Pornhub"),
-    },
-    # ==================================================================================
-    "Discord": {
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Discord": frozen({
         "sources": (
             "https://discord.com/blog/discord-transparency-report-july-dec-2020",
             "https://discord.com/blog/discord-transparency-report-h1-2021",
@@ -82,7 +85,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "https://discord.com/safety-transparency-reports/2023-q3",
             "https://discord.com/safety-transparency-reports/2023-q4"
         ),
-        "features": {
+        "features": frozen({
             "data": "csv",
             "history": "same page (dropdown)",
             "terms": ("child safety", "CSAM"),
@@ -90,17 +93,17 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "granularity": "Q",
             "frequency": "Q",
             "coverage": "2020 H2",
-        },
+        }),
         "columns": (
             "reports (about CSAM)",
             "reports (about grooming or endangerment)"
         ),
-        "sums": {
+        "sums": frozen({
             "reports": (
                 "reports (about CSAM)",
                 "reports (about grooming or endangerment)"
             ),
-        },
+        }),
         "rows": (
             #fmt: off
             {"2023 Q4": (55_638, 317)},
@@ -116,11 +119,11 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2020 H2": ( 6_865,  83)},
             #fmt: on
         ),
-    },
-    # ==================================================================================
-    "Facebook": {
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Facebook": frozen({
         "sources": ("https://transparency.fb.com/sr/community-standards/",),
-        "features": {
+        "features": frozen({
             "data": "csv",
             "history": "data",
             "terms": ("child nudity & sexual exploitation", "child sexual exploitation",),
@@ -128,7 +131,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "granularity": "Q",
             "frequency": "Q",
             "coverage": "2018 Q3",
-        },
+        }),
         "columns": (
             "pieces (Child Nudity & Sexual Exploitation)",
             "pieces (Child Endangerment: Nudity and Physical Abuse)",
@@ -143,12 +146,12 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "reversals w/o appeal (Child Endangerment: Nudity and Physical Abuse)",
             "reversals w/o appeal (Child Endangerment: Sexual Exploitation)",
         ),
-        "sums": {
+        "sums": frozen({
             "pieces": (
                 "pieces (Child Nudity & Sexual Exploitation)",
                 "pieces (Child Endangerment: Sexual Exploitation)",
             ),
-        },
+        }),
         "rows": (
             # fmt: off
             {"2023 Q4": (None, 1_900_000, 16_200_000, None, 135_100, 1_000_000, None, 36_100, 317_500, None, 279_500, 1_200_000)},
@@ -175,13 +178,27 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2018 Q3": (9_000_000, None, None, None, None, None, None, None, None, None, None, None)},
             # fmt: on
         ),
-    },
-    # ==================================================================================
-    "Google": {
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "GitHub": frozen({
+        "sources": (
+            "https://transparencycenter.github.com/automated-detection/",
+        ),
+        "columns": ("accounts", "reports"),
+        "rows": (
+            # fmt: off
+            {"2023": (3, 37)},
+            {"2022": (1, 6)},
+            {"2021": (1, 4)},
+            # fmt: on
+        ),
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Google": frozen({
         "sources": (
             "https://transparencyreport.google.com/child-sexual-abuse-material/",
         ),
-        "features": {
+        "features": frozen({
             "data": None,
             "history": "same page (dropdown)",
             "terms": ("CSAM",),
@@ -189,7 +206,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "granularity": "H",
             "frequency": "H",
             "coverage": "2020 H1",
-        },
+        }),
         "columns": ("pieces", "reports", "accounts", "urls"),
         "rows": (
             # fmt: off
@@ -203,11 +220,11 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2020 H1": (1_461_582, 112_595, 77_940, 331_865)},
             # fmt: on
         ),
-    },
-    # ==================================================================================
-    "Instagram": {
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Instagram": frozen({
         "sources": ("https://transparency.fb.com/sr/community-standards/",),
-        "features": {
+        "features": frozen({
             "data": "csv",
             "history": "data",
             "terms": ("child nudity & sexual exploitation", "sexual exploitation",),
@@ -215,7 +232,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "granularity": "Q",
             "frequency": "Q",
             "coverage": "2019 Q2",
-        },
+        }),
         "columns": (
             "pieces (Child Nudity & Sexual Exploitation)",
             "pieces (Child Endangerment: Nudity and Physical Abuse)",
@@ -230,12 +247,12 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "reversals w/o appeal (Child Endangerment: Nudity and Physical Abuse)",
             "reversals w/o appeal (Child Endangerment: Sexual Exploitation)",
         ),
-        "sums": {
+        "sums": frozen({
             "pieces": [
                 "pieces (Child Nudity & Sexual Exploitation)",
                 "pieces (Child Endangerment: Sexual Exploitation)",
             ],
-        },
+        }),
         "rows": (
             # fmt: off
             {"2023 Q4": (None, 198_500, 2_100_000, None, 34_700, 79_100, None, 4_600, 26_500, None, 11_900, 86_800)},
@@ -259,11 +276,11 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2019 Q2": (526_200, None, None, None, None, None, None, None, None, None, None, None)},
             # fmt: on
         ),
-    },
-    # ==================================================================================
-    "LinkedIn": {
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "LinkedIn": frozen({
         "sources": ("https://about.linkedin.com/transparency/community-report",),
-        "features": {
+        "features": frozen({
             "data": None,
             "history": "same page (tabs)",
             "terms": ("child exploitation",),
@@ -271,7 +288,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "granularity": "H",
             "frequency": "H",
             "coverage": "2019 H1",
-        },
+        }),
         "comments": ("numbers disclosed under 'content removed', hence pieces",),
         "columns": ("pieces",),
         "rows": (
@@ -287,23 +304,23 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2019 H1": (22,)},
             # fmt: on
         ),
-    },
-    # ==================================================================================
-    "Meta": {
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Meta": frozen({
         "brands": ("Facebook", "Instagram", "WhatsApp"),
-        "sums": {
+        "sums": frozen({
             "pieces": [
                 "pieces (Child Nudity & Sexual Exploitation)",
                 "pieces (Child Endangerment: Sexual Exploitation)",
             ],
-        },
-    },
-    # ==================================================================================
-    "Microsoft": {
+        }),
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Microsoft": frozen({
         "sources": (
             "https://www.microsoft.com/en-us/corporate-responsibility/digital-safety-content-report",
         ),
-        "features": {
+        "features": frozen({
             "data": "xls",
             "history": "same page (dropdown)",
             "terms": ("CSAM",),
@@ -311,8 +328,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "granularity": "H",
             "frequency": "H",
             "coverage": "2020 H1",
-        },
-        "brands": ["LinkedIn"],
+        }),
+        "brands": ["GitHub", "LinkedIn"],
         "columns": (
             "pieces",
             "automatically detected pieces",
@@ -320,10 +337,10 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "reinstated accounts",
             "reports",
         ),
-        "schema": {
+        "schema": frozen({
             "automatically detected pieces": "float",
             "reinstated accounts": "float",
-        },
+        }),
         "rows": (
             {"2023 H1": (227_823, 94.7, None, None, None)},
             {"2023 H1": (46_856, 99.2, 7_456, 1.4, None)},
@@ -347,25 +364,25 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2020 H1": (84_581, 99.8, 15_935, 0.01, None)},
             {"2020 H1": (None, None, None, None, 32_622)},
         ),
-    },
-    # ==================================================================================
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "MindGeek": None,  # Pornhub is listed as Aylo brand
-    # ==================================================================================
-    "Omegle": {
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Omegle": frozen({
         "comments": (
             "A website offering video chat between unregistered users. It was shut",
             "down in 2023 to settle a lawsuit by the victim of online child sexual",
             "exploitation. See https://www.bbc.com/news/technology-67485561 and",
             "https://www.bbc.com/news/business-67364634.",
         ),
-    },
-    # ==================================================================================
-    "Pinterest": {
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Pinterest": frozen({
         "sources": (
             "https://policy.pinterest.com/en/transparency-report",
             "https://help.pinterest.com/en/guide/transparency-report-archive",
         ),
-        "features": {
+        "features": frozen({
             "data": None,
             "history": "same page (tabs)",
             "terms": ("child safety", "child sexual exploitation", "CSAM"),
@@ -373,7 +390,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "granularity": "Q",
             "frequency": "H",
             "coverage": "2020 H1",
-        },
+        }),
         "comments": (
             "Pin is lingo for a media card with picture, hence pin with CSAM is piece.",
             "Pinterest's disclosure language explains 2nd through 5th columns:",
@@ -415,9 +432,9 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2020 H1": (1_638, None, None, None, None, None, None, None, None, None, None, None, None)},
             # fmt: on
         ),
-    },
-    # ==================================================================================
-    "Pornhub": {
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Pornhub": frozen({
         "sources": (
             "https://help.pornhub.com/hc/en-us/articles/14666334117267-2022-Transparency-Report",
             "https://help.pornhub.com/hc/en-us/articles/5357457259155-2021-Transparency-Report",
@@ -433,7 +450,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "While NCMEC includes the corporate parent and sibling brands in its",
             "disclosures, only Pornhub makes its own disclosures.",
         ),
-        "features": {
+        "features": frozen({
             "data": None,
             "history": "page archive",
             "terms": ("CSAM"),
@@ -441,15 +458,15 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "granularity": "H",
             "frequency": "H",
             "coverage": "2020",
-        },
+        }),
         "columns": (
             "reports",
             "videos",
             "photos",
         ),
-        "sums": {
+        "sums": frozen({
             "pieces": ["videos", "photos"],
-        },
+        }),
         "rows": (
             # fmt: off
             {"2023 H2": (1_289, 2_344, 1_018)},
@@ -459,19 +476,20 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2020": (4_171, None, None)},
             # fmt:on
         ),
-    },
-    # ==================================================================================
-    "Quora": {
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Quora": frozen({
         "sources": (
             "https://help.quora.com/hc/en-us/articles/13294268051732-DSA-Transparency",
         ),
         "comments": (
             "Quora's first and only transparency report so far, with user numbers only",
         ),
-    },
-    # ==================================================================================
-    "Reddit": {
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Reddit": frozen({
         "sources": (
+            "https://www.redditinc.com/policies/transparency-report-july-to-december-2023",
             "https://www.redditinc.com/policies/2023-h1-transparency-report",
             "https://www.redditinc.com/policies/2022-transparency-report",
             "https://www.redditinc.com/policies/mid-year-transparency-report-2022-2",
@@ -480,7 +498,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "https://www.redditinc.com/policies/transparency-report-2019-1",
             "https://www.redditinc.com/policies/transparency",
         ),
-        "features": {
+        "features": frozen({
             "data": None,
             "history": "page archive",
             "terms": ("minor sexualization", "child sexual exploitation", "CSAM"),
@@ -488,7 +506,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "granularity": "H",
             "frequency": "H",
             "coverage": "2021",
-        },
+        }),
         "comments": [
             "pieces includes posts and comments but not private messages"
         ],
@@ -503,11 +521,12 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "account appeals (minor sexualization)",
             "account reversals percent (minor sexualization)",
         ),
-        "schema": {
+        "schema": frozen({
             "account reversals percent (minor sexualization)": "float",
-        },
+        }),
         "rows": (
             # fmt: off
+            {"2023 H2": (None, 133_588, 349_189, 263, 1_536, 15_744, 128_513, 5_801, 8.6)},
             {"2023 H1": (149_084, 156_533, 181_083, 296, 987, 27_219, 68_900, 2_924, 7.8)},
             {"2022 H2": (31_574, 40_243, None, None, None, None, None, None, None), "redundant": True},
             {"2022 H1": (None, 12_349, None, None, None, None, None, None, None), "redundant": True},
@@ -517,9 +536,9 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2019": (None, 724, 38_410, None, 280, None, 10_781, None, None)},
             # fmt: on
         ),
-    },
-    # ==================================================================================
-    "Snap": {
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Snap": frozen({
         "sources": (
             "https://values.snap.com/privacy/transparency",
             "https://values.snap.com/privacy/transparency-h2-2023",
@@ -532,7 +551,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "https://www.snap.com/en-US/privacy/transparency/2020-6-30",
             "https://www.snap.com/en-US/privacy/transparency/2019-12-31",
         ),
-        "features": {
+        "features": frozen({
             "data": None,
             "history": "page archive",
             "terms": ("child sexual exploitation and abuse imagery",),
@@ -540,9 +559,9 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "granularity": "H",
             "frequency": "H",
             "coverage": "2019 H2",
-        },
+        }),
         "columns": ("pieces", "accounts", "reports"),
-        "schema": {"accounts": "float"},
+        "schema": frozen({"accounts": "float"}),
         "rows": (
             # fmt: off
             {"2023 H2": (1_046_296, 343_865, 398_736)},
@@ -565,17 +584,17 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "* CSAM accounts enforced EU 10,667; NorthAm 12,397; RestWorld 11,766",
             "* total accounts enforced EU 366,609; NorthAm 730,147; RestWorld 258,407",
         ),
-    },
-    # ==================================================================================
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Telegram": None,
-    # ==================================================================================
-    "TikTok": {
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "TikTok": frozen({
         "sources": (
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-4/",
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-3/",
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-2/",
         ),
-        "features": {
+        "features": frozen({
             "data": "csv",
             "history": "page archive",
             "terms": ("sexual exploitation of minors", "CSAM", "youth exploitation and abuse"),
@@ -583,7 +602,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "granularity": "Q",
             "frequency": "Q",
             "coverage": "2022 Q1",
-        },
+        }),
         "comments": (
             "The current version of TikTok's disclosures contains two category shares",
             "for 'Youth Exploitation & Abuse', one relative to the Safety & Civility",
@@ -602,20 +621,20 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "videos removed by automation",
             "videos restored",
         ),
-        "schema": {
+        "schema": frozen({
             "share of policy category (Youth Exploitation & Abuse)": "float",
             "proactive removal rate (Youth Exploitation & Abuse)": "float",
             "removal rate before any views (Youth Exploitation & Abuse)": "float",
             "removal rate within 24 hours (Youth Exploitation & Abuse)": "float",
             "share of total removals (Safety & Civility)": "float",
-        },
-        "products": {
+        }),
+        "products": frozen({
             "pieces": (
                 "share of policy category (Youth Exploitation & Abuse)",
                 "share of total removals (Safety & Civility)",
                 "total videos removed",
             ),
-        },
+        }),
         "rows": (
             # fmt: off
             {"2023 Q4": (0.232, 0.981, 0.781, 0.902, 0.135, 176_461_963, 128_300_584, 8_038_106)},
@@ -624,9 +643,9 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2023 Q1": (None,  None,  None,  None,  None,   91_003_510,  53_494_911, None     )},
             # fmt: on
         ),
-    },
-    # ----------------------------------------------------------------------------------
-    "TikTok (original schema)": {
+    }),
+    # ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    "TikTok (original schema)": frozen({
         "comments": [
             "TikTok reorganized its classification of violative behaviors",
             "for Q2 2023. While the firm claims that doing so 'added granularity,'",
@@ -651,13 +670,13 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "removal rate before any views (human moderation)",
             "proactive removal rate (human moderation)",
         ),
-        "schema": {
+        "schema": frozen({
             "category share (human moderation)": "float",
             "minor safety category share of total": "float",
             "removal rate within 24 hours (human moderation)": "float",
             "removal rate before any views (human moderation)": "float",
             "proactive removal rate (human moderation)": "float",
-        },
+        }),
         "rows": (
             # fmt: off
             {"2023 Q1": (None, 0.023, 0.306, 53_494_911, 91_003_510, 0.869, 0.784, 0.927)},
@@ -667,13 +686,13 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2022 Q1": (None, 0.019, 0.417, 34_726_592, 102_305_516, 0.903, 0.825, 0.906)},
             # fmt: on
         ),
-    },
-    # ==================================================================================
-    "Tumblr": {
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Tumblr": frozen({
         "sources": ("https://www.tumblr.com/transparency",),
-    },
-    # ==================================================================================
-    "Twitch": {
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Twitch": frozen({
         "sources": (
             "https://safety.twitch.tv/s/article/H1-2023-Transparency-Report",
             "https://safety.twitch.tv/s/article/H2-2022-Transparency-Report",
@@ -682,7 +701,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "https://safety.twitch.tv/s/article/Transparency-Reports#5H12021TransparencyReport",
             "https://safety.twitch.tv/s/article/Transparency-Reports#62020TransparencyReport",
         ),
-        "features": {
+        "features": frozen({
             "data": None,
             "history": "page",
             "terms": ("youth safety", "child sexual exploitation and abuse"),
@@ -690,7 +709,13 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "granularity": "H",
             "frequency": "H",
             "coverage": "2020",
-        },
+        }),
+        "comments": (
+            "Twitch's data are marked as redundant because their report counts are",
+            "included with Amazon's yearly disclosures. For years where NCMEC breaks",
+            "out Twitch from Amazon, Twitch's report counts appear to be more accurate",
+            "than those of Amazon.",
+        ),
         "columns": ("reports",),
         "rows": (
             # fmt: off
@@ -703,14 +728,14 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2020 H1": (812,), "redundant": True},
             # fmt: on
         ),
-    },
-    # ==================================================================================
-    "Twitter": {
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Twitter": frozen({
         "sources": (
             "https://transparency.twitter.com",
             "https://blog.twitter.com/en_us/topics/company/2023/an-update-on-twitter-transparency-reporting",
         ),
-        "features": {
+        "features": frozen({
             "data": None,
             "history": "same page (dropdown)",
             "terms": ("child sexual exploitation",),
@@ -718,7 +743,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "granularity": "H",
             "frequency": "H",
             "coverage": "2018 H2 - 2022 H1",
-        },
+        }),
         "comments": ("CSV download feature does not work in any browser",),
         "columns": (
             "accounts actioned",
@@ -737,32 +762,32 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2018 H2": (457_231, 455_651, 2_777)},
             # fmt: on
         ),
-    },
-    # ==================================================================================
-    "WhatsApp": {
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "WhatsApp": frozen({
         "sources": (
             "https://www.whatsapp.com/legal/california-privacy-notice/transparency-report/",
         ),
         "comments": (
             "That appears to be the only transparency report WhatsApp ever released, as in 1.",
         ),
-    },
-    # ==================================================================================
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Wikimedia": None,
-    # ==================================================================================
-    "Wordpress": {
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Wordpress": frozen({
         "sources": ("https://transparency.automattic.com",),
-    },
-    # ==================================================================================
-    "X": {
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "X": frozen({
         "brands": ("Twitter",),
-    },
-    # ==================================================================================
-    "YouTube": {
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "YouTube": frozen({
         "sources": (
             "https://transparencyreport.google.com/child-sexual-abuse-material/",
         ),
-        "features": {
+        "features": frozen({
             "data": None,
             "history": "same page (dropdown)",
             "terms": ("CSAM",),
@@ -770,7 +795,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "granularity": "H",
             "frequency": "H",
             "coverage": "2020 H1",
-        },
+        }),
         "columns": ("pieces", "reports"),
         "rows": (
             # fmt: off
@@ -784,9 +809,9 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2020 H1": (71_954, 69_961)},
             # fmt: on
         ),
-    },
-    # ==================================================================================
-    "NCMEC": {
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "NCMEC": frozen({
         "sources": (
             "https://www.missingkids.org/content/dam/missingkids/pdfs/2019-reports-by-esp.pdf",
             "https://www.missingkids.org/content/dam/missingkids/pdfs/2020-reports-by-esp.pdf",
@@ -796,7 +821,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "https://www.missingkids.org/content/dam/missingkids/pdfs/2021-notifications-by-ncmec-per-esp.pdf",
             "https://www.missingkids.org/content/dam/missingkids/pdfs/2022-notifications-by-ncmec-per-esp.pdf",
         ),
-        "features": {
+        "features": frozen({
             "data": None,
             "history": "page archive",
             "terms": ("CSAM",),
@@ -804,7 +829,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "granularity": "Y",
             "frequency": "Y",
             "coverage": "2019",
-        },
+        }),
         "comments": (
             "reports: number of reports *received* by NCMEC from a platform",
             "notifications_sent: number of hosted CSAM notices *sent* by NCMEC",
@@ -819,10 +844,10 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             "notifications_sent",
             "response_time",
         ),
-        "schema": {
+        "schema": frozen({
             "platform": "string",
             "response_time": "float"
-        },
+        }),
         "rows": (
             # fmt: off
             {"2019": ("Alphabet", 449_283, None, None)},
@@ -832,6 +857,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2019": ("Aylo", None, None, None)},
             {"2019": ("Discord", 19_480, None, None)},
             {"2019": ("Facebook", None, None, None)},
+            {"2019": ("GitHub", 2, None, None)},
             {"2019": ("Google", None, None, None)},
             {"2019": ("Instagram", None, None, None)},
             {"2019": ("LinkedIn", 88, None, None)},
@@ -856,7 +882,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2019": ("YouTube", None, None, None)},
             {"2019": ("ESP Total", 16_836_694, None, None)},
             {"2019": ("Total", 16_987_361, None , None)},
-
+            # ───────────────────────────────────────────────────────
             {"2020": ("Alphabet", 546_704, None, None)},
             {"2020": ("Amazon", 2_235, None, None)},
             {"2020": ("Apple", 265, None, None)},
@@ -864,6 +890,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2020": ("Aylo", None, None, None)},
             {"2020": ("Discord", 15_324, None, None)},
             {"2020": ("Facebook", None, None, None)},
+            {"2020": ("GitHub", 2, None, None)},
             {"2020": ("Google", None, None, None)},
             {"2020": ("Instagram", None, None, None)},
             {"2020": ("LinkedIn", 60, None, None)},
@@ -888,7 +915,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2020": ("YouTube", None, None, None)},
             {"2020": ("ESP Total", 21_447_786, None, None)},
             {"2020": ("Total", 21_751_085, None, None)},
-
+            # ───────────────────────────────────────────────────────
             {"2021": ("Alphabet", 875_783, None, None)},
             {"2021": ("Amazon", 99, None, None)},
             {"2021": ("Amazon", 4, None, None)},
@@ -898,6 +925,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2021": ("Aylo", None, None, None)},
             {"2021": ("Discord", 29_606, 68, 3.21)},
             {"2021": ("Facebook", 22_118_952, 28, 7.27)},
+            {"2021": ("GitHub", 4, None, None)},
             {"2021": ("Google", None, 975, 6.77)},
             {"2021": ("Instagram", 3_393_654, 22, 4.45)},
             {"2021": ("LinkedIn", 110, None, None)},
@@ -928,7 +956,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2021": ("YouTube", None, 10, 2.2)},
             {"2021": ("ESP Total", 29_157_083, 75_038, 1.22)},
             {"2021": ("Total", 29_397_681, None, None)},
-
+            # ───────────────────────────────────────────────────────
             {"2022": ("Alphabet", 2_174_548, None, None)},
             {"2022": ("Amazon", 106, None, None)},
             {"2022": ("Amazon", 55_543, None, None)},
@@ -937,6 +965,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2022": ("Aylo", None, None, None)},
             {"2022": ("Discord", 169_800, 1_533, 4.7)},
             {"2022": ("Facebook", 21_165_208, 10, 4.4)},
+            {"2022": ("GitHub", 6, None, None)},
             {"2022": ("Google", None, 916, 4.2)},
             {"2022": ("Instagram", 5_007_902, 13, 3.7)},
             {"2022": ("LinkedIn", 201, None, None)},
@@ -968,7 +997,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2022": ("YouTube", None, 14, 3.6)},
             {"2022": ("ESP Total", 31_802_525, 80_969, None)},
             {"2022": ("Total", 32_059_029, None, None)},
-
+            # ───────────────────────────────────────────────────────
             {"2023": ("Alphabet", 1_470_958, None, None)},
             {"2023": ("Amazon", 197, None, None)},
             {"2023": ("Amazon", 25_497, None, None)},
@@ -980,6 +1009,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2023": ("Discord", 339_412, None, None)},
             {"2023": ("Facebook", 17_838_422, None, None)},
             {"2023": ("Google", None, None, None)},
+            {"2023": ("GitHub", 1, None, None)},
             {"2023": ("Instagram", 11_430_007, None, None)},
             {"2023": ("LinkedIn", 209, None, None)},
             {"2023": ("Meta", None, None, None)},
@@ -1010,5 +1040,5 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = {
             {"2023": ("Total", 36_210_368, None, None)},
             # fmt: on
         ),
-    },
-}
+    }),
+})

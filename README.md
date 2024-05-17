@@ -22,7 +22,7 @@ to tidy up such data.
 
 ### Dataset 1: CyberTipline Reports per Year (1998 onward)
 
-The [CyberTipline reports per year](data/csam-reports-per-year.csv) dataset
+The [CyberTipline reports per year](data/ocse-reports-per-year.csv) dataset
 captures the number of reports NCMEC received on its CyberTipline since
 inception in March 1998, largely based on the table included in Appendix A of
 its [CY 2022 Report to the Committee on
@@ -33,8 +33,8 @@ Department of Justice.
 
 ### Dataset 2: CyberTipline Report Contents and Recipients (2020 onward)
 
-The CyberTipline report [contents](data/csam-report-contents.csv) and
-[recipients](data/csam-report-recipients.csv) dataset breaks down the reports
+The CyberTipline report [contents](data/ocse-report-contents.csv) and
+[recipients](data/ocse-report-recipients.csv) dataset breaks down the reports
 NCMEC received by:
 
   * the category of sexual exploitation, e.g., whether a report concerns child
@@ -61,7 +61,7 @@ Prevention at the Department of Justice.
 
 ### Dataset 3: CyberTipline Reports per Platform (2019 onward)
 
-The [CyberTipline reports per platform](data/csam-reports-per-platform.json)
+The [CyberTipline reports per platform](data/ocse-reports-per-platform.json)
 dataset is the main dataset provided by this repository. It collects:
 
   * the CSAM disclosures by major non-Chinese social networks;
@@ -132,7 +132,7 @@ collects all of a platform's quantitative disclosures within one table:
 
 ### Dataset 4: CyberTipline Reports per Country (2019 onward)
 
-[CyberTipline reports per country](data/csam-reports-per-country.csv) collects
+[CyberTipline reports per country](data/ocse-reports-per-country.csv) collects
 NCMEC's per-country breakdown of CyberTipline reports for
 [2019](https://www.missingkids.org/content/dam/missingkids/pdfs/2019-cybertipline-reports-by-country.pdf),
 [2020](https://www.missingkids.org/content/dam/missingkids/pdfs/2020-reports-by-country.pdf),

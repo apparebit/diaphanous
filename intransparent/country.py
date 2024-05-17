@@ -347,7 +347,7 @@ def ingest_reports_per_country(
     if logger is None:
         logger = silent_logger
 
-    reports = read_reports(path / 'csam-reports-per-country.csv')
+    reports = read_reports(path / 'ocse-reports-per-country.csv')
     logger(reports, caption='reports')
 
     populations = read_populations(path / 'populations.csv')

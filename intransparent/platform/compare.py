@@ -10,7 +10,8 @@ def _components(p: pd.Period) -> tuple[pd.Period, int, int]:
 def _annualize(df: pd.DataFrame) -> pd.DataFrame:
     # If periods have uniform length, Pandas uses PeriodIndex and hence supports
     # expressions such as `df.index.year` that simplify aggregation by year.
-    # This function still works in the more general case.
+    # This function still works in the more general case where periods are not
+    # uniform.
     aux = pd.DataFrame.from_records(
         [_components(p) for p in df.index],
         index=df.index,
@@ -61,13 +62,15 @@ def compare_all_platform_reports(data: PlatformData) -> dict[str, pd.DataFrame]:
     """
     NCMEC = wide_ncmec_reports(data)
 
-    # Annualize all tables so that they have compatible indices
+    # Drop all redundant data
     nonredundant = (
         (p, t[~t["redundant"]] if "redundant" in t.columns else t)
         for p, t in data.disclosures.items()
         if t is not None and len(t) > 0
     )
 
+    # Annualize so that all data has same index. TODO: Also, for each column,
+    # knock out years with partial data.
     annualized = {
         p: _annualize(t.reindex(columns=["pieces", "reports"])).reindex(NCMEC.index)
         for p, t in nonredundant
