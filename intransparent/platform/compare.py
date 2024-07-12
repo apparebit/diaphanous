@@ -1,13 +1,14 @@
 import pandas as pd
 
-from .ingest import PlatformData, wide_ncmec_reports
+from .data import REPORTS_PER_PLATFORM
+from .ingest import ingest_table, PlatformData, wide_ncmec_reports
 
 
 def _components(p: pd.Period) -> tuple[pd.Period, int, int]:
     return pd.Period(p.year, freq='Y'), p.start_time.month, p.end_time.month
 
 
-def _annualize(df: pd.DataFrame) -> pd.DataFrame:
+def annualize(df: pd.DataFrame) -> pd.DataFrame:
     # If periods have uniform length, Pandas uses PeriodIndex and hence supports
     # expressions such as `df.index.year` that simplify aggregation by year.
     # This function still works in the more general case where periods are not
@@ -25,7 +26,7 @@ def _annualize(df: pd.DataFrame) -> pd.DataFrame:
     ].drop(columns=['start_month', 'end_month'])
 
 
-def _compare_platform_reports(
+def compare_platform_reports(
     platform: str, table: None | pd.DataFrame, NCMEC: pd.DataFrame
 ) -> pd.DataFrame:
     """
@@ -53,6 +54,21 @@ def _compare_platform_reports(
     return table
 
 
+def compare_twitch(data: PlatformData) -> pd.DataFrame:
+    twitch = annualize(
+        ingest_table('Twitch', REPORTS_PER_PLATFORM['Twitch'], include_redundant=True)
+        .drop(columns='redundant')
+        .reindex(columns=["pieces", "reports"])
+    )
+
+    NCMEC = wide_ncmec_reports(data)
+
+    twitch2 = data.disclosures['NCMEC']
+    NCMEC['Twitch'] = twitch2[twitch2['platform'] == 'Twitch']['reports']
+
+    return compare_platform_reports('Twitch', twitch, NCMEC)
+
+
 def compare_all_platform_reports(data: PlatformData) -> dict[str, pd.DataFrame]:
     """
     Create tables comparing platforms' disclosures with those of NCMEC for the
@@ -72,7 +88,7 @@ def compare_all_platform_reports(data: PlatformData) -> dict[str, pd.DataFrame]:
     # Annualize so that all data has same index. TODO: Also, for each column,
     # knock out years with partial data.
     annualized = {
-        p: _annualize(t.reindex(columns=["pieces", "reports"])).reindex(NCMEC.index)
+        p: annualize(t.reindex(columns=["pieces", "reports"])).reindex(NCMEC.index)
         for p, t in nonredundant
     }
 
@@ -93,12 +109,13 @@ def compare_all_platform_reports(data: PlatformData) -> dict[str, pd.DataFrame]:
 
         annualized[firm] = sum
 
+    # Perform actual comparisons
     comparisons = {}
     for platform in NCMEC.columns:
         if platform in ("NCMEC", "Telegram", "ESP Total", "Total"):
             continue
 
-        comparison = _compare_platform_reports(
+        comparison = compare_platform_reports(
             platform, annualized.get(platform), NCMEC
         )
         comparisons[platform] = comparison

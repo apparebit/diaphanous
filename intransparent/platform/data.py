@@ -184,6 +184,15 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "sources": (
             "https://transparencycenter.github.com/automated-detection/",
         ),
+        "features": frozen({
+            "data": None,
+            "history": "same page (dropdown)",
+            "terms": ("CSEAI",),
+            "quantities": "counts",
+            "granularity": "Y",
+            "frequency": "Y",
+            "coverage": "2021",
+        }),
         "columns": ("accounts", "reports"),
         "rows": (
             # fmt: off
@@ -415,6 +424,9 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         ),
         "rows": (
             # fmt: off
+            {"2023 Q4": (None, 7_089, 3_602_828, 1_163, 7_488, 4_237, 173_110, 27_499, 19_754, 78, 18, 3, 1)},
+            {"2023 Q3": (None, 5_489, 1_469_597, 2_246, 10_471, 318, 244_258, 65_254, 49_854, 73, 22, 4, 2)},
+            {"2023 H2": (16_234, None, None, None, None, None, None, None, None, None, None, None, None)},
             {"2023 Q2": (None, 9_691, 3_877_286, 1_071, 16_336, 48_039, 172_633, 20_136, 9_874, 83, 14, 2, 1)},
             {"2023 Q1": (None, 8_393, 1_846_326, 2_348, 23_479, 17_715, 63_761, 8_524, 3_925, 65, 26, 6, 3)},
             {"2023 H1": (34_203, None, None, None, None, None, None, None, None, None, None, None, None)},

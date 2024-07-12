@@ -27,7 +27,7 @@ log() {
 }
 
 prepare_figures() {
-    for name in meta reports platforms countries; do
+    for name in meta reports platforms countries continents; do
         rsvg-convert -f pdf -o "figure-${name}.pdf" "../figure/${name}.svg"
     done
 }
@@ -78,7 +78,9 @@ do_build() {
 }
 
 target=${1:-report}
-shift
+if [ $# -ne 0 ]; then
+    shift
+fi
 
 case $target in
     figure )

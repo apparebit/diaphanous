@@ -148,7 +148,7 @@ def _ingest_row(
     return (row_index, row_data)
 
 
-def _ingest_table(
+def ingest_table(
     platform: str, data: DisclosureType, include_redundant: bool = False
 ) -> pd.DataFrame:
     # Warm up.
@@ -297,7 +297,7 @@ def ingest_reports_per_platform(
 
         # Ingest table with platform's CSAM disclosures.
         logger("✅ {}", platform)
-        table = _ingest_table(platform, record, include_redundant=include_redundant)
+        table = ingest_table(platform, record, include_redundant=include_redundant)
 
         # Compute sums and products.
         table = _compute_columns(platform, record, table)

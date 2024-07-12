@@ -3,10 +3,6 @@
 \usepackage{graphicx}
 \usepackage{pifont}
 \usepackage{multirow}
-\usepackage{fontawesome5}
-
-\newcommand\ImageCheck{$\vcenter{\hbox{\scriptsize\faImage}}$}
-\newcommand\VideoCheck{\;$\vcenter{\hbox{\scriptsize\faVideo}}$}
 
 \newcommand\same{\multicolumn{1}{c}{$\equiv$}}
 \newcommand\missing{\multicolumn{1}{r}{??}}
@@ -21,8 +17,8 @@
 \begin{document}
 
 \title{Putting the Count Back Into Accountability}
-\subtitle{An Audit of Transparency Disclosures About the Sexual Exploitation of
-    Minors}
+\subtitle{An Audit of Social Media Transparency Disclosures,
+    Focusing on Sexual Exploitation of Minors}
 
 \author{Robert Grimm}
 \orcid{0000-0002-8300-2153}
@@ -35,65 +31,7 @@
 \email{rgrimm@alum.mit.edu}
 
 \begin{abstract}
-
-\hidden{
-This paper presents the results of a systematic audit of transparency
-disclosures by technology firms about the sexual exploitation of minors and by
-the US-based clearinghouse for mandatory incident reports. It combines a
-critical review of legal norms and their largely technology-based implementation
-with a \emph{quantitative} version of comparative analysis. The latter leverages
-redundant and repeated disclosures of the same metrics for validating their
-quantities. In particular, we compare statistics for reports sent by technology
-firms with those for reports received by the clearinghouse. We also compare
-statistics disclosed for one reporting period with the same statistics included
-with the data for the next reporting period. The critical review demonstrates
-that legal mandates are likely too broad and deprive (post)pubescent teenagers
-their autonomy, for example, when criminalizing even consensual sexting or
-private recordings made
-
-
-pubescent and
-postpubescent minors of autonomy , criminalizing behavior such as consensual sexting by teenagers
-that teenagers sexting consensually,
-
-
-
-While each individual comparison of
-two data points has only limited significance, the totality of comparisons
-exhibits distinct patterns that
-
-
-a reporting period with the same statistics
-disclosed
-
-
-
-legally required reports about such incidents.
-The audit combines a critical review of legal norms and their largely
-technology-based implementation with a \emph{quantitative} comparative analysis.
-The latter leverages redundant and repeated disclosures of the same metrics for
-validating their quantities. This paper applies two concrete of such
-\emph{scrappy audits}, comparing
-
-
-
-The latter is
-based on the observation that redundant and repeated disclosures of the same
-metrics should also result in the same quantities.
-
-
-
-technology firms that generate reports and
-the clearinghouse receiving such
-
-
-legally required reports of such incidents. Combining a
-critical review of legal norms in the United States
-
-
-
-
-    This paper explores a lightweight, quantitative audit methodology for
+This paper explores a lightweight, quantitative audit methodology for
 transparency disclosures called \emph{scrappy audits}. It amounts to little more
 than treating redundant and repeated disclosures as opportunities for validating
 quantities. The paper applies two concrete audits to social media disclosures
@@ -115,10 +53,7 @@ over the last decade. However, there also are strong indicators that current
 statistics, which treat all such material the same, are large and unhelpful
 overcounts. Notably, many technical violations of the law, e.g., teenagers
 sexting, are not necessarily grounded in actual harm to minors but still
-reported as such.}
-
-We have data on online child sexual exploitation.
-
+reported as such.
 \end{abstract}
 
 \begin{CCSXML}
@@ -155,98 +90,25 @@ Children, NCMEC, teenage sexting}
 Child sexual exploitation (CSE) has become a hotly debated topic over the last
 few years. There are the headlines in national newspapers announcing that ``the
 internet is overrun with images of child sexual abuse''~\cite{KellerDance2019},
-that ``Instagram connects vast pedophile network''~\cite{HorwitzBlunt2023}, and
-that ``AI is about to make the online child sex abuse problem much
-worse''\hidden{~\cite{Remus2024}}. There is the hearing by the Senate Judiciary
-Committee on ``big tech and the online child sexual exploitation crisis''
-featuring the CEOs of Discord, Meta, Snap, TikTok, and X née
-Twitter~\cite{Durbin2024}. There also are the Qanon adherents and Moms for
-Liberty mobilizing to ``\#SaveTheChildren'' while maligning pretty much everyone
-else, particularly LGBT folk, as
-``groomers''~\cite{BuntainBarlowea2022,MartinyLawrence2023}.
+``Instagram connects vast pedophile network''~\cite{HorwitzBlunt2023}, and ``AI
+is about to make the online child sex abuse problem much
+worse''~\cite{remus2024}. There is the hearing by the Senate Judiciary Committee
+on ``big tech and the online child sexual exploitation crisis'' featuring the
+CEOs of Discord, Meta, Snap, TikTok, and X née Twitter~\cite{Durbin2024}. There
+also are the Moms for Liberty, Qanon adherents, and Proud Boys mobilizing to
+``\#SaveTheChildren'' while maligning everyone else, particularly LGBT folk, as
+``pedos'' or ``groomers''\footnote{Yet the Proud Boys' most visible sartorial
+choice, a certain Fred Perry polo shirt, has long been a staple for members of
+Europe's gay leather and fetish subculture. When Fred Perry learned of the Proud
+Boys' penchant for its wares, the firm publicly acknowledged the shirt's role as
+``British subcultural uniform,'' emphasized that its brand stands for
+``inclusivity, diversity, and independence,'' and halted sales of the shirt in
+North
+America~\cite{FredPerry2020}.}~\cite{BuntainBarlowea2022,MartinyLawrence2023}.
 
-Despite all their substantial differences, the examples share the urgent
-emotional appeal and a strong othering effect---though they cannot agree on the
-identity of that other, alternately pointing at a vast pedophile network, AI,
-big tech, or groomers. Even if we are inclined to dismiss Qanon and Moms for
-Liberty for compounding the exploitation of children by exploiting the issue for
-their own gains, journalists' and politicians' sensationalism raises
-uncomfortable questions about what is fact and what is, maybe not fiction, but
-at least exaggeration.
-
-Unfortunately, many experts seem to
-
-
-exploiting the issue of child sexual exploitation
-
-
-abusing the issue of child exp for their own gain
-
-
-\hidden{
-Remarkably, professional journalists, politicians, lawyers, as well as
-activists, conspiracy theorists, and extremists seemingly agree that we are
-facing a deluge of child sexual exploitation, especially online. They may not
-agree on the primary threat, alternately pointing at some ``vast pedophile
-network,'' ``AI,'' ``big tech,'' or ``groomers.'' But they do share an urgent
-and very much emotional appeal.
-
-But false accusations of child sexual exploitation have long been used as an
-instrument of oppression against sexual minorities. For example, conservative
-Catholics have spent millions of dollars on location data, with the goal of
-unmasking gay priests and seminary members. The full impact of their campaign is
-not known. They did succeed in forcing the resignation of the to the American
-Bishops' Conference. The group's statements as well as those of commentators are
-full of disclaimers that this is not rooted in homophobia and does not
-discriminate, only to repeat the most insulting stereotypes of gay men in the
-next sentence.
-
-This article explores the question what data do we have on online CSE, how
-accurate is that data, and what does the data tell us about CSE. Answering
-these questions requires mixed methods, namely a critical review of the legal
-
-
-
-
-
-Common to all examples are an urgent emotional appeal and a threatening Other.
-Though they cannot agree whether that Other is a ``vast pedophile network,''
-``AI,'' ``big tech,'' or ``groomers.''
-
-
-The emotional appeal and threat of Other have clear benefits for the ones making
-them: The appeal attracts readers, voters, adherents, donors and the threat of
-the Other keeps them engaged. But
-
-
-
-
-There is no shortage of people claiming that child sexual exploitation is
-
-
-
-
-There is no shortage of people claiming that we are fa child sexual
-exploitation (CSE)
-
-
-
-
-
-
-Remarkably, the journalists, politicians, activists, conspiracy theorists, and
-far-right extremists in these examples
-
-
-
-While some tipline workers and police suspect that social media are complicit
-with OCSE, the fact that many firms scan proactively and have developed their
-own technologies demonstrates that this is not the case. In particular, both
-Meta and Google have consistently worked to protect children. In fact, Meta had
-two employees serve as board members for NCMEC, until an apparent fight about
-end-to-end encryption resulted in
-
-
+The remarkable part about these examples is that, despite the many substantial
+differences, the journalists, politicians, activists, conspiracy theorists,
+and far-right extremists all make an urgent emotional appeal and
 
 
 Remarkably, the journalists, politicians, activists, conspiracy theorists, and
@@ -352,7 +214,12 @@ Notably,  it leverages redundant and repeated disclosures of the same data
 points to ascertain the accuracy of transparency data. In isolation, the
 magnitude of the difference between two such values supports
 
-}
+
+
+
+
+
+
 
 
 
@@ -367,7 +234,7 @@ their quantities, and seeks to answer the following research questions:
 
 \begin{enumerate}
 \item What is the extent of technology firms' transparency disclosures?
-\item How accurate are disclosed transparency data?
+\item How accurate is disclosed transparency data?
 \item What does the data imply about online child sexual exploitation?
 \end{enumerate}
 
@@ -582,60 +449,47 @@ Year
 & \multicolumn{1}{c}{of (\%)}
 & \multicolumn{1}{c}{Total}\\[2ex]
 
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{Meta (Q\;\ImageCheck\VideoCheck)}}} & & & & \\ \cmidrule{2-4}
+& \multicolumn{3}{c}{\textsc{\MakeLowercase{Meta (Q)}}} & & & & \\ \cmidrule{2-4}
 \color{lowlight} 2019 &  39,368,400 &   2.48 &            &         & 15,884,511 & 93.508 & \color{lowlight} 16,987,361 \\
 \color{lowlight} 2020 &  38,890,800 &   1.92 &            &         & 20,307,216 & 93.362 & \color{lowlight} 21,751,085 \\
 \color{lowlight} 2021 &  78,012,400 &   2.90 &            &         & 26,885,302 & 91.454 & \color{lowlight} 29,397,681 \\
 \color{lowlight} 2022 & 105,800,000 &   3.89 &            &         & 27,190,665 & 84.814 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &  63,300,000 &   2.07 &            &         & 30,658,047 & 84.666 & \color{lowlight} 36,210,368 \\
-\addlinespace
+\color{lowlight} 2023 &  63,300,000 &   2.07 &            &         & 30,658,047 & 84.666 & \color{lowlight} 36,210,368 \\[2ex]
 
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{Google (H\;\ImageCheck\VideoCheck)}}} & & & & \\ \cmidrule{2-4}
+& \multicolumn{3}{c}{\textsc{\MakeLowercase{Google (H)}}} & & & & \\ \cmidrule{2-4}
 \color{lowlight} 2019 &             &        &            &         &    449,283 &  2.645 & \color{lowlight} 16,987,361 \\
 \color{lowlight} 2020 &   4,437,853 &   8.10 &    547,875 &   -0.21 &    546,704 &  2.513 & \color{lowlight} 21,751,085 \\
 \color{lowlight} 2021 &   6,696,497 &   7.69 &    870,319 &   +0.64 &    875,783 &  2.979 & \color{lowlight} 29,397,681 \\
 \color{lowlight} 2022 &  13,402,885 &   6.16 &  2,174,319 &   +0.01 &  2,174,548 &  6.783 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &   7,955,169 &   5.40 &  1,472,221 &   -0.09 &  1,470,958 &  4.062 & \color{lowlight} 36,210,368 \\
-\addlinespace
+\color{lowlight} 2023 &    \missing &        &   \missing &         &  1,470,958 &  4.062 & \color{lowlight} 36,210,368 \\[2ex]
 
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{X née Twitter (H\;\ImageCheck\VideoCheck)}}} & & & & \\ \cmidrule{2-4}
+& \multicolumn{3}{c}{\textsc{\MakeLowercase{X née Twitter (H)}}} & & & & \\ \cmidrule{2-4}
 \color{lowlight} 2019 &             &        &           &          &     45,726 &  0.269 & \color{lowlight} 16,987,361 \\
 \color{lowlight} 2020 &             &        &           &          &     65,062 &  0.299 & \color{lowlight} 21,751,085 \\
 \color{lowlight} 2021 &             &        &           &          &     86,666 &  0.295 & \color{lowlight} 29,397,681 \\
 \color{lowlight} 2022 &             &        &           &          &     98,050 &  0.306 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &             &        &           &          &    870,503 &  2.404 & \color{lowlight} 36,210,368 \\
-\addlinespace
+\color{lowlight} 2023 &             &        &           &          &    870,503 &  2.404 & \color{lowlight} 36,210,368 \\[2ex]
 
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{Snap (H\;\ImageCheck\VideoCheck)}}} & & & & \\ \cmidrule{2-4}
+& \multicolumn{3}{c}{\textsc{\MakeLowercase{Snap (H)}}} & & & & \\ \cmidrule{2-4}
 \color{lowlight} 2019 &             &        &            &         &     82,030 &  0.483 & \color{lowlight} 16,987,361 \\
 \color{lowlight} 2020 &             &        &            &         &    144,095 &  0.662 & \color{lowlight} 21,751,085 \\
 \color{lowlight} 2021 &             &        &            &         &    512,522 &  1.743 & \color{lowlight} 29,397,681 \\
 \color{lowlight} 2022 &   1,273,838 &   2.31 &    550,755 &   +0.06 &    551,086 &  1.719 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &   1,594,805 &   2.31 &    691,225 &   +3.16 &    713,055 &  1.969 & \color{lowlight} 36,210,368 \\
-\addlinespace
+\color{lowlight} 2023 &    \missing &        &   \missing &         &    713,055 &  1.969 & \color{lowlight} 36,210,368 \\[2ex]
 
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{TikTok (Q\;\ImageCheck\VideoCheck)}}} & & & & \\ \cmidrule{2-4}
+& \multicolumn{3}{c}{\textsc{\MakeLowercase{TikTok (Q)}}} & & & & \\ \cmidrule{2-4}
 \color{lowlight} 2019 &             &        &           &          &        596 &  0.004 & \color{lowlight} 16,987,361 \\
 \color{lowlight} 2020 &             &        &           &          &     22,692 &  0.104 & \color{lowlight} 21,751,085 \\
 \color{lowlight} 2021 &             &        &           &          &    154,618 &  0.526 & \color{lowlight} 29,397,681 \\
 \color{lowlight} 2022 &             &        &           &          &    288,125 &  0.899 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 & 107,418,328 & 181.95 &           &          &    590,376 &  1.630 & \color{lowlight} 36,210,368 \\
-\addlinespace
+\color{lowlight} 2023 & 107,418,328 & 181.95 &           &          &    590,376 &  1.630 & \color{lowlight} 36,210,368 \\[2ex]
 
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{Discord (Q\;\ImageCheck)}}} & & & & \\ \cmidrule{2-4}
+& \multicolumn{3}{c}{\textsc{\MakeLowercase{Discord (Q)}}} & & & & \\ \cmidrule{2-4}
 \color{lowlight} 2019 &             &        &           &          &     19,480 &  0.115 & \color{lowlight} 16,987,361 \\
 \color{lowlight} 2020 &             &        &           &          &     15,324 &  0.071 & \color{lowlight} 21,751,085 \\
 \color{lowlight} 2021 &             &        &    24,623 &   +20.24 &     29,606 &  0.101 & \color{lowlight} 29,397,681 \\
-\color{lowlight} 2022 &             &        &\bf 58,179 &\bf+191.86&\bf 169,800 &  0.530 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &             &        &\bf164,478 &\bf+106.36&\bf 339,412 &  0.937 & \color{lowlight} 36,210,368 \\
-\addlinespace
-
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{Reddit (H\;\ImageCheck\VideoCheck)}}} & & & & \\ \cmidrule{2-4}
-\color{lowlight} 2019 &             &        &        724 &   \same &        724 &  0.004 & \color{lowlight} 16,987,361 \\
-\color{lowlight} 2020 &             &        &      2,233 &   \same &      2,233 &  0.010 & \color{lowlight} 21,751,085 \\
-\color{lowlight} 2021 &       9,258 &   0.92 &     10,059 &   \same &     10,059 &  0.034 & \color{lowlight} 29,397,681 \\
-\color{lowlight} 2022 &      80,888 &   1.54 &     52,592 &   \same &     52,592 &  0.164 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &             &        &    290,121 &   +0.01 &    290,141 &  0.801 & \color{lowlight} 36,210,368 \\
+\color{lowlight} 2022 &             &        &    58,179 &  +191.86 &    169,800 &  0.530 & \color{lowlight} 32,059,029 \\
+\color{lowlight} 2023 &             &        &   164,478 &  +106.36 &    339,412 &  0.937 & \color{lowlight} 36,210,368 \\
 
 \bottomrule
 \end{tabular}
@@ -663,60 +517,47 @@ Year
 & \multicolumn{1}{c}{of (\%)}
 & \multicolumn{1}{c}{Total}\\[2ex]
 
+& \multicolumn{3}{c}{\textsc{\MakeLowercase{Reddit (H)}}} & & & & \\ \cmidrule{2-4}
+\color{lowlight} 2019 &             &        &        724 &   \same &        724 &  0.004 & \color{lowlight} 16,987,361 \\
+\color{lowlight} 2020 &             &        &      2,233 &   \same &      2,233 &  0.010 & \color{lowlight} 21,751,085 \\
+\color{lowlight} 2021 &       9,258 &   0.92 &     10,059 &   \same &     10,059 &  0.034 & \color{lowlight} 29,397,681 \\
+\color{lowlight} 2022 &      80,888 &   1.54 &     52,592 &   \same &     52,592 &  0.164 & \color{lowlight} 32,059,029 \\
+\color{lowlight} 2023 &    \missing &        &   \missing &         &    290,141 &  0.801 & \color{lowlight} 36,210,368 \\[2ex]
+
 & \multicolumn{3}{c}{\textsc{\MakeLowercase{Omegle}}} & & & & \\ \cmidrule{2-4}
 \color{lowlight} 2019 &             &        &           &          &      3,470 &  0.020 & \color{lowlight} 16,987,361 \\
 \color{lowlight} 2020 &             &        &           &          &     20,265 &  0.093 & \color{lowlight} 21,751,085 \\
 \color{lowlight} 2021 &             &        &           &          &     46,924 &  0.160 & \color{lowlight} 29,397,681 \\
 \color{lowlight} 2022 &             &        &           &          &    608,601 &  1.898 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &             &        &           &          &    188,102 &  0.520 & \color{lowlight} 36,210,368 \\
-\addlinespace
+\color{lowlight} 2023 &             &        &           &          &    188,102 &  0.520 & \color{lowlight} 36,210,368 \\[2ex]
 
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{Microsoft (H\;\ImageCheck\VideoCheck)}}} & & & & \\ \cmidrule{2-4}
+& \multicolumn{3}{c}{\textsc{\MakeLowercase{Microsoft (H)}}} & & & & \\ \cmidrule{2-4}
 \color{lowlight} 2019 &             &        &            &         &    123,927 &  0.730 & \color{lowlight} 16,987,361 \\
 \color{lowlight} 2020 &   1,256,652 &  13.03 &     96,435 &   +0.42 &     96,836 &  0.445 & \color{lowlight} 21,751,085 \\
 \color{lowlight} 2021 &     564,383 &   7.12 &     78,926 &   -0.05 &     78,883 &  0.268 & \color{lowlight} 29,397,681 \\
 \color{lowlight} 2022 &     452,384 &   4.22 &    107,599 &   +1.11 &    108,798 &  0.339 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &    \missing &        &   \missing &         &    141,236 &  0.390 & \color{lowlight} 36,210,368 \\
-\addlinespace
+\color{lowlight} 2023 &    \missing &        &   \missing &         &    141,236 &  0.390 & \color{lowlight} 36,210,368 \\[2ex]
 
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{Pinterest (Q/H\;\ImageCheck\VideoCheck)}}} & & & & \\ \cmidrule{2-4}
+& \multicolumn{3}{c}{\textsc{\MakeLowercase{Pinterest (Q/H)}}} & & & & \\ \cmidrule{2-4}
 \color{lowlight} 2019 &             &        &            &         &      7,360 &  0.043 & \color{lowlight} 16,987,361 \\
 \color{lowlight} 2020 &             &        &      3,432 &   \same &      3,432 &  0.016 & \color{lowlight} 21,751,085 \\
 \color{lowlight} 2021 &       1,608 &   0.60 &      2,684 &  -14.94 &      2,283 &  0.008 & \color{lowlight} 29,397,681 \\
 \color{lowlight} 2022 &      37,136 &   1.13 &     32,964 &   +4.08 &     34,310 &  0.107 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &      57,774 &   1.15 &     50_437 &   +3.81 &     52,356 &  0.145 & \color{lowlight} 36,210,368 \\
-\addlinespace
+\color{lowlight} 2023 &    \missing &        &   \missing &         &     52,356 &  0.145 & \color{lowlight} 36,210,368 \\[2ex]
 
 & \multicolumn{3}{c}{\textsc{\MakeLowercase{Amazon (Y)}}} & & & & \\ \cmidrule{2-4}
 \color{lowlight} 2019 &             &        &           &          &        549 &  0.003 & \color{lowlight} 16,987,361 \\
 \color{lowlight} 2020 &             &        &     2,235 &    \same &      2,235 &  0.010 & \color{lowlight} 21,751,085 \\
 \color{lowlight} 2021 &      27,244 &   0.81 &    33,848 &    -0.04 &     33,833 &  0.116 & \color{lowlight} 29,397,681 \\
 \color{lowlight} 2022 &      52,656 &   0.79 &    67,073 &    +4.60 &     70,157 &  0.220 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &      24,756 &   0.79 &    31,281 &    +3.45 &     32,359 &  0.090 & \color{lowlight} 36,210,368 \\
-\addlinespace
+\color{lowlight} 2023 &      24,756 &   0.79 &    31,281 &    +3.45 &     32,359 &  0.090 & \color{lowlight} 36,210,368 \\[2ex]
 
 & \multicolumn{3}{c}{\textsc{\MakeLowercase{Automattic}}} & & & & \\ \cmidrule{2-4}
 \color{lowlight} 2019 &             &        &           &          &     10,443 &  0.062 & \color{lowlight} 16,987,361 \\
 \color{lowlight} 2020 &             &        &           &          &      9,130 &  0.042 & \color{lowlight} 21,751,085 \\
 \color{lowlight} 2021 &             &        &           &          &      4,821 &  0.016 & \color{lowlight} 29,397,681 \\
 \color{lowlight} 2022 &             &        &           &          &      5,035 &  0.016 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &             &        &           &          &     19,591 &  0.054 & \color{lowlight} 36,210,368 \\
-
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{Quora}}} & & & & \\ \cmidrule{2-4}
-\color{lowlight} 2019 &             &        &           &          &     10,443 &  0.062 & \color{lowlight} 16,987,361 \\
-\color{lowlight} 2020 &             &        &           &          &      9,130 &  0.042 & \color{lowlight} 21,751,085 \\
-\color{lowlight} 2021 &             &        &           &          &      4,821 &  0.016 & \color{lowlight} 29,397,681 \\
-\color{lowlight} 2022 &             &        &           &          &      5,035 &  0.016 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &             &        &           &          &     19,591 &  0.054 & \color{lowlight} 36,210,368 \\
-\addlinespace
-
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{Aylo née MindGeek (H\;\ImageCheck\VideoCheck)}}} & & & & \\ \cmidrule{2-4}
-\color{lowlight} 2019 &             &        &           &          &            &        & \color{lowlight} 16,987,361 \\
-\color{lowlight} 2020 &             &        & \bf 4,171 &\bf+217.17& \bf 13,229 &  0.062 & \color{lowlight} 21,751,085 \\
-\color{lowlight} 2021 &      20,401 &   2.26 &     9,029 &    +0.82 &      9,103 &  0.031 & \color{lowlight} 29,397,681 \\
-\color{lowlight} 2022 &       9,588 &   4.80 &     1,996 &    +4.96 &      2,095 &  0.007 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &       7,313 &   2.92 &     2,503 &    +3.72 &      2,596 &  0.007 & \color{lowlight} 36,210,368 \\
-\addlinespace
+\color{lowlight} 2023 &             &        &           &          &     19,591 &  0.054 & \color{lowlight} 36,210,368 \\[2ex]
 
 \bottomrule
 \end{tabular}
@@ -744,15 +585,28 @@ Year
 & \multicolumn{1}{c}{of (\%)}
 & \multicolumn{1}{c}{Total}\\[2ex]
 
+& \multicolumn{3}{c}{\textsc{\MakeLowercase{Quora}}} & & & & \\ \cmidrule{2-4}
+\color{lowlight} 2019 &             &        &           &          &     10,443 &  0.062 & \color{lowlight} 16,987,361 \\
+\color{lowlight} 2020 &             &        &           &          &      9,130 &  0.042 & \color{lowlight} 21,751,085 \\
+\color{lowlight} 2021 &             &        &           &          &      4,821 &  0.016 & \color{lowlight} 29,397,681 \\
+\color{lowlight} 2022 &             &        &           &          &      5,035 &  0.016 & \color{lowlight} 32,059,029 \\
+\color{lowlight} 2023 &             &        &           &          &     19,591 &  0.054 & \color{lowlight} 36,210,368 \\[2ex]
+
+& \multicolumn{3}{c}{\textsc{\MakeLowercase{Aylo (H)}}} & & & & \\ \cmidrule{2-4}
+\color{lowlight} 2019 &             &        &           &          &            &        & \color{lowlight} 16,987,361 \\
+\color{lowlight} 2020 &             &        &     4,171 &  +217.17 &     13,229 &  0.062 & \color{lowlight} 21,751,085 \\
+\color{lowlight} 2021 &      20,401 &   2.26 &     9,029 &    +0.82 &      9,103 &  0.031 & \color{lowlight} 29,397,681 \\
+\color{lowlight} 2022 &       9,588 &   4.80 &     1,996 &    +4.96 &      2,095 &  0.007 & \color{lowlight} 32,059,029 \\
+\color{lowlight} 2023 &       7,313 &   2.92 &     2,503 &    +3.72 &      2,596 &  0.007 & \color{lowlight} 36,210,368 \\[2ex]
+
 & \multicolumn{3}{c}{\textsc{\MakeLowercase{Apple}}} & & & & \\ \cmidrule{2-4}
 \color{lowlight} 2019 &             &        &           &          &        205 & 1.2e-3 & \color{lowlight} 16,987,361 \\
 \color{lowlight} 2020 &             &        &           &          &        265 & 1.2e-3 & \color{lowlight} 21,751,085 \\
 \color{lowlight} 2021 &             &        &           &          &        160 & 5.5e-4 & \color{lowlight} 29,397,681 \\
 \color{lowlight} 2022 &             &        &           &          &        234 & 7.4e-4 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &             &        &           &          &        267 & 7.4e-4 & \color{lowlight} 36,210,368 \\
-\addlinespace
+\color{lowlight} 2023 &             &        &           &          &        267 & 7.4e-4 & \color{lowlight} 36,210,368 \\[2ex]
 
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{Wikimedia (\ImageCheck)}}} & & & & \\ \cmidrule{2-4}
+& \multicolumn{3}{c}{\textsc{\MakeLowercase{Wikimedia}}} & & & & \\ \cmidrule{2-4}
 \color{lowlight} 2019 &             &        &           &          &         13 & 7.7e-5 & \color{lowlight} 16,987,361 \\
 \color{lowlight} 2020 &             &        &           &          &         11 & 5.1e-5 & \color{lowlight} 21,751,085 \\
 \color{lowlight} 2021 &             &        &           &          &          8 & 2.7e-5 & \color{lowlight} 29,397,681 \\
@@ -775,18 +629,6 @@ nonzero minimum for the y-axis obscures the curves for Apple and Wikimedia. The
 three tables present firms in decreasing order of their CyberTipline report
 counts for 2023. That also is the labelling order for curves in the figure.
 
-\begin{figure}
-\centering\libertineLF
-\includegraphics[
-    scale=0.6,
-    alt={}
-]{figure-platforms}
-\caption{CyberTipline reports per corporation and year above a threshold of
- 1,800 on a log scale (NCMEC)}
-\Description{Line graph showing reports per year.}
-\label{fig:reports-by-corp}
-\end{figure}
-
 The derived \emph{pieces per report} metric in the middle column for technology
 firm uses corporations' own piece counts as numerators and report counts as
 denominators, with the latter falling back onto NCMEC's report counts otherwise.
@@ -806,6 +648,19 @@ NCMEC during a given year. Hence, they are not the same as those included in
 NCMEC's tabulations of reports received from electronic service providers, which
 omit reports received from the public. However, the latter subtotals also amount
 to 98.6\%--99.3\% of totals, i.e., almost all of them.
+
+\begin{figure}
+\centering\libertineLF
+\includegraphics[
+    scale=0.6,
+    alt={}
+]{figure-reports-by-corporation}
+\caption{CyberTipline reports per corporation and year above a threshold of
+ 1,800 on a log scale (NCMEC)}
+\Description{Line graph showing reports per year.}
+\label{fig:reports-by-corp}
+\end{figure}
+
 The total report counts are true totals, accounting for reports submitted by
 technology firms and public alike. Hence, they are not the same as those
 included in NCMEC's tabulations of CyberTipline reports received from
@@ -822,14 +677,12 @@ NCMEC's, in case of Discord's disclosures for 2022 and 2023 severely so.
 \centering\libertineLF
 \includegraphics[
     scale=0.6,
-    alt={Charting cheek to cheek}
-]{figure-meta}
-
-\caption{(a) Quarterly pieces for Facebook and Instagram (Meta); (b) Yearly
-    pieces and reports for Meta (Meta \& NCMEC)}
-
-\Description{Charting cheek to cheek}
-\label{fig:meta}
+    alt={}
+]{figure-reports-by-corporation}
+\caption{CyberTipline reports per corporation and year above a threshold of
+ 1,800 on a log scale (NCMEC)}
+\Description{Line graph showing reports per year.}
+\label{fig:reports-by-corp}
 \end{figure}
 
 Figure~\ref{fig:reports-by-corp} plots entries above 1,800 from the first column
@@ -840,6 +693,7 @@ on a log scale across two subfigures, with curves for Meta and Google present in
 both. The combination of non-zero origin, log scale, and side-by-side subplots
 ensures that fourteen curves fit into the same figure while still remaining
 readable.
+
 
 firms into one chart and the nonzero origin for the y-axis spreads out the
 cluster from Google to Microsoft, thus facilitating labelling. Discord,
@@ -856,14 +710,16 @@ tables.
 
 
 
+
 \begin{figure}
 \centering\libertineLF
 \includegraphics[
     scale=0.6,
     alt={Charting cheek to cheek}
-]{figure-reports}
+]{figure-meta-pieces}
 
-\caption{Yearly reports vs piecewise-linear and exponential curves (NCMEC)}
+\caption{(a) Quarterly pieces for Facebook and Instagram (Meta); (b) Yearly
+    reports vs pieces for Meta (NCMEC and Meta)}
 \Description{Charting cheek to cheek}
 \label{fig:reports-by-corp}
 \end{figure}

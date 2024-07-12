@@ -167,6 +167,18 @@
             {"2018 Q3": [9000000, null, null, null, null, null, null, null, null, null, null, null]}
         ]
     },
+    "GitHub": {
+        "sources": ["https://transparencycenter.github.com/automated-detection/"],
+        "columns": [
+            "accounts",
+            "reports"
+        ],
+        "rows": [
+            {"2023": [3, 37]},
+            {"2022": [1, 6]},
+            {"2021": [1, 4]}
+        ]
+    },
     "Google": {
         "sources": ["https://transparencyreport.google.com/child-sexual-abuse-material/"],
         "features": {
@@ -296,7 +308,7 @@
             "frequency": "H",
             "coverage": "2020 H1"
         },
-            "brands": ["LinkedIn"],
+            "brands": ["GitHub", "LinkedIn"],
         "columns": [
             "pieces",
             "automatically detected pieces",
@@ -449,6 +461,7 @@
     },
     "Reddit": {
         "sources": [
+            "https://www.redditinc.com/policies/transparency-report-july-to-december-2023",
             "https://www.redditinc.com/policies/2023-h1-transparency-report",
             "https://www.redditinc.com/policies/2022-transparency-report",
             "https://www.redditinc.com/policies/mid-year-transparency-report-2022-2",
@@ -486,6 +499,7 @@
             "account reversals percent (minor sexualization)": "float"
         },
         "rows": [
+            {"2023 H2": [null, 133588, 349189, 263, 1536, 15744, 128513, 5801, 8.600]},
             {"2023 H1": [149084, 156533, 181083, 296, 987, 27219, 68900, 2924, 7.800]},
             {"2022 H2": [31574, 40243, null, null, null, null, null, null, null], "redundant": true},
             {"2022 H1": [null, 12349, null, null, null, null, null, null, null], "redundant": true},
@@ -799,6 +813,7 @@
             {"2019": ["Aylo", null, null, null]},
             {"2019": ["Discord", 19480, null, null]},
             {"2019": ["Facebook", null, null, null]},
+            {"2019": ["GitHub", 2, null, null]},
             {"2019": ["Google", null, null, null]},
             {"2019": ["Instagram", null, null, null]},
             {"2019": ["LinkedIn", 88, null, null]},
@@ -830,6 +845,7 @@
             {"2020": ["Aylo", null, null, null]},
             {"2020": ["Discord", 15324, null, null]},
             {"2020": ["Facebook", null, null, null]},
+            {"2020": ["GitHub", 2, null, null]},
             {"2020": ["Google", null, null, null]},
             {"2020": ["Instagram", null, null, null]},
             {"2020": ["LinkedIn", 60, null, null]},
@@ -863,6 +879,7 @@
             {"2021": ["Aylo", null, null, null]},
             {"2021": ["Discord", 29606, 68, 3.210]},
             {"2021": ["Facebook", 22118952, 28, 7.270]},
+            {"2021": ["GitHub", 4, null, null]},
             {"2021": ["Google", null, 975, 6.770]},
             {"2021": ["Instagram", 3393654, 22, 4.450]},
             {"2021": ["LinkedIn", 110, null, null]},
@@ -901,6 +918,7 @@
             {"2022": ["Aylo", null, null, null]},
             {"2022": ["Discord", 169800, 1533, 4.700]},
             {"2022": ["Facebook", 21165208, 10, 4.400]},
+            {"2022": ["GitHub", 6, null, null]},
             {"2022": ["Google", null, 916, 4.200]},
             {"2022": ["Instagram", 5007902, 13, 3.700]},
             {"2022": ["LinkedIn", 201, null, null]},
@@ -943,6 +961,7 @@
             {"2023": ["Discord", 339412, null, null]},
             {"2023": ["Facebook", 17838422, null, null]},
             {"2023": ["Google", null, null, null]},
+            {"2023": ["GitHub", 1, null, null]},
             {"2023": ["Instagram", 11430007, null, null]},
             {"2023": ["LinkedIn", 209, null, null]},
             {"2023": ["Meta", null, null, null]},
