@@ -25,10 +25,12 @@ to tidy up such data.
 The [CyberTipline reports per year](data/ocse-reports-per-year.csv) dataset
 captures the number of reports NCMEC received on its CyberTipline since
 inception in March 1998, largely based on the table included in Appendix A of
-its [CY 2022 Report to the Committee on
-Appropriations](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf)
-to the Office of Juvenile Justice and Delinquency Protection (OJJDP) at the
-Department of Justice.
+its
+[2022](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf)
+and
+[2023](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency-CY-2023-Report.pdf)
+transparency reports to the Office for Juvenile Justice and Delinquency
+Prevention at the Department of Justice.
 
 
 ### Dataset 2: CyberTipline Report Contents and Recipients (2020 onward)
@@ -192,11 +194,12 @@ released before Q2 2022 were retrieved from the Internet Archive's snapshots.
 The [CSAM pieces by relationship to
 victim](data/csam-pieces-by-relationship-to-victim.csv) dataset captures the
 relationship between suspected offenders and victims as determined by law
-enforcement agencies and tabulated by NCMEC. It is included in NCMEC's [CY 2022
-Report to the Committees on
-Appropriations](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf)
-as part of a grant by the Office for Juvenile Justice and Delinquency
-Prevention (OJJDP).
+enforcement agencies and tabulated by NCMEC. It is included in NCMEC's
+[2022](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf)
+and
+[2023](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency-CY-2023-Report.pdf)
+transparency reports to the Office for Juvenile Justice and Delinquency
+Prevention at the Department of Justice.
 
 Since the number of victims in NCMEC's database seems to be very small, I pulled
 in two more datasets characterizing relationships as well. [The
@@ -230,6 +233,16 @@ analyzing it as well as resulting figures. In particular:
   - The `stubs` directory contains typing stubs.
   - The `report` directory contains the LaTeX sources for the article discussing
     the work.
+
+
+## Acronyms
+
+  - **CSAM**: Child Sexual Abuse Material
+  - **CSE**: Child Sexual Exploitation
+  - **NCMEC**: National Center for Missing and Exploited Children
+  - **OCSE**: Online Child Sexual Exploitation
+  - **OJJDP**: Office for Juvenile Justice and Delinquency Prevention (at the US
+    Departmet of Justice)
 
 
 ## Licensing
