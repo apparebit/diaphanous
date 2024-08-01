@@ -169,6 +169,15 @@
     },
     "GitHub": {
         "sources": ["https://transparencycenter.github.com/automated-detection/"],
+        "features": {
+            "data": null,
+            "history": "same page (dropdown)",
+            "terms": ["CSEAI"],
+            "quantities": "counts",
+            "granularity": "Y",
+            "frequency": "Y",
+            "coverage": "2021"
+        },
         "columns": [
             "accounts",
             "reports"
@@ -321,6 +330,9 @@
             "reinstated accounts": "float"
         },
         "rows": [
+            {"2023 H2": [66603, 99.100, null, null, null]},
+            {"2023 H2": [61348, 99.200, 10237, 0.800, null]},
+            {"2023 H2": [null, null, null, null, 60749]},
             {"2023 H1": [227823, 94.700, null, null, null]},
             {"2023 H1": [46856, 99.200, 7456, 1.400, null]},
             {"2023 H1": [null, null, null, null, 79971]},
@@ -394,6 +406,9 @@
             "% pins reached >100"
         ],
         "rows": [
+            {"2023 Q4": [null, 7089, 3602828, 1163, 7488, 4237, 173110, 27499, 19754, 78, 18, 3, 1]},
+            {"2023 Q3": [null, 5489, 1469597, 2246, 10471, 318, 244258, 65254, 49854, 73, 22, 4, 2]},
+            {"2023 H2": [16234, null, null, null, null, null, null, null, null, null, null, null, null]},
             {"2023 Q2": [null, 9691, 3877286, 1071, 16336, 48039, 172633, 20136, 9874, 83, 14, 2, 1]},
             {"2023 Q1": [null, 8393, 1846326, 2348, 23479, 17715, 63761, 8524, 3925, 65, 26, 6, 3]},
             {"2023 H1": [34203, null, null, null, null, null, null, null, null, null, null, null, null]},

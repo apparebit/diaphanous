@@ -63,7 +63,7 @@ def show(
     columns = value.columns
     is_reports_table = 'reports' in columns and 'Δ%' in columns and 'NCMEC' in columns
     if is_reports_table and lowlight_columns is None:
-        lowlight_columns = ['esp', 'total', 'esp/total%']
+        lowlight_columns = ['esp%', 'esp', 'total', 'esp/total%']
 
     style = format_table(
         value,

@@ -351,6 +351,9 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "reinstated accounts": "float",
         }),
         "rows": (
+            {"2023 H2": (66_603, 99.1, None, None, None)},
+            {"2023 H2": (61_348, 99.2, 10_237, 0.8, None)},
+            {"2023 H2": (None, None, None, None, 60_749)},
             {"2023 H1": (227_823, 94.7, None, None, None)},
             {"2023 H1": (46_856, 99.2, 7_456, 1.4, None)},
             {"2023 H1": (None, None, None, None, 79_971)},
