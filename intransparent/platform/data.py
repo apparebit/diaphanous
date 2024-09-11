@@ -154,6 +154,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         }),
         "rows": (
             # fmt: off
+            {"2024 Q2": (None, 922_000, 9_700_000, None, 83_500, 410_000, None, 9_300, 90_000, None, 1_100, 52_300)},
+            {"2024 Q1": (None, 771_700, 14_400_000, None, 78_100, 380_900, None, 11_200, 123_900, None, 500, 73_400)},
             {"2023 Q4": (None, 1_900_000, 16_200_000, None, 135_100, 1_000_000, None, 36_100, 317_500, None, 279_500, 1_200_000)},
             {"2023 Q3": (None, 1_800_000, 16_900_000, None, 112_200, 266_600, None, 20_300, 87_800, None, 1_800, 116_600)},
             {"2023 Q2": (None, 1_700_000, 7_200_000, None, 94_400, 146_800, None, 20_500, 38_700, None, 1_400, 41_300)},
@@ -255,6 +257,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "reversals w/o appeal (Child Nudity & Sexual Exploitation)",
             "reversals w/o appeal (Child Endangerment: Nudity and Physical Abuse)",
             "reversals w/o appeal (Child Endangerment: Sexual Exploitation)",
+            #"proactive rate",  TODO!
         ),
         "sums": frozen({
             "pieces": [
@@ -264,6 +267,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         }),
         "rows": (
             # fmt: off
+            {"2024 Q2": (None, 176_800, 2_800_000, None, 31_700, 71_100, None, 5_300, 21_600, None, 400, 11_500)},
+            {"2024 Q1": (None, 183_600, 2_700_000, None, 39_400, 68_600, None, 5_300, 26_900, None, 300, 11_100)},
             {"2023 Q4": (None, 198_500, 2_100_000, None, 34_700, 79_100, None, 4_600, 26_500, None, 11_900, 86_800)},
             {"2023 Q3": (None, 227_700, 1_600_000, None, 44_400, 38_200, None, 5_600, 14_300, None, 1_100, 3_100)},
             {"2023 Q2": (None, 320_700, 1_700_000, None, 22_000, 22_800, None, 5_200, 6_300, None, 700, 700)},
