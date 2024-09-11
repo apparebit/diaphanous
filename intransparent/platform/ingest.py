@@ -330,6 +330,9 @@ def combine_brands(data: PlatformData) -> dict[str, pd.DataFrame]:
     """
     disclosures = dict(data.disclosures)
     for firm_name, brands in data.brands.items():
+        if firm_name == "Microsoft":
+            continue
+
         firm_data = disclosures.get(firm_name)
         schema = None if firm_data is None else firm_data.dtypes
 
