@@ -10,6 +10,32 @@ An Audit of Social Media Transparency Disclosures, Focusing on Sexual
 Exploitation of Minors](https://arxiv.org/abs/2402.14625) provides the details.
 
 
+## The Code
+
+To run the code in this repository, you'll need the following tools:
+
+  * According to [vermin](https://github.com/netromdk/vermin), the minimmum
+    required Python version is 3.11.
+  * The [analysis/platform.ipynb](analysis/platform.ipynb) notebook is written
+    in Python and R. The necessary bindings are provided by the
+    [rpy2](https://rpy2.github.io) Python package. The package is installed like
+    other Python packages as described in the next bullet point. But it does
+    require a working R installation (e.g.,
+    <code>brew&nbsp;install&nbsp;r</code>).
+  * Required Python packages are listed in the repository's
+    [pyproject.toml](pyproject.toml). Probably, the easiest way of installing
+    them is:
+    ```sh
+    $ python -m venv .venv   # Create virtual environment
+    $ . .venv/bin/activate   # Activate virtual environment
+    $ pip install -e .       # Install intransparent as editable
+    ```
+    As a side-effect, the third command installs all Python dependencies, too.
+
+Building the report requires additional tools, i.e., a working LaTeX
+installation, though the necessary incantations [are scripted](report/build.sh).
+
+
 ## The Data
 
 While a few CSV files contain [tidy
