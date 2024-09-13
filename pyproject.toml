@@ -33,6 +33,7 @@ dependencies = [
     "nbformat",   # 5.9.0   -- required for rendering Plotly MIME types
     "kaleido",    # 0.2.1   -- required for exporting images from Plotly
     "matplotlib", # 3.7.1   -- required for background gradient in table
+    "rpy2",       #         -- required for R integration
 ]
 
 dynamic = ["version"]
