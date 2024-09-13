@@ -260,7 +260,7 @@ def ingest_reports_per_platform(
             logger("Skipping metadata")
             continue
         if record is None:
-            logger("❌ {} (no transparency disclosures)", platform)
+            logger("➖ {} (no transparency disclosures)", platform)
             all_features[platform] = {}
             continue
 
@@ -289,7 +289,7 @@ def ingest_reports_per_platform(
         # Check that disclosure record has either none or all required table properties.
         missing = _TABLE_FIELDS - record.keys()
         if missing == _TABLE_FIELDS or len(record["rows"]) == 0:
-            logger("❌ {} (no CSAM data)", platform)
+            logger("➖ {} (no CSAM data)", platform)
             continue
         if len(missing) > 0 and missing != {"schema"}:
             s = ", ".join(set(missing) - set(["schema"]))
