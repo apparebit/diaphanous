@@ -119,18 +119,14 @@ def reports_per_country(section: int = -1) -> None:
     show(
         """
         <p>Member countries of the Arab League feature unusually prominently
-        when ranking countries by CSAM reports per capita. Notably, Libya and
-        the United Arab Emirates each rank worst for two out of four years
-        2019–2022. The substantial differences between the two countries would
-        seem to exclude wealth, political stability, and effective policing as
-        likely cause and instead point to some shared cultural trait as likely
-        reason.</p>
+        when ranking countries by CSAM reports per capita. Notably, either Libya
+        or the United Arab Emirates is the worst ranked country. The substantial
+        differences between the two countries would seem to exclude wealth,
+        political stability, and effective policing as likely causes and instead
+        point to some shared cultural trait as likely reason.</p>
 
-        <p>However, we cannot tell whether such a shared cultural trait is
-        internal or external to the population, e.g., reflects an actual
-        difference in attitudes towards CSAM or is the result of biases in
-        content moderation. In either case, the data for 2022 shows that other
-        countries are rapidly closing the gap in CSAM reports per capita.</p>
+        <p>Note that such a shared cultural trait may be an actual trait or a
+        perceived trait.</p>
         """
     )
 
