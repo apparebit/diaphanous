@@ -27,7 +27,7 @@ log() {
 }
 
 prepare_figures() {
-    for name in meta reports reports-best-fit platforms countries continents flow share; do
+    for name in meta reports reports-best-fit platforms countries continents flow share comparable-reports; do
         rsvg-convert -f pdf -o "figure-${name}.pdf" "../figure/${name}.svg"
     done
 }

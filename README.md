@@ -157,6 +157,20 @@ collects all of a platform's quantitative disclosures within one table:
     "permanent suspension." User registrations thusly impacted *are* included
     under *accounts*. However, temporarily impacted registrations are not.
 
+[Comparable CyberTipline report counts](data/comparable-reports.csv) and
+[per-provider comparable CyberTipline report
+counts](data/comparable-reports-by-provider.csv) are materialized views onto the
+same data. Both views are in long format and only include rows for counts that
+were disclosed by both electronic service provider and NCMEC.
+
+The latter, more precise view has _year_, _observer_, _count_, and _topic_
+columns, with the topic column enabling the grouping of rows with service
+provider and NCMEC as observers. The former, simplified view has only _id_,
+_observer_, and _count_ columns, with the ID column effectively combining the
+other view's _year_ and _topic_ columns and the _observer_ column only
+distinguishing between a generic *ServiceProvider* and NCMEC.
+
+
 
 ### Dataset 4: CyberTipline Reports per Country (2019 onward)
 

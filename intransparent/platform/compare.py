@@ -42,7 +42,9 @@ def compare_platform_reports(
     received = NCMEC[platform]
 
     table.insert(1, 'π', table['pieces'] / sent.fillna(received))
-    table["Δ%"] = (received - sent) / sent * 100
+    # Calculate percentage difference based on *mean* between the two counts. It
+    # accounts for the fact that we do not know which count is correct, if any.
+    table["Δ%"] = (received - sent) / ((received + sent) / 2)  * 100
     table["NCMEC"] = received
     industry = NCMEC["ESP Total"]
     table["esp%"] = received.fillna(sent) / industry * 100

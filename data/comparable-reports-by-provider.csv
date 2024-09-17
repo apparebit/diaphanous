@@ -1,12 +1,4 @@
 year,observer,count,topic
-2020,Alphabet,547875,Alphabet
-2021,Alphabet,870319,Alphabet
-2022,Alphabet,2174319,Alphabet
-2023,Alphabet,1472221,Alphabet
-2020,NCMEC,546704,Alphabet
-2021,NCMEC,875783,Alphabet
-2022,NCMEC,2174548,Alphabet
-2023,NCMEC,1470958,Alphabet
 2020,Amazon,2235,Amazon
 2021,Amazon,33848,Amazon
 2022,Amazon,67073,Amazon
@@ -29,6 +21,14 @@ year,observer,count,topic
 2021,NCMEC,29606,Discord
 2022,NCMEC,169800,Discord
 2023,NCMEC,339412,Discord
+2020,Google,547875,Google
+2021,Google,870319,Google
+2022,Google,2174319,Google
+2023,Google,1472221,Google
+2020,NCMEC,546704,Google
+2021,NCMEC,875783,Google
+2022,NCMEC,2174548,Google
+2023,NCMEC,1470958,Google
 2020,Microsoft,96435,Microsoft
 2021,Microsoft,78930,Microsoft
 2022,Microsoft,107605,Microsoft
