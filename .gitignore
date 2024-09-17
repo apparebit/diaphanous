@@ -160,4 +160,5 @@ report/*.out
 report/comment.cut
 report/report.pdf
 
-arrr
+# R packages
+rlib
