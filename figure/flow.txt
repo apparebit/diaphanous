@@ -14,30 +14,19 @@ Misleading words/images online [0.023] Violation of US Law #d6402c
 Misleading domain name [0.019] Violation of US Law #d6402c
 Child sex tourism [0.006] Violation of US Law #d6402c
 
-// : Adults producing CSAM #d6402c
 Adults producing CSAM [9] CSAM #d6402c
-// : Adults distributing/accessing CSAM #d6402c
 Adults distributing/accessing CSAM [9] CSAM #d6402c
 
-// : Minors selling self-produced sexual content #fe8c02
 Minors selling self-produced sexual content [9] CSAM #fe8c02
-// : Adults producing/distributing/accessing\nvirtual CSAM incl. animation #fe8c02
 Adults producing/distributing/accessing\nvirtual CSAM incl. animation [9] CSAM #fe8c02
 
-// : Adults distributing/accessing porn collections\ncontaining occasional CSAM #ffca00
 Adults distributing/accessing porn collections\ncontaining occasional CSAM [9] CSAM #ffca00
-// : Minors/adults shit-posting CSAM,\ni.e., as memes #ffca00
 Minors/adults shit-posting CSAM,\ni.e., as memes [10] CSAM #ffca00
-// : Adults posting CSAM to alert other adults\nor recruit them for “community policing" #ffca00
 Adults posting CSAM to alert other adults\nor recruit them for “community policing" [9] CSAM #ffca00
-// : Teenagers exchanging sexual photos/videos\ninvolving other teenagers without consent #ffca00
 Teenagers exchanging sexual photos/videos\ninvolving other teenagers without consent [9] CSAM #ffca00
 
-// : Teenagers exchanging sexual photos/videos\nof themselves with consent #069335
 Teenagers exchanging sexual photos/videos\nof themselves with consent [9] CSAM #069335
-:Adults owning sexual photos/videos of minors\nabove age of consent, taken with consent #069335
 Adults owning sexual photos/videos of minors\nabove age of consent, taken with consent [9] CSAM #069335
-// : Adults, e.g., parents or teachers, documenting\nCSAM sent to minors in their care #069335
 Adults, e.g., parents or teachers, documenting\nCSAM sent to minors in their care [9] CSAM #069335
 
 CSAM [18] Violation of US Law #d6402c
@@ -57,20 +46,31 @@ Violation of US Law [5] False Negative #069335
 Incidental False Positive [18] Reported to\nNCMEC #3078ea
 Adversarial False Positive [2] Reported to\nNCMEC #750787
 
-Reported to\nNCMEC [7.397] Actionable #d6402c
-Reported to\nNCMEC [7.396] Informational #d6402c
-Reported to\nNCMEC [7] Actionable #fe8c02
-Reported to\nNCMEC [7] Informational #fe8c02
-Reported to\nNCMEC [15] Actionable #ffca00
-Reported to\nNCMEC [15] Informational #ffca00
-Reported to\nNCMEC [11] Actionable #069335
-Reported to\nNCMEC [11] Informational #069335
-Reported to\nNCMEC [9] Actionable #3078ea
-Reported to\nNCMEC [9] Informational #3078ea
-Reported to\nNCMEC [1] Actionable #750787
-Reported to\nNCMEC [1] Informational #750787
+Reported to\nNCMEC [4.932] Unique #d6402c
+Reported to\nNCMEC [9.862] Redundant #d6402c
+Reported to\nNCMEC [4.667] Unique #fe8c02
+Reported to\nNCMEC [9.333] Redundant #fe8c02
+Reported to\nNCMEC [10] Unique #ffca00
+Reported to\nNCMEC [20] Redundant #ffca00
+Reported to\nNCMEC [7.333] Unique #069335
+Reported to\nNCMEC [14.666] Redundant #069335
+Reported to\nNCMEC [6] Unique #3078ea
+Reported to\nNCMEC [12] Redundant #3078ea
+Reported to\nNCMEC [0.667] Unique #750787
+Reported to\nNCMEC [1.333] Redundant #750787
 
-// Appealed Reversed
+Unique [2.466] Actionable #d6402c
+Unique [2.466] Informational #d6402c
+Unique [2.333] Actionable #fe8c02
+Unique [2.334] Informational #fe8c02
+Unique [5] Actionable #ffca00
+Unique [5] Informational #ffca00
+Unique [3.666] Actionable #069335
+Unique [3.667] Informational #069335
+Unique [3] Actionable #3078ea
+Unique [3] Informational #3078ea
+Unique [0.333] Actionable #750787
+Unique [0.334] Informational #750787
 
 // === Settings ===
 
@@ -135,3 +135,4 @@ move Child sex trafficking 0.14, 0
 move Misleading words/images online 0.14, 0
 move Misleading domain name 0.14, 0
 move Child sex tourism 0.14, 0
+move Reported to\nNCMEC 0, -0.01
