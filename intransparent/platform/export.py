@@ -107,9 +107,9 @@ def encode_reports_per_platform(
         for key, value in cast(DisclosureType, platform_object).items():
             first_property = append_comma_to_line_if_not(first_property)
 
-            if key == "brands":
+            if key in ("aka", "brands"):
                 s = ", ".join([json.dumps(item) for item in cast(list[str], value)])
-                yield from emit_line(f'            "brands": [{s}]')
+                yield from emit_line(f'        "{key}": [{s}]')
             elif key in ("features", "products", "schema", "sums"):
                 yield from emit_line(f'        "{key}": {{')
                 first_item = True

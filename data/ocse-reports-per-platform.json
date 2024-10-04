@@ -8,10 +8,10 @@
         "|": "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     },
     "Alphabet": {
-            "brands": ["Google", "YouTube"]
+        "brands": ["Google", "YouTube"]
     },
     "Amazon": {
-            "brands": ["Twitch"],
+        "brands": ["Twitch"],
         "sources": [
             "https://www.aboutamazon.com/news/policy-news-views/amazon-csam-transparency-report-2023",
             "https://www.aboutamazon.com/news/policy-news-views/amazon-csam-transparency-report-2022",
@@ -53,10 +53,11 @@
     },
     "Automattic": {
         "sources": ["https://transparency.automattic.com"],
-            "brands": ["Tumblr", "Wordpress"]
+        "brands": ["Tumblr", "Wordpress"]
     },
     "Aylo": {
-            "brands": ["MindGeek", "Pornhub"]
+        "aka": ["MindGeek"],
+        "brands": ["Pornhub"]
     },
     "Discord": {
         "sources": [
@@ -302,7 +303,7 @@
         ]
     },
     "Meta": {
-            "brands": ["Facebook", "Instagram", "WhatsApp"],
+        "brands": ["Facebook", "Instagram", "WhatsApp"],
         "sums": {
             "pieces": [
                 "pieces (Child Nudity & Sexual Exploitation)",
@@ -321,7 +322,7 @@
             "frequency": "H",
             "coverage": "2020 H1"
         },
-            "brands": ["GitHub", "LinkedIn"],
+        "brands": ["GitHub", "LinkedIn"],
         "columns": [
             "pieces",
             "automatically detected pieces",
@@ -360,7 +361,6 @@
             {"2020 H1": [null, null, null, null, 32622]}
         ]
     },
-    "MindGeek": null,
     "Omegle": {
         "comments": [
             "A website offering video chat between unregistered users. It was shut",
@@ -585,10 +585,15 @@
         "sources": [
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-4/",
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-3/",
-            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-2/"
+            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-2/",
+            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-1/",
+            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-4/",
+            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-3/",
+            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-2/",
+            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-1/"
         ],
         "features": {
-            "data": "csv",
+            "data": "Excel, csv",
             "history": "page archive",
             "terms": [
                 "sexual exploitation of minors",
@@ -601,14 +606,22 @@
             "coverage": "2022 Q1"
         },
         "comments": [
-            "The current version of TikTok's disclosures contains two category shares",
-            "for 'Youth Exploitation & Abuse', one relative to the Safety & Civility",
-            "super-category and the other without super-category. The meaning of the",
-            "second one is less than clear. The row for Q1 2023 repeats the totals",
-            "from the dataset with the original schema; it is included so that 2023",
-            "is included in the analysis."
+            "Originally, TikTok's transparency disclosures were marred by the use",
+            "of fractional shares. To derive actual counts, the shares of category",
+            "and supercategory have to be known. But by disclosing some shares for",
+            "human moderation only, TikTok made it impossible to derive piece counts.",
+            "After changing the schema for its transparency data with Q2 2023,",
+            "TikTok started to report the share for entire categories and super-",
+            "categories. Alas, despite claims to the opposite, the firm also stopped",
+            "disclosing granular data on youth safety including sexual exploitation.",
+            "Columns from the original schema are marked as such, with exception of",
+            "total videos removed and videos removed by automation, which appear in",
+            "both schemas."
         ],
         "columns": [
+            "pieces (human moderation, original schema)",
+            "category share (human moderation, original schema)",
+            "minor safety category share of total (original schema)",
             "share of policy category (Youth Exploitation & Abuse)",
             "proactive removal rate (Youth Exploitation & Abuse)",
             "removal rate before any views (Youth Exploitation & Abuse)",
@@ -616,67 +629,32 @@
             "share of total removals (Safety & Civility)",
             "total videos removed",
             "videos removed by automation",
-            "videos restored"
+            "videos restored",
+            "removal rate within 24 hours (human moderation, original schema)",
+            "removal rate before any views (human moderation, original schema)",
+            "proactive removal rate (human moderation, original schema)"
         ],
         "schema": {
+            "category share (human moderation, original schema)": "float",
+            "minor safety category share of total (original schema)": "float",
             "share of policy category (Youth Exploitation & Abuse)": "float",
             "proactive removal rate (Youth Exploitation & Abuse)": "float",
             "removal rate before any views (Youth Exploitation & Abuse)": "float",
             "removal rate within 24 hours (Youth Exploitation & Abuse)": "float",
-            "share of total removals (Safety & Civility)": "float"
-        },
-        "products": {
-            "pieces": [
-                "share of policy category (Youth Exploitation & Abuse)",
-                "share of total removals (Safety & Civility)",
-                "total videos removed"
-            ]
+            "share of total removals (Safety & Civility)": "float",
+            "removal rate within 24 hours (human moderation, original schema)": "float",
+            "removal rate before any views (human moderation, original schema)": "float",
+            "proactive removal rate (human moderation, original schema)": "float"
         },
         "rows": [
-            {"2023 Q4": [0.232, 0.981, 0.781, 0.902, 0.135, 176461963, 128300584, 8038106]},
-            {"2023 Q3": [0.279, 0.987, 0.792, 0.916, 0.161, 136530418, 88721552, 7084629]},
-            {"2023 Q2": [0.308, 0.986, 0.836, 0.911, 0.145, 106476032, 66440775, 6750002]},
-            {"2023 Q1": [null, null, null, null, null, 91003510, 53494911, null]}
-        ]
-    },
-    "TikTok (original schema)": {
-        "comments": [
-            "TikTok reorganized its classification of violative behaviors",
-            "for Q2 2023. While the firm claims that doing so 'added granularity,'",
-            "that is not the case, at least for child sexual abuse materials.",
-            "While the incomplete disclosure of the subcategory made it impossible",
-            "to compute counts, it was at least acknowledged in the data."
-        ],
-        "sources": [
-            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-1/",
-            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-4/",
-            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-3/",
-            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-2/",
-            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-1/"
-        ],
-        "columns": [
-            "pieces (human moderation)",
-            "category share (human moderation)",
-            "minor safety category share of total",
-            "total videos removed (automation)",
-            "total videos removed",
-            "removal rate within 24 hours (human moderation)",
-            "removal rate before any views (human moderation)",
-            "proactive removal rate (human moderation)"
-        ],
-        "schema": {
-            "category share (human moderation)": "float",
-            "minor safety category share of total": "float",
-            "removal rate within 24 hours (human moderation)": "float",
-            "removal rate before any views (human moderation)": "float",
-            "proactive removal rate (human moderation)": "float"
-        },
-        "rows": [
-            {"2023 Q1": [null, 0.023, 0.306, 53494911, 91003510, 0.869, 0.784, 0.927]},
-            {"2022 Q4": [415278, 0.033, 0.333, 46836047, 85680819, 0.887, 0.821, 0.931]},
-            {"2022 Q3": [792473, 0.033, 0.429, 53287839, 110954663, 0.925, 0.883, 0.951]},
-            {"2022 Q2": [null, 0.024, 0.437, 48011571, 113809300, 0.907, 0.858, 0.932]},
-            {"2022 Q1": [null, 0.019, 0.417, 34726592, 102305516, 0.903, 0.825, 0.906]}
+            {"2023 Q4": [null, null, null, 0.232, 0.981, 0.781, 0.902, 0.135, 176461963, 128300584, 8038106, null, null, null]},
+            {"2023 Q3": [null, null, null, 0.279, 0.987, 0.792, 0.916, 0.161, 136530418, 88721552, 7084629, null, null, null]},
+            {"2023 Q2": [null, null, null, 0.308, 0.986, 0.836, 0.911, 0.145, 106476032, 66440775, 6750002, null, null, null]},
+            {"2023 Q1": [null, 0.023, 0.306, null, null, null, null, null, 91003510, 53494911, null, 0.869, 0.784, 0.927]},
+            {"2022 Q4": [415278, 0.033, 0.333, null, null, null, null, null, 85680819, 46836047, null, 0.887, 0.821, 0.931]},
+            {"2022 Q3": [792473, 0.033, 0.429, null, null, null, null, null, 110954663, 53287839, null, 0.925, 0.883, 0.951]},
+            {"2022 Q2": [null, 0.024, 0.437, null, null, null, null, null, 113809300, 48011571, null, 0.907, 0.858, 0.932]},
+            {"2022 Q1": [null, 0.019, 0.417, null, null, null, null, null, 102305516, 34726592, null, 0.903, 0.825, 0.906]}
         ]
     },
     "Tumblr": {
@@ -684,6 +662,7 @@
     },
     "Twitch": {
         "sources": [
+            "https://safety.twitch.tv/s/article/H2-2023-Transparency-Report",
             "https://safety.twitch.tv/s/article/H1-2023-Transparency-Report",
             "https://safety.twitch.tv/s/article/H2-2022-Transparency-Report",
             "https://safety.twitch.tv/s/article/H1-2022-Transparency-Report",
@@ -711,6 +690,7 @@
         ],
         "columns": ["reports"],
         "rows": [
+            {"2023 H2": [3272], "redundant": true},
             {"2023 H1": [3285], "redundant": true},
             {"2022 H2": [7585], "redundant": true},
             {"2022 H1": [6711], "redundant": true},
@@ -760,7 +740,7 @@
         "sources": ["https://transparency.automattic.com"]
     },
     "X": {
-            "brands": ["Twitter"]
+        "aka": ["Twitter"]
     },
     "YouTube": {
         "sources": ["https://transparencyreport.google.com/child-sexual-abuse-material/"],

@@ -68,7 +68,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Aylo": frozen({
-        "brands": ("MindGeek", "Pornhub"),
+        "aka": ("MindGeek",),
+        "brands": ("Pornhub",),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Discord": frozen({
@@ -383,8 +384,6 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         ),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-    "MindGeek": None,  # Pornhub is listed as Aylo brand
-    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Omegle": frozen({
         "comments": (
             "A website offering video chat between unregistered users. It was shut",
@@ -614,9 +613,14 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-4/",
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-3/",
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-2/",
+            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-1/",
+            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-4/",
+            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-3/",
+            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-2/",
+            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-1/",
         ),
         "features": frozen({
-            "data": "csv",
+            "data": "Excel, csv",
             "history": "page archive",
             "terms": ("sexual exploitation of minors", "CSAM", "youth exploitation and abuse"),
             "quantities": "fractions",
@@ -625,14 +629,22 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "coverage": "2022 Q1",
         }),
         "comments": (
-            "The current version of TikTok's disclosures contains two category shares",
-            "for 'Youth Exploitation & Abuse', one relative to the Safety & Civility",
-            "super-category and the other without super-category. The meaning of the",
-            "second one is less than clear. The row for Q1 2023 repeats the totals",
-            "from the dataset with the original schema; it is included so that 2023",
-            "is included in the analysis.",
+            "Originally, TikTok's transparency disclosures were marred by the use",
+            "of fractional shares. To derive actual counts, the shares of category",
+            "and supercategory have to be known. But by disclosing some shares for",
+            "human moderation only, TikTok made it impossible to derive piece counts.",
+            "After changing the schema for its transparency data with Q2 2023,",
+            "TikTok started to report the share for entire categories and super-",
+            "categories. Alas, despite claims to the opposite, the firm also stopped",
+            "disclosing granular data on youth safety including sexual exploitation.",
+            "Columns from the original schema are marked as such, with exception of",
+            "total videos removed and videos removed by automation, which appear in",
+            "both schemas.",
         ),
         "columns": (
+            "pieces (human moderation, original schema)",
+            "category share (human moderation, original schema)",
+            "minor safety category share of total (original schema)",
             "share of policy category (Youth Exploitation & Abuse)",
             "proactive removal rate (Youth Exploitation & Abuse)",
             "removal rate before any views (Youth Exploitation & Abuse)",
@@ -641,70 +653,32 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "total videos removed",
             "videos removed by automation",
             "videos restored",
+            "removal rate within 24 hours (human moderation, original schema)",
+            "removal rate before any views (human moderation, original schema)",
+            "proactive removal rate (human moderation, original schema)",
         ),
         "schema": frozen({
+            "category share (human moderation, original schema)": "float",
+            "minor safety category share of total (original schema)": "float",
             "share of policy category (Youth Exploitation & Abuse)": "float",
             "proactive removal rate (Youth Exploitation & Abuse)": "float",
             "removal rate before any views (Youth Exploitation & Abuse)": "float",
             "removal rate within 24 hours (Youth Exploitation & Abuse)": "float",
             "share of total removals (Safety & Civility)": "float",
-        }),
-        "products": frozen({
-            "pieces": (
-                "share of policy category (Youth Exploitation & Abuse)",
-                "share of total removals (Safety & Civility)",
-                "total videos removed",
-            ),
+            "removal rate within 24 hours (human moderation, original schema)": "float",
+            "removal rate before any views (human moderation, original schema)": "float",
+            "proactive removal rate (human moderation, original schema)": "float",
         }),
         "rows": (
             # fmt: off
-            {"2023 Q4": (0.232, 0.981, 0.781, 0.902, 0.135, 176_461_963, 128_300_584, 8_038_106)},
-            {"2023 Q3": (0.279, 0.987, 0.792, 0.916, 0.161, 136_530_418,  88_721_552, 7_084_629)},
-            {"2023 Q2": (0.308, 0.986, 0.836, 0.911, 0.145, 106_476_032,  66_440_775, 6_750_002)},
-            {"2023 Q1": (None,  None,  None,  None,  None,   91_003_510,  53_494_911, None     )},
-            # fmt: on
-        ),
-    }),
-    # ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-    "TikTok (original schema)": frozen({
-        "comments": [
-            "TikTok reorganized its classification of violative behaviors",
-            "for Q2 2023. While the firm claims that doing so 'added granularity,'",
-            "that is not the case, at least for child sexual abuse materials.",
-            "While the incomplete disclosure of the subcategory made it impossible",
-            "to compute counts, it was at least acknowledged in the data."
-        ],
-        "sources": (
-            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-1/",
-            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-4/",
-            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-3/",
-            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-2/",
-            "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2022-1/",
-        ),
-        "columns": (
-            "pieces (human moderation)",
-            "category share (human moderation)",
-            "minor safety category share of total",
-            "total videos removed (automation)",
-            "total videos removed",
-            "removal rate within 24 hours (human moderation)",
-            "removal rate before any views (human moderation)",
-            "proactive removal rate (human moderation)",
-        ),
-        "schema": frozen({
-            "category share (human moderation)": "float",
-            "minor safety category share of total": "float",
-            "removal rate within 24 hours (human moderation)": "float",
-            "removal rate before any views (human moderation)": "float",
-            "proactive removal rate (human moderation)": "float",
-        }),
-        "rows": (
-            # fmt: off
-            {"2023 Q1": (None, 0.023, 0.306, 53_494_911, 91_003_510, 0.869, 0.784, 0.927)},
-            {"2022 Q4": (415_278, 0.033, 0.333, 46_836_047, 85_680_819, 0.887, 0.821, 0.931)},
-            {"2022 Q3": (792_473, 0.033, 0.429, 53_287_839, 110_954_663, 0.925, 0.883, 0.951,)},
-            {"2022 Q2": (None, 0.024, 0.437, 48_011_571, 113_809_300, 0.907, 0.858, 0.932)},
-            {"2022 Q1": (None, 0.019, 0.417, 34_726_592, 102_305_516, 0.903, 0.825, 0.906)},
+            {"2023 Q4": (None, None, None, 0.232, 0.981, 0.781, 0.902, 0.135, 176_461_963, 128_300_584, 8_038_106, None, None, None)},
+            {"2023 Q3": (None, None, None, 0.279, 0.987, 0.792, 0.916, 0.161, 136_530_418,  88_721_552, 7_084_629, None, None, None)},
+            {"2023 Q2": (None, None, None, 0.308, 0.986, 0.836, 0.911, 0.145, 106_476_032,  66_440_775, 6_750_002, None, None, None)},
+            {"2023 Q1": (None, 0.023, 0.306, None, None, None, None, None, 91_003_510, 53_494_911, None, 0.869, 0.784, 0.927)},
+            {"2022 Q4": (415_278, 0.033, 0.333, None, None, None, None, None, 85_680_819, 46_836_047, None, 0.887, 0.821, 0.931)},
+            {"2022 Q3": (792_473, 0.033, 0.429, None, None, None, None, None, 110_954_663, 53_287_839, None, 0.925, 0.883, 0.951,)},
+            {"2022 Q2": (None, 0.024, 0.437, None, None, None, None, None, 113_809_300, 48_011_571, None, 0.907, 0.858, 0.932)},
+            {"2022 Q1": (None, 0.019, 0.417, None, None, None, None, None, 102_305_516, 34_726_592, None, 0.903, 0.825, 0.906)},
             # fmt: on
         ),
     }),
@@ -715,6 +689,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Twitch": frozen({
         "sources": (
+            "https://safety.twitch.tv/s/article/H2-2023-Transparency-Report",
             "https://safety.twitch.tv/s/article/H1-2023-Transparency-Report",
             "https://safety.twitch.tv/s/article/H2-2022-Transparency-Report",
             "https://safety.twitch.tv/s/article/H1-2022-Transparency-Report",
@@ -740,6 +715,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "columns": ("reports",),
         "rows": (
             # fmt: off
+            {"2023 H2": (3_272,), "redundant": True},
             {"2023 H1": (3_285,), "redundant": True},
             {"2022 H2": (7_585,), "redundant": True},
             {"2022 H1": (6_711,), "redundant": True},
@@ -801,7 +777,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "X": frozen({
-        "brands": ("Twitter",),
+        "aka": ("Twitter",),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "YouTube": frozen({

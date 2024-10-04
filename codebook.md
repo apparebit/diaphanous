@@ -92,6 +92,7 @@ either integers, floating point numbers, or strings.
 
 A disclosure record may include the following properties:
 
+  * `aka`: a list of strings with former names
   * `brands`: a list of strings naming subsidiary units
   * `sources`: a list of strings with the URLs of transparency disclosures
   * `comments`: a list of strings with human-readable comments

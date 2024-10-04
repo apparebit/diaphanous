@@ -1,3 +1,4 @@
+from collections import defaultdict
 from collections.abc import Sequence
 from dataclasses import dataclass
 from itertools import chain
@@ -232,7 +233,7 @@ def _compute_columns(
 
 class PlatformData(NamedTuple):
     disclosures: dict[str, pd.DataFrame]
-    brands: dict[str, tuple[str,...]]
+    brands: dict[str, set[str]]
     features: pd.DataFrame
 
 
@@ -251,7 +252,7 @@ def ingest_reports_per_platform(
         logger = lambda *args, **kwargs: None
 
     disclosures = {}
-    brands = {}
+    brands = defaultdict(set)
     all_features = {}
 
     for platform, record in raw_data.items():
@@ -267,7 +268,9 @@ def ingest_reports_per_platform(
         # Record brand relationships.
         record = cast(DisclosureType, record)
         if "brands" in record:
-            brands[platform] = record["brands"]
+            brands[platform] |= set(record["brands"])
+        if "aka" in record:
+            brands[platform] |= set(record["aka"])
 
         # Record (a copy of the) features.
         features = dict(record.get("features", {}))
