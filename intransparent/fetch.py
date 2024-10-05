@@ -9,7 +9,9 @@ from urllib.request import Request, urlopen
 def fetch_json(url: str) -> object:
     """Fetch the JSON payload from the given URL."""
     response = urlopen(Request(url))
-    assert 200 <= response.status < 300
+    if response.status != 200:
+        error = http.client.responses.get(http.HTTPStatus(response.status))
+        raise AssertionError(error or str(response.status))
     return json.loads(response.read())
 
 
@@ -142,7 +144,7 @@ def fetch_populations(
         )
 
         response = urlopen(Request(url))
-        if not 200 <= response.status < 300:
+        if response.status != 200:
             error = http.client.responses.get(http.HTTPStatus(response.status))
             raise AssertionError(error or str(response.status))
 
