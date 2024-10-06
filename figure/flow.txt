@@ -46,31 +46,31 @@ Violation of US Law [5] False Negative #069335
 Incidental False Positive [18] Reported to\nNCMEC #3078ea
 Adversarial False Positive [2] Reported to\nNCMEC #750787
 
-Reported to\nNCMEC [4.932] Unique #d6402c
-Reported to\nNCMEC [9.862] Redundant #d6402c
-Reported to\nNCMEC [4.667] Unique #fe8c02
-Reported to\nNCMEC [9.333] Redundant #fe8c02
-Reported to\nNCMEC [10] Unique #ffca00
-Reported to\nNCMEC [20] Redundant #ffca00
-Reported to\nNCMEC [7.333] Unique #069335
-Reported to\nNCMEC [14.666] Redundant #069335
-Reported to\nNCMEC [6] Unique #3078ea
-Reported to\nNCMEC [12] Redundant #3078ea
-Reported to\nNCMEC [0.667] Unique #750787
-Reported to\nNCMEC [1.333] Redundant #750787
+Reported to\nNCMEC [7.3965] Unique #d6402c
+Reported to\nNCMEC [7.3965] Redundant #d6402c
+Reported to\nNCMEC [7] Unique #fe8c02
+Reported to\nNCMEC [7] Redundant #fe8c02
+Reported to\nNCMEC [15] Unique #ffca00
+Reported to\nNCMEC [15] Redundant #ffca00
+Reported to\nNCMEC [11] Unique #069335
+Reported to\nNCMEC [11] Redundant #069335
+Reported to\nNCMEC [9] Unique #3078ea
+Reported to\nNCMEC [9] Redundant #3078ea
+Reported to\nNCMEC [1] Unique #750787
+Reported to\nNCMEC [1] Redundant #750787
 
-Unique [2.466] Actionable #d6402c
-Unique [2.466] Informational #d6402c
-Unique [2.333] Actionable #fe8c02
-Unique [2.334] Informational #fe8c02
-Unique [5] Actionable #ffca00
-Unique [5] Informational #ffca00
-Unique [3.666] Actionable #069335
-Unique [3.667] Informational #069335
-Unique [3] Actionable #3078ea
-Unique [3] Informational #3078ea
-Unique [0.333] Actionable #750787
-Unique [0.334] Informational #750787
+Unique [3.69825] Actionable #d6402c
+Unique [3.69825] Informational #d6402c
+Unique [3.5] Actionable #fe8c02
+Unique [3.5] Informational #fe8c02
+Unique [7.5] Actionable #ffca00
+Unique [7.5] Informational #ffca00
+Unique [5.5] Actionable #069335
+Unique [5.5] Informational #069335
+Unique [4.5] Actionable #3078ea
+Unique [4.5] Informational #3078ea
+Unique [0.5] Actionable #750787
+Unique [0.5] Informational #750787
 
 // === Settings ===
 

@@ -1,235 +1,235 @@
 <svg height="900" width="1400" xmlns="http://www.w3.org/2000/svg">
 <title>Your Diagram Title</title>
-<!-- Generated with SankeyMATIC: 9/21/2024, 8:12:44 PM -->
+<!-- Generated with SankeyMATIC: 10/5/2024, 10:07:35 PM -->
 <g transform="translate(382.44484,0)">
 <g id="sankey_flows">
-<path id="flow20" d="M189.45331 407.05352v168.535L354.90662 577.5811v-168.535z" fill="#ffca00" stroke-width="0.5" stroke="#ffca00" opacity="0.45"><title>CSAM → Violation of US Law: 37.000</title></path>
-<path id="flow26" d="M366.90662 477.3711C416.54262 477.3711 482.72394 440.96244 532.35994 440.96244" fill="none" stroke-width="136.65" stroke="#ffca00" opacity="0.45"><title>Violation of US Law → Reported to NCMEC: 30.000</title></path>
-<path id="flow21" d="M189.45331 575.58852v122.985L354.90662 700.5661v-122.985z" fill="#069335" stroke-width="0.5" stroke="#069335" opacity="0.45"><title>CSAM → Violation of US Law: 27.000</title></path>
-<path id="flow28" d="M366.90662 627.6861C416.54262 627.6861 482.72394 559.39244 532.35994 559.39244" fill="none" stroke-width="100.21" stroke="#069335" opacity="0.45"><title>Violation of US Law → Reported to NCMEC: 22.000</title></path>
-<path id="flow37" d="M544.35994 463.742C593.99593 463.742 660.17726 547.27608 709.81325 547.27608" fill="none" stroke-width="91.1" stroke="#ffca00" opacity="0.45"><title>Reported to NCMEC → Redundant: 20.000</title></path>
-<path id="flow18" d="M189.45331 243.07352v81.99L354.90662 327.0561v-81.99z" fill="#d6402c" stroke-width="0.5" stroke="#d6402c" opacity="0.45"><title>CSAM → Violation of US Law: 18.000</title></path>
-<path id="flow19" d="M189.45331 325.06352v81.99L354.90662 409.0461v-81.99z" fill="#fe8c02" stroke-width="0.5" stroke="#fe8c02" opacity="0.45"><title>CSAM → Violation of US Law: 18.000</title></path>
-<path id="flow30" d="M366.90662 767.7866C416.54262 767.7866 482.72394 650.49244 532.35994 650.49244" fill="none" stroke-width="81.99" stroke="#3078ea" opacity="0.45"><title>Incidental False Positive → Reported to NCMEC: 18.000</title></path>
-<path id="flow22" d="M366.90662 241.45398v67.38211L532.35994 308.86744v-67.38211z" fill="#d6402c" stroke-width="0.5" stroke="#d6402c" opacity="0.45"><title>Violation of US Law → Reported to NCMEC: 14.793</title></path>
-<path id="flow39" d="M544.35994 576.09563C593.99593 576.09563 660.17726 626.2279 709.81325 626.2279" fill="none" stroke-width="66.80363" stroke="#069335" opacity="0.45"><title>Reported to NCMEC → Redundant: 14.666</title></path>
-<path id="flow24" d="M366.90662 358.9411C416.54262 358.9411 482.72394 340.75244 532.35994 340.75244" fill="none" stroke-width="63.77" stroke="#fe8c02" opacity="0.45"><title>Violation of US Law → Reported to NCMEC: 14.000</title></path>
-<path id="flow41" d="M544.35994 664.15744C593.99593 664.15744 660.17726 686.95971 709.81325 686.95971" fill="none" stroke-width="54.66" stroke="#3078ea" opacity="0.45"><title>Reported to NCMEC → Redundant: 12.000</title></path>
-<path id="flow12" d="M12 448.04852v45.55L177.45331 493.59852v-45.55z" fill="#ffca00" stroke-width="0.5" stroke="#ffca00" opacity="0.45"><title>Minors/adults shit-posting CSAM, i.e., as memes → CSAM: 10.000</title></path>
-<path id="flow36" d="M544.35994 395.417C593.99593 395.417 660.17726 301.52236 709.81325 301.52236" fill="none" stroke-width="45.55" stroke="#ffca00" opacity="0.45"><title>Reported to NCMEC → Unique: 10.000</title></path>
-<path id="flow33" d="M544.35994 286.41129C593.99593 286.41129 660.17726 436.75356 709.81325 436.75356" fill="none" stroke-width="44.92141" stroke="#d6402c" opacity="0.45"><title>Reported to NCMEC → Redundant: 9.862</title></path>
-<path id="flow35" d="M544.35994 351.38609C593.99593 351.38609 660.17726 480.47018 709.81325 480.47018" fill="none" stroke-width="42.51181" stroke="#fe8c02" opacity="0.45"><title>Reported to NCMEC → Redundant: 9.333</title></path>
-<path id="flow7" d="M12 132.44352C61.63599 132.44352 127.81732 263.57102 177.45331 263.57102" fill="none" stroke-width="40.995" stroke="#d6402c" opacity="0.45"><title>Adults producing CSAM → CSAM: 9.000</title></path>
-<path id="flow8" d="M12 199.66402C61.63599 199.66402 127.81732 304.56602 177.45331 304.56602" fill="none" stroke-width="40.995" stroke="#d6402c" opacity="0.45"><title>Adults distributing/accessing CSAM → CSAM: 9.000</title></path>
-<path id="flow9" d="M12 266.88452C61.63599 266.88452 127.81732 345.56102 177.45331 345.56102" fill="none" stroke-width="40.995" stroke="#fe8c02" opacity="0.45"><title>Minors selling self-produced sexual content → CSAM: 9.000</title></path>
-<path id="flow10" d="M12 334.10502C61.63599 334.10502 127.81732 386.55602 177.45331 386.55602" fill="none" stroke-width="40.995" stroke="#fe8c02" opacity="0.45"><title>Adults producing/distributing/accessing virtual CSAM incl. animation → CSAM: 9.000</title></path>
-<path id="flow11" d="M12 401.32552C61.63599 401.32552 127.81732 427.55102 177.45331 427.55102" fill="none" stroke-width="40.995" stroke="#ffca00" opacity="0.45"><title>Adults distributing/accessing porn collections containing occasional CSAM → CSAM: 9.000</title></path>
-<path id="flow13" d="M12 540.32152C61.63599 540.32152 127.81732 514.09602 177.45331 514.09602" fill="none" stroke-width="40.995" stroke="#ffca00" opacity="0.45"><title>Adults posting CSAM to alert other adults or recruit them for “community policing" → CSAM: 9.000</title></path>
-<path id="flow14" d="M12 607.54202C61.63599 607.54202 127.81732 555.09102 177.45331 555.09102" fill="none" stroke-width="40.995" stroke="#ffca00" opacity="0.45"><title>Teenagers exchanging sexual photos/videos involving other teenagers without consent → CSAM: 9.000</title></path>
-<path id="flow15" d="M12 674.76252C61.63599 674.76252 127.81732 596.08602 177.45331 596.08602" fill="none" stroke-width="40.995" stroke="#069335" opacity="0.45"><title>Teenagers exchanging sexual photos/videos of themselves with consent → CSAM: 9.000</title></path>
-<path id="flow16" d="M12 741.98302C61.63599 741.98302 127.81732 637.08102 177.45331 637.08102" fill="none" stroke-width="40.995" stroke="#069335" opacity="0.45"><title>Adults owning sexual photos/videos of minors above age of consent, taken with consent → CSAM: 9.000</title></path>
-<path id="flow17" d="M12 809.20352C61.63599 809.20352 127.81732 678.07602 177.45331 678.07602" fill="none" stroke-width="40.995" stroke="#069335" opacity="0.45"><title>Adults, e.g., parents or teachers, documenting CSAM sent to minors in their care → CSAM: 9.000</title></path>
-<path id="flow38" d="M544.35994 525.9929C593.99593 525.9929 660.17726 340.99827 709.81325 340.99827" fill="none" stroke-width="33.40181" stroke="#069335" opacity="0.45"><title>Reported to NCMEC → Unique: 7.333</title></path>
-<path id="flow27" d="M366.90662 561.6386C416.54262 561.6386 482.72394 783.61432 532.35994 783.61432" fill="none" stroke-width="31.885" stroke="#ffca00" opacity="0.45"><title>Violation of US Law → False Negative: 7.000</title></path>
-<path id="flow40" d="M544.35994 623.16244C593.99593 623.16244 660.17726 371.36417 709.81325 371.36417" fill="none" stroke-width="27.33" stroke="#3078ea" opacity="0.45"><title>Reported to NCMEC → Unique: 6.000</title></path>
-<path id="flow29" d="M366.90662 689.1786C416.54262 689.1786 482.72394 810.94432 532.35994 810.94432" fill="none" stroke-width="22.775" stroke="#069335" opacity="0.45"><title>Violation of US Law → False Negative: 5.000</title></path>
-<path id="flow48" d="M721.81325 290.13486C771.44924 290.13486 837.63057 254.25466 887.26656 254.25466" fill="none" stroke-width="22.775" stroke="#ffca00" opacity="0.45"><title>Unique → Actionable: 5.000</title></path>
-<path id="flow49" d="M721.81325 312.90986C771.44924 312.90986 837.63057 356.99961 887.26656 356.99961" fill="none" stroke-width="22.775" stroke="#ffca00" opacity="0.45"><title>Unique → Informational: 5.000</title></path>
-<path id="flow32" d="M544.35994 252.71796C593.99593 252.71796 660.17726 246.25654 709.81325 246.25654" fill="none" stroke-width="22.46526" stroke="#d6402c" opacity="0.45"><title>Reported to NCMEC → Unique: 4.932</title></path>
-<path id="flow34" d="M544.35994 319.50109C593.99593 319.50109 660.17726 268.11827 709.81325 268.11827" fill="none" stroke-width="21.25818" stroke="#fe8c02" opacity="0.45"><title>Reported to NCMEC → Unique: 4.667</title></path>
-<path id="flow23" d="M366.90662 317.9461C416.54262 317.9461 482.72394 740.34182 532.35994 740.34182" fill="none" stroke-width="18.22" stroke="#d6402c" opacity="0.45"><title>Violation of US Law → False Negative: 4.000</title></path>
-<path id="flow25" d="M366.90662 399.9361C416.54262 399.9361 482.72394 758.56182 532.35994 758.56182" fill="none" stroke-width="18.22" stroke="#fe8c02" opacity="0.45"><title>Violation of US Law → False Negative: 4.000</title></path>
-<path id="flow51" d="M721.81325 349.34758C771.44924 349.34758 837.63057 376.7387 887.26656 376.7387" fill="none" stroke-width="16.70318" stroke="#069335" opacity="0.45"><title>Unique → Informational: 3.667</title></path>
-<path id="flow50" d="M721.81325 332.64667C771.44924 332.64667 837.63057 273.99148 887.26656 273.99148" fill="none" stroke-width="16.69863" stroke="#069335" opacity="0.45"><title>Unique → Actionable: 3.666</title></path>
-<path id="flow52" d="M721.81325 364.53167C771.44924 364.53167 837.63057 289.17329 887.26656 289.17329" fill="none" stroke-width="13.665" stroke="#3078ea" opacity="0.45"><title>Unique → Actionable: 3.000</title></path>
-<path id="flow53" d="M721.81325 378.19667C771.44924 378.19667 837.63057 391.92279 887.26656 391.92279" fill="none" stroke-width="13.665" stroke="#3078ea" opacity="0.45"><title>Unique → Informational: 3.000</title></path>
-<path id="flow44" d="M721.81325 240.64023C771.44924 240.64023 837.63057 226.62403 887.26656 226.62403" fill="none" stroke-width="11.23263" stroke="#d6402c" opacity="0.45"><title>Unique → Actionable: 2.466</title></path>
-<path id="flow45" d="M721.81325 251.87286C771.44924 251.87286 837.63057 329.36442 887.26656 329.36442" fill="none" stroke-width="11.23263" stroke="#d6402c" opacity="0.45"><title>Unique → Informational: 2.466</title></path>
-<path id="flow47" d="M721.81325 273.43167C771.44924 273.43167 837.63057 340.29642 887.26656 340.29642" fill="none" stroke-width="10.63137" stroke="#fe8c02" opacity="0.45"><title>Unique → Informational: 2.334</title></path>
-<path id="flow46" d="M721.81325 262.80258C771.44924 262.80258 837.63057 237.55376 887.26656 237.55376" fill="none" stroke-width="10.62682" stroke="#fe8c02" opacity="0.45"><title>Unique → Actionable: 2.333</title></path>
-<path id="flow31" d="M366.90662 839.5621C416.54262 839.5621 482.72394 696.04244 532.35994 696.04244" fill="none" stroke-width="9.11" stroke="#750787" opacity="0.45"><title>Adversarial False Positive → Reported to NCMEC: 2.000</title></path>
-<path id="flow43" d="M544.35994 697.56153C593.99593 697.56153 660.17726 717.32562 709.81325 717.32562" fill="none" stroke-width="6.07181" stroke="#750787" opacity="0.45"><title>Reported to NCMEC → Redundant: 1.333</title></path>
-<path id="flow42" d="M544.35994 693.00653C593.99593 693.00653 660.17726 386.54827 709.81325 386.54827" fill="none" stroke-width="3.03818" stroke="#750787" opacity="0.45"><title>Reported to NCMEC → Unique: 0.667</title></path>
-<path id="flow0" d="M313.67063 57.0672C326.04143 57.0672 342.53583 242.63828 354.90662 242.63828" fill="none" stroke-width="2.3686" stroke="#d6402c" opacity="0.45"><title>Online enticement of children → Violation of US Law: 0.520</title></path>
-<path id="flow55" d="M721.81325 387.30667C771.44924 387.30667 837.63057 399.51598 887.26656 399.51598" fill="none" stroke-width="1.52137" stroke="#750787" opacity="0.45"><title>Unique → Informational: 0.334</title></path>
-<path id="flow54" d="M721.81325 385.78758C771.44924 385.78758 837.63057 296.7642 887.26656 296.7642" fill="none" stroke-width="1.51682" stroke="#750787" opacity="0.45"><title>Unique → Actionable: 0.333</title></path>
-<path id="flow1" d="M313.67063 84.76625C326.04143 84.76625 342.53583 244.11182 354.90662 244.11182" fill="none" stroke-width="1" stroke="#d6402c" opacity="0.45"><title>Obscene material sent to a child → Violation of US Law: 0.127</title></path>
-<path id="flow2" d="M313.67063 111.39486C326.04143 111.39486 342.53583 244.51494 354.90662 244.51494" fill="none" stroke-width="1" stroke="#d6402c" opacity="0.45"><title>Child sexual molestation → Violation of US Law: 0.050</title></path>
-<path id="flow3" d="M313.67063 137.84356C326.04143 137.84356 342.53583 244.73814 354.90662 244.73814" fill="none" stroke-width="1" stroke="#d6402c" opacity="0.45"><title>Child sex trafficking → Violation of US Law: 0.048</title></path>
-<path id="flow4" d="M313.67063 164.23076C326.04143 164.23076 342.53583 244.89984 354.90662 244.89984" fill="none" stroke-width="1" stroke="#d6402c" opacity="0.45"><title>Misleading words/images online → Violation of US Law: 0.023</title></path>
-<path id="flow5" d="M313.67063 190.55192C326.04143 190.55192 342.53583 244.99549 354.90662 244.99549" fill="none" stroke-width="1" stroke="#d6402c" opacity="0.45"><title>Misleading domain name → Violation of US Law: 0.019</title></path>
-<path id="flow6" d="M313.67063 216.83435C326.04143 216.83435 342.53583 245.05243 354.90662 245.05243" fill="none" stroke-width="1" stroke="#d6402c" opacity="0.45"><title>Child sex tourism → Violation of US Law: 0.006</title></path>
+<path id="flow20" d="M189.45331 407.91448v168.535L354.90662 576.72013v-168.535z" fill="#ffca00" stroke-width="0.5" stroke="#ffca00" opacity="0.45"><title>CSAM → Violation of US Law: 37.00000</title></path>
+<path id="flow26" d="M366.90662 476.51013C416.54262 476.51013 482.72394 437.9398 532.35994 437.9398" fill="none" stroke-width="136.65" stroke="#ffca00" opacity="0.45"><title>Violation of US Law → Reported to NCMEC: 30.00000</title></path>
+<path id="flow21" d="M189.45331 576.44948v122.985L354.90662 699.70513v-122.985z" fill="#069335" stroke-width="0.5" stroke="#069335" opacity="0.45"><title>CSAM → Violation of US Law: 27.00000</title></path>
+<path id="flow28" d="M366.90662 626.82513C416.54262 626.82513 482.72394 556.3698 532.35994 556.3698" fill="none" stroke-width="100.21" stroke="#069335" opacity="0.45"><title>Violation of US Law → Reported to NCMEC: 22.00000</title></path>
+<path id="flow18" d="M189.45331 243.93448v81.99L354.90662 326.19513v-81.99z" fill="#d6402c" stroke-width="0.5" stroke="#d6402c" opacity="0.45"><title>CSAM → Violation of US Law: 18.00000</title></path>
+<path id="flow19" d="M189.45331 325.92448v81.99L354.90662 408.18513v-81.99z" fill="#fe8c02" stroke-width="0.5" stroke="#fe8c02" opacity="0.45"><title>CSAM → Violation of US Law: 18.00000</title></path>
+<path id="flow30" d="M366.90662 766.92563C416.54262 766.92563 482.72394 647.4698 532.35994 647.4698" fill="none" stroke-width="81.99" stroke="#3078ea" opacity="0.45"><title>Incidental False Positive → Reported to NCMEC: 18.00000</title></path>
+<path id="flow36" d="M544.35994 403.7773C593.99593 403.7773 660.17726 332.41167 709.81325 332.41167" fill="none" stroke-width="68.325" stroke="#ffca00" opacity="0.45"><title>Reported to NCMEC → Unique: 15.00000</title></path>
+<path id="flow37" d="M544.35994 472.1023C593.99593 472.1023 660.17726 588.19323 709.81325 588.19323" fill="none" stroke-width="68.325" stroke="#ffca00" opacity="0.45"><title>Reported to NCMEC → Redundant: 15.00000</title></path>
+<path id="flow22" d="M366.90662 274.28407C416.54262 274.28407 482.72394 272.15374 532.35994 272.15374" fill="none" stroke-width="67.38211" stroke="#d6402c" opacity="0.45"><title>Violation of US Law → Reported to NCMEC: 14.79300</title></path>
+<path id="flow24" d="M366.90662 358.08013C416.54262 358.08013 482.72394 337.7298 532.35994 337.7298" fill="none" stroke-width="63.77" stroke="#fe8c02" opacity="0.45"><title>Violation of US Law → Reported to NCMEC: 14.00000</title></path>
+<path id="flow38" d="M544.35994 531.3173C593.99593 531.3173 660.17726 391.62667 709.81325 391.62667" fill="none" stroke-width="50.105" stroke="#069335" opacity="0.45"><title>Reported to NCMEC → Unique: 11.00000</title></path>
+<path id="flow39" d="M544.35994 581.4223C593.99593 581.4223 660.17726 647.40823 709.81325 647.40823" fill="none" stroke-width="50.105" stroke="#069335" opacity="0.45"><title>Reported to NCMEC → Redundant: 11.00000</title></path>
+<path id="flow12" d="M12 448.90948v45.55L177.45331 494.45948v-45.55z" fill="#ffca00" stroke-width="0.5" stroke="#ffca00" opacity="0.45"><title>Minors/adults shit-posting CSAM, i.e., as memes → CSAM: 10.00000</title></path>
+<path id="flow7" d="M12 133.30448C61.63599 133.30448 127.81732 264.43198 177.45331 264.43198" fill="none" stroke-width="40.995" stroke="#d6402c" opacity="0.45"><title>Adults producing CSAM → CSAM: 9.00000</title></path>
+<path id="flow8" d="M12 200.52498C61.63599 200.52498 127.81732 305.42698 177.45331 305.42698" fill="none" stroke-width="40.995" stroke="#d6402c" opacity="0.45"><title>Adults distributing/accessing CSAM → CSAM: 9.00000</title></path>
+<path id="flow9" d="M12 267.74548C61.63599 267.74548 127.81732 346.42198 177.45331 346.42198" fill="none" stroke-width="40.995" stroke="#fe8c02" opacity="0.45"><title>Minors selling self-produced sexual content → CSAM: 9.00000</title></path>
+<path id="flow10" d="M12 334.96598C61.63599 334.96598 127.81732 387.41698 177.45331 387.41698" fill="none" stroke-width="40.995" stroke="#fe8c02" opacity="0.45"><title>Adults producing/distributing/accessing virtual CSAM incl. animation → CSAM: 9.00000</title></path>
+<path id="flow11" d="M12 402.18648C61.63599 402.18648 127.81732 428.41198 177.45331 428.41198" fill="none" stroke-width="40.995" stroke="#ffca00" opacity="0.45"><title>Adults distributing/accessing porn collections containing occasional CSAM → CSAM: 9.00000</title></path>
+<path id="flow13" d="M12 541.18248C61.63599 541.18248 127.81732 514.95698 177.45331 514.95698" fill="none" stroke-width="40.995" stroke="#ffca00" opacity="0.45"><title>Adults posting CSAM to alert other adults or recruit them for “community policing" → CSAM: 9.00000</title></path>
+<path id="flow14" d="M12 608.40298C61.63599 608.40298 127.81732 555.95198 177.45331 555.95198" fill="none" stroke-width="40.995" stroke="#ffca00" opacity="0.45"><title>Teenagers exchanging sexual photos/videos involving other teenagers without consent → CSAM: 9.00000</title></path>
+<path id="flow15" d="M12 675.62348C61.63599 675.62348 127.81732 596.94698 177.45331 596.94698" fill="none" stroke-width="40.995" stroke="#069335" opacity="0.45"><title>Teenagers exchanging sexual photos/videos of themselves with consent → CSAM: 9.00000</title></path>
+<path id="flow16" d="M12 742.84398C61.63599 742.84398 127.81732 637.94198 177.45331 637.94198" fill="none" stroke-width="40.995" stroke="#069335" opacity="0.45"><title>Adults owning sexual photos/videos of minors above age of consent, taken with consent → CSAM: 9.00000</title></path>
+<path id="flow17" d="M12 810.06448C61.63599 810.06448 127.81732 678.93698 177.45331 678.93698" fill="none" stroke-width="40.995" stroke="#069335" opacity="0.45"><title>Adults, e.g., parents or teachers, documenting CSAM sent to minors in their care → CSAM: 9.00000</title></path>
+<path id="flow40" d="M544.35994 626.9723C593.99593 626.9723 660.17726 437.17667 709.81325 437.17667" fill="none" stroke-width="40.995" stroke="#3078ea" opacity="0.45"><title>Reported to NCMEC → Unique: 9.00000</title></path>
+<path id="flow41" d="M544.35994 667.9673C593.99593 667.9673 660.17726 692.95823 709.81325 692.95823" fill="none" stroke-width="40.995" stroke="#3078ea" opacity="0.45"><title>Reported to NCMEC → Redundant: 9.00000</title></path>
+<path id="flow48" d="M721.81325 315.33042C771.44924 315.33042 837.63057 268.90387 887.26656 268.90387" fill="none" stroke-width="34.1625" stroke="#ffca00" opacity="0.45"><title>Unique → Actionable: 7.50000</title></path>
+<path id="flow49" d="M721.81325 349.49292C771.44924 349.49292 837.63057 409.9074 887.26656 409.9074" fill="none" stroke-width="34.1625" stroke="#ffca00" opacity="0.45"><title>Unique → Informational: 7.50000</title></path>
+<path id="flow32" d="M544.35994 255.30821C593.99593 255.30821 660.17726 249.51864 709.81325 249.51864" fill="none" stroke-width="33.69106" stroke="#d6402c" opacity="0.45"><title>Reported to NCMEC → Unique: 7.39650</title></path>
+<path id="flow33" d="M544.35994 288.99927C593.99593 288.99927 660.17726 505.3002 709.81325 505.3002" fill="none" stroke-width="33.69106" stroke="#d6402c" opacity="0.45"><title>Reported to NCMEC → Redundant: 7.39650</title></path>
+<path id="flow27" d="M366.90662 560.77763C416.54262 560.77763 482.72394 780.59167 532.35994 780.59167" fill="none" stroke-width="31.885" stroke="#ffca00" opacity="0.45"><title>Violation of US Law → False Negative: 7.00000</title></path>
+<path id="flow34" d="M544.35994 321.7873C593.99593 321.7873 660.17726 282.30667 709.81325 282.30667" fill="none" stroke-width="31.885" stroke="#fe8c02" opacity="0.45"><title>Reported to NCMEC → Unique: 7.00000</title></path>
+<path id="flow35" d="M544.35994 353.6723C593.99593 353.6723 660.17726 538.08823 709.81325 538.08823" fill="none" stroke-width="31.885" stroke="#fe8c02" opacity="0.45"><title>Reported to NCMEC → Redundant: 7.00000</title></path>
+<path id="flow50" d="M721.81325 379.10042C771.44924 379.10042 837.63057 298.51137 887.26656 298.51137" fill="none" stroke-width="25.0525" stroke="#069335" opacity="0.45"><title>Unique → Actionable: 5.50000</title></path>
+<path id="flow51" d="M721.81325 404.15292C771.44924 404.15292 837.63057 439.5149 887.26656 439.5149" fill="none" stroke-width="25.0525" stroke="#069335" opacity="0.45"><title>Unique → Informational: 5.50000</title></path>
+<path id="flow29" d="M366.90662 688.31763C416.54262 688.31763 482.72394 807.92167 532.35994 807.92167" fill="none" stroke-width="22.775" stroke="#069335" opacity="0.45"><title>Violation of US Law → False Negative: 5.00000</title></path>
+<path id="flow52" d="M721.81325 426.92792C771.44924 426.92792 837.63057 321.28637 887.26656 321.28637" fill="none" stroke-width="20.4975" stroke="#3078ea" opacity="0.45"><title>Unique → Actionable: 4.50000</title></path>
+<path id="flow53" d="M721.81325 447.42542C771.44924 447.42542 837.63057 462.2899 887.26656 462.2899" fill="none" stroke-width="20.4975" stroke="#3078ea" opacity="0.45"><title>Unique → Informational: 4.50000</title></path>
+<path id="flow23" d="M366.90662 317.08513C416.54262 317.08513 482.72394 737.31917 532.35994 737.31917" fill="none" stroke-width="18.22" stroke="#d6402c" opacity="0.45"><title>Violation of US Law → False Negative: 4.00000</title></path>
+<path id="flow25" d="M366.90662 399.07513C416.54262 399.07513 482.72394 755.53917 532.35994 755.53917" fill="none" stroke-width="18.22" stroke="#fe8c02" opacity="0.45"><title>Violation of US Law → False Negative: 4.00000</title></path>
+<path id="flow44" d="M721.81325 241.09587C771.44924 241.09587 837.63057 227.45735 887.26656 227.45735" fill="none" stroke-width="16.84553" stroke="#d6402c" opacity="0.45"><title>Unique → Actionable: 3.69825</title></path>
+<path id="flow45" d="M721.81325 257.9414C771.44924 257.9414 837.63057 368.46088 887.26656 368.46088" fill="none" stroke-width="16.84553" stroke="#d6402c" opacity="0.45"><title>Unique → Informational: 3.69825</title></path>
+<path id="flow46" d="M721.81325 274.33542C771.44924 274.33542 837.63057 243.85137 887.26656 243.85137" fill="none" stroke-width="15.9425" stroke="#fe8c02" opacity="0.45"><title>Unique → Actionable: 3.50000</title></path>
+<path id="flow47" d="M721.81325 290.27792C771.44924 290.27792 837.63057 384.8549 887.26656 384.8549" fill="none" stroke-width="15.9425" stroke="#fe8c02" opacity="0.45"><title>Unique → Informational: 3.50000</title></path>
+<path id="flow31" d="M366.90662 838.70113C416.54262 838.70113 482.72394 693.0198 532.35994 693.0198" fill="none" stroke-width="9.11" stroke="#750787" opacity="0.45"><title>Adversarial False Positive → Reported to NCMEC: 2.00000</title></path>
+<path id="flow42" d="M544.35994 690.7423C593.99593 690.7423 660.17726 459.95167 709.81325 459.95167" fill="none" stroke-width="4.555" stroke="#750787" opacity="0.45"><title>Reported to NCMEC → Unique: 1.00000</title></path>
+<path id="flow43" d="M544.35994 695.2973C593.99593 695.2973 660.17726 715.73323 709.81325 715.73323" fill="none" stroke-width="4.555" stroke="#750787" opacity="0.45"><title>Reported to NCMEC → Redundant: 1.00000</title></path>
+<path id="flow0" d="M313.67063 57.92817C326.04143 57.92817 342.53583 241.77732 354.90662 241.77732" fill="none" stroke-width="2.3686" stroke="#d6402c" opacity="0.45"><title>Online enticement of children → Violation of US Law: 0.52000</title></path>
+<path id="flow54" d="M721.81325 458.81292C771.44924 458.81292 837.63057 332.67387 887.26656 332.67387" fill="none" stroke-width="2.2775" stroke="#750787" opacity="0.45"><title>Unique → Actionable: 0.50000</title></path>
+<path id="flow55" d="M721.81325 461.09042C771.44924 461.09042 837.63057 473.6774 887.26656 473.6774" fill="none" stroke-width="2.2775" stroke="#750787" opacity="0.45"><title>Unique → Informational: 0.50000</title></path>
+<path id="flow1" d="M313.67063 85.62721C326.04143 85.62721 342.53583 243.25086 354.90662 243.25086" fill="none" stroke-width="1" stroke="#d6402c" opacity="0.45"><title>Obscene material sent to a child → Violation of US Law: 0.12700</title></path>
+<path id="flow2" d="M313.67063 112.25583C326.04143 112.25583 342.53583 243.65398 354.90662 243.65398" fill="none" stroke-width="1" stroke="#d6402c" opacity="0.45"><title>Child sexual molestation → Violation of US Law: 0.05000</title></path>
+<path id="flow3" d="M313.67063 138.70452C326.04143 138.70452 342.53583 243.87717 354.90662 243.87717" fill="none" stroke-width="1" stroke="#d6402c" opacity="0.45"><title>Child sex trafficking → Violation of US Law: 0.04800</title></path>
+<path id="flow4" d="M313.67063 165.09173C326.04143 165.09173 342.53583 244.03887 354.90662 244.03887" fill="none" stroke-width="1" stroke="#d6402c" opacity="0.45"><title>Misleading words/images online → Violation of US Law: 0.02300</title></path>
+<path id="flow5" d="M313.67063 191.41288C326.04143 191.41288 342.53583 244.13453 354.90662 244.13453" fill="none" stroke-width="1" stroke="#d6402c" opacity="0.45"><title>Misleading domain name → Violation of US Law: 0.01900</title></path>
+<path id="flow6" d="M313.67063 217.69532C326.04143 217.69532 342.53583 244.19147 354.90662 244.19147" fill="none" stroke-width="1" stroke="#d6402c" opacity="0.45"><title>Child sex tourism → Violation of US Law: 0.00600</title></path>
 </g>
 <g id="sankey_nodes">
 <g class="node">
-<rect id="r0" class="for_r0" x="177.45331" y="55.8829" height="2.3686" width="12" fill="#888888" fill-opacity="1" transform="translate(124.21732,0)"><title>Online enticement of children:
-0.520</title></rect>
+<rect id="r0" class="for_r0" x="177.45331" y="56.74387" height="2.3686" width="12" fill="#888888" fill-opacity="1" transform="translate(124.21732,0)"><title>Online enticement of children:
+0.52000</title></rect>
 </g>
 <g class="node">
-<rect id="r1" class="for_r1" x="354.90662" y="241.45398" height="459.11212" width="12" fill="#888888" fill-opacity="1"><title>Violation of US Law:
-100.793</title></rect>
+<rect id="r1" class="for_r1" x="354.90662" y="240.59302" height="459.11212" width="12" fill="#888888" fill-opacity="1"><title>Violation of US Law:
+100.79300</title></rect>
 </g>
 <g class="node">
-<rect id="r2" class="for_r2" x="177.45331" y="84.477" height="0.57849" width="12" fill="#888888" fill-opacity="1" transform="translate(124.21732,0)"><title>Obscene material sent to a child:
-0.127</title></rect>
+<rect id="r2" class="for_r2" x="177.45331" y="85.33797" height="0.57849" width="12" fill="#888888" fill-opacity="1" transform="translate(124.21732,0)"><title>Obscene material sent to a child:
+0.12700</title></rect>
 </g>
 <g class="node">
-<rect id="r3" class="for_r3" x="177.45331" y="111.28099" height="0.22775" width="12" fill="#888888" fill-opacity="1" transform="translate(124.21732,0)"><title>Child sexual molestation:
-0.050</title></rect>
+<rect id="r3" class="for_r3" x="177.45331" y="112.14195" height="0.22775" width="12" fill="#888888" fill-opacity="1" transform="translate(124.21732,0)"><title>Child sexual molestation:
+0.05000</title></rect>
 </g>
 <g class="node">
-<rect id="r4" class="for_r4" x="177.45331" y="137.73424" height="0.21864" width="12" fill="#888888" fill-opacity="1" transform="translate(124.21732,0)"><title>Child sex trafficking:
-0.048</title></rect>
+<rect id="r4" class="for_r4" x="177.45331" y="138.5952" height="0.21864" width="12" fill="#888888" fill-opacity="1" transform="translate(124.21732,0)"><title>Child sex trafficking:
+0.04800</title></rect>
 </g>
 <g class="node">
-<rect id="r5" class="for_r5" x="177.45331" y="164.17838" height="0.10476" width="12" fill="#888888" fill-opacity="1" transform="translate(124.21732,0)"><title>Misleading words/images online:
-0.023</title></rect>
+<rect id="r5" class="for_r5" x="177.45331" y="165.03934" height="0.10476" width="12" fill="#888888" fill-opacity="1" transform="translate(124.21732,0)"><title>Misleading words/images online:
+0.02300</title></rect>
 </g>
 <g class="node">
-<rect id="r6" class="for_r6" x="177.45331" y="190.50864" height="0.08654" width="12" fill="#888888" fill-opacity="1" transform="translate(124.21732,0)"><title>Misleading domain name:
-0.019</title></rect>
+<rect id="r6" class="for_r6" x="177.45331" y="191.36961" height="0.08654" width="12" fill="#888888" fill-opacity="1" transform="translate(124.21732,0)"><title>Misleading domain name:
+0.01900</title></rect>
 </g>
 <g class="node">
-<rect id="r7" class="for_r7" x="177.45331" y="216.82069" height="0.02733" width="12" fill="#888888" fill-opacity="1" transform="translate(124.21732,0)"><title>Child sex tourism:
-0.006</title></rect>
+<rect id="r7" class="for_r7" x="177.45331" y="217.68165" height="0.02733" width="12" fill="#888888" fill-opacity="1" transform="translate(124.21732,0)"><title>Child sex tourism:
+0.00600</title></rect>
 </g>
 <g class="node">
-<rect id="r8" class="for_r8" x="0" y="111.94602" height="40.995" width="12" fill="#888888" fill-opacity="1"><title>Adults producing CSAM:
-9.000</title></rect>
+<rect id="r8" class="for_r8" x="0" y="112.80698" height="40.995" width="12" fill="#888888" fill-opacity="1"><title>Adults producing CSAM:
+9.00000</title></rect>
 </g>
 <g class="node">
-<rect id="r9" class="for_r9" x="177.45331" y="243.07352" height="455.5" width="12" fill="#888888" fill-opacity="1"><title>CSAM:
-100.000</title></rect>
+<rect id="r9" class="for_r9" x="177.45331" y="243.93448" height="455.5" width="12" fill="#888888" fill-opacity="1"><title>CSAM:
+100.00000</title></rect>
 </g>
 <g class="node">
-<rect id="r10" class="for_r10" x="0" y="179.16652" height="40.995" width="12" fill="#888888" fill-opacity="1"><title>Adults distributing/accessing CSAM:
-9.000</title></rect>
+<rect id="r10" class="for_r10" x="0" y="180.02748" height="40.995" width="12" fill="#888888" fill-opacity="1"><title>Adults distributing/accessing CSAM:
+9.00000</title></rect>
 </g>
 <g class="node">
-<rect id="r11" class="for_r11" x="0" y="246.38702" height="40.995" width="12" fill="#888888" fill-opacity="1"><title>Minors selling self-produced sexual content:
-9.000</title></rect>
+<rect id="r11" class="for_r11" x="0" y="247.24798" height="40.995" width="12" fill="#888888" fill-opacity="1"><title>Minors selling self-produced sexual content:
+9.00000</title></rect>
 </g>
 <g class="node">
-<rect id="r12" class="for_r12" x="0" y="313.60752" height="40.995" width="12" fill="#888888" fill-opacity="1"><title>Adults producing/distributing/accessing virtual CSAM incl. animation:
-9.000</title></rect>
+<rect id="r12" class="for_r12" x="0" y="314.46848" height="40.995" width="12" fill="#888888" fill-opacity="1"><title>Adults producing/distributing/accessing virtual CSAM incl. animation:
+9.00000</title></rect>
 </g>
 <g class="node">
-<rect id="r13" class="for_r13" x="0" y="380.82802" height="40.995" width="12" fill="#888888" fill-opacity="1"><title>Adults distributing/accessing porn collections containing occasional CSAM:
-9.000</title></rect>
+<rect id="r13" class="for_r13" x="0" y="381.68898" height="40.995" width="12" fill="#888888" fill-opacity="1"><title>Adults distributing/accessing porn collections containing occasional CSAM:
+9.00000</title></rect>
 </g>
 <g class="node">
-<rect id="r14" class="for_r14" x="0" y="448.04852" height="45.55" width="12" fill="#888888" fill-opacity="1"><title>Minors/adults shit-posting CSAM, i.e., as memes:
-10.000</title></rect>
+<rect id="r14" class="for_r14" x="0" y="448.90948" height="45.55" width="12" fill="#888888" fill-opacity="1"><title>Minors/adults shit-posting CSAM, i.e., as memes:
+10.00000</title></rect>
 </g>
 <g class="node">
-<rect id="r15" class="for_r15" x="0" y="519.82402" height="40.995" width="12" fill="#888888" fill-opacity="1"><title>Adults posting CSAM to alert other adults or recruit them for “community policing":
-9.000</title></rect>
+<rect id="r15" class="for_r15" x="0" y="520.68498" height="40.995" width="12" fill="#888888" fill-opacity="1"><title>Adults posting CSAM to alert other adults or recruit them for “community policing":
+9.00000</title></rect>
 </g>
 <g class="node">
-<rect id="r16" class="for_r16" x="0" y="587.04452" height="40.995" width="12" fill="#888888" fill-opacity="1"><title>Teenagers exchanging sexual photos/videos involving other teenagers without consent:
-9.000</title></rect>
+<rect id="r16" class="for_r16" x="0" y="587.90548" height="40.995" width="12" fill="#888888" fill-opacity="1"><title>Teenagers exchanging sexual photos/videos involving other teenagers without consent:
+9.00000</title></rect>
 </g>
 <g class="node">
-<rect id="r17" class="for_r17" x="0" y="654.26502" height="40.995" width="12" fill="#888888" fill-opacity="1"><title>Teenagers exchanging sexual photos/videos of themselves with consent:
-9.000</title></rect>
+<rect id="r17" class="for_r17" x="0" y="655.12598" height="40.995" width="12" fill="#888888" fill-opacity="1"><title>Teenagers exchanging sexual photos/videos of themselves with consent:
+9.00000</title></rect>
 </g>
 <g class="node">
-<rect id="r18" class="for_r18" x="0" y="721.48552" height="40.995" width="12" fill="#888888" fill-opacity="1"><title>Adults owning sexual photos/videos of minors above age of consent, taken with consent:
-9.000</title></rect>
+<rect id="r18" class="for_r18" x="0" y="722.34648" height="40.995" width="12" fill="#888888" fill-opacity="1"><title>Adults owning sexual photos/videos of minors above age of consent, taken with consent:
+9.00000</title></rect>
 </g>
 <g class="node">
-<rect id="r19" class="for_r19" x="0" y="788.70602" height="40.995" width="12" fill="#888888" fill-opacity="1"><title>Adults, e.g., parents or teachers, documenting CSAM sent to minors in their care:
-9.000</title></rect>
+<rect id="r19" class="for_r19" x="0" y="789.56698" height="40.995" width="12" fill="#888888" fill-opacity="1"><title>Adults, e.g., parents or teachers, documenting CSAM sent to minors in their care:
+9.00000</title></rect>
 </g>
 <g class="node">
-<rect id="r20" class="for_r20" x="532.35994" y="245.89421" height="459.11212" width="12" fill="#888888" fill-opacity="1" transform="translate(0,-4.40888)"><title>Reported to NCMEC:
-100.793</title></rect>
+<rect id="r20" class="for_r20" x="532.35994" y="242.87156" height="459.11212" width="12" fill="#888888" fill-opacity="1" transform="translate(0,-4.40888)"><title>Reported to NCMEC:
+100.79300</title></rect>
 </g>
 <g class="node">
-<rect id="r21" class="for_r21" x="532.35994" y="731.23182" height="91.1" width="12" fill="#888888" fill-opacity="1"><title>False Negative:
-20.000</title></rect>
+<rect id="r21" class="for_r21" x="532.35994" y="728.20917" height="91.1" width="12" fill="#888888" fill-opacity="1"><title>False Negative:
+20.00000</title></rect>
 </g>
 <g class="node">
-<rect id="r22" class="for_r22" x="354.90662" y="726.7916" height="81.99" width="12" fill="#888888" fill-opacity="1"><title>Incidental False Positive:
-18.000</title></rect>
+<rect id="r22" class="for_r22" x="354.90662" y="725.93063" height="81.99" width="12" fill="#888888" fill-opacity="1"><title>Incidental False Positive:
+18.00000</title></rect>
 </g>
 <g class="node">
-<rect id="r23" class="for_r23" x="354.90662" y="835.0071" height="9.11" width="12" fill="#888888" fill-opacity="1"><title>Adversarial False Positive:
-2.000</title></rect>
+<rect id="r23" class="for_r23" x="354.90662" y="834.14613" height="9.11" width="12" fill="#888888" fill-opacity="1"><title>Adversarial False Positive:
+2.00000</title></rect>
 </g>
 <g class="node">
-<rect id="r24" class="for_r24" x="709.81325" y="235.02391" height="153.04345" width="12" fill="#888888" fill-opacity="1"><title>Unique:
-33.599</title></rect>
+<rect id="r24" class="for_r24" x="709.81325" y="232.67311" height="229.55606" width="12" fill="#888888" fill-opacity="1"><title>Unique:
+50.39650</title></rect>
 </g>
 <g class="node">
-<rect id="r25" class="for_r25" x="709.81325" y="414.29286" height="306.06867" width="12" fill="#888888" fill-opacity="1"><title>Redundant:
-67.194</title></rect>
+<rect id="r25" class="for_r25" x="709.81325" y="488.45467" height="229.55606" width="12" fill="#888888" fill-opacity="1"><title>Redundant:
+50.39650</title></rect>
 </g>
 <g class="node">
-<rect id="r26" class="for_r26" x="887.26656" y="221.00772" height="76.51489" width="12" fill="#888888" fill-opacity="1"><title>Actionable:
-16.798</title></rect>
+<rect id="r26" class="for_r26" x="887.26656" y="219.03459" height="114.77803" width="12" fill="#888888" fill-opacity="1"><title>Actionable:
+25.19825</title></rect>
 </g>
 <g class="node">
-<rect id="r27" class="for_r27" x="887.26656" y="323.74811" height="76.52855" width="12" fill="#888888" fill-opacity="1"><title>Informational:
-16.801</title></rect>
+<rect id="r27" class="for_r27" x="887.26656" y="360.03812" height="114.77803" width="12" fill="#888888" fill-opacity="1"><title>Informational:
+25.19825</title></rect>
 </g>
 </g>
 <g id="sankey_labels" font-family="sans-serif" font-size="20px" fill="#000000">
-<rect id="label0_bg" class="for_r0" x="-69.90375" y="43.65625" width="245.3225" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(124.21732,0)"></rect>
-<text id="label0" class="for_r0" text-anchor="end" x="169.56847" y="57.0672" font-weight="400" font-size="18px" dy="5.94953" transform="translate(124.21732,0)">Online enticement of children</text>
-<rect id="label1_bg" class="for_r1" x="276.51875" y="457.59375" width="169.27562" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
-<text id="label1" class="for_r1" text-anchor="middle" x="360.90662" y="471.01004" font-weight="400" font-size="18px" dy="5.94953">Violation of US Law</text>
-<rect id="label2_bg" class="for_r2" x="-93.91938" y="71.34375" width="269.33812" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(124.21732,0)"></rect>
-<text id="label2" class="for_r2" text-anchor="end" x="169.56847" y="84.76625" font-weight="400" font-size="18px" dy="5.94953" transform="translate(124.21732,0)">Obscene material sent to a child</text>
-<rect id="label3_bg" class="for_r3" x="-31.8725" y="97.96875" width="207.29125" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(124.21732,0)"></rect>
-<text id="label3" class="for_r3" text-anchor="end" x="169.56847" y="111.39486" font-weight="400" font-size="18px" dy="5.94953" transform="translate(124.21732,0)">Child sexual molestation</text>
-<rect id="label4_bg" class="for_r4" x="7.15875" y="124.42188" width="168.26" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(124.21732,0)"></rect>
-<text id="label4" class="for_r4" text-anchor="end" x="169.56847" y="137.84356" font-weight="400" font-size="18px" dy="5.94953" transform="translate(124.21732,0)">Child sex trafficking</text>
-<rect id="label5_bg" class="for_r5" x="-91.90375" y="150.8125" width="267.3225" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(124.21732,0)"></rect>
-<text id="label5" class="for_r5" text-anchor="end" x="169.56847" y="164.23076" font-weight="400" font-size="18px" dy="5.94953" transform="translate(124.21732,0)">Misleading words/images online</text>
-<rect id="label6_bg" class="for_r6" x="-36.88813" y="177.14063" width="212.30687" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(124.21732,0)"></rect>
-<text id="label6" class="for_r6" text-anchor="end" x="169.56847" y="190.55192" font-weight="400" font-size="18px" dy="5.94953" transform="translate(124.21732,0)">Misleading domain name</text>
-<rect id="label7_bg" class="for_r7" x="25.17437" y="203.42188" width="150.24437" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(124.21732,0)"></rect>
-<text id="label7" class="for_r7" text-anchor="end" x="169.56847" y="216.83435" font-weight="400" font-size="18px" dy="5.94953" transform="translate(124.21732,0)">Child sex tourism</text>
-<rect id="label8_bg" class="for_r8" x="-205.32563" y="119.03125" width="203.29125" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
-<text id="label8" class="for_r8" text-anchor="end" x="-7.88484" y="132.44352" font-weight="400" font-size="18px" dy="5.94953">Adults producing CSAM</text>
-<rect id="label9_bg" class="for_r9" x="151.59688" y="457.40625" width="64.21313" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
-<text id="label9" class="for_r9" text-anchor="middle" x="183.45331" y="470.82352" font-weight="400" font-size="18px" dy="5.94953">CSAM</text>
-<rect id="label10_bg" class="for_r10" x="-298.35688" y="186.25" width="296.3225" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
-<text id="label10" class="for_r10" text-anchor="end" x="-7.88484" y="199.66402" font-weight="400" font-size="18px" dy="5.94953">Adults distributing/accessing CSAM</text>
-<rect id="label11_bg" class="for_r11" x="-359.41938" y="253.46875" width="357.385" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
-<text id="label11" class="for_r11" text-anchor="end" x="-7.88484" y="266.88452" font-weight="400" font-size="18px" dy="5.94953">Minors selling self-produced sexual content</text>
-<rect id="label12_bg" class="for_r12" x="-325.40375" y="310.32813" width="323.36937" height="47.21875" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
-<text id="label12" class="for_r12" text-anchor="end" x="-7.88484" y="334.10502" font-weight="400" font-size="18px" dy="-4.40203">Adults producing/distributing/accessing<tspan x="-7.88484" dy="20.7" font-weight="400" font-size="18px">virtual CSAM incl. animation</tspan></text>
-<rect id="label13_bg" class="for_r13" x="-371.41938" y="377.5625" width="369.385" height="47.20313" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
-<text id="label13" class="for_r13" text-anchor="end" x="-7.88484" y="401.32552" font-weight="400" font-size="18px" dy="-4.40203">Adults distributing/accessing porn collections<tspan x="-7.88484" dy="20.7" font-weight="400" font-size="18px">containing occasional CSAM</tspan></text>
-<rect id="label14_bg" class="for_r14" x="-280.32563" y="447.04688" width="278.29125" height="47.21875" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
-<text id="label14" class="for_r14" text-anchor="end" x="-7.88484" y="470.82352" font-weight="400" font-size="18px" dy="-4.40203">Minors/adults shit-posting CSAM,<tspan x="-7.88484" dy="20.7" font-weight="400" font-size="18px">i.e., as memes</tspan></text>
-<rect id="label15_bg" class="for_r15" x="-343.40375" y="516.54688" width="341.36937" height="47.21875" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
-<text id="label15" class="for_r15" text-anchor="end" x="-7.88484" y="540.32152" font-weight="400" font-size="18px" dy="-4.40203">Adults posting CSAM to alert other adults<tspan x="-7.88484" dy="20.7" font-weight="400" font-size="18px">or recruit them for “community policing"</tspan></text>
-<rect id="label16_bg" class="for_r16" x="-370.46625" y="583.76563" width="368.43187" height="47.21875" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
-<text id="label16" class="for_r16" text-anchor="end" x="-7.88484" y="607.54202" font-weight="400" font-size="18px" dy="-4.40203">Teenagers exchanging sexual photos/videos<tspan x="-7.88484" dy="20.7" font-weight="400" font-size="18px">involving other teenagers without consent</tspan></text>
-<rect id="label17_bg" class="for_r17" x="-370.46625" y="651" width="368.43187" height="47.20313" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
-<text id="label17" class="for_r17" text-anchor="end" x="-7.88484" y="674.76252" font-weight="400" font-size="18px" dy="-4.40203">Teenagers exchanging sexual photos/videos<tspan x="-7.88484" dy="20.7" font-weight="400" font-size="18px">of themselves with consent</tspan></text>
-<rect id="label18_bg" class="for_r18" x="-378.435" y="718.21875" width="376.40062" height="47.20313" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
-<text id="label18" class="for_r18" text-anchor="end" x="-7.88484" y="741.98302" font-weight="400" font-size="18px" dy="-4.40203">Adults owning sexual photos/videos of minors<tspan x="-7.88484" dy="20.7" font-weight="400" font-size="18px">above age of consent, taken with consent</tspan></text>
-<rect id="label19_bg" class="for_r19" x="-382.45063" y="785.4375" width="380.41625" height="47.21875" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
-<text id="label19" class="for_r19" text-anchor="end" x="-7.88484" y="809.20352" font-weight="400" font-size="18px" dy="-4.40203">Adults, e.g., parents or teachers, documenting<tspan x="-7.88484" dy="20.7" font-weight="400" font-size="18px">CSAM sent to minors in their care</tspan></text>
-<rect id="label20_bg" class="for_r20" x="485.4875" y="451.6875" width="106.24438" height="47.20313" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(0,-4.40888)"></rect>
-<text id="label20" class="for_r20" text-anchor="middle" x="538.35994" y="475.45026" font-weight="400" font-size="18px" dy="-4.40203" transform="translate(0,-4.40888)">Reported to<tspan x="538.35994" dy="20.7" font-weight="400" font-size="18px">NCMEC</tspan></text>
-<rect id="label21_bg" class="for_r21" x="546.39375" y="763.35938" width="132.26" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
-<text id="label21" class="for_r21" text-anchor="start" x="552.24478" y="776.78182" font-weight="400" font-size="18px" dy="5.94953">False Negative</text>
-<rect id="label22_bg" class="for_r22" x="146.58062" y="754.375" width="206.29125" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
-<text id="label22" class="for_r22" text-anchor="end" x="347.02178" y="767.7866" font-weight="400" font-size="18px" dy="5.94953">Incidental False Positive</text>
-<rect id="label23_bg" class="for_r23" x="133.59625" y="826.14063" width="219.27562" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
-<text id="label23" class="for_r23" text-anchor="end" x="347.02178" y="839.5621" font-weight="400" font-size="18px" dy="5.94953">Adversarial False Positive</text>
-<rect id="label24_bg" class="for_r24" x="681.44062" y="298.125" width="69.24438" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
-<text id="label24" class="for_r24" text-anchor="middle" x="715.81325" y="311.54564" font-weight="400" font-size="18px" dy="5.94953">Unique</text>
-<rect id="label25_bg" class="for_r25" x="723.84687" y="553.90625" width="100.27563" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
-<text id="label25" class="for_r25" text-anchor="start" x="729.69809" y="567.32719" font-weight="400" font-size="18px" dy="5.94953">Redundant</text>
-<rect id="label26_bg" class="for_r26" x="901.3" y="245.84375" width="96.26" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
-<text id="label26" class="for_r26" text-anchor="start" x="907.15141" y="259.26516" font-weight="400" font-size="18px" dy="5.94953">Actionable</text>
-<rect id="label27_bg" class="for_r27" x="901.3" y="348.59375" width="116.26" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
-<text id="label27" class="for_r27" text-anchor="start" x="907.15141" y="362.01239" font-weight="400" font-size="18px" dy="5.94953">Informational</text>
+<rect id="label0_bg" class="for_r0" x="-69.90375" y="44.51563" width="245.3225" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(124.21732,0)"></rect>
+<text id="label0" class="for_r0" text-anchor="end" x="169.56847" y="57.92817" font-weight="400" font-size="18px" dy="5.94953" transform="translate(124.21732,0)">Online enticement of children</text>
+<rect id="label1_bg" class="for_r1" x="276.51875" y="456.73438" width="169.27562" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
+<text id="label1" class="for_r1" text-anchor="middle" x="360.90662" y="470.14907" font-weight="400" font-size="18px" dy="5.94953">Violation of US Law</text>
+<rect id="label2_bg" class="for_r2" x="-93.91938" y="72.20313" width="269.33812" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(124.21732,0)"></rect>
+<text id="label2" class="for_r2" text-anchor="end" x="169.56847" y="85.62721" font-weight="400" font-size="18px" dy="5.94953" transform="translate(124.21732,0)">Obscene material sent to a child</text>
+<rect id="label3_bg" class="for_r3" x="-31.8725" y="98.84375" width="207.29125" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(124.21732,0)"></rect>
+<text id="label3" class="for_r3" text-anchor="end" x="169.56847" y="112.25583" font-weight="400" font-size="18px" dy="5.94953" transform="translate(124.21732,0)">Child sexual molestation</text>
+<rect id="label4_bg" class="for_r4" x="7.15875" y="125.28125" width="168.26" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(124.21732,0)"></rect>
+<text id="label4" class="for_r4" text-anchor="end" x="169.56847" y="138.70452" font-weight="400" font-size="18px" dy="5.94953" transform="translate(124.21732,0)">Child sex trafficking</text>
+<rect id="label5_bg" class="for_r5" x="-91.90375" y="151.67188" width="267.3225" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(124.21732,0)"></rect>
+<text id="label5" class="for_r5" text-anchor="end" x="169.56847" y="165.09173" font-weight="400" font-size="18px" dy="5.94953" transform="translate(124.21732,0)">Misleading words/images online</text>
+<rect id="label6_bg" class="for_r6" x="-36.88813" y="178" width="212.30687" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(124.21732,0)"></rect>
+<text id="label6" class="for_r6" text-anchor="end" x="169.56847" y="191.41288" font-weight="400" font-size="18px" dy="5.94953" transform="translate(124.21732,0)">Misleading domain name</text>
+<rect id="label7_bg" class="for_r7" x="25.17437" y="204.28125" width="150.24437" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(124.21732,0)"></rect>
+<text id="label7" class="for_r7" text-anchor="end" x="169.56847" y="217.69532" font-weight="400" font-size="18px" dy="5.94953" transform="translate(124.21732,0)">Child sex tourism</text>
+<rect id="label8_bg" class="for_r8" x="-205.32563" y="119.89063" width="203.29125" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
+<text id="label8" class="for_r8" text-anchor="end" x="-7.88484" y="133.30448" font-weight="400" font-size="18px" dy="5.94953">Adults producing CSAM</text>
+<rect id="label9_bg" class="for_r9" x="151.59688" y="458.26563" width="64.21313" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
+<text id="label9" class="for_r9" text-anchor="middle" x="183.45331" y="471.68448" font-weight="400" font-size="18px" dy="5.94953">CSAM</text>
+<rect id="label10_bg" class="for_r10" x="-298.35688" y="187.10938" width="296.3225" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
+<text id="label10" class="for_r10" text-anchor="end" x="-7.88484" y="200.52498" font-weight="400" font-size="18px" dy="5.94953">Adults distributing/accessing CSAM</text>
+<rect id="label11_bg" class="for_r11" x="-359.41938" y="254.32813" width="357.385" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
+<text id="label11" class="for_r11" text-anchor="end" x="-7.88484" y="267.74548" font-weight="400" font-size="18px" dy="5.94953">Minors selling self-produced sexual content</text>
+<rect id="label12_bg" class="for_r12" x="-325.40375" y="311.20313" width="323.36937" height="47.20313" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
+<text id="label12" class="for_r12" text-anchor="end" x="-7.88484" y="334.96598" font-weight="400" font-size="18px" dy="-4.40203">Adults producing/distributing/accessing<tspan x="-7.88484" dy="20.7" font-weight="400" font-size="18px">virtual CSAM incl. animation</tspan></text>
+<rect id="label13_bg" class="for_r13" x="-371.41938" y="378.42188" width="369.385" height="47.20313" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
+<text id="label13" class="for_r13" text-anchor="end" x="-7.88484" y="402.18648" font-weight="400" font-size="18px" dy="-4.40203">Adults distributing/accessing porn collections<tspan x="-7.88484" dy="20.7" font-weight="400" font-size="18px">containing occasional CSAM</tspan></text>
+<rect id="label14_bg" class="for_r14" x="-280.32563" y="447.92188" width="278.29125" height="47.20313" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
+<text id="label14" class="for_r14" text-anchor="end" x="-7.88484" y="471.68448" font-weight="400" font-size="18px" dy="-4.40203">Minors/adults shit-posting CSAM,<tspan x="-7.88484" dy="20.7" font-weight="400" font-size="18px">i.e., as memes</tspan></text>
+<rect id="label15_bg" class="for_r15" x="-343.40375" y="517.40625" width="341.36937" height="47.21875" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
+<text id="label15" class="for_r15" text-anchor="end" x="-7.88484" y="541.18248" font-weight="400" font-size="18px" dy="-4.40203">Adults posting CSAM to alert other adults<tspan x="-7.88484" dy="20.7" font-weight="400" font-size="18px">or recruit them for “community policing"</tspan></text>
+<rect id="label16_bg" class="for_r16" x="-370.46625" y="584.625" width="368.43187" height="47.21875" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
+<text id="label16" class="for_r16" text-anchor="end" x="-7.88484" y="608.40298" font-weight="400" font-size="18px" dy="-4.40203">Teenagers exchanging sexual photos/videos<tspan x="-7.88484" dy="20.7" font-weight="400" font-size="18px">involving other teenagers without consent</tspan></text>
+<rect id="label17_bg" class="for_r17" x="-370.46625" y="651.85938" width="368.43187" height="47.20313" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
+<text id="label17" class="for_r17" text-anchor="end" x="-7.88484" y="675.62348" font-weight="400" font-size="18px" dy="-4.40203">Teenagers exchanging sexual photos/videos<tspan x="-7.88484" dy="20.7" font-weight="400" font-size="18px">of themselves with consent</tspan></text>
+<rect id="label18_bg" class="for_r18" x="-378.435" y="719.07813" width="376.40062" height="47.21875" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
+<text id="label18" class="for_r18" text-anchor="end" x="-7.88484" y="742.84398" font-weight="400" font-size="18px" dy="-4.40203">Adults owning sexual photos/videos of minors<tspan x="-7.88484" dy="20.7" font-weight="400" font-size="18px">above age of consent, taken with consent</tspan></text>
+<rect id="label19_bg" class="for_r19" x="-382.45063" y="786.29688" width="380.41625" height="47.21875" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
+<text id="label19" class="for_r19" text-anchor="end" x="-7.88484" y="810.06448" font-weight="400" font-size="18px" dy="-4.40203">Adults, e.g., parents or teachers, documenting<tspan x="-7.88484" dy="20.7" font-weight="400" font-size="18px">CSAM sent to minors in their care</tspan></text>
+<rect id="label20_bg" class="for_r20" x="485.4875" y="448.65625" width="106.24438" height="47.21875" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(0,-4.40888)"></rect>
+<text id="label20" class="for_r20" text-anchor="middle" x="538.35994" y="472.42762" font-weight="400" font-size="18px" dy="-4.40203" transform="translate(0,-4.40888)">Reported to<tspan x="538.35994" dy="20.7" font-weight="400" font-size="18px">NCMEC</tspan></text>
+<rect id="label21_bg" class="for_r21" x="546.39375" y="760.34375" width="132.26" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
+<text id="label21" class="for_r21" text-anchor="start" x="552.24478" y="773.75917" font-weight="400" font-size="18px" dy="5.94953">False Negative</text>
+<rect id="label22_bg" class="for_r22" x="146.58062" y="753.5" width="206.29125" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
+<text id="label22" class="for_r22" text-anchor="end" x="347.02178" y="766.92563" font-weight="400" font-size="18px" dy="5.94953">Incidental False Positive</text>
+<rect id="label23_bg" class="for_r23" x="133.59625" y="825.28125" width="219.27562" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
+<text id="label23" class="for_r23" text-anchor="end" x="347.02178" y="838.70113" font-weight="400" font-size="18px" dy="5.94953">Adversarial False Positive</text>
+<rect id="label24_bg" class="for_r24" x="681.44062" y="334.03125" width="69.24438" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
+<text id="label24" class="for_r24" text-anchor="middle" x="715.81325" y="347.45114" font-weight="400" font-size="18px" dy="5.94953">Unique</text>
+<rect id="label25_bg" class="for_r25" x="723.84687" y="589.8125" width="100.27563" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
+<text id="label25" class="for_r25" text-anchor="start" x="729.69809" y="603.2327" font-weight="400" font-size="18px" dy="5.94953">Redundant</text>
+<rect id="label26_bg" class="for_r26" x="901.3" y="263" width="96.26" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
+<text id="label26" class="for_r26" text-anchor="start" x="907.15141" y="276.4236" font-weight="400" font-size="18px" dy="5.94953">Actionable</text>
+<rect id="label27_bg" class="for_r27" x="901.3" y="404.01563" width="116.26" height="26.51563" rx="5" fill="#fff" fill-opacity="0.85" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
+<text id="label27" class="for_r27" text-anchor="start" x="907.15141" y="417.42713" font-weight="400" font-size="18px" dy="5.94953">Informational</text>
 </g>
 </g></svg>
