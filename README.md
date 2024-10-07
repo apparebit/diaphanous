@@ -9,7 +9,8 @@ Accountability: An Audit of Social Media Transparency Disclosures, Focusing on
 Sexual Exploitation of Minors](https://arxiv.org/abs/2402.14625).
 
 Please cite as: Robert Grimm. Diaphanous: Transparency Disclosures About the
-Sexual Exploitation of Minors.
+Sexual Exploitation of Minors. v0.1, Zenodo, 7 Oct. 2024,
+[![DOI](https://zenodo.org/badge/646089718.svg)](https://doi.org/10.5281/zenodo.13896438).
 
 
 ## The Code
@@ -97,8 +98,8 @@ Prevention at the Department of Justice.
 The [CyberTipline reports per platform](data/ocse-reports-per-platform.json)
 dataset is the project's main dataset. It collects:
 
-  * the CSAM disclosures by major non-Chinese social networks and other large
-    service providers;
+  * disclosures about child sexual exploitation by major non-Chinese social
+    networks and other large service providers;
   * corresponding disclosures about service providers' reporting by NCMEC.
 
 The above linked JSON format is [automatically
@@ -227,11 +228,11 @@ geometries, and region/continent information. It leverages the following data:
     names based on [Luke Duncalfe's ISO-3166
     dataset](https://github.com/lukes/ISO-3166-Countries-with-Regional-Codes).
 
-The following choropleths using the Equal Earth projection visualize normalized
-per country CSAM reports:
+The following choropleths using the Equal Earth projection visualize
+CyberTipline reports per year per country per capita:
 
 ![CyberTipline reports per capita per country per
-year](https://raw.githubusercontent.com/apparebit/diaphanous/boss/figure/reports-per-capita.svg)
+year](https://raw.githubusercontent.com/apparebit/diaphanous/boss/figure/countries.svg)
 
 
 ### Dataset 5: Platform Data (2020 onward)
