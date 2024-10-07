@@ -6,9 +6,9 @@ as disclosed by technology corporations, their brands, an independent nonprofit,
 and the national clearinghouse for such reports in the US, the National Center
 for Missing and Exploited Children (NCMEC).
 
-The dataset is available in both [Python](intransparent/by_platform/data.py) and
+The dataset is available in both [Python](diaphanous/by_platform/data.py) and
 [JSON](data/ocse-reports-per-platform.json), with the latter [automatically
-generated](intransparent/by_platform/export.py) from the former. This codebook
+generated](diaphanous/by_platform/export.py) from the former. This codebook
 applies to both formats equally. That is possible because both formats are based
 on the same data model, JSON, and even syntactic differences between the two
 formats are minor.

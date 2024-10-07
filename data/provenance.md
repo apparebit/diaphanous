@@ -86,11 +86,11 @@
   * __`populations.csv`__: Per-country population statistics for 2019–2023 from
     the [United Nations Population Division](https://population.un.org/). That
     data used to be trivially downloadable through a URL, but no more. The
-    `intransparent.fetch` module contains the code necessary for automating the
+    `diaphanous.fetch` module contains the code necessary for automating the
     download. You can execute it as follows:
 
     ```sh
-    python -m intransparent --fetch-populations
+    python -m diaphanous --fetch-populations
     ```
 
   * __`regions.csv`__: Countries and their geographical regions based on [Luke

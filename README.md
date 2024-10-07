@@ -1,13 +1,15 @@
-# Intransparent: Independent Validation of Social Media Transparency Data
+# Diaphanous: Transparency Disclosures About the Sexual Exploitation of Minors
 
-This repository curates machine-readable versions of transparency disclosures
-about the online sexual exploitation of minors. It focuses on social media
-platforms and the national clearinghouse for reports of such activities and
-imagery, the National Center for Missing and Exploited Children or NCMEC. In
-addition to the data, the repository also includes Python modules and notebooks
-for analyzing the data. The report [Putting the Count Back Into Accountability:
-An Audit of Social Media Transparency Disclosures, Focusing on Sexual
-Exploitation of Minors](https://arxiv.org/abs/2402.14625) provides the details.
+This repository curates quantitative transparency disclosures about the online
+sexual exploitation of minors, i.e., people under the age of eighteen, in
+machine-readable form. It also includes a 4,400-line Python library for
+validating and tidying the data and Python as well as R notebooks with the
+analysis for the corresponding report [Putting the Count Back Into
+Accountability: An Audit of Social Media Transparency Disclosures, Focusing on
+Sexual Exploitation of Minors](https://arxiv.org/abs/2402.14625).
+
+Please cite as: Robert Grimm. Diaphanous: Transparency Disclosures About the
+Sexual Exploitation of Minors.
 
 
 ## The Code
@@ -23,14 +25,17 @@ To run the code in this repository, you'll need the following tools:
     require a working R installation (e.g.,
     <code>brew&nbsp;install&nbsp;r</code>).
   * Required Python packages are listed in the repository's
-    [pyproject.toml](pyproject.toml). Probably, the easiest way of installing
-    them is:
+    [pyproject.toml](pyproject.toml). The simplest way of installing the
+    project's dependencies is create a local clone of this repository and then
+    installing it thusly:
     ```sh
     $ python -m venv .venv   # Create virtual environment
     $ . .venv/bin/activate   # Activate virtual environment
-    $ pip install -e .       # Install intransparent as editable
+    $ pip install -e .       # Install diaphanous as editable
     ```
-    As a side-effect, the third command installs all Python dependencies, too.
+    Thanks to the `-e` option, `pip install` creates a so-called editable
+    install, i.e., it makes the Python code in the `diaphanous` package
+    executable without copying it. It also installs all necessary dependencies.
 
 Building the report requires additional tools, i.e., a working LaTeX
 installation, though the necessary incantations [are scripted](report/build.sh).
@@ -40,10 +45,10 @@ installation, though the necessary incantations [are scripted](report/build.sh).
 
 While a few CSV files contain [tidy
 data](https://vita.had.co.nz/papers/tidy-data.pdf), others are decidedly untidy
-with, for example, individual columns combining two variables. That typically
-reflects the organization of the original disclosure and helps ensure
-correctness of data transcription. This repository's Python code illustrates how
-to tidy up such data.
+with, for example, individual columns combining two variables. The organization
+of a dataset usually reflects that of the original disclosure and helps ensuring
+the correctness of data transcription. The Python package includes several
+examples for how to tidy up such data.
 
 
 ### Dataset 1: CyberTipline Reports per Year (1998 onward)
@@ -90,27 +95,32 @@ Prevention at the Department of Justice.
 ### Dataset 3: CyberTipline Reports per Platform (2019 onward)
 
 The [CyberTipline reports per platform](data/ocse-reports-per-platform.json)
-dataset is the main dataset provided by this repository. It collects:
+dataset is the project's main dataset. It collects:
 
-  * the CSAM disclosures by major non-Chinese social networks;
-  * corresponding disclosures about platforms' reporting by NCMEC.
+  * the CSAM disclosures by major non-Chinese social networks and other large
+    service providers;
+  * corresponding disclosures about service providers' reporting by NCMEC.
 
 The above linked JSON format is [automatically
-generated](intransparent/platform/export.py) from a [Python
-module](intransparent/platform/data.py). Both formats have the same structure
+generated](diaphanous/platform/export.py) from a [Python
+module](diaphanous/platform/data.py). Both formats have the same structure
 and contain the same information.
 
 The dataset incorporates information about these platforms:
 
-  * Amazon
+  * Amazon (owns Twitch)
   * Apple
-  * Aylo née MindGeek
+  * Automattic (owns Tumblr and Wordpress)
+  * Aylo (née MindGeek)
   * Discord
   * Facebook (Meta)
-  * Google (Google)
+  * GitHub (Microsoft)
+  * Google (owns YouTube)
   * Instagram (Meta)
   * LinkedIn (Microsoft)
-  * Microsoft (Microsoft)
+  * Meta (owns Facebook, Instagram, and WhatsApp)
+  * Microsoft (owns GitHub and LinkedIn)
+  * MindGeek (now Aylo)
   * Omegle
   * Pinterest
   * Pornhub (Aylo)
@@ -121,17 +131,22 @@ The dataset incorporates information about these platforms:
   * TikTok
   * Tumblr (Automattic)
   * Twitch (Amazon)
+  * Twitter (now X)
   * WhatsApp (Meta)
   * Wikimedia
   * Wordpress (Automattic)
-  * X née Twitter
+  * X (née Twitter)
   * YouTube (Google)
 
-If a corporation runs more than one platform, the corporation's name is provided
-in parentheses. The EU's list of [very large online platforms and very large
-online search
-engines](https://digital-strategy.ec.europa.eu/en/policies/list-designated-vlops-and-vloses)
-includes several of the above platforms.
+Surveyed organizations fall into at least one of the following categories:
+
+  * Social media based on Buffer's list of [top social media
+    sites](https://buffer.com/library/social-media-sites/),
+  * Popular platforms based on the European Commission's list of [very large
+    online
+    platforms](https://digital-strategy.ec.europa.eu/en/policies/list-designated-vlops-and-vloses),
+  * Platforms with considerable reported child sexual exploitation activity
+    based on NCMEC's transparency disclosures.
 
 A separate [codebook](codebook.md) documents the JSON and Python formats.
 Basically, they consist of a top-level object that maps organization names to an
@@ -179,8 +194,9 @@ NCMEC's per-country breakdown of CyberTipline reports for
 [2019](https://www.missingkids.org/content/dam/missingkids/pdfs/2019-cybertipline-reports-by-country.pdf),
 [2020](https://www.missingkids.org/content/dam/missingkids/pdfs/2020-reports-by-country.pdf),
 [2021](https://www.missingkids.org/content/dam/missingkids/pdfs/2021-reports-by-country.pdf),
+[2022](https://www.missingkids.org/content/dam/missingkids/pdfs/2022-reports-by-country.pdf),
 and
-[2022](https://www.missingkids.org/content/dam/missingkids/pdfs/2022-reports-by-country.pdf)
+[2023](https://www.missingkids.org/content/dam/missingkids/pdfs/2023-reports-by-country.pdf)
 in machine-readable form. The CSV table is mostly straightforward: Its first two
 columns comprise the country name and ISO three-letter code, followed by a
 column per year from 2019 through 2022.
@@ -195,7 +211,7 @@ Island; the subantarctic dependency of Norway is an uninhabited nature reserve
 and hence rather unlikely to serve as actual location of internet users.
 
 This repository's Python package includes [code that
-enriches](intransparent/country.py) this dataset with population counts,
+enriches](diaphanous/country.py) this dataset with population counts,
 geometries, and region/continent information. It leverages the following data:
 
   * Per-country population counts by the [United Nations Population
@@ -215,7 +231,7 @@ The following choropleths using the Equal Earth projection visualize normalized
 per country CSAM reports:
 
 ![CyberTipline reports per capita per country per
-year](https://raw.githubusercontent.com/apparebit/intransparent/boss/figure/reports-per-capita.svg)
+year](https://raw.githubusercontent.com/apparebit/diaphanous/boss/figure/reports-per-capita.svg)
 
 
 ### Dataset 5: Platform Data (2020 onward)
@@ -255,6 +271,17 @@ data is helpful indeed, the choice of relationship bins for the LEARCAT data
 renders it close to useless in this context.
 
 
+### Other Data
+
+The `data` directory contains a few more tables, including one with [global
+population sizes](data/global-population.csv) also provided by the UN Population
+Division and one with Meta's [daily and monthly active
+people](data/meta/family-active-people.csv), which captures the number of users
+who logged into Facebook, Instagram, Messenger, or WhatsApp at least one over a
+day or month. Both tables are used to calculate Meta's daily and monthly active
+people as a fraction of the world population.
+
+
 ## Repository Layout
 
 In addition to the data, this repository also contains the Python code for
@@ -262,11 +289,11 @@ analyzing it as well as resulting figures. In particular:
 
   - The `analysis` directory contains notebooks with the high-level analysis
     code. The `index.ipynb` notebook includes almost all other notebooks.
-  - The `intransparent` directory contains the Python library code used by the
+  - The `diaphanous` directory contains the Python library code used by the
     notebooks.
-      - The remaining code in `intransparent.main` should be refactored into
+      - The remaining code in `diaphanous.main` should be refactored into
         notebooks.
-      - The `show()` function in `intransparent.show` is more generally useful.
+      - The `show()` function in `diaphanous.show` is more generally useful.
         Most of this functionality should be up-streamed to Pandas because it
         significantly improves on the default table format.
   - The `figure` directory contains SVG figures.
@@ -287,10 +314,9 @@ analyzing it as well as resulting figures. In particular:
 
 ## Licensing
 
-The code in this repository is ©️ 2023–2024 by Robert Grimm has been released
-under the [Apache 2.0](LICENSE) open source license. The datasets in this
-repository combine transparency data released by several social media platforms
-as well as the National Center for Missing and Exploited Children (NCMEC) and
-make this data more easily accessible in machine-readable form. It has been
-released under the [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
-license.
+The code in this repository is ©️ 2023–2024 by Robert Grimm and has been
+released under the [Apache 2.0](LICENSE) open source license. The datasets in
+this repository combine disclosures by electronic service providers as well as
+the National Center for Missing and Exploited Children (NCMEC) and make this
+data more easily accessible in machine-readable form. It has been released under
+the [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) license.

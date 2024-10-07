@@ -6,7 +6,7 @@ import traceback
 
 import pandas as pd
 
-from intransparent import (
+from diaphanous import (
     ingest_reports_per_country,
     reports_per_capita_country_year,
     create_map,
