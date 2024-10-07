@@ -22,7 +22,7 @@ __all__ = (
     'fetch_populations',
 )
 
-__version__ = "0.9"
+__version__ = "0.1"
 
 # CSAM Reports per Platform
 from .platform.data import REPORTS_PER_PLATFORM
