@@ -9,7 +9,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         # ──────────────────────────────────────────────────────────────
         "author": "Robert Grimm",
         "title": "Social Media CSAM Disclosures",
-        "url": "https://github.com/apparebit/intransparent",
+        "url": "https://github.com/apparebit/diaphanous",
         "version": __version__,
         # ──────────────────────────────────────────────────────────────
     }),
