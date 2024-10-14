@@ -202,7 +202,7 @@ def _compute_columns(
             continue
 
         for target, sources in data[computation].items():
-            if target in table.columns:
+            if target in table.columns and computation == "products":
                 raise ValueError(f"{platform} tries to recompute {target} column")
             if len(sources) == 0:
                 raise ValueError(f"{platform} tries to compute {target} from nothing")
@@ -223,10 +223,16 @@ def _compute_columns(
             else:
                 dtype = "float64"
 
-            table[target] = (
+            result = (
                 getattr(table[list(sources)], computation[:-1])(axis=1, min_count=1)
                 .astype(dtype)
             )
+
+            if target in table:
+                assert computation == "sums"
+                table[target] = table[target].add(result, fill_value=0)
+            else:
+                table[target] = result
 
     return table
 

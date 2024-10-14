@@ -744,19 +744,30 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "comments": ("CSV download feature does not work in any browser",),
         "columns": (
             "accounts actioned",
-            "accounts suspended",
+            "accounts",
             "distinct pieces",
+            "pieces (automated)",
+            "pieces (human)",
+            "reports (automated)",
+            "reports (human)",
+            "accounts (automated)",
+            "accounts (human)",
         ),
+        "sums": frozen({
+            "pieces": ("pieces (automated)", "pieces (human)"),
+            "reports": ("reports (automated)", "reports (human)"),
+            "accounts": ("accounts (automated)", "accounts (human)"),
+        }),
         "rows": (
             # fmt: off
-            {"2022 H1": (696_015, 691_704, 11_927)},
-            {"2021 H2": (599_523, 596_997, 6_796)},
-            {"2021 H1": (456_146, 453_754, 6_087)},
-            {"2020 H2": (469_439, 464_804, 9_178)},
-            {"2020 H1": (444_781, 438_809, 10_343)},
-            {"2019 H2": (264_625, 257_768, 11_026)},
-            {"2019 H1": (246_642, 245_341, 2_751)},
-            {"2018 H2": (457_231, 455_651, 2_777)},
+            {"2022 H1": (696_015, 691_704, 11_927, None, None, None, None, None, None)},
+            {"2021 H2": (599_523, 596_997, 6_796, None, None, None, None, None, None)},
+            {"2021 H1": (456_146, 453_754, 6_087, None, None, None, None, None, None)},
+            {"2020 H2": (469_439, 464_804, 9_178, None, None, None, None, None, None)},
+            {"2020 H1": (444_781, 438_809, 10_343, None, None, None, None, None, None)},
+            {"2019 H2": (264_625, 257_768, 11_026, None, None, None, None, None, None)},
+            {"2019 H1": (246_642, 245_341, 2_751, None, None, None, None, None, None)},
+            {"2018 H2": (457_231, 455_651, 2_777, None, None, None, None, None, None)},
             # fmt: on
         ),
     }),
@@ -778,6 +789,39 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "X": frozen({
         "aka": ("Twitter",),
+        "sources": (
+            "https://transparency.x.com/content/dam/transparency-twitter/2024/x-global-transparency-report-h1.pdf",
+        ),
+        "features": frozen({
+            "data": None,
+            "history": None,
+            "terms": ("child sexual exploitation", "physical child abuse"),
+            "quantities": "counts",
+            "granularity": "H",
+            "frequency": "H",
+            "coverage": "2024 H1",
+        }),
+        "columns": (
+            "accounts actioned",
+            "accounts",
+            "distinct pieces",
+            "pieces (automated)",
+            "pieces (human)",
+            "reports (automated)",
+            "reports (human)",
+            "accounts (automated)",
+            "accounts (human)",
+        ),
+        "sums": frozen({
+            "pieces": ("pieces (automated)", "pieces (human)"),
+            "reports": ("reports (automated)", "reports (human)"),
+            "accounts": ("accounts (automated)", "accounts (human)"),
+        }),
+        "rows": (
+            # fmt: off
+            {"2024 H1": (None, None, None, 1_645, 12_926, 35_176, 335_412, 2_388_683, 392_951)},
+            # fmt: on
+        ),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "YouTube": frozen({
