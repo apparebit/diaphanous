@@ -15,14 +15,17 @@ def create_map(
     # magnitude. Clever.
     discretization: int = 0,
     with_panels: bool = True,
-    with_equal_earth: bool = True,
+    with_albers: bool = False,
+    with_equal_earth: bool = False,
     with_animation: bool = False,  # Forced to False if with_panels
-    with_antarctica: bool = True,  # Forced to True if with_equal_earth
+    with_antarctica: bool = True,  # Forced to True if with_albers or with_equal_earth
 ) -> Any:
     # -------------------- Adjust options
     if with_panels:
         with_animation = False
-    if with_equal_earth:
+    if with_albers:
+        with_equal_earth = False
+    if with_albers or with_equal_earth:
         with_antarctica = True
 
     # -------------------- Discretization
@@ -59,13 +62,19 @@ def create_map(
         # hover_data={'iso3': False, 'reports_per_capita': False, 'year': False},
         labels={'reports_per_capita': 'Reports<br>per Capita'},
     )
-    if with_equal_earth:
+    if with_albers:
+        kwargs |= dict(projection='albers')
+    elif with_equal_earth:
         kwargs |= dict(projection='equal earth')
     if with_panels:
         kwargs |= dict(
             facet_col='year',
             facet_col_wrap=2,
-            #facet_row_spacing=0.005,
+        )
+    if with_panels and with_albers:
+        kwargs |= dict(
+            facet_row_spacing=0.0001,  # must be larger than zero to have effect
+            facet_col_spacing=0.005,
         )
     if with_animation:
         kwargs |= dict(
@@ -76,7 +85,7 @@ def create_map(
 
     # -------------------- Update overall appearance
     fig.update_traces(
-        marker_line_width=0.4,  # See "countrywidth" below
+        marker_line_width=0.3,  # See "countrywidth" below
         selector=dict(
             type='choropleth',
         ),
@@ -89,9 +98,9 @@ def create_map(
         showocean=True,
         oceancolor='#eaeaec',
         showcoastlines=True,
-        coastlinewidth=0.4,
+        coastlinewidth=0.3,
         # Also see "marker_line_width" under update_traces() above
-        countrywidth=0.4,
+        countrywidth=0.3,
         # Color of countries that have no data
         landcolor='#c5c5c6',
     )
@@ -108,10 +117,10 @@ def create_map(
 
     if with_panels:
         fig.update_layout(
-            margin=dict(t=2, r=0, b=2, l=0),
+            margin=dict(t=0, r=0, b=0, l=0),
             #width=640,
             #height=1100 if with_antarctica else 960,
-            coloraxis_colorbar_len=0.3,
+            coloraxis_colorbar_len=0,
             # title=dict(
             #     text='<i>CSAM Reports per Capita, Country, and Year</i>',
             #     font_size=22,
@@ -169,8 +178,12 @@ def create_map(
             year = a.text.split('=')[-1]
             domain = fig.layout[trace_by_year[year]].domain
 
-            x = 0.57 if int(year) % 2 == 0 else 0.06
-            y = domain.y[0] + 0.12
+            if with_albers:
+                x = 0.53 if int(year) % 2 == 0 else 0.03
+                y = domain.y[0] + 0.28
+            else:
+                x = 0.57 if int(year) % 2 == 0 else 0.06
+                y = domain.y[0] + 0.12
 
             a.update(
                 text=year,

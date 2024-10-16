@@ -155,6 +155,7 @@ def reports_per_country(section: int = -1) -> None:
         map_data,
         discretization=0,
         with_panels=True,
+        with_albers=True,
         with_antarctica=True,
     )
     show_map(fig)
