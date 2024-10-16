@@ -4,7 +4,7 @@
                 "author": "Robert Grimm",
                  "title": "Social Media CSAM Disclosures",
                    "url": "https://github.com/apparebit/diaphanous",
-               "version": "2.0",
+               "version": "0.1",
         "|": "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     },
     "Alphabet": {
@@ -717,18 +717,38 @@
         "comments": ["CSV download feature does not work in any browser"],
         "columns": [
             "accounts actioned",
-            "accounts suspended",
-            "distinct pieces"
+            "accounts",
+            "distinct pieces",
+            "pieces (automated)",
+            "pieces (human)",
+            "reports (automated)",
+            "reports (human)",
+            "accounts (automated)",
+            "accounts (human)"
         ],
+        "sums": {
+            "pieces": [
+                "pieces (automated)",
+                "pieces (human)"
+            ],
+            "reports": [
+                "reports (automated)",
+                "reports (human)"
+            ],
+            "accounts": [
+                "accounts (automated)",
+                "accounts (human)"
+            ]
+        },
         "rows": [
-            {"2022 H1": [696015, 691704, 11927]},
-            {"2021 H2": [599523, 596997, 6796]},
-            {"2021 H1": [456146, 453754, 6087]},
-            {"2020 H2": [469439, 464804, 9178]},
-            {"2020 H1": [444781, 438809, 10343]},
-            {"2019 H2": [264625, 257768, 11026]},
-            {"2019 H1": [246642, 245341, 2751]},
-            {"2018 H2": [457231, 455651, 2777]}
+            {"2022 H1": [696015, 691704, 11927, null, null, null, null, null, null]},
+            {"2021 H2": [599523, 596997, 6796, null, null, null, null, null, null]},
+            {"2021 H1": [456146, 453754, 6087, null, null, null, null, null, null]},
+            {"2020 H2": [469439, 464804, 9178, null, null, null, null, null, null]},
+            {"2020 H1": [444781, 438809, 10343, null, null, null, null, null, null]},
+            {"2019 H2": [264625, 257768, 11026, null, null, null, null, null, null]},
+            {"2019 H1": [246642, 245341, 2751, null, null, null, null, null, null]},
+            {"2018 H2": [457231, 455651, 2777, null, null, null, null, null, null]}
         ]
     },
     "WhatsApp": {
@@ -740,7 +760,46 @@
         "sources": ["https://transparency.automattic.com"]
     },
     "X": {
-        "aka": ["Twitter"]
+        "aka": ["Twitter"],
+        "sources": ["https://transparency.x.com/content/dam/transparency-twitter/2024/x-global-transparency-report-h1.pdf"],
+        "features": {
+            "data": null,
+            "history": null,
+            "terms": [
+                "child sexual exploitation",
+                "physical child abuse"
+            ],
+            "quantities": "counts",
+            "granularity": "H",
+            "frequency": "H",
+            "coverage": "2024 H1"
+        },
+        "columns": [
+            "accounts actioned",
+            "accounts",
+            "distinct pieces",
+            "pieces (automated)",
+            "pieces (human)",
+            "reports (automated)",
+            "reports (human)",
+            "accounts (automated)",
+            "accounts (human)"
+        ],
+        "sums": {
+            "pieces": [
+                "pieces (automated)",
+                "pieces (human)"
+            ],
+            "reports": [
+                "reports (automated)",
+                "reports (human)"
+            ],
+            "accounts": [
+                "accounts (automated)",
+                "accounts (human)"
+            ]
+        },
+        "rows": [{"2024 H1": [null, null, null, 1645, 12926, 35176, 335412, 2388683, 392951]}]
     },
     "YouTube": {
         "sources": ["https://transparencyreport.google.com/child-sexual-abuse-material/"],
