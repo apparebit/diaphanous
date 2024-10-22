@@ -64,6 +64,13 @@ and
 transparency reports to the Office for Juvenile Justice and Delinquency
 Prevention at the Department of Justice.
 
+Simon Kemp's [Digital 2024: Global Overview
+Report](https://datareportal.com/reports/digital-2024-global-overview-report)
+includes statistics on the [global number of social media user
+identities](https://indd.adobe.com/embed/8892459e-f0f4-4cfd-bf47-f5da5728a5b5?startpage=207&allowFullscreen=true).
+They are an effective denominator for normalizing the CyberTipline reports per
+year.
+
 
 ### Dataset 2: CyberTipline Report Contents and Recipients (2020 onward)
 

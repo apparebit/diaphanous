@@ -18,6 +18,7 @@
         "OCSE",
         "Plotly",
         "Quora",
+        "virality",
         "vpython"
     ],
     "python.defaultInterpreterPath": ".venv/bin/python"
