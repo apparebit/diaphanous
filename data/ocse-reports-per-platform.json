@@ -8,7 +8,10 @@
         "|": "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     },
     "Alphabet": {
-        "brands": ["Google", "YouTube"]
+        "brands": ["Google", "YouTube"],
+        "features": {
+            "social_media": false
+        }
     },
     "Amazon": {
         "brands": ["Twitch"],
@@ -25,7 +28,8 @@
             "quantities": "counts",
             "granularity": "Y",
             "frequency": "Y",
-            "coverage": "2020"
+            "coverage": "2020",
+            "social_media": false
         },
         "columns": [
             "reports",
@@ -49,15 +53,24 @@
     },
     "Apple": {
         "sources": ["https://www.apple.com/legal/transparency/"],
-        "comments": ["Transparency reports cover government requests only."]
+        "comments": ["Transparency reports cover government requests only."],
+        "features": {
+            "social_media": false
+        }
     },
     "Automattic": {
         "sources": ["https://transparency.automattic.com"],
-        "brands": ["Tumblr", "Wordpress"]
+        "brands": ["Tumblr", "Wordpress"],
+        "features": {
+            "social_media": false
+        }
     },
     "Aylo": {
         "aka": ["MindGeek"],
-        "brands": ["Pornhub"]
+        "brands": ["Pornhub"],
+        "features": {
+            "social_media": false
+        }
     },
     "Discord": {
         "sources": [
@@ -83,7 +96,8 @@
             "quantities": "counts",
             "granularity": "Q",
             "frequency": "Q",
-            "coverage": "2020 H2"
+            "coverage": "2020 H2",
+            "social_media": true
         },
         "columns": [
             "reports (about CSAM)",
@@ -121,7 +135,8 @@
             "quantities": "rounded",
             "granularity": "Q",
             "frequency": "Q",
-            "coverage": "2018 Q3"
+            "coverage": "2018 Q3",
+            "social_media": true
         },
         "columns": [
             "pieces (Child Nudity & Sexual Exploitation)",
@@ -179,7 +194,8 @@
             "quantities": "counts",
             "granularity": "Y",
             "frequency": "Y",
-            "coverage": "2021"
+            "coverage": "2021",
+            "social_media": false
         },
         "columns": [
             "accounts",
@@ -200,7 +216,8 @@
             "quantities": "counts",
             "granularity": "H",
             "frequency": "H",
-            "coverage": "2020 H1"
+            "coverage": "2020 H1",
+            "social_media": false
         },
         "columns": [
             "pieces",
@@ -231,7 +248,8 @@
             "quantities": "rounded",
             "granularity": "Q",
             "frequency": "Q",
-            "coverage": "2019 Q2"
+            "coverage": "2019 Q2",
+            "social_media": true
         },
         "columns": [
             "pieces (Child Nudity & Sexual Exploitation)",
@@ -286,7 +304,8 @@
             "quantities": "counts",
             "granularity": "H",
             "frequency": "H",
-            "coverage": "2019 H1"
+            "coverage": "2019 H1",
+            "social_media": true
         },
         "comments": ["numbers disclosed under 'content removed', hence pieces"],
         "columns": ["pieces"],
@@ -304,6 +323,9 @@
     },
     "Meta": {
         "brands": ["Facebook", "Instagram", "WhatsApp"],
+        "features": {
+            "social_media": true
+        },
         "sums": {
             "pieces": [
                 "pieces (Child Nudity & Sexual Exploitation)",
@@ -320,7 +342,8 @@
             "quantities": "counts",
             "granularity": "H",
             "frequency": "H",
-            "coverage": "2020 H1"
+            "coverage": "2020 H1",
+            "social_media": false
         },
         "brands": ["GitHub", "LinkedIn"],
         "columns": [
@@ -367,7 +390,10 @@
             "down in 2023 to settle a lawsuit by the victim of online child sexual",
             "exploitation. See https://www.bbc.com/news/technology-67485561 and",
             "https://www.bbc.com/news/business-67364634."
-        ]
+        ],
+        "features": {
+            "social_media": true
+        }
     },
     "Pinterest": {
         "sources": [
@@ -385,7 +411,8 @@
             "quantities": "counts",
             "granularity": "Q",
             "frequency": "H",
-            "coverage": "2020 H1"
+            "coverage": "2020 H1",
+            "social_media": true
         },
         "comments": [
             "Pin is lingo for a media card with picture, hence pin with CSAM is piece.",
@@ -453,7 +480,8 @@
             "quantities": "counts",
             "granularity": "H",
             "frequency": "H",
-            "coverage": "2020"
+            "coverage": "2020",
+            "social_media": false
         },
         "columns": [
             "reports",
@@ -477,7 +505,10 @@
     },
     "Quora": {
         "sources": ["https://help.quora.com/hc/en-us/articles/13294268051732-DSA-Transparency"],
-        "comments": ["Quora's first and only transparency report so far, with user numbers only"]
+        "comments": ["Quora's first and only transparency report so far, with user numbers only"],
+        "features": {
+            "social_media": true
+        }
     },
     "Reddit": {
         "sources": [
@@ -501,7 +532,8 @@
             "quantities": "counts",
             "granularity": "H",
             "frequency": "H",
-            "coverage": "2021"
+            "coverage": "2021",
+            "social_media": true
         },
         "comments": ["pieces includes posts and comments but not private messages"],
         "columns": [
@@ -549,7 +581,8 @@
             "quantities": "counts",
             "granularity": "H",
             "frequency": "H",
-            "coverage": "2019 H2"
+            "coverage": "2019 H2",
+            "social_media": true
         },
         "columns": [
             "pieces",
@@ -603,7 +636,8 @@
             "quantities": "fractions",
             "granularity": "Q",
             "frequency": "Q",
-            "coverage": "2022 Q1"
+            "coverage": "2022 Q1",
+            "social_media": true
         },
         "comments": [
             "Originally, TikTok's transparency disclosures were marred by the use",
@@ -658,7 +692,10 @@
         ]
     },
     "Tumblr": {
-        "sources": ["https://www.tumblr.com/transparency"]
+        "sources": ["https://www.tumblr.com/transparency"],
+        "features": {
+            "social_media": true
+        }
     },
     "Twitch": {
         "sources": [
@@ -680,7 +717,8 @@
             "quantities": "counts",
             "granularity": "H",
             "frequency": "H",
-            "coverage": "2020"
+            "coverage": "2020",
+            "social_media": true
         },
         "comments": [
             "Twitch's data are marked as redundant because their report counts are",
@@ -712,7 +750,8 @@
             "quantities": "counts",
             "granularity": "H",
             "frequency": "H",
-            "coverage": "2018 H2 - 2022 H1"
+            "coverage": "2018 H2 - 2022 H1",
+            "social_media": true
         },
         "comments": ["CSV download feature does not work in any browser"],
         "columns": [
@@ -753,11 +792,17 @@
     },
     "WhatsApp": {
         "sources": ["https://www.whatsapp.com/legal/california-privacy-notice/transparency-report/"],
-        "comments": ["That appears to be the only transparency report WhatsApp ever released, as in 1."]
+        "comments": ["That appears to be the only transparency report WhatsApp ever released, as in 1."],
+        "features": {
+            "social_media": true
+        }
     },
     "Wikimedia": null,
     "Wordpress": {
-        "sources": ["https://transparency.automattic.com"]
+        "sources": ["https://transparency.automattic.com"],
+        "features": {
+            "social_media": false
+        }
     },
     "X": {
         "aka": ["Twitter"],
@@ -772,7 +817,8 @@
             "quantities": "counts",
             "granularity": "H",
             "frequency": "H",
-            "coverage": "2024 H1"
+            "coverage": "2024 H1",
+            "social_media": true
         },
         "columns": [
             "accounts actioned",
@@ -810,7 +856,8 @@
             "quantities": "counts",
             "granularity": "H",
             "frequency": "H",
-            "coverage": "2020 H1"
+            "coverage": "2020 H1",
+            "social_media": true
         },
         "columns": [
             "pieces",
@@ -844,7 +891,8 @@
             "quantities": "counts",
             "granularity": "Y",
             "frequency": "Y",
-            "coverage": "2019"
+            "coverage": "2019",
+            "social_media": false
         },
         "comments": [
             "reports: number of reports *received* by NCMEC from a platform",

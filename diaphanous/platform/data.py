@@ -16,6 +16,9 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Alphabet": frozen({
         "brands": ("Google", "YouTube"),
+        "features": frozen({
+            "social_media": False,
+        }),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Amazon": frozen({
@@ -34,6 +37,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "granularity": "Y",
             "frequency": "Y",
             "coverage": "2020",
+            "social_media": False,
         }),
         "columns": (
             "reports",
@@ -59,17 +63,26 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "sources": ["https://www.apple.com/legal/transparency/"],
         "comments": [
             "Transparency reports cover government requests only.",
-        ]
+        ],
+        "features": frozen({
+            "social_media": False,
+        }),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Automattic": frozen({
         "sources": ("https://transparency.automattic.com",),
         "brands": ("Tumblr", "Wordpress"),
+        "features": frozen({
+            "social_media": False,
+        }),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Aylo": frozen({
         "aka": ("MindGeek",),
         "brands": ("Pornhub",),
+        "features": frozen({
+            "social_media": False,
+        }),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Discord": frozen({
@@ -94,6 +107,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "granularity": "Q",
             "frequency": "Q",
             "coverage": "2020 H2",
+            "social_media": True,
         }),
         "columns": (
             "reports (about CSAM)",
@@ -132,6 +146,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "granularity": "Q",
             "frequency": "Q",
             "coverage": "2018 Q3",
+            "social_media": True,
         }),
         "columns": (
             "pieces (Child Nudity & Sexual Exploitation)",
@@ -195,6 +210,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "granularity": "Y",
             "frequency": "Y",
             "coverage": "2021",
+            "social_media": False,
         }),
         "columns": ("accounts", "reports"),
         "rows": (
@@ -218,6 +234,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "granularity": "H",
             "frequency": "H",
             "coverage": "2020 H1",
+            "social_media": False,
         }),
         "columns": ("pieces", "reports", "accounts", "urls"),
         "rows": (
@@ -244,6 +261,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "granularity": "Q",
             "frequency": "Q",
             "coverage": "2019 Q2",
+            "social_media": True,
         }),
         "columns": (
             "pieces (Child Nudity & Sexual Exploitation)",
@@ -303,6 +321,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "granularity": "H",
             "frequency": "H",
             "coverage": "2019 H1",
+            "social_media": True,
         }),
         "comments": ("numbers disclosed under 'content removed', hence pieces",),
         "columns": ("pieces",),
@@ -323,6 +342,9 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Meta": frozen({
         "brands": ("Facebook", "Instagram", "WhatsApp"),
+        "features": frozen({
+            "social_media": True,
+        }),
         "sums": frozen({
             "pieces": [
                 "pieces (Child Nudity & Sexual Exploitation)",
@@ -343,6 +365,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "granularity": "H",
             "frequency": "H",
             "coverage": "2020 H1",
+            "social_media": False,
         }),
         "brands": ["GitHub", "LinkedIn"],
         "columns": (
@@ -391,6 +414,9 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "exploitation. See https://www.bbc.com/news/technology-67485561 and",
             "https://www.bbc.com/news/business-67364634.",
         ),
+        "features": frozen({
+            "social_media": True,
+        }),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Pinterest": frozen({
@@ -406,6 +432,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "granularity": "Q",
             "frequency": "H",
             "coverage": "2020 H1",
+            "social_media": True,
         }),
         "comments": (
             "Pin is lingo for a media card with picture, hence pin with CSAM is piece.",
@@ -477,6 +504,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "granularity": "H",
             "frequency": "H",
             "coverage": "2020",
+            "social_media": False,
         }),
         "columns": (
             "reports",
@@ -505,6 +533,9 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "comments": (
             "Quora's first and only transparency report so far, with user numbers only",
         ),
+        "features": frozen({
+            "social_media": True,
+        }),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Reddit": frozen({
@@ -526,6 +557,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "granularity": "H",
             "frequency": "H",
             "coverage": "2021",
+            "social_media": True,
         }),
         "comments": [
             "pieces includes posts and comments but not private messages"
@@ -579,6 +611,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "granularity": "H",
             "frequency": "H",
             "coverage": "2019 H2",
+            "social_media": True,
         }),
         "columns": ("pieces", "accounts", "reports"),
         "schema": frozen({"accounts": "float"}),
@@ -627,6 +660,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "granularity": "Q",
             "frequency": "Q",
             "coverage": "2022 Q1",
+            "social_media": True,
         }),
         "comments": (
             "Originally, TikTok's transparency disclosures were marred by the use",
@@ -685,6 +719,9 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Tumblr": frozen({
         "sources": ("https://www.tumblr.com/transparency",),
+        "features": frozen({
+            "social_media": True,
+        }),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Twitch": frozen({
@@ -705,6 +742,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "granularity": "H",
             "frequency": "H",
             "coverage": "2020",
+            "social_media": True,
         }),
         "comments": (
             "Twitch's data are marked as redundant because their report counts are",
@@ -740,6 +778,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "granularity": "H",
             "frequency": "H",
             "coverage": "2018 H2 - 2022 H1",
+            "social_media": True,
         }),
         "comments": ("CSV download feature does not work in any browser",),
         "columns": (
@@ -779,12 +818,18 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "comments": (
             "That appears to be the only transparency report WhatsApp ever released, as in 1.",
         ),
+        "features": frozen({
+            "social_media": True,
+        }),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Wikimedia": None,
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Wordpress": frozen({
         "sources": ("https://transparency.automattic.com",),
+        "features": frozen({
+            "social_media": False,
+        })
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "X": frozen({
@@ -800,6 +845,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "granularity": "H",
             "frequency": "H",
             "coverage": "2024 H1",
+            "social_media": True,
         }),
         "columns": (
             "accounts actioned",
@@ -836,6 +882,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "granularity": "H",
             "frequency": "H",
             "coverage": "2020 H1",
+            "social_media": True,
         }),
         "columns": ("pieces", "reports"),
         "rows": (
@@ -870,6 +917,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "granularity": "Y",
             "frequency": "Y",
             "coverage": "2019",
+            "social_media": False,
         }),
         "comments": (
             "reports: number of reports *received* by NCMEC from a platform",

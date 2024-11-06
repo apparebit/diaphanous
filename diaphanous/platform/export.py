@@ -117,7 +117,7 @@ def encode_reports_per_platform(
                     first_item = append_comma_to_line_if_not(first_item)
                     if v is None:
                         yield from emit_line(f'            "{k}": null')
-                    elif isinstance(v, str):
+                    elif isinstance(v, (bool, str)):
                         yield from emit_line(f'            "{k}": {json.dumps(v)}')
                     else:
                         yield from emit_list(k, v, "            ")

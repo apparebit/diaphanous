@@ -245,8 +245,8 @@ class PlatformData(NamedTuple):
 
 _TABLE_FIELDS = frozenset(["columns", "rows", "schema"])
 _FEATURE_FIELDS = frozenset([
-    "data", "history", "terms", "quantities", "granularity", "frequency", "coverage"])
-
+    "data", "history", "terms", "quantities", "granularity", "frequency", "coverage", "social_media"])
+_SOCIAL_MEDIA = frozenset(["social_media"])
 
 def ingest_reports_per_platform(
     raw_data: DisclosureCollectionType,
@@ -281,17 +281,19 @@ def ingest_reports_per_platform(
         # Record (a copy of the) features.
         features = dict(record.get("features", {}))
         if len(features):
-            if _FEATURE_FIELDS != features.keys():
+            if _FEATURE_FIELDS != features.keys() and _SOCIAL_MEDIA != features.keys():
                 raise ValueError(
-                    f'feature keys are {", ".join(features.keys())} and not '
-                    f'{", ".join(_FEATURE_FIELDS)}'
+                    f'{platform} has features {", ".join(features.keys())} '
+                    f'and not social_media by itself nor {", ".join(_FEATURE_FIELDS)}'
                 )
-            features["terms"] = "; ".join(features["terms"])
-            features["has_reports"] = (
-                "reports" in record.get("columns", [])
-                or "reports" in record.get("sums", {})
-                or "reports" in record.get("products", {})
-            )
+            if "terms" in features:
+                features["terms"] = "; ".join(features["terms"])
+            if "has_reports" in features:
+                features["has_reports"] = (
+                    "reports" in record.get("columns", [])
+                    or "reports" in record.get("sums", {})
+                    or "reports" in record.get("products", {})
+                )
 
         all_features[platform] = features
 
