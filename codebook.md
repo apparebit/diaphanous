@@ -142,6 +142,7 @@ a `features` dictionary with the following keys and values:
   * `frequency`: a string indicating the *current* frequency of disclosures,
     `Q`, `H`, or `Y`;
   * `coverage`: a string indicating the period of the first OCSE disclosure;
+  * `social_media`: a boolean indicating whether the provider is just that.
 
 
 
