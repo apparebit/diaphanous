@@ -110,13 +110,13 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "social_media": True,
         }),
         "columns": (
-            "reports (about CSAM)",
-            "reports (about grooming or endangerment)"
+            "accounts (CSAM)",
+            "accounts (grooming or endangerment)"
         ),
         "sums": frozen({
-            "reports": (
-                "reports (about CSAM)",
-                "reports (about grooming or endangerment)"
+            "accounts": (
+                "accounts (CSAM)",
+                "accounts (grooming or endangerment)"
             ),
         }),
         "rows": (
