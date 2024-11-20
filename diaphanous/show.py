@@ -355,6 +355,17 @@ def all_levels(frame: pd.DataFrame) -> Iterator[Vertical]:
             )
 
 
+def is_name(value: object) -> bool:
+    if value is None or isinstance(value, int):
+        return False
+
+    try:
+        int(value)
+        return False
+    except:
+        return True
+
+
 def all_columns(frame: pd.DataFrame) -> Iterator[Vertical]:
     ncolumns = frame.shape[0]
     for column_index, dtype in enumerate(frame.dtypes):
@@ -363,7 +374,7 @@ def all_columns(frame: pd.DataFrame) -> Iterator[Vertical]:
             'column',
             column_index,
             ncolumns,
-            None if name is None else str(name),
+            name if is_name(name) else None,
             cast(Dtype, dtype),
             frame.iloc[:, column_index],
         )
