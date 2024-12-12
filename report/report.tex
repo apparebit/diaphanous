@@ -1,4 +1,6 @@
 \documentclass[nonacm,screen]{acmart}
+%\documentclass[anonymous,nonacm,screen]{acmart}
+%\documentclass[sageh, shortAfour]{sagej}
 \pdfoutput=1
 \usepackage{graphicx}
 \usepackage{pifont}
@@ -14,6 +16,8 @@
 
 \definecolor{lowlight}{gray}{0.55}
 \definecolor{slate}{HTML}{864b79}
+\definecolor{DeepRed}{HTML}{8a0312}
+\definecolor{DeepGreen}{HTML}{0a580f}
 
 \makeatletter
 \renewcommand{\anon}[2][ANONYMIZED]{%
@@ -33,12 +37,17 @@
 \theoremstyle{definition}
 \newtheorem{finding}{Finding}
 
+\newif\iftechreport
+\techreportfalse
+\newcommand\TechReport[1]{\iftechreport {#1}\fi}
+\newcommand\Journal[1]{\iftechreport\else{#1}\fi}
+
 \AtBeginDocument{\libertineOsF}
 
 \begin{document}
 
 \title{Putting the Count Back Into Accountability}
-\subtitle{By Analyzing Transparency Data on the Sexual Exploitation of Minors}
+\subtitle{A Comprehensive Analysis of Transparency Data About the Sexual Exploitation of Minors}
 
 \author{Robert Grimm}
 \orcid{0000-0002-8300-2153}
@@ -53,50 +62,28 @@
 
 Alarmist and sensationalist statements about the ``explosion'' of online child
 sexual exploitation or \V{CSE} dominate much of the public discourse about the
-topic. Based on a new dataset collecting the transparency disclosures (or lack
-thereof) for 16 \V{US}-based internet platforms and the national clearinghouse
-collecting legally mandated reports about \V{CSE}, this study seeks answers to
-two research questions: First, what does the data tell us about the growth of
-online \V{CSE}? Second, how reliable and trustworthy is that data? To answer the
-two questions, this study proceeds in three parts. First, we leverage a critical
-literature review to formulate a granular model for (so-called) CyberTipline
-reporting. Second, we analyze the growth in CyberTipline reports over the last
-quarter of a century and correlate it with the growth of social media user
-accounts. Third, we use two comparative audits to assess the quality of
-transparency data. Critical findings include (1) a significant overreach of
-\V{US} law that increasingly threatens the very population it claims to protect,
-i.e., children and adolescents, (2) linear growth in CyberTipline reports over
-the last decade that is largely driven by a corresponding increase in social
-media user accounts, (3) no statistically relevant impact of the pandemic on
-report volume, and (4) a half-half split between firms that release meaningful
-and reasonably accurate transparency data and those that either fail to make
-disclosures (notably, Apple) or release data with severe quality issues
-(notably, Discord, Meta, and TikTok).
+topic. Based on a new dataset collecting the transparency disclosures for 16
+\V{US}-based internet platforms and the national clearinghouse collecting
+legally mandated reports about \V{CSE}, this study seeks answers to two research
+questions: First, what does the data tell us about the growth of online \V{CSE}?
+Second, how reliable and trustworthy is that data? To answer the two questions,
+this study proceeds in three parts. First, we leverage a critical literature
+review to synthesize a granular model for \V{CSE} reporting. Second, we analyze
+the growth in \V{CSE} reports over the last 25~years and correlate it with the
+growth of social media user accounts. Third, we use two comparative audits to
+assess the quality of transparency data. Critical findings include: First,
+\V{US} law increasingly threatens the very population it claims to protect,
+i.e., children and adolescents. Second, the rapid growth of \V{CSE} report over
+the last decade is linear and largely driven by an equivalent growth in social
+media user accounts. Third, the Covid-19 pandemic had no statistically relevant
+impact on report volume. Fourth, while half of surveyed organizations release
+meaningful and reasonably accurate transparency data, the other half either fail
+to make disclosures or release data with severe quality issues.
 
 \end{abstract}
 
-\begin{CCSXML}
-<ccs2012>
-<concept>
-<concept_id>10003456.10003462</concept_id>
-<concept_desc>Social and professional topics~Computing / technology policy</concept_desc>
-<concept_significance>500</concept_significance>
-</concept>
-<concept>
-<concept_id>10002951.10003227.10003233.10010519</concept_id>
-<concept_desc>Information systems~Social networking sites</concept_desc>
-<concept_significance>500</concept_significance>
-</concept>
-</ccs2012>
-\end{CCSXML}
-
-\ccsdesc[500]{Social and professional topics~Computing / technology policy}
-\ccsdesc[500]{Information systems~Social networking sites}
-
-\keywords{social media, content moderation, transparency reporting, audit, minor
-safety, sexual exploitation of minors, child sexual exploitation, child sexual
-abuse material, CSAM, CyberTipline, National Center for Missing and Exploited
-Children, NCMEC, teenage sexting}
+\keywords{social media, transparency reporting, audit, child sexual abuse
+materials, National Center for Missing and Exploited Children, CyberTipline}
 
 \maketitle
 
@@ -106,9 +93,10 @@ Children, NCMEC, teenage sexting}
 \section{Introduction}
 \label{sec:introduction}
 
-Child sexual exploitation (\V{CSE}) is a hot topic. There are the headlines in
-national newspapers announcing that ``the internet is overrun with images of
-child sexual abuse''~\cite{KellerDance2019}, ``Instagram connects vast pedophile
+Public debate about child sexual exploitation (\V{CSE}) features many adamant to
+alarming claims. There are the headlines in national newspapers announcing that
+``the internet is overrun with images of child sexual
+abuse''~\cite{KellerDance2019}, ``Instagram connects vast pedophile
 network''~\cite{HorwitzBlunt2023}, and ``\V{AI} is about to make the online
 child sex abuse problem much worse''~\cite{Oremus2024}. There are Senate
 hearings on ``big tech and the online child sexual exploitation crisis''
@@ -117,14 +105,14 @@ referencing the ``explosion in the multijurisdictional distribution of child
 pornography''~\cite{UnitedStatesCongress2008}. There also are the Moms for
 Liberty, Qanon adherents, and Proud Boys mobilizing to ``\#SaveTheChildren''
 while maligning everyone else, particularly \V{LGBT} folk, as ``pedos'' or
-``groomers''~\cite{BuntainBarlowea2022,MartinyLawrence2023}. By contrast,
+``groomers''~\cite{BuntainBarlowea2022, MartinyLawrence2023}. By contrast,
 experts such as academics~\cite{SalterWoodlockea2023},
 lawyers~\cite{Haney2021b}, hotline operators~\cite{ODonnell2021}, and
-police~\cite{Europol2020, Interpol2020} tend to blame the pandemic, often in
-unusually lurid terms.
+police~\cite{Europol2020, Interpol2020} tend to blame the Covid-19 pandemic,
+often in unusually lurid terms.
 
-Given the gravity of the topic and the sensationalism infusing even the law, two
-questions stand out:
+Given the gravity of the topic and the creeping sensationalism infusing even the
+law, two questions stand out:
 \begin{enumerate}
 \item What does available data tell us about the extent of online child sexual
 exploitation?
@@ -153,9 +141,7 @@ leverage redundant or repeated disclosures of what should be the same quantities
 to assess data quality. At the same time, they differ significantly in what
 constitutes (un)acceptable divergence.
 
-After describing methods in Section~\ref{sec:methods} and providing background
-on law and CyberTipline reporting in Section~\ref{sec:background}, we present
-the findings in Section~\ref{sec:findings}. Highlights include:
+Significant findings include:
 \begin{enumerate}
 \item A significant overreach of \V{US} law that increasingly threatens the very
 population it claims to protect, i.e., children and adolescents;
@@ -163,9 +149,8 @@ population it claims to protect, i.e., children and adolescents;
 driven by a corresponding increase in social media user accounts;
 \item No statistically relevant impact of the pandemic on report volume;
 \item A half-half split between firms that release meaningful and reasonably
-accurate transparency data and those that either fail to make disclosures
-(notably, Apple) or release data with severe quality issues (notably, Discord,
-Meta, and TikTok).
+accurate transparency data and those that either fail to make disclosures or
+release data with severe quality issues.
 \end{enumerate}
 The second finding directly contradicts claims of an ``explosion'' of \V{CSAM}
 or an internet ``overrun with images of child sexual abuse.'' But that doesn't
@@ -173,20 +158,13 @@ change that the deluge of reports is bringing \V{NCMEC} close to breaking
 point~\cite{GrossmanPfefferkornea2024}. As discussed in
 Section~\ref{sec:discussion}, the findings of this study not only allow us to
 provide a bound on possible future growth. But they also suggest two approaches
-for reigning in the deluge of CyberTipline reports. Alas, both of them require
-further research and more granular transparency data. We conclude in
-Section~\ref{sec:conclusion}.
+for reigning in the deluge of CyberTipline reports. Alas, evaluating their
+impact requires further research and more granular transparency data.
 
-All data and the Python and R code used for this study have been released under
-a permissive license, are accessible through version control on GitHub,\anon[{
-[\emph{elided for
-review}]}]{\footnote{\url{https://github.com/apparebit/diaphanous}}} and have
-been archived in an academic research repository~\anon[{ [\emph{elided for
-review}]}]{\cite{Grimm2024}}. For full disclosure, \anon[one of ]{}the
-author\anon[s]{} worked as a software engineer for Meta from 2018 to 2019 and
-served as a consultant for litigation against the firm in 2022. However,
-\anon[they]{he} did not work on content moderation and \anon[do]{does} not
-retain any financial interest in the firm.
+All study data as well as the Python and R code used for analysis have been
+released under a permissive license. Together with an extended technical report,
+they have been archived in an academic research repository~\anon[{[\emph{elided
+for review}]}]{\cite{Grimm2024}}.
 
 
 % ======================================================================================
@@ -195,19 +173,18 @@ retain any financial interest in the firm.
 
 To establish necessary context, this study starts out with a critical literature
 review. It is based on a mix of broad and specifically targeted searches of both
-internet and academic repositories, with the latter searches iteratively
-refining results from the former. The goal for the review was to synthesize a
-realistic conceptual model of CyberTipline reporting that captures the
-relationship between illegal, detected, reported, and uniquely actionable
-incidents and offers granular detail even where existing transparency practices
-do not. Since more than 99\% of all CyberTipline reports concern \V{CSAM}, the
-literature review paid particular attention to breaking down this monolithic
-category into subcategories reflecting kinds of \V{CSAM} observed in practice.
-The iterative expansion of sources considered as part of the review ensures that
-those subcategories are representative, though it cannot guarantee that they are
-exhaustive, i.e., complete. Where data is available, we incorporate it into the
-review. However, the review also surfaced several areas that would benefit from
-quantification.
+internet and academic repositories that iteratively refine prior results. The
+goal is to synthesize a realistic conceptual model of CyberTipline reporting
+that captures the relationship between illegal, detected, reported, and uniquely
+actionable incidents and offers granular detail even where existing transparency
+practices do not. Since more than 99\% of all CyberTipline reports concern
+\V{CSAM}, the literature review paid particular attention to breaking down this
+monolithic category into subcategories reflecting kinds of \V{CSAM} observed in
+practice. The iterative expansion of sources considered as part of the review
+ensures that those subcategories are representative, though it cannot guarantee
+that they are exhaustive, i.e., complete. Where data is available, we
+incorporate it into the review. However, the review also surfaced several
+aspects that would benefit from quantification.
 
 
 \subsection{Data}
@@ -216,28 +193,25 @@ quantification.
 The subsequent parts of the study build on a new dataset comprising quantitative
 \V{CSE} transparency disclosures for about thirty organizations, covering large
 technology firms, their subsidiaries and social media brands, as well as a
-couple of not-for-profits~\anon[{ [\emph{elided for
-review}]}]{\cite{Grimm2024}}. The latter include the National Center for Missing
-and Exploited Children or \V{NCMEC}, which serves as clearinghouse for reports
-about \V{CSE}, which are mandated by \V{US} law and received through its
-CyberTipline. Since social media thrive on user-generated content, the primary
-criterion for inclusion in the dataset---in addition to participating in
-CyberTipline reporting---is being a popular social media site based on Buffer's
-yearly rankings from~2022 through~2024~\cite{Lua2022,Lua2023,Oladipo2024}. To
-ensure broad coverage, further criteria are being labelled a very large online
-platform by the European Commission~\cite{EuropeanCommission2023b} and having
+couple of not-for-profits~\anon[{[\emph{elided for review}]}]{\cite{Grimm2024}}.
+The latter include the National Center for Missing and Exploited Children or
+\V{NCMEC}, which serves as clearinghouse for reports about \V{CSE}, which are
+mandated by \V{US} law and received through its CyberTipline. Since social media
+thrive on user-generated content, the primary criterion for inclusion in the
+dataset---in addition to participating in CyberTipline reporting---is being a
+popular social media site based on Buffer's yearly rankings from~2022
+through~2024\TechReport{~\cite{Lua2022, Lua2023, Oladipo2024}}. To ensure broad
+coverage, further criteria are being labelled a very large online platform by
+the European Commission\TechReport{~\cite{EuropeanCommission2023b}} and having
 filed 100,000 or more CyberTipline reports during any year, which are roughly
 0.3\% of the total report count for 2023.
 
 \begin{table}
 \centering\libertineLF
 
-\caption{Surveyed organizations: The first column identifies organizations and,
-indented, their subsidiaries or brands, followed by three columns with the
-criteria for inclusion: Social media (Soc), very large platforms (VL), and
-platforms that filed $\geq100$k reports (.1M). The next two columns identify
-transparency data coverage and current disclosure frequency in months. The final
-column shows how an organization's data was audited.}
+\caption{An overview of surveyed organizations and their subsidiaries or brands.
+Criteria for inclusion are social media (Soc), very large platforms (VL), and
+platforms that filed $\geq100$k reports (.1M)}
 
 \label{tab:survey}
 \begin{tabular}{lcccl@{}rc}
@@ -284,13 +258,13 @@ X                     &\yes&\yes&\yes& H1~2024..        &  6 &   ---   \\
 \end{tabular}
 \end{table}
 
-Where available, an organization's entry in the dataset includes the
+\TechReport{Where available, an organization's entry in the dataset includes the
 quantitative disclosures, preserving their numerical precision, unit names (with
 some well-defined exceptions for common metrics), and reporting periods. At the
 same time, some organizational entries record only the absence of relevant
 transparency data, e.g., Apple, or the relationship to other entries that do
 contain data, e.g., Meta's entry lists Facebook, Instagram, and WhatsApp as
-corporate brands. Table~\ref{tab:survey} lists the 15~corporations and
+corporate brands. }Table~\ref{tab:survey} lists the 15~corporations and
 2~not-for-profits surveyed by this study, the criteria for inclusion, the
 (indented) subsidiaries/brands meeting the criteria, time periods covered by
 their transparency disclosures, current disclosure frequencies in months, and
@@ -301,6 +275,7 @@ in the table, CyberTipline report counts were audited for seven corporations
 plus \V{NCMEC}, and historical data disclosures were audited for another two
 corporations.
 
+\TechReport{
 The dataset further includes several supplemental tables and code for more
 easily processing the data. Supplemental tables comprise domain-specific
 information, such as the original machine-readable disclosures by Discord, Meta,
@@ -316,19 +291,23 @@ While reported statistics go as far back as \V{Q3}~2018, no \V{CSV} files from
 before \V{Q2}~2021 are available. To help clean up, validate, and enrich the
 data, the code includes a 4,400-line Python library. It also includes the Python
 and R notebooks with the analysis for this study.
+}
 
-We found \V{NCMEC}'s transparency disclosures to the Congressional Committees of
-Appropriations for the years 2022~\cite{NcmecOjjdp2022} and
-2023~\cite{NcmecOjjdp2023} particularly useful. Mandated by the explanatory
-statement for the Consolidated Appropriations Act of 2022~\cite{DeLauro2022},
-the data included in these disclosures goes beyond the per-provider and
-per-country breakdowns published before and provides, for the first time,
-comprehensive statistics on reported activities, the uniqueness of reports and
-attachments, as well as the relationship between perpetrators and abused minors.
-While most of the data covers recent years only, i.e., from 2020 forward, the
-disclosures do include yearly CyberTipline report counts going back to the
-beginning in 1998. These statistics are the foundation for the second part of
-the study, which considers the volume of CyberTipline reports.
+As illustrated by the \emph{Disclosures} column in Table~\ref{tab:survey}, most
+organizations release some transparency data. At the same time, \V{NCMEC}'s
+disclosures are the by far most comprehensive, thanks largely to two reports to
+the Congressional Committees of Appropriations for the years
+2022~\cite{NcmecOjjdp2022} and 2023~\cite{NcmecOjjdp2023}. Mandated by the
+explanatory statement for the Consolidated Appropriations Act of
+2022\TechReport{~\cite{DeLauro2022}}, the data included in these disclosures
+goes beyond the per-provider and per-country breakdowns published before and
+provides, for the first time, comprehensive statistics on reported activities,
+the uniqueness of reports and attachments, as well as the relationship between
+perpetrators and abused minors. While most of the data covers recent years only,
+i.e., from 2020 forward, the disclosures do include yearly CyberTipline report
+counts going back to the beginning in 1998. These statistics are the foundation
+for the second part of the study, which considers the volume of CyberTipline
+reports.
 
 
 \subsection{Audits}
@@ -337,19 +316,18 @@ the study, which considers the volume of CyberTipline reports.
 To assess the quality of technology industry transparency efforts, this study
 includes two audits of transparency data as its third part. The first and
 primary audit compares CyberTipline report counts for electronic service
-providers or \V{ESP}s as disclosed by their producers, i.e., the service
-providers themselves, and their only consumer, i.e., the National Center for
-Missing and Exploited Children. While almost all service providers that disclose
-counts do so semiannually or quarterly and several of them distinguish between
-subsidiaries or brands, \V{NCMEC}'s yearly disclosure frequency and
-corporation-only breakdown for 2019 and 2020 determine the granularity for all
-audits, i.e., yearly per-corporation counts. Out of the 16 organizations other
-than \V{NCMEC} contained in the dataset, seven include CyberTipline report
-counts in their transparency disclosures and hence are subject to the first
-audit. Twitter's transparency disclosures only covered the number of unique
-accounts closed. However, X's disclosures for \V{H1}~2024, for the first time,
-do include CyberTipline report counts, which raises the possibility of inclusion
-in a future iteration of this audit.
+providers or \V{ESP}s as disclosed by their producers and their only consumer.
+While almost all service providers that disclose counts do so semiannually or
+quarterly and several of them distinguish between subsidiaries or brands,
+\V{NCMEC}'s yearly disclosure frequency and corporation-only breakdown for 2019
+and 2020 determine the granularity for all audits, i.e., yearly per-corporation
+counts. Out of the 16 organizations other than \V{NCMEC} contained in the
+dataset, seven include CyberTipline report counts in their transparency
+disclosures and hence are subject to the first audit. Twitter's transparency
+disclosures only covered the number of unique accounts closed. However, X's
+disclosures for \V{H1}~2024, for the first time, do include CyberTipline report
+counts, which raises the possibility of inclusion in a future iteration of this
+audit.
 
 The second audit compares computer-readable data disclosures, e.g., \V{CSV}
 files, by the same service provider for subsequent reporting periods. In
@@ -361,18 +339,18 @@ machine-readable formats and hence are subject to the second audit. They also
 happen to be distinct from the seven corporations covered by the first audit.
 
 Since most surveyed organizations engage in surveillance
-capitalism~\cite{Zuboff2019}, i.e., critically depend on their ability to
-process and analyze large volumes of data, we might expect to mostly find
-pairwise identical quantities. Furthermore, in the rare case that quantities
-differ, i.e., exhibit some kind of error, we'd expect that either service
-provider or \V{NCMEC} would have noticed and provided a credible explanation
-with the data. Alas, in the real world, instances of divergent transparency data
-aren't hard to come by, but apparent awareness and explanations thereof are. In
-fact, we encountered only one instance of a service provider explaining a major
-discrepancy. At the same time, the audits identified significant data quality
-issues for three service providers. Furthermore, claims made by two of the
-providers are sufficiently discordant with the data to raise concerns about the
-veracity of their transparency reporting.
+capitalism\TechReport{~\cite{Zuboff2019}}, i.e., critically depend on their
+ability to process and analyze large volumes of data, we might expect to mostly
+find pairwise identical quantities. Furthermore, in the rare case that
+quantities differ, i.e., exhibit some kind of error, we'd expect that either
+service provider or \V{NCMEC} would have noticed and provided a credible
+explanation with the data. Alas, in the real world, instances of divergent
+transparency data aren't hard to come by, but apparent awareness and
+explanations thereof are. In fact, we encountered only one instance of a service
+provider explaining a major discrepancy. At the same time, the audits identified
+significant data quality issues for three service providers. Furthermore, claims
+made by two of the providers are sufficiently discordant with the data to raise
+concerns about the veracity of their transparency reporting.
 
 With numerical equality too blunt an audit instrument, the challenge becomes to
 tease apart different kinds of errors. Hence we need to define what kind of
@@ -423,10 +401,8 @@ in the absence of other information. Since the normality assumption does not
 hold for count data, we omit the customary 95\% limits of agreement from the
 plots and instead trace the mean difference. We then rely on visual inspection
 to analyze patterns and outliers, while also employing the sign test and
-Fisher's exact test to confirm their statistical significance~\cite{Kanji2006}.
-
-Basic descriptive statistics suffice for the second audit of computer-readable
-files.
+Fisher's exact test to confirm their statistical
+significance\TechReport{~\cite{Kanji2006}}.
 
 
 \subsection{Global Impact and Limitations}
@@ -437,58 +413,66 @@ of American internet services all but ensures that the resulting data is of
 global significance. Notably, Meta generated more than 84\% of all CyberTipline
 reports every year since 2019 and more than 91\% from 2019 to 2021 (inclusive).
 Furthermore, based on Meta's ``monthly active
-people''~\cite{FacebookInc2021,MetaPlatformsInc2022,MetaPlatformsInc2024}, i.e.,
-users that logged into Facebook, Instagram, Messenger, or WhatsApp at least once
-during a month, and \V{UN} population
-estimates~\cite{WorldPopulationProspects2024}, Meta's user share amongst the
-global population, across \emph{all} ages, grew from 37\% in 2019 to 49\% in
-2023!
+people\Journal{,}''\TechReport{~\cite{FacebookInc2021, MetaPlatformsInc2022,
+MetaPlatformsInc2024},} i.e., users that logged into Facebook, Instagram,
+Messenger, or WhatsApp at least once during a month, and \V{UN} population
+estimates\TechReport{~\cite{WorldPopulationProspects2024}}, Meta's user share
+amongst the global population, across \emph{all} ages, grew from 37\% in 2019 to
+49\% in 2023!
 
 That reach, however, is not uniform, with China being the most significant
 holdout. In fact, none of the social media platforms operated by the
-corporations included in this study are accessible from within China. Though
-Microsoft's LinkedIn did have a local equivalent, and TikTok, in addition to
-being under Chinese ownership, does have a local equivalent. Furthermore, while
-Apple's iCloud and iMessage are available within China, they use local servers
-that are not operated by Apple. Amongst several others, Belarus, India, Iran,
-Pakistan, and Russia similarly restrict at least some American social
+corporations included in this study are accessible from within China.
+\Journal{While typically not as comprehensive, several other countries similarly
+restrict at least some American social media. }\TechReport{Though Microsoft's
+LinkedIn did have a local equivalent, and TikTok, in addition to being under
+Chinese ownership, does have a local equivalent. Furthermore, while Apple's
+iCloud and iMessage are available within China, they use local servers that are
+not operated by Apple. Amongst several others, Belarus, India, Iran, Pakistan,
+and Russia similarly restrict at least some American social
 media~\cite{FunkBrodyea2024}.
 
-While the global reach of American electronic service providers may be uneven,
-CyberTipline reporting has significant impact on countries where American
-service providers do have a substantial presence. For example, in its
-transparency disclosures, Germany's federal criminal police repeatedly
+}Despite the uneven global reach, CyberTipline reporting has significant impact
+on countries where American service providers have a substantial presence. For
+example, in its transparency disclosures, Germany's federal police repeatedly
 acknowledges \V{NCMEC}'s CyberTipline as the by far most significant source for
-reports about \V{CSE}, though it does not quantify their
-share~\cite{Bundeskriminalamt2023,Bundeskriminalamt2024}. However, this study
-only considers \V{NCMEC}'s per country statistics. Analyzing the disclosures of
-international police forces is an interesting and complimentary topic for future
-work.
+reports about \V{CSE}\TechReport{, though it does not quantify their
+share~\cite{Bundeskriminalamt2024}. However, this study only considers
+\V{NCMEC}'s per country statistics}. Analyzing the disclosures of international
+police forces is an interesting and complimentary topic for future work.
 
 This study focuses on centralized corporate social media because they currently
-are the dominant means for accessing user-generated content. The focus is highly
+are the dominant means for accessing user-generated content. That is highly
 effective, with the surveyed 16 out of almost 250 organizations accounting for
 more than 97\% of all CyberTipline reports every year. Since these social media
 are typically accessed through mobile devices, this study also includes the
 currently dominant means for accessing \V{CSAM}~\cite{SteelNewmanea2020}.
+\Journal{However, because it focuses on CyberTipline reports, this study has
+less coverage for decentralized technologies, including the dark web,
+peer-to-peer networks, and federated social media. That seems to be the case
+even for federated social media that perform active content moderation. For
+example, Mastodon gGmbH operates the largest Mastodon instance with 240,000
+active users but filed a mere 16 CyberTipline reports in 2023. By comparison,
+the bottom three organizations surveyed by this study are the Wikimedia
+Foundation with 34 reports, Apple with 267, and Aylo with 2,596.}
 
-To put it differently, this study only marginally covers formerly dominant but
-still actively used technologies, such as peer-to-peer networks and the dark
-web~\cite{SteelNewmanea2020}, as well as possible future dominant technologies,
-such as federated social media. To begin with, most dark websites and some
-peer-to-peer networks aren't particularly concerned with legal compliance and
-thus highly unlikely to file CyberTipline reports. Meanwhile, many federated
-social media instances may take their content moderation and legal compliance
-more seriously, but they nonetheless won't (be able to) allocate resources to
-trust and safety that are even remotely comparable to centralized corporate
-social media. As a case in point, Mastodon gGmbH operates the largest Mastodon
-instance with 240,000 active
+\TechReport{To put it differently, this study only marginally covers formerly
+dominant but still actively used technologies, such as peer-to-peer networks and
+the dark web~\cite{SteelNewmanea2020}, as well as possible future dominant
+technologies, such as federated social media. To begin with, most dark websites
+and some peer-to-peer networks aren't particularly concerned with legal
+compliance and thus highly unlikely to file CyberTipline reports. Meanwhile,
+many federated social media instances may take their content moderation and
+legal compliance more seriously, but they nonetheless won't (be able to)
+allocate resources to trust and safety that are even remotely comparable to
+centralized corporate social media. As a case in point, Mastodon gGmbH operates
+the largest Mastodon instance with 240,000 active
 users\footnote{https://mastodon.fediverse.observer/list} and also performs
 content moderation. But even though \V{CSAM} is being traded across the
 so-called fediverse~\cite{ThielDiResta2023}, the firm filed a mere 16
 CyberTipline reports in 2023. By comparison, the bottom three organizations
 surveyed by this study are the Wikimedia Foundation with 34 reports, Apple with
-267 reports, and Aylo with 2,596 reports.
+267 reports, and Aylo with 2,596 reports.}
 
 That is not to suggest that the relationship between corporate social media and
 the volume of CyberTipline reports can be reduced to anything as quaint as the
@@ -508,9 +492,9 @@ as terrible a problem as \V{NCMEC}'s yearly statistics suggest.
 
 \subsection{US Law}
 
-Chapter 110 of 18 \V{US} Code~\cite{Chapter110Code18US}, the United States'
-criminal code, concerns the ``sexual exploitation and other abuse of children.''
-It prohibits grooming children (\S2251), selling or buying children
+Chapter 110 of 18 \V{US} Code\TechReport{~\cite{Chapter110Code18US}}, the United
+States' criminal code, concerns the ``sexual exploitation and other abuse of
+children.'' It prohibits grooming children (\S2251), selling or buying children
 (\V{\S2251A}), the production, distribution, and possession of imagery depicting
 minors engaging in ``sexually explicit conduct'' (\S2252) and any other
 materials qualifying as ``child pornography'' (\V{\S2252A}) even in other
@@ -525,16 +509,16 @@ mandatory restitution (\S2259) in addition to fines and long prison sentences,
 e.g., 5--20 years for the first violation of \V{\S2252A} and 15--40 years for
 subsequent violations. The only violations of \S2252 and \V{\S2252A} without a
 minimum penalty are possession of \V{CSAM}. According to the guidelines of the
-\V{US} Sentencing Commission~\cite{ReevesMateea2024}, a first-time offender
-possessing less than 10 images, none of them involving prepubescent children,
-sadomasochism, or violence, faces between 27--33 months in prison in addition to
-a \$10k--\$100k fine. However, thanks to a 1996 amendment, if the offense
-involves a computer (including smartphone), the penalty increases to 33--41
-months in addition to a fine of \$15k--\$150k. Still assuming less than 10
-images, no prepubescent children, \V{S/M}, or violence, if the offense involves
-offering/sending such imagery to others, the penalty increases to 51--63 months.
-If it also involves ``pecuniary gain,'' ``valuable consideration,'' or a minor
-as recipient, the penalty further increases to 87--108 months. And so on.
+\V{US} Sentencing Commission\TechReport{~\cite{ReevesMateea2024}}, a first-time
+offender possessing less than 10 images, none of them involving prepubescent
+children, sadomasochism, or violence, faces between 27--33 months in prison in
+addition to a \$10k--\$100k fine. However, thanks to a 1996 amendment, if the
+offense involves a computer, the penalty increases to 33--41 months in addition
+to a fine of \$15k--\$150k. Still assuming less than 10 images, no prepubescent
+children, \V{S/M}, or violence, if the offense involves offering/sending such
+imagery to others, the penalty increases to 51--63 months. If it also involves
+``pecuniary gain,'' ``valuable consideration,'' or a minor as recipient, the
+penalty further increases to 87--108 months.
 
 % Possession is level 18, all other offenses are level 22.
 % Use of computer: +2
@@ -547,28 +531,32 @@ compells the center to triage and forward CyberTipline reports to law
 enforcement (\V{\S2258A}), authorizes it to collect image and video hashes and
 share that information with service providers (\V{\S2258C}), and exempts the
 organization from any civil and criminal liability that might arises from
-running the CyberTipline (\V{\S2258D}).
+running the CyberTipline (\V{\S2258D}). \Journal{Despite having been created
+through a Congressional Act and receiving most of its funding from the \V{US}
+federal government, \V{NCMEC} nonetheless is a private not-for-profit
+corporation with an independent board and offers other, related services, such
+as case management or family advocacy~\cite{FernandesAlcantaraHanson2021}.}
 
-Despite having been created through a Congressional Act and receiving most of
-its funding from the \V{US} federal government, \V{NCMEC} nonetheless is a
-private not-for-profit corporation with an independent board. As such, it offers
-other, related services, such as case management for missing children, sex
-offender tracking, and family advocacy~\cite{FernandesAlcantaraHanson2021}.
-Still, fulfilling its role as clearinghouse necessitates close collaboration
-with law enforcement. Two federal appeals courts have found that \V{NCMEC}
-qualifies as a government agent. Hence, its inspection of CyberTipline report
-attachments during triage may amount to illegal warantless searches, which may
-make evidence gathered during such inspections inadmissible in
-court~\cite{GrossmanPfefferkornea2024}.
+\TechReport{Despite having been created through a Congressional Act and
+receiving most of its funding from the \V{US} federal government, \V{NCMEC}
+nonetheless is a private not-for-profit corporation with an independent board.
+As such, it offers other, related services, such as case management for missing
+children, sex offender tracking, and family
+advocacy~\cite{FernandesAlcantaraHanson2021}. Still, fulfilling its role as
+clearinghouse necessitates close collaboration with law enforcement. Two federal
+appeals courts have found that \V{NCMEC} qualifies as a government agent. Hence,
+its inspection of CyberTipline report attachments during triage may amount to
+illegal warantless searches, which may make evidence gathered during such
+inspections inadmissible in court~\cite{GrossmanPfefferkornea2024}.}
 
 
 \subsection{CyberTipline Reports}
 
 Each CyberTipline report describes an individual incident. Accordingly, the
 schema starts with a summary that identifies the type as well as date and time
-of the incident~\cite{NCMEC2024}. It is followed by sections that capture
-granular information about involved internet services, interactions with law
-enforcement, the reporter of the incident, the reported person, the intended
+of the incident\TechReport{~\cite{NCMEC2024}}. It is followed by sections that
+capture granular information about involved internet services, interactions with
+law enforcement, the reporter of the incident, the reported person, the intended
 recipient, and the child victim. File attachments include violative materials
 such as pictures and videos that qualify as \V{CSAM} as well as other
 supplementary content.
@@ -578,13 +566,15 @@ an \verb|escalateToHighPriority| flag and the \verb|sextortion|,
 \verb|csamSolicitation|, \verb|minorToMinorInteraction|, and \verb|spam|
 annotations. The metadata for attachments includes tags such as
 \verb|potentialMeme|, \verb|viral|, \verb|possibleSelfProduction|,
-\verb|liveStreaming| and \verb|generativeAi|. It also includes the Tech
-Coalition classification~\cite{TechCoalition2022a}. That industry organization's
-labelling scheme distinguishes between (A)~``pre-pubescent'' and
-(B)~``post-pubescent'' as well as between (1)~``sex act'' and (2)~``lascivious
-exhibition'' resulting in the four labels \V{A1}, \V{A2}, \V{B1}, and \V{B2}. A
-few actual CyberTipline reports (without attachments) have become public as part
-of court proceedings~\cite{CyberTipline5074778,CyberTipline5778397}.
+\verb|liveStreaming| and \verb|generativeAi|. \TechReport{It also includes the
+Tech Coalition classification\TechReport{~\cite{TechCoalition2022a}}. That
+industry organization's labelling scheme distinguishes between
+(A)~``pre-pubescent'' and (B)~``post-pubescent'' as well as between (1)~``sex
+act'' and (2)~``lascivious exhibition'' resulting in the four labels \V{A1},
+\V{A2}, \V{B1}, and \V{B2}.} A few actual CyberTipline reports (without
+attachments) have become public as part of court
+proceedings~\cite{CyberTipline5074778, CyberTipline5778397}.
+
 
 % ======================================================================================
 \section{Findings}
@@ -620,12 +610,13 @@ protect, the minors themselves.
 story. They emphasize a ``compelling State [sic] interest in protecting children
 from those who sexually exploit them, and this interest extends to stamping out
 the vice of child pornography at all levels in the distribution
-chain''~\cite{UnitedStatesCongress2008}. They further claim that ``technological
-ease, lack of expense, and anonymity \ldots [of] the Internet has resulted in an
-explosion in the multijurisdictional distribution of child
-pornography''~\cite{UnitedStatesCongress2003}. They then position the criminal
-law as an effective means ``to dry up the market for this material by imposing
-severe criminal penalties''~\cite{UnitedStatesCongress2008}.
+chain\Journal{.}''\TechReport{~\cite{UnitedStatesCongress2008}.} They further
+claim that ``technological ease, lack of expense, and anonymity \ldots [of] the
+Internet has resulted in an explosion in the multijurisdictional distribution of
+child pornography\Journal{.}''\TechReport{~\cite{UnitedStatesCongress2003}.}
+They then position the criminal law as an effective means ``to dry up the market
+for this material by imposing severe criminal
+penalties\Journal{.}''\TechReport{~\cite{UnitedStatesCongress2008}.}
 
 \V{CSAM} is indeed the by far most frequently reported incident type, accounting
 for more than 99.2\% of all CyberTipline reports filed over the last four years.
@@ -661,15 +652,16 @@ receiving sexts at, in publication order from 2018 to 2020 and 2022, 14.8\% and
 as well as 19.3\% and 34.8\%~\cite{MoriParkea2022}. Given these rates, it is no
 surprise that the lead author of the first study characterized sexting as a
 ``normative component of teen sexual behavior and
-development''~\cite{Klass2018}. Technically, teenagers who do sext are violating
-federal and state laws against child pornography. While an academic survey did
-attest significant restraint in prosecuting
+development''\TechReport{~\cite{Klass2018}}. Technically, teenagers who do sext
+are violating federal and state laws against child pornography. While an
+academic survey did attest significant restraint in prosecuting
 adolescents~\cite{WolakFinkelhorea2012}, examples for (threatened) prosecutions
-are not hard to come by~\cite{Bekiempis2019, CrockettJr2016, Dunlap2016,
-Feldman2020, Jouvenal2023, Miller2015, Moore2014, Tobias2009}. Some states have
+are not hard to come by\Journal{~\cite{Bekiempis2019, Feldman2020,
+Jouvenal2023}}\TechReport{~\cite{Bekiempis2019, CrockettJr2016, Dunlap2016,
+Feldman2020, Jouvenal2023, Miller2015, Moore2014, Tobias2009}}. Some states have
 reduced the penalty for adolescent sexting to
-misdemeanors~\cite{HindujaPatchin2022}, but ``once they have the option of
-lesser penalties, prosecutors are more likely to press
+misdemeanors\TechReport{~\cite{HindujaPatchin2022}}, but ``once they have the
+option of lesser penalties, prosecutors are more likely to press
 charges''~\cite{Hasinoff2016}.
 
 While adolescent sexting can be a perfectly healthy exploration of sexuality, it
@@ -680,16 +672,13 @@ the prevalence for having forwarded a sext without consent is 12\%, 7\%, or
 subjugated to ``any image-based sexual abuse,'' increasing the prevalence from
 2.8\% to 37.2\% amongst surveyed adolescents, a $13.2\times$
 difference~\cite{FinkelhorSuttonea2024}. Minors engage in these behaviors even
-though the vast majority ($>81\%$) know that doing so is illegal; worries about
-legal consequences are especially acute for boys and Black
-minors~\cite{Thorn2020}.
+though the vast majority ($>81\%$) know that doing so is illegal\TechReport{;
+worries about legal consequences are especially acute for boys and Black
+minors}~\cite{Thorn2020}.
 
 \begin{figure}
 \centering\libertineLF
-\includegraphics[
-    scale=0.4,
-    alt={Charting cheek to cheek}
-]{figure-flow}
+\includegraphics[scale=0.4]{figure-flow}
 
 \caption{The relationship between illegal, detected, reported, and uniquely
 actionable incidents involving the sexual exploitation of minors. The
@@ -712,6 +701,7 @@ reliable statistics are available. Meanwhile, category-level flows into
 report ratios; almost all of them are \V{CSAM}.
 
 
+\TechReport{
 \begin{finding}
 Most of the technologies used for detecting \V{CSAM} are vulnerable to
 adversarial attack. \V{NCMEC} is still using \V{MD5}---16~years after \V{CERT}
@@ -776,6 +766,7 @@ Machine learning classifiers for images aren't more reliable either. A large
 number of attacks have been documented in the research literature, including
 both black box and white box attacks as well as attacks that falsely frame
 victims and that cloak illicit materials~\cite{MachadoSilvaea2020}.
+}
 
 
 \begin{finding}
@@ -783,6 +774,7 @@ Automated scanning for \V{CSAM} has already been weaponized on Discord,
 resulting in an unknown number of account terminations.
 \end{finding}
 
+\TechReport{
 \noindent{}Turning the above, mostly theoretical vulnerabilities into practical
 attacks and developing countermeasures are important topics for future work. But
 if we were to speculate about real-world attacks, one credible scenario starts
@@ -795,10 +787,17 @@ that were modified to match leaked PhotoDNA hashes. This latter attack is akin
 to swatting, but targets victims' internet accounts. Since many people rely on
 the same few accounts for a large number of services, a false flag for \V{CSAM}
 can have devastating consequences~\cite{Hill2022}.
+}
 
-The latter attack also provides the basic outline for a 2023 attack against
-Discord users, except that no image modification was
-necessary~\cite{NoTextToSpeech2023, Woohoowi2023}. It involved manipulating
+\Journal{\noindent{}As described in the accompanying technical report, the image
+hashing and machine learning technologies used for detecting \V{CSAM} are all
+vulnerable to adversarial attack. That is gravely concerning given the
+potentially devastating consequences of a false flag for
+\V{CSAM}~\cite{Hill2022}. Worse, such attacks have already happened, as
+illustrated by 2023 attack against Discord users~\cite{NoTextToSpeech2023}.}
+\TechReport{The latter attack also provides the basic outline for a 2023 attack
+against Discord users, except that no image modification was
+necessary~\cite{NoTextToSpeech2023, Woohoowi2023}.} It involved manipulating
 users on Discord into posting a specific image. The image seems innocuous
 enough, showing an adolescent with headphones sitting in front of his computer
 and eating popcorn. Reliably, when users posted the image, they did not receive
@@ -810,31 +809,31 @@ safety team added the corresponding hashes to its database. But the firm was too
 aggressive and included the innocuous beginning without the naked brother,
 thereby creating an effective means of attacking gullible Discord users.
 
-Discussions on Reddit and YouTube about this weaponization of falsely labelled
-\V{CSAM} employ a remarkable argot. Instead of using the term ``child
-pornography,'' most participants substitute the initialism ``cheese pizza.''
-While the term may have originated with sexual predators, it became an important
-part of the PizzaGate conspiracy theory, and by now, it is seemingly firmly
-entrenched with the terminally online~\cite{Applebaum2016}.
+\TechReport{ Discussions on Reddit and YouTube about this weaponization of
+falsely labelled \V{CSAM} employ a remarkable argot. Instead of using the term
+``child pornography,'' most participants substitute the initialism ``cheese
+pizza.'' While the term may have originated with sexual predators, it became an
+important part of the PizzaGate conspiracy theory, and by now, it seems firmly
+entrenched with the terminally online~\cite{Applebaum2016}.}
 
 
 \begin{finding}
 Reversal rates for content takedowns by Meta and account terminations by
 Microsoft and Pinterest, after being actioned for \V{CSE}, have been slowly
-increasing over the last few years and reached 3.1\%, 1.1\%, and 12.8\%,
+increasing over the last few years and reached 3.1\%, 1.1\%, and 12.8\% in 2023,
 respectively.
 \end{finding}
 
-\noindent{}Meta, Microsoft, and Pinterest are the only surveyed organizations
-that release statistics about reversals of content takedowns (Meta) and account
-terminations (Microsoft and Pinterest) involving \V{CSE}. With exception of one
-out of four years for Meta, the reversal rate has been slowly increasing for all
-three firms, reaching 3.1\%, 1.1\%, and 12.8\% in 2023, respectively. However,
-it is unclear whether this trend will continue for Meta in 2024, since its
-reversal rate dropped to 1.4\% over the first two quarters. In other words, 2023
-may very well have been an outlier for Meta. In any case, given the potential
-harms from being falsely accused of posting \V{CSAM}, Meta's and Microsoft's
-reversal rates are concerning, but Pinterest's rate is outright alarming.
+\noindent{}Meta, Microsoft, and Pinterest are the only surveyed organizations to
+release statistics about reversals of content takedowns (Meta) and account
+terminations (Microsoft and Pinterest) for \V{CSE}. With exception of one out of
+four years for Meta, the reversal rate has been slowly increasing for all three
+firms, reaching 3.1\%, 1.1\%, and 12.8\% in 2023, respectively. Though, with
+Meta's reversal rate dropping to 1.4\% over the first two quarters of 2024, it
+looks like this trend won't continue for the firm. In any case, given the
+significant potentila harm from being falsely accused of posting \V{CSAM},
+Meta's and Microsoft's reversal rates are concerning, but Pinterest's rate is
+outright alarming.
 
 Figure~\ref{fig:flow} incorporates inadvertent as well as adversarial false
 positives in the middle stages. It also shows false negatives, though no data is
@@ -882,10 +881,7 @@ stages on the right.
 
 \begin{figure}
 \centering\libertineLF
-\includegraphics[
-    scale=0.6,
-    alt={Charting cheek to cheek}
-]{figure-reports-plus}
+\includegraphics[scale=0.6]{figure-reports-plus}
 
 \caption{Yearly CyberTipline reports (in blue, linear fit in gray, left y-axis),
 reports per 1,000 social media user accounts (in orange, linear fit in gray,
@@ -919,9 +915,9 @@ in 2014, and growth accelerating significantly.
 characterized the growth of CyberTipline reports as
 exponential~\cite{BurszteinBrightea2019}, and \V{NCMEC} has been doing the same
 in its 2023 and 2024 transparency reports to
-Congress~\cite{NcmecOjjdp2022,NcmecOjjdp2023}. Alas, even in 2019, an
-exponential regression wasn't a good fit for the data. With five more years of
-data, it produces an even worse fit. Compared to the linear version, the
+Congress\TechReport{~\cite{NcmecOjjdp2022, NcmecOjjdp2023}}. Alas, even in 2019,
+an exponential regression wasn't a good fit for the data. With five more years
+of data, it produces an even worse fit. Compared to the linear version, the
 exponential fit has a $15\times$ larger mean squared error and the weighted
 exponential fit has a $6.5\times$ larger error.
 
@@ -947,7 +943,7 @@ content.
 That contention is supported by the fact that related indicators do not exhibit
 the same growth pattern as social media users. Notably, the number of internet
 users has been growing either mostly linearly or vaguely exponentially over the
-last 20 years, depending on source~\cite{ITU2023,RichieMathieuea2023}.
+last 20 years, depending on source~\cite{ITU2023, RichieMathieuea2023}.
 Interestingly, while the \V{ITU}'s global count of internet users shows mostly
 linear growth over the last two decades, its count of \V{US} internet users from
 2005 onwards, while far noisier than social media users or CyberTipline report
@@ -955,9 +951,10 @@ counts, shows the same tell-tale acceleration around 2014. That suggests that,
 at least for the \V{US}, social media were the prime attraction for new internet
 users over the last decade.
 
-An analysis of \V{NCMEC}'s by-country disaggregations~\cite{NcmecByCountry2019,
-NcmecByCountry2020, NcmecByCountry2021, NcmecByCountry2022, NcmecByCountry2023}
-offers additional but qualified support. First, the analysis surfaced a few,
+An analysis of \V{NCMEC}'s by-country
+disaggregations\TechReport{~\cite{NcmecByCountry2019, NcmecByCountry2020,
+NcmecByCountry2021, NcmecByCountry2022, NcmecByCountry2023}} offers additional
+but qualified support. \TechReport{To begin with, the analysis surfaced a few,
 minor data quality issues. Notably, we found entries for the same country under
 two labels, ``French Guiana'' and ``Guiana, French,'' for the Netherlands
 Antilles in addition to the three island states resulting from the Antilles'
@@ -966,7 +963,7 @@ territory is an uninhabited nature preserve, and for ``Europe'' in addition to
 pretty much all European countries. With all but one count in the single digits,
 we simply discounted these entries for the per-capita analysis.
 
-Second, when ranking countries by reports per capita, we discovered an initially
+}When ranking countries by reports per capita, we discovered an initially
 puzzling phenomenon: From 2019 to 2023, not only was either Libya or the United
 Arab Emirates (\V{UAE}) the country with the most reports per capita, but member
 countries of the Arab League accounted for 13, 13, 13, 9, and 14 of the
@@ -979,21 +976,25 @@ with better infrastructure and larger \V{GDP}---only added to the puzzlement.
 DataReportal's statistics on global social media penetration point towards a
 simple explanation. Their ranking of countries with the most social media user
 accounts per capita for 2023 shows seven Arab League countries including Libya
-and the \V{UAE} amongst top-ten countries~\cite{Kemp2024}. That neatly explains
-the relatively high per-capita report count for that year. However, with five
-and three Arab League countries amongst the top-ten for 2022 and
-2021~\cite{Kemp2023, Kemp2022}, the numbers do not fully align with the reports
-per capita. Unfortunately, DataReportal publishes only top-ten and bottom-ten
-countries. Hence we do not have enough information to determine whether this is
-a data quality issue or reflects the impact of another, unidentified variable.
+and the \V{UAE} amongst top-ten countries\TechReport{~\cite{Kemp2024}}. That
+neatly explains the relatively high per-capita report count for that year.
+However, with five and three Arab League countries amongst the top-ten for 2022
+and 2021\TechReport{~\cite{Kemp2023, Kemp2022}}, the numbers do not fully align
+with the reports per capita. Unfortunately, DataReportal publishes only top-ten
+and bottom-ten countries. Hence we do not have enough information to determine
+whether this is a data quality issue or reflects the impact of another,
+unidentified variable.
 
 Social media user counts may be the driving force behind the increase in
 CyberTipline reports, but it is not the only one. As illustrated by the orange
 curve in Figure~\ref{fig:reports}, normalized report counts have grown from less
 than 1~report per 1,000 users to almost 8~reports per 1,000 users over the last
 decade. That trend is certainly concerning, and identifying its cause is
-critical future work. Incident rates for offline \V{CSE} in the \V{US}
-reportedly are around 1--2 incidents per 1,000 \emph{children} (not
+critical future work.
+
+\TechReport{
+By comparison, incident rates for offline \V{CSE} in the \V{US} reportedly are
+around 1--2 incidents per 1,000 \emph{children} (not
 capita)~\cite{RezeyDiMeglio2024}. With children making up 22\% of the American
 population~\cite{FederalInteragencyForumOnChildAndFamilyStatistics2023}, that
 corresponds to 1--2 incidents per 4,550 capita or 0.22--0.44 incidents per 1,000
@@ -1015,11 +1016,12 @@ appears to be an order of magnitude larger than offline activities. Unless we
 are inclined to believe that social media turn people into sexual predators at
 significant rates, that difference must be due to other factors, which is
 consistent with findings in the previous section.
+}
 
 
 \begin{finding}
-The pandemic had no statistically relevant impact on the volume of CyberTipline
-reports.
+The Covid-19 pandemic had no statistically relevant impact on the volume of
+CyberTipline reports.
 \end{finding}
 
 \noindent{}As illustrated by the magenta bars in Figure~\ref{fig:reports}, the
@@ -1033,68 +1035,43 @@ year-over-year growth, the increase of +0.5 standard deviations from 2019 to
 report volume for the pandemic years is consistent with the growth for the rest
 of the decade.
 
-That still allows for a more short-lived impact, a claim that \emph{is}
-supported by available data. We can also construct more complex scenarios under
-which the pandemic significantly reduced organizations' report processing
-capability and hence a relative increase in incidents was offset by a
-corresponding decrease in filed reports. But that seems unlikely because many of
-the claims in support of a more sustained impact do not hold up to scrutiny.
+We could construct more complex scenarios under which the pandemic significantly
+reduced organizations' report processing capability and hence a relative
+increase in incidents was offset by a corresponding decrease in filed reports.
+But that seems unlikely because many of the claims in support of a more
+sustained impact do not hold up to scrutiny. Notably, besides a blog post from
+April 2021 by \V{NCMEC} that features only year-over-year
+comparisons~\cite{ODonnell2021} and a university's research report from May 2021
+that captures the pressures faced by individual hotline staff and police
+officers during the pandemic~\cite{SalterWong2021}, peer-reviewed
+articles~\cite{Dabrowska2021, Haney2021b, SalterWoodlockea2023} consistently
+cite reports by Europol from June 2020~\cite{Europol2020} and Interpol from
+September 2020~\cite{Interpol2020}.
 
-For instance, the American Bar Association published versions of the same
-article in its SciTech Lawyer~\cite{Haney2021b} and GPSolo
-magazines~\cite{Haney2021a} that cited an \V{NCMEC} blog post from April 2021
-attesting to substantial increases from 2019 to 2020 for several
-metrics~\cite{ODonnell2021}. But without more context, these year-over-year
-increases reveal very little beyond indicators getting worse. A second source is
-an Interpol report from September 2020 that collects a fair bit of anecdotal
-evidence and then blatantly misrepresents its only comprehensive metric, making
-the boldfaced claim of a ``significant increase in the sharing of \V{CSEAM}''
-(child sexual exploitation and abuse material) above a graph with a noisy but
-clearly sinusoidal curve whose upswing happens to align with the start of the
-pandemic~\cite{Interpol2020}.
+Both reports mostly feature anecdotal and indirect evidence. Both reports also
+misrepresent data on peer-to-peer networks by the Child Rescue Coalition. They
+claim that graphs of sinusoidal signals that happen to rise between February and
+April 2020 somehow demonstrate a ``significant increase in the sharing of
+\V{CSEAM}'' (child sexual exploitation and abuse material)---to use Interpol's
+boldface phrase. In addition to sharing the same sourcing and description,
+Interpol's single curve very much looks like the sum of Europol's four
+country-specific curves. That suggests that both police agencies are presenting
+the same data. However, according to y-axis labels, Interpol's counts are
+roughly $5,700\times$ larger than Europol's aggregates.
 
-There is a university's research report that also collects a fair bit of
-anecdotal evidence, but primarily serves as an impressive and harrowing snapshot
-of the pressures hotline staff and police officers faced during the
-pandemic~\cite{SalterWong2021}. But where the report repeatedly emphasized the
-anecdotal character of observations, the introduction to a peer-reviewed
-follow-up~\cite{SalterWoodlockea2023} presents the pandemic's abuse-increasing
-impact as established fact, citing an \V{NGO}'s predictions, their own research
-report, as well as a Europol report from June 2020~\cite{Europol2020}. The first
-source is meaningless. The second provides only anecdotal evidence.
+At the same time, Europol's report does contains compelling evidence that the
+pandemic did, in fact, result in significantly more incidents involving
+\V{CSAM}, albeit \emph{at a different timescale}. When looking at CyberTipline
+reports \V{NCMEC} forwarded to European police during the first half of 2020 at
+\emph{monthly} granularity, there is a $5\times$ spike for March 2020 only.
+While we concur that the pandemic is the most plausible cause, the effect is not
+sustained enough to have any impact on yearly statistics. Alas, since we didn't
+follow a formal protocol such as
+\V{PRISMA}\TechReport{~\cite{MoherLiberatiea2009a}} in selecting publications,
+we cannot exclude confirmation bias for the selection of the above examples.
 
-Europol's report, the third source, again collects some anecdotal evidence and
-then proceeds to claim a ``considerable increase'' above a graph showing four
-fairly noisy but clearly sinusoidal curves whose upswings happen to align with
-the start of the pandemic. Since both Interpol's and Europol's graphs are
-showing \V{CSAM} sharing on peer-to-peer networks sourced from the Child Rescue
-Coalition and Interpol's one curve looks very much like the aggregate of
-Europol's four, we conclude that both police organizations misrepresented the
-data in the same way---in case of Europol without the boldface highlight. On top
-of that, at least one of the organizations got the labels for the y-axis all
-wrong, with quantities over an order of magnitude apart.
 
-Europol's report also contains compelling evidence that the pandemic did, in
-fact, result in significantly more incidents involving \V{CSAM}, albeit \emph{at
-a different timescale}. When looking at CyberTipline reports forwarded to
-European police by \V{NCMEC} during the first half of 2020 at \emph{monthly}
-granularity, there is a $5\times$ spike for March 2020. We'd be shocked if that
-spike wasn't caused by the pandemic.
-
-Finally, another peer-reviewed article cast a wider net in the sources it
-considered and ended up more skeptical about the pandemic's impact, as the first
-three words of the title, ``The Unclear Picture,'' make ample
-clear~\cite{Dabrowska2021}. But here too, many of the claims in favor of a
-pandemic increase do not hold up to scrutiny. Notably, Europol's and Interpol's
-reports as well as the source data by the Child Rescue Coalition feature
-prominently. But unfortunately, the author didn't notice their significant
-overlap and shortcomings.
-
-While we did search for evidence \emph{in favor} a pandemic effect, we didn't
-follow a formal protocol such as \V{PRISMA}~\cite{MoherLiberatiea2009a} nor
-collected statistics throughout the repeated searches. As a result, we cannot
-exclude confirmation bias for the selection of the above examples.
-
+\TechReport{
 Before we shift focus to the two quantitative audits, we note the following
 negative finding:
 
@@ -1107,10 +1084,7 @@ nor for the number of attachments.
 
 \begin{figure}
 \centering\libertineLF
-\includegraphics[
-    scale=0.6,
-    alt={Charting cheek to cheek}
-]{figure-platforms}
+\includegraphics[scale=0.6]{figure-platforms}
 
 \caption{Yearly CyberTipline report counts disaggregated by platform on a log
 scale.}
@@ -1131,10 +1105,7 @@ aggressive, that is, at least exponential growth.
 
 \begin{figure}
 \centering\libertineLF
-\includegraphics[
-    scale=0.6,
-    alt={Charting cheek to cheek}
-]{figure-meta}
+\includegraphics[scale=0.6]{figure-meta}
 
 \caption{Meta: The number of photos and videos, i.e., pieces, removed per
 quarter on the left; number of pieces and reports per year on the right.}
@@ -1154,12 +1125,13 @@ At first glance, the change of metrics in \V{Q2}~2021 is curious because counts
 jump upwards, even though the label suggests a smaller category. Meta's
 transparency report for \V{Q2}~2021 provides no explanation. However, searching
 for ``Meta Community standards enforcement report \V{Q2}~2021'' with an external
-search engine did produce a blog post~\cite{Facebook2021a} linking a \V{PDF}
-document with the explanation~\cite{Facebook2021}. Apparently, the new metric
-covers not only ``sexual exploitation,'' but also ``sexualization of children''
-and ``inappropriate interactions with children,'' which were not tracked before.
-While all three are clearly related to minor safety, their aggregation make
-little sense. But it does explain the jump in actioned images and videos.
+search engine did produce a blog post\TechReport{~\cite{Facebook2021a}} linking
+a \V{PDF} document with the explanation~\cite{Facebook2021}. Apparently, the new
+metric covers not only ``sexual exploitation,'' but also ``sexualization of
+children'' and ``inappropriate interactions with children,'' which were not
+tracked before. While all three are clearly related to minor safety, their
+aggregation make little sense. But it does explain the jump in actioned images
+and videos.
 
 Even though Meta generated more than 91\% of all CyberTipline reports in
 2019--2021 and more than 84\% in 2022--2023, the number of actioned pictures and
@@ -1172,6 +1144,7 @@ variability is surprising. While Meta announced its intent to share more
 statistics about minor safety earlier this year, so far its follow-through has
 been lacking---and since its transparency reports are not archived, that promise
 appears to be gone, too.
+}
 
 
 % --------------------------------------------------------------------------------------
@@ -1183,10 +1156,7 @@ appears to be gone, too.
 
 \begin{figure}
 \centering\libertineLF
-\includegraphics[
-    scale=0.7,
-    alt={Charting cheek to cheek}
-]{figure-comparable-reports}
+\includegraphics[scale=0.7]{figure-comparable-reports}
 
 \caption{Mean difference plots for seven service providers individually and all
 of them together. Each plot has its own scale, and the x-axis is logarithmic for
@@ -1205,8 +1175,9 @@ and the color reflecting the year. If the service provider's count is smaller
 than \V{NCMEC}'s, the percent difference is positive (and vice versa). The
 dashed line is the mean of the percentage differences. Each of the eight plots
 has its own dimensions for axes and the eighth plot's x-axis is logarithmic.
+\TechReport{
 Tables~\ref{tab:pieces-and-reports-1}--\ref{tab:pieces-and-reports-3} in
-Appendix~\ref{sec:appendix:data} provide the raw data.
+Appendix~\ref{sec:appendix:data} provide the raw data.}
 
 
 \begin{finding}
@@ -1219,17 +1190,17 @@ Aylo's 104.1\% difference for 2020. The firm only makes transparency disclosures
 for its most visible brand, Pornhub. In its transparency report for the year,
 which was published in April 2021, the brand not only acknowledges the
 discrepancy but also explains it as the result of submitting the same reports
-``multiple times in an abundance of caution''~\cite{Pornhub2021}. They add that
-\V{NCMEC} has been notified of the duplicate reports. Strikingly, this is the
-only instance we could find of a service provider acknowledging a problem with
-their disclosures or providing a credible explanation for the problem. While we
-consider the acknowledgment and explanation exemplary, the rest of the report
-makes for tedious reading. It emphasizes, again and again, Pornhub's principled
-stand against any form of abuse.
+``multiple times in an abundance of caution''\TechReport{~\cite{Pornhub2021}}.
+They add that \V{NCMEC} has been notified of the duplicate reports. Strikingly,
+this is the only instance we could find of a service provider acknowledging a
+problem with their disclosures or providing a credible explanation for the
+problem. While we consider the acknowledgment and explanation exemplary, the
+rest of the report makes for tedious reading. It emphasizes, again and again,
+Pornhub's principled stand against any form of abuse.
 
-Presumably, the firm is still reacting to events from December 2020, when New
-York Times columnist Nick Kristof~\cite{Kristof2020} made common cause with
-anti-porn crusaders~\cite{Hitt2020a} associated with a White supremacist
+\TechReport{Presumably, the firm is still reacting to events from December 2020,
+when New York Times columnist Nick Kristof~\cite{Kristof2020} made common cause
+with anti-porn crusaders~\cite{Hitt2020a} associated with a White supremacist
 church~\cite{Halley2021} and used a few harrowing cases to falsely paint Pornhub
 as the epitome of abusive sleaze~\cite{Brown2020, Grant2020}, a site ``infested
 with rape videos.'' No matter that similar cases regularly occur on social media
@@ -1237,8 +1208,8 @@ as well. No matter that Pornhub had been working with \V{NCMEC} since 2019 and
 was proactively scanning user-contributed content already. No matter that Apple
 is not scanning proactively to this day. No matter that Kristof had published
 similarly sensationalist and ultimately false reports twice
-before~\cite{Dickson2014,Soderlund2011} and keeps casting himself in the role of
-the superhero rescuing damsels from monsters~\cite{Heber2024}.
+before~\cite{Dickson2014, Soderlund2011} and keeps casting himself in the role
+of the superhero rescuing damsels from monsters~\cite{Heber2024}.}
 
 
 \begin{finding}
@@ -1281,10 +1252,9 @@ For the previous audit, which compared counts tabulated by independent
 organizations, a small amount of random error is not really surprising. For
 this, the second audit, that is emphatically not the case. In fact, we only
 considered the possibility after serendipitously using Meta's \V{CSV} file for a
-subsequent quarter while validating a code refactoring. Except it didn't feel
-serendipitous at the time, since we spent the better part of a day checking and
-rechecking our code for what looked like a bug causing incorrect results---until
-finally concluding that it had to be the input.
+subsequent quarter while validating a code refactoring. Except it didn't feel it
+at the time, as we spent the better part of a day checking and rechecking our
+code for bugs---until finally concluding that it had to be the input.
 
 \begin{finding}
 In addition to only including rounded quantities, Meta's transparency data is
@@ -1320,37 +1290,33 @@ significant short-comings. First, a panel of academic experts performed a
 qualitative review of Meta's policies, enforcement process, and transparency
 reporting including metrics~\cite{BradfordGriselea2019}. Second, Ernst \& Young
 performed a quantitative assessment of Meta's transparency data collection
-according to usual accounting standards~\cite{Meta2022}. According to \V{E\&Y}'s
-written statement, the accountants reviewed Meta's management assertion about
-the transparency data and found that ``internal controls were suitably designed,
-implemented and operating with sufficient effectiveness.'' Now, \V{E\&Y} only
-reviewed \V{Q4}~2021, and that quarter had the second lowest rate of divergent
-quantities, with $27/2,192=1.2\%$ of data points. Still, their assessment
-clearly wasn't sufficiently thorough.
+according to usual accounting standards\TechReport{~\cite{Meta2022}}. According
+to \V{E\&Y}'s written statement, the accountants reviewed Meta's management
+assertion about the transparency data and found that ``internal controls were
+suitably designed, implemented and operating with sufficient effectiveness.''
+Now, \V{E\&Y} only reviewed \V{Q4}~2021, and that quarter had the second lowest
+rate of divergent quantities, with $27/2,192=1.2\%$ of data points. Still, their
+assessment clearly wasn't sufficiently thorough.
 
 While Meta has certainly invested significant resources into trust and safety,
-the firm keeps undermining its own transparency and safety efforts all the same.
-Notably, it similarly misreported advertising metrics to
-customers~\cite{BruellPatel2020, Hutchinson2016, Hutchinson2016b,
-Hutchinson2017, VranicaMarshall2016}, platform usage data to a Harvard-based
-research consortium~\cite{Timberg2021}, and adverts in its transparency
-database~\cite{Rosenberg2019, ScottMontellaro2021, SilvermanMac2020a}. Meta also
-deplatformed the academics who collected the data behind several of the news
-reports just cited~\cite{EdelsonMcCoy2021, EdelsonMcCoy2021a} and shut down its
-CrowdTangle transparency tool when it became inconvenient~\cite{Kerr2024}. While
-employed by Meta, the author also discovered compelling evidence that the firm
-was artificially inflating basic advertising metrics~\cite{Grimm2022c}.
-
-As far as minor safety is concerned, the firm did run an advertising campaign
-(for TikTok nonetheless) that sexualized teenage girls for the benefit of
-middle-aged straight men. When employees raised concerns, the firm cut off their
-access to information about the ad campaign but otherwise continued running the
-ads~\cite{SilvermanMac2020}. Firm-internal documents unsealed as part of a
-lawsuit by the State of New Mexico against Meta demonstrate that this was far
-from an exceptional case. The firm was fully aware that children were being
-exposed to a ``massive volume of inappropriate and sexually explicit content,''
-but did nothing to stop it, going as far as blocking the implementation of child
-safety features~\cite{SungSilberling2024}.
+the firm also has a substantial history of faulty and misleading metrics and
+favoring profits over minor safety. Notably, it misreported advertising metrics
+to customers\Journal{~\cite{BruellPatel2020}}\TechReport{~\cite{BruellPatel2020,
+Hutchinson2016, Hutchinson2016b, Hutchinson2017, VranicaMarshall2016}}, platform
+usage data to a Harvard-based research consortium~\cite{Timberg2021}, and
+adverts in its transparency
+database\Journal{~\cite{Rosenberg2019}}\TechReport{~\cite{Rosenberg2019,
+ScottMontellaro2021, SilvermanMac2020a}}. Meta also deplatformed the academics
+who collected the data behind several of the news reports just
+cited\Journal{~\cite{EdelsonMcCoy2021a}}\TechReport{~\cite{EdelsonMcCoy2021,
+EdelsonMcCoy2021a}} and shut down its CrowdTangle transparency tool when it
+became inconvenient~\cite{Kerr2024}.\anon[]{ While employed by Meta, the author
+also discovered compelling evidence that the firm was artificially inflating
+basic advertising metrics~\cite{Grimm2022c}.} As internal documents unsealed as
+part of a lawsuit by the State of New Mexico against Meta
+demonstrate~\cite{SungSilberling2024}, Meta running an advertising campaign (for
+TikTok nonetheless) that sexualized teenage girls for the benefit of middle-aged
+straight men was not an isolated incident~\cite{SilvermanMac2020}.
 
 
 \begin{finding}
@@ -1377,31 +1343,49 @@ floating point numbers, e.g., the same quantity may appear as
 ``0.9620000000000001'' and ``0.962.''
 
 The lack of complete statistics when it comes to \V{CSE} suffices for rendering
-TikTok's transparency disclosures useless for our purposes. The subpar state of
-their \V{CSV} files is only adding insult to injury.
+TikTok's transparency disclosures useless for our purposes. However, even if it
+was disclosing the necessary metrics, the subpar state of their \V{CSV} files
+would unnecessarily complicate analysis.
 
 
 % ======================================================================================
 \section{Discussion}
 \label{sec:discussion}
 
+%% https://ourworldindata.org/grapher/female-population-by-age-group
+%% https://ourworldindata.org/grapher/male-population-by-age-group
+%% children under 10 in millions: 334.2 + 318.47 + 335.56 + 354.67 = 1,353.9
+%%  2 * (8.2 - 1.3539) / 5 = 2.74
+
+Knowing that much of the growth in CyberTipline reports is driven by an
+equivalent growth in social media users doesn't make \V{NCMEC}'s work any
+easier. The organization is already close to breaking
+point~\cite{GrossmanPfefferkornea2024}. But at the current rate of 3.93 million
+more reports per year, it will need to process an additional 7.5~reports for
+every minute in every year. At some point in the future, growth will necessarily
+plateau. After all, there are only so many humans who can maintain only so many
+social media accounts. Alas, assuming that children under 10 mostly stay off
+social media and the rest of humanity maintain two social media accounts on
+average (compared to six for \anon[one of ]{}this study's author\anon[s]{}),
+that still implies $2.74\times$ the current CyberTipline report volume. Hence
+reducing the volume of CyberTipline reports is imperative.
+
+
 \subsection{Legal Overreach}
 \label{sec:discussion:legal}
 
-Lawmakers' findings incorporated into bills updating Chapter~110 of 18~\V{US}
-Code make clear that the blanket prohibition against possession of sexual
-imagery involving minors is based on the assumption that such imagery necessarily
-involves sexual predation. As this study's findings demonstrated, that
-assumption is unrealistic. The blanket prohibition also reflects a curious focus
-on sexual imagery that interferes with the self-determination of adolescents.
-While the United States is one of only two countries in the world that hasn't
-ratified the United Nations Convention on the Rights of the
-Child~\cite{Mason2005} and thus does not recognize freedom from excessive
-interference as a right for children, the blanket prohibition also interferes
-with other \V{US} laws.
+This study suggests two avenues for meaningfully reducing the CyberTipline
+report volume. The first is legislative reform based on the realization that, in
+the majority of cases, sexual imagery involving minors does not involve sexual
+predation. That makes the blanket prohibition against such imagery excessively
+punitive. It also impedes the self-determination of adolescents. While the
+United States is one of only two countries in the world that hasn't ratified the
+United Nations Convention on the Rights of the Child~\cite{Mason2005} and thus
+does not recognize freedom from excessive interference as a right for children,
+the blanket prohibition does interfere with other \V{US} laws.
 
-Notably, in roughly half of \V{US} states, the age of consent is 16 or 17. By
-definition, that allows for consensual sexual relationships between an
+For instance, in roughly half of \V{US} states, the age of consent is 16 or 17.
+By definition, that allows for consensual sexual relationships between an
 adolescent and an adult. However, if the adult takes (consensual) pictures of
 their interactions and shares those pictures with their partner, the adult not
 only violates the prohibition against \V{CSAM} but also meets the Sentencing
@@ -1417,107 +1401,59 @@ Unfortunately, \V{NCMEC} and other advocacy groups are aiding this legal
 overreach by referring to sexual imagery created by and involving minors as
 ``self-generated child sexual abuse materials'' or shorter ``self-generated
 \V{CSAM}.'' It strongly suggests that these organizations are unable to conceive
-of adolescents as sexual beings just when they are particularly focused on that
-aspect of their rapidly maturing bodies. That, in turn, gets in the way of
-supporting adolescents in navigating what activities are and are not acceptable
-when it comes to, notably, sexting. When all imagery is verboten, working out
-the practical (and moral) differences becomes much harder. The fact that
-non-consensual sharing has a substantial prevalence $>10\%$ suggests that
-distinguishing between the two is, in fact, challenging for many adolescents.
-
-The need for more nuanced treatment is also supported by the country's
-experience with abstinence-ony sex education. Since the mid-1990s, the \V{US}
-spent about \$2~billion on abstinence-only sex education. Overall, it has
-nothing to show for that investment, as abstinence-only sex education is
-ineffective, except it has a ``perverse effect, increasing adolescent birthrates
-in conservative  states''~\cite{FoxHimmelsteinea2019}. It would seem pure folly
-to keep trying this same failed strategy for sexting.
+of adolescents as sexual beings just when they are particularly focused on just
+that aspect of their rapidly maturing bodies. That, in turn, gets in the way of
+supporting adolescents in navigating what activities are and are not acceptable,
+notably, when sexting. When all imagery is verboten, working out the practical
+(and moral) differences becomes much harder. The fact that non-consensual
+sharing has a substantial prevalence $>10\%$ suggests that distinguishing
+between the two is, in fact, challenging for many adolescents.
 
 \emph{None} of the above is an argument for legalizing the public posting or
 arbitrary exchange of sexual imagery involving minors. But these scenarios serve
 as compelling arguments for \emph{selectively} eliminating the attendant
 criminal jeopardy. It may also be worth considering whether the exchange of
-inappropriate memes or expressions of abhorrence is better treated as something
-akin to a traffic violation. An additional and pragmatic argument for a more
-nuanced law is the fact that the current CyberTipline reporting volume is
-threatening to overhelm \V{NCMEC}'s capacity to perform meaningful
-triage~\cite{GrossmanPfefferkornea2024}. We return to this critical shortly.
+inappropriate memes or expressions of abhorrence are better treated as something
+akin to traffic violations. Since the mid-1990s, the \V{US} spent about
+\$2~billion on abstinence-only sex education, with nothing to show for that
+investment besides ``increasing adolescent birthrates in conservative
+states''~\cite{FoxHimmelsteinea2019}. It would be pure folly to keep trying this
+same failed strategy for sexting.
 
 
-\subsection{Appraising the Deluge}
+\subsection{Wither the Deluge}
 \label{sec:discussion:deluge}
 
-The analysis of yearly CyberTipline report volumes in
-Section~\ref{sec:findings:reports} produced two findings that are remarkable by
-themselves but also somewhat contradictory. To start with, much of the growth
-over the last decade is (most likely) driven by an equivalent growth in social
-media user accounts. When scaling the report volume by user accounts, yearly
-rates fall into a range of one to eight reports per 1,000 user accounts.
-Reassuringly, these are human-conceivable dimensions, very much unlike the other
-statistics in this paper with their millions to thousands of millions. While
-they are larger than previously reported rates for offline \V{CSE}, they
-nonetheless are inconsistent with the notion that the internet activated a
-previously latent human potential for sexual predation.
+The second second avenue for reducing the deluge of reports is undoing the
+growth of normalized yearly rates from one to eight reports per 1,000 user
+accounts. Compared to the other statistics in this paper with their millions to
+thousands of millions, these are human-conceivable dimensions. While seemingly
+larger than previously reported rates for offline \V{CSE}, they nonetheless are
+inconsistent with the notion that the internet activated a previously latent
+human potential for sexual predation. Still, the increase from one to eight
+reports per 1,000 user accounts over the last decade is very clearly noticeable.
 
-Having said that, something fundamentally changed in 2014. That change is
-reflected in both absolute report counts and the relative reports per account
-counts: Both have been growing aggressively, though linearly for the last
-decade. By comparison, the growth in absolute report counts before 2014 is
-effectively irrelevant and the growth in relative reports per user counts is
-negative until 2008 and then minimal until 2014. While not conclusive, all
-available indicators are pointing towards social media as the root cause for
-that change and acceleration.
+Making sense of this component requires additional research---and more granular
+data including on the prevalence of sexts, memes, and predatory materials.
+However, several factors point towards social media being responsible. There is
+the finding that most of the growth is driven by social media user accounts.
+There is the ``move fast and break things'' mindset of \V{US}-based corporate
+social media and their relentless persuit of hypergrowth. Not surprisingly, the
+resulting platforms make posting of user-generated content easier than any other
+platform before and are designed for the viral distribution thereof. Facebook
+contributing to the genocides in Myanmar and Ethiopia are extreme examples for
+what can go wrong as a result\TechReport{~\cite{Gilbert2020, GlobalWitness2022,
+HumanRightsCouncil2018, Mozur2018}}. Finally, there is commentary by observers
+of internet culture that attests to 2014 as the year when social media displaced
+the open web\Journal{~\cite{Cao2024}}\TechReport{~\cite{Cao2024, Staltz2017}}.
 
-One indicator is the finding that most of the growth is driven by social media
-user accounts. Another indicator is the ``move fast and break things'' mindset
-of \V{US}-based corporate social media and their relentless persuit of
-hypergrowth. Not surprisingly, the resulting platforms make posting of
-user-generated content easier than any other platform before and are designed
-for the viral distribution thereof. Facebook contributing to the genocides in
-Myanmar and Ethiopia are extreme examples for what can go wrong as a
-result~\cite{Gilbert2020, GlobalWitness2022, HumanRightsCouncil2018, Mozur2018}.
-A final indicator is commentary by observers of internet culture that attests to
-2014 as the year when social media displaced the open web~\cite{Cao2024,
-Staltz2017}.
-
-Unfortunately, the lack of granular data, such as the prevalence of sexts,
-memes, and predatory materials, gets in the way of exploring this relationship
-in the depth it deserves. It certainly is a worthwhile topic for future work.
+While suggestive, more work is clearly needed to make sense of this phenomenon
+let alone undo it. In the meantime, more detailed reporting by the technology
+industry can make a significant difference so that \V{NCMEC} can continue
+serving as an effective global clearinghouse for reports about \V{CSE}.
 
 
-%% https://ourworldindata.org/grapher/female-population-by-age-group
-%% https://ourworldindata.org/grapher/male-population-by-age-group
-%% children under 10 in millions: 334.2 + 318.47 + 335.56 + 354.67 = 1,353.9
-%%  2 * (8.2 - 1.3539) / 5 = 2.74
-
-None of that makes \V{NCMEC}'s work any easier. That is a serious concern given
-that \V{NCMEC} is already close to breaking
-point~\cite{GrossmanPfefferkornea2024}. At the current rate of 3.93 million more
-reports per year, the organization will need to process an additional
-7.5~reports for every minute in every year. At some point in the future,
-however, growth must necessarily plateau. There are only so many humans who can
-maintain only so many social media accounts. Alas, assuming that children under
-10 mostly stay off social media and the rest of humanity maintain two social
-media accounts on average (compared to six for \anon[one of ]{}this study's
-author\anon[s]{}), that still implies $2.74\times$ the current CyberTipline
-report volume. Hence reducing the volume of CyberTipline reports is imperative.
-
-This study suggests two avenues for meaningfully reducing the CyberTipline
-report volume in practice. First, as already discussed in
-Section~\ref{sec:discussion:legal}, legal reform could eliminate reports about
-incidents clearly not caused by sexual predation. Until that eventuality, more
-detailed reporting by the technology industry can make a significant difference
-and reduce the effort necessary for separating urgent reports about sexual
-predation from the noise of sexts and memes. Second, there is the unexplained
-linear growth in CyberTipline reports from about~1 to almost 8~reports per 1,000
-social media user accounts over the last decade, as presented in
-Section~\ref{sec:findings:reports}. Alas, making sense of that component
-(necessary for its elimination) requires additional research---and, yes, more
-granular data including on the prevalence of sexts, memes, and predatory
-materials. However, a precondition for more granular data is that the industry
-improves its transparency practices.
-
-
+\TechReport{
 \subsection{Further Failures of Transparency}
 
 In addition to the audits, the process of selecting and evaluating service
@@ -1525,19 +1461,20 @@ providers in preparation for this study surfaced concerns about the transparency
 practices of a few more firms.
 
 When Discord first disclosed statistics about its CyberTipline reporting in its
-transparency report for July to December 2020~\cite{DiscordSafety2021}, it did
-so in a section titled ``Reports to \V{NCMEC}'' in a bar chart titled
-``\V{H2}~2020 \V{NCMEC} Reports.'' Based on this labelling, we started tracking
-Discord's statistics as CyberTipline reports. Subsequent transparency reports
-did not use the same section headers, but still labelled the dominant statistic
-in their breakdown of triggers as ``media reports'' (as opposed to grooming, a
-considerably smaller category). During analysis, Discord's statistics stuck out:
-They were considerably smaller than \V{NCMEC}'s counts and, according to
-Fisher's exact test, definitely not random outliers. When we revisited the
-transparency report, we noticed a boldface ``6,948 \emph{accounts} to
-\V{NCMEC}'' (emphasis ours) in the paragraph below the chart. It is eventually
-followed by a disclaimer that the ``figure represents distinct accounts reported
-and not the total number of reports submitted.''
+transparency report for July to December
+2020\TechReport{~\cite{DiscordSafety2021}}, it did so in a section titled
+``Reports to \V{NCMEC}'' in a bar chart titled ``\V{H2}~2020 \V{NCMEC}
+Reports.'' Based on this labelling, we started tracking Discord's statistics as
+CyberTipline reports. Subsequent transparency reports did not use the same
+section headers, but still labelled the dominant statistic in their breakdown of
+triggers as ``media reports'' (as opposed to grooming, a considerably smaller
+category). During analysis, Discord's statistics stuck out: They were
+considerably smaller than \V{NCMEC}'s counts and, according to Fisher's exact
+test, definitely not random outliers. When we revisited the transparency report,
+we noticed a boldface ``6,948 \emph{accounts} to \V{NCMEC}'' (emphasis ours) in
+the paragraph below the chart. It is eventually followed by a disclaimer that
+the ``figure represents distinct accounts reported and not the total number of
+reports submitted.''
 
 We briefly considered listing Discord as one of the audited firms and then
 revealing the mistaken metric in the analysis, thus drawing attention to the
@@ -1563,35 +1500,34 @@ they cause additional incidents? Were they discovered after the fact because of
 increased account scrutiny including history? Or how do you account for this
 discrepancy?
 
-We have observed more underhanded behavior as well. Reddit stands out amongst
-the surveyed providers because it is the only one that has been disclosing
+We have observed more dubious behavior as well. Reddit stands out amongst the
+surveyed providers because it is the only one that has been disclosing
 CyberTipline report counts since 2019. Furthermore, its disclosed counts are the
 same as \V{NCMEC}'s for four out of the last five years. In the past, Reddit has
 committed to providing meaningful notice about its content moderation decisions
 and also to abiding by the Santa Clara Principles for content
-moderation~\cite{Reddit2022}. Those commitments helped make it the only
-technology platform to receive five stars in the Electronic Frontier
+moderation\TechReport{~\cite{Reddit2022}}. Those commitments helped make it the
+only technology platform to receive five stars in the Electronic Frontier
 Foundation's Who Has Your Back transparency
-rankings~\cite{CrockerGebhartea2019}. In short, Reddit appears to be exemplary
-when it comes to transparency. Except, as we discovered during the research for
-this study, Reddit has been shadow moderating comments for years, displaying
-removed comments only to their authors~\cite{Hawkins2023}. That, of course, is
-the opposite of meaningful notice and also a direct violation of the Santa Clara
-Principles.
+rankings\TechReport{~\cite{CrockerGebhartea2019}}. In short, Reddit appears to
+be exemplary when it comes to transparency. Except, as we discovered during the
+research for this study, Reddit has been shadow moderating comments for years,
+displaying removed comments only to their
+authors\TechReport{~\cite{Hawkins2023}}. That, of course, is the opposite of
+meaningful notice and also a direct violation of the Santa Clara Principles.
 
-Of course, there is a simpler option available to technology firms as well: Skip
-transparency disclosures altogether. Apple takes not doing things one step
-further, and after its ambitious but flawed attempt to perform client-side
-scanning for \V{CSAM} failed~\cite{FoxBrewsterLevine2023}, the firm apparently
-began ignoring the issue, forgoing any cloud-based scanning. Even if it did,
-pervasive encryption would probably limit what content can be scanned in the
-first place. However, that also is the case for Meta's WhatsApp. It nonetheless
+Of course, there is a simpler option available to technology firms: Skip
+transparency disclosures altogether. In fact, Apple goes even further, and after
+its attempt at client-side scanning for \V{CSAM}
+failed~\cite{FoxBrewsterLevine2023}, the firm gave up on the issue, forgoing
+even cloud-based scanning. While pervasive encryption probably would limit what
+content can be scanned, Meta's WhatsApp also faces that problem and nonetheless
 managed to file 1.4 million CyberTipline reports in 2023. Instead, Apple chooses
 not to scan for \V{CSAM} and not to make transparency disclosures, a degree of
 inaction only shared with Quora and possibly Omegle amongst surveyed
 organizations. Doing so is legal---as long as Apple files CyberTipline reports
 about incidents as it becomes aware of them, which it did 267 times in 2023.
-Only the Wikimedia Foundation filed fewer reports.
+Only the Wikimedia Foundation filed fewer reports.}
 
 
 \subsection{Incentives for Improving Transparency}
@@ -1636,12 +1572,13 @@ remedy also appears unrealistic for the forseeable future. At the same time,
 this study illustrates the very benefits of such a mandate, one anchored in
 \V{US} law nonetheless. Before the April 2023 release of \V{NCMEC}'s
 transparency report to the Congressional Appropriations
-Committees~\cite{NcmecOjjdp2022}, several statistics including long-term growth
-in CyberTipline reports, kinds of reported incidents, number and uniqueness of
-attachments, and relationship between perpetrators and victims were not publicly
-available. However, thanks to an addition to the explanatory statement for the
-2023 Appropriations Bill~\cite{DeLauro2022}, \V{NCMEC} was compelled to produce
-the corresponding transparency data. It made a real difference for this study.
+Committees\TechReport{~\cite{NcmecOjjdp2022}}, several statistics including
+long-term growth in CyberTipline reports, kinds of reported incidents, number
+and uniqueness of attachments, and relationship between perpetrators and victims
+were not publicly available. However, thanks to an addition to the explanatory
+statement for the 2023 Appropriations Bill\TechReport{~\cite{DeLauro2022}},
+\V{NCMEC} was compelled to produce the corresponding transparency data. It made
+a real difference for this study.
 
 Even if that particular stick remains out of play, we strongly believe that
 upping their game in transparency reporting is in the best interest of both
@@ -1649,10 +1586,11 @@ industry and \V{NCMEC} as well. We belabored the reasons for needing more
 granular data in Sections~\ref{sec:discussion:legal}
 and~\ref{sec:discussion:deluge} already. So here, we add only two more points.
 For one, social media firms probably won't escape the Brussels
-effect~\cite{Bradford2020} and already are subject to the Digital Services Act's
-transparenyc reporting requirements~\cite{EuropeanParliamentAndCouncil2022}.
-They might as well do the same reporting on a global scale. For another, a lack
-of data provides a fertile breeding ground for various stakeholders' biased and
+effect\TechReport{~\cite{Bradford2020}} and already are subject to the Digital
+Services Act's transparenyc reporting
+requirements\TechReport{~\cite{EuropeanParliamentAndCouncil2022}}. They might as
+well do the same reporting on a global scale. For another, a lack of data
+provides a fertile breeding ground for various stakeholders' biased and
 simplistic accounts when the reality, as this study illustrates for \V{CSE},
 often is far more nuanced and complicated. Admittedly, better data doesn't
 automagically result in more nuanced story telling (whether by press, \V{NGO}s,
@@ -1677,9 +1615,9 @@ based on the available data. Then incorporate their feedback.
 \label{sec:conclusion}
 
 In summary, the evidentiary record does \emph{not} support the more
-sensationalist and even lurid claims about child sexual exploitation. There is
-\emph{no} ``explosion'' of \V{CSAM}. The internet is \emph{not} ``overrun with
-images of child sexual abuse.'' The pandemic did \emph{not} trigger more sexual
+sensationalist claims about child sexual exploitation. There is \emph{no}
+``explosion'' of \V{CSAM}. The internet is \emph{not} ``overrun with images of
+child sexual abuse.'' The pandemic did \emph{not} trigger more sexual
 exploitation overall, even if there was a marked spike in March 2020.
 
 Nonetheless, the evidentiary record does support the claim that \V{US}-based
@@ -1691,273 +1629,50 @@ that storm is now threatening to overwhelm the very organization serving as a
 critical global resource. Not only that, but the majority of reports is also
 useless. That should suffice as encouragement for legislative reform. The fact
 that laws intended to protect minors are increasingly criminalizing and thereby
-harming them should add urgency. After all, that too is a form of child abuse.
-Unfortunately, \V{NCMEC} and other advocacy groups contribute to this legal
-mission creep by using fallacious language such as ``self-generated \V{CSAM}.''
-Please drop this un-phrase.
+harming them should add urgency. That also makes language such as
+``self-generated \V{CSAM}'' counter-productive.
 
 As far as transparency is concerned, many technology firms did far better than
-we expected at the start of this project. As this study has amply demonstrated,
-transparency disclosures needn't be mere transparency theater, but can help
-produce real insight. The most surprising result from this study is the first
-audit's finding that firms generally disclose reasonably accurate CyberTipline
-report counts but nonetheless have a very small but statistically significant
-bias towards underreporting. In other words, the trust and safety personell
-assembling these statistics are consummate professionals first and
-over-excitable humans rallying for their shared cause, i.e., employer, second.
-But making such surprising discoveries requires having access to meaningful data
-first. That's why transparency data matters. So if you work in trust and safety,
-don't try to spin the data. Release raw, unrounded counts broken down by
-well-defined content categories and countries in machine-readable form every 3
-or 6 months. We'll be sure to conduct the next audit of that transparency data
-in a couple of years, too.
+we expected. As this study has amply demonstrated, transparency disclosures
+needn't be mere transparency theater, but can help produce real insight. The
+most surprising result from this study is the first audit's finding that firms
+generally disclose reasonably accurate CyberTipline report counts but
+nonetheless have a very small but statistically significant bias towards
+underreporting. In other words, the professionalism of the trust and safety
+personnel preparing these statistics prevails, but it cannot entirely overcome
+all too human biases. Making such discoveries requires access to meaningful
+data. As this study has shown, we do not have enough when it comes to online
+sexual exploitation of children.
 
 
 % ======================================================================================
 
 \begin{anonsuppress}
 \begin{acks}
-This work was supported in part by MEYS, ERC CZ program, grant No. LL2325. An
-\V{NCMEC} employee helped complicated my thinking about \V{CSAM}---while somehow
-also avoiding to answer any of my questions. Meanwhile Karin Wolman did answer
-my questions about 18 \V{US} Code. Thank you both!
+An \V{NCMEC} employee helped complicate our thinking about \V{CSAM}---while
+somehow also avoiding to answer all of our questions. Meanwhile Karin Wolman did
+answer our questions about 18 \V{US} Code. Jan Vitek provided helpful feedback
+on earlier versions of this article. Thank you!
+
+This work was supported in part by \V{MEYS}, \V{ERC} \V{CZ} program, grant no.\
+LL2325 and by National Science Foundation grants CCF-2139612 and CCF-1910850.
 \end{acks}
+
+% \begin{dci}
+% The author worked as a software engineer for Meta from 2018 to 2019 and served
+% as a consultant for litigation against the firm in 2022. However, he did not
+% work on content moderation while employed and does not retain any interest in
+% the firm, financial or otherwise.
+% \end{dci}
 \end{anonsuppress}
 
+%\bibliographystyle{SageH}
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{bibliography}
 
+\TechReport{
 \appendix
-
-\section{The Data}
-\label{sec:appendix:data}
-
-\begin{table}
-\centering\libertineLF
-
-\caption{CSAM pieces and CyberTipline reports disclosed by technology firms and NCMEC: 2019 to 2023 (pt.\ 1)}
-\label{tab:pieces-and-reports-1}
-
-\begin{tabular}{r@{\hskip 1.5em}rrr r@{\hskip 1.5em}rrr}
-\toprule
-& \multicolumn{3}{c}{Disclosed by Service Provider}
-& \hspace{3.5em}
-& \multicolumn{3}{c}{Disclosed by NCMEC} \\
-\cmidrule{2-4}\cmidrule{6-8}
-
-Year
-& \multicolumn{1}{c}{Pieces}
-& \multicolumn{1}{c}{per}
-& \multicolumn{1}{c}{Reports}
-& \multicolumn{1}{c}{$\Delta$\%}
-& \multicolumn{1}{c}{Reports}
-& \multicolumn{1}{c}{of (\%)}
-& \multicolumn{1}{c}{Total}\\[2ex]
-
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{Meta (Q\;\ImageCheck\VideoCheck)}}} & & & & \\ \cmidrule{2-4}
-\color{lowlight} 2019 &  39,368,400 &   2.48 &            &         & 15,884,511 & 93.508 & \color{lowlight} 16,987,361 \\
-\color{lowlight} 2020 &  38,890,800 &   1.92 &            &         & 20,307,216 & 93.362 & \color{lowlight} 21,751,085 \\
-\color{lowlight} 2021 &  78,012,400 &   2.90 &            &         & 26,885,302 & 91.454 & \color{lowlight} 29,397,681 \\
-\color{lowlight} 2022 & 105,800,000 &   3.89 &            &         & 27,190,665 & 84.814 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &  63,300,000 &   2.07 &            &         & 30,658,047 & 84.666 & \color{lowlight} 36,210,368 \\
-\addlinespace
-
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{Google (H\;\ImageCheck\VideoCheck)}}} & & & & \\ \cmidrule{2-4}
-\color{lowlight} 2019 &             &        &            &         &    449,283 &  2.645 & \color{lowlight} 16,987,361 \\
-\color{lowlight} 2020 &   4,437,853 &   8.10 &    547,875 &   -0.21 &    546,704 &  2.513 & \color{lowlight} 21,751,085 \\
-\color{lowlight} 2021 &   6,696,497 &   7.69 &    870,319 &   +0.63 &    875,783 &  2.979 & \color{lowlight} 29,397,681 \\
-\color{lowlight} 2022 &  13,402,885 &   6.16 &  2,174,319 &   +0.01 &  2,174,548 &  6.783 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &   7,955,169 &   5.40 &  1,472,221 &   -0.09 &  1,470,958 &  4.062 & \color{lowlight} 36,210,368 \\
-\addlinespace
-
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{X née Twitter (H\;\ImageCheck\VideoCheck)}}} & & & & \\ \cmidrule{2-4}
-\color{lowlight} 2019 &             &        &           &          &     45,726 &  0.269 & \color{lowlight} 16,987,361 \\
-\color{lowlight} 2020 &             &        &           &          &     65,062 &  0.299 & \color{lowlight} 21,751,085 \\
-\color{lowlight} 2021 &             &        &           &          &     86,666 &  0.295 & \color{lowlight} 29,397,681 \\
-\color{lowlight} 2022 &             &        &           &          &     98,050 &  0.306 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &             &        &           &          &    870,503 &  2.404 & \color{lowlight} 36,210,368 \\
-\addlinespace
-
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{Snap (H\;\ImageCheck\VideoCheck)}}} & & & & \\ \cmidrule{2-4}
-\color{lowlight} 2019 &             &        &            &         &     82,030 &  0.483 & \color{lowlight} 16,987,361 \\
-\color{lowlight} 2020 &             &        &            &         &    144,095 &  0.662 & \color{lowlight} 21,751,085 \\
-\color{lowlight} 2021 &             &        &            &         &    512,522 &  1.743 & \color{lowlight} 29,397,681 \\
-\color{lowlight} 2022 &   1,273,838 &   2.31 &    550,755 &   +0.06 &    551,086 &  1.719 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &   1,594,805 &   2.31 &    691,225 &   +3.11 &    713,055 &  1.969 & \color{lowlight} 36,210,368 \\
-\addlinespace
-
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{TikTok (Q\;\ImageCheck\VideoCheck)}}} & & & & \\ \cmidrule{2-4}
-\color{lowlight} 2019 &             &        &           &          &        596 &  0.004 & \color{lowlight} 16,987,361 \\
-\color{lowlight} 2020 &             &        &           &          &     22,692 &  0.104 & \color{lowlight} 21,751,085 \\
-\color{lowlight} 2021 &             &        &           &          &    154,618 &  0.526 & \color{lowlight} 29,397,681 \\
-\color{lowlight} 2022 &             &        &           &          &    288,125 &  0.899 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &             &        &           &          &    590,376 &  1.630 & \color{lowlight} 36,210,368 \\
-\addlinespace
-
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{Discord (Q\;\ImageCheck)}}} & & & & \\ \cmidrule{2-4}
-\color{lowlight} 2019 &             &        &           &          &     19,480 &  0.115 & \color{lowlight} 16,987,361 \\
-\color{lowlight} 2020 &             &        &           &          &     15,324 &  0.071 & \color{lowlight} 21,751,085 \\
-\color{lowlight} 2021 &             &        &           &          &     29,606 &  0.101 & \color{lowlight} 29,397,681 \\
-\color{lowlight} 2022 &             &        &           &          &    169,800 &  0.530 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &             &        &           &          &    339,412 &  0.937 & \color{lowlight} 36,210,368 \\
-\addlinespace
-
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{Reddit (H\;\ImageCheck\VideoCheck)}}} & & & & \\ \cmidrule{2-4}
-\color{lowlight} 2019 &             &        &        724 &   \same &        724 &  0.004 & \color{lowlight} 16,987,361 \\
-\color{lowlight} 2020 &             &        &      2,233 &   \same &      2,233 &  0.010 & \color{lowlight} 21,751,085 \\
-\color{lowlight} 2021 &       9,258 &   0.92 &     10,059 &   \same &     10,059 &  0.034 & \color{lowlight} 29,397,681 \\
-\color{lowlight} 2022 &      80,888 &   1.54 &     52,592 &   \same &     52,592 &  0.164 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &             &        &    290,121 &   +0.01 &    290,141 &  0.801 & \color{lowlight} 36,210,368 \\
-
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{table}
-\centering\libertineLF
-
-\caption{CSAM pieces and CyberTipline reports disclosed by technology firms and NCMEC: 2019 to 2023 (pt.\ 2)}
-\label{tab:pieces-and-reports-2}
-
-\begin{tabular}{r@{\hskip 1.5em}rrr r@{\hskip 1.5em}rrr}
-\toprule
-& \multicolumn{3}{c}{Disclosed by Service Provider}
-& \hspace{3.5em}
-& \multicolumn{3}{c}{Disclosed by NCMEC} \\
-\cmidrule{2-4}\cmidrule{6-8}
-
-Year
-& \multicolumn{1}{c}{Pieces}
-& \multicolumn{1}{c}{per}
-& \multicolumn{1}{c}{Reports}
-& \multicolumn{1}{c}{$\Delta$\%}
-& \multicolumn{1}{c}{Reports}
-& \multicolumn{1}{c}{of (\%)}
-& \multicolumn{1}{c}{Total}\\[2ex]
-
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{Omegle}}} & & & & \\ \cmidrule{2-4}
-\color{lowlight} 2019 &             &        &           &          &      3,470 &  0.020 & \color{lowlight} 16,987,361 \\
-\color{lowlight} 2020 &             &        &           &          &     20,265 &  0.093 & \color{lowlight} 21,751,085 \\
-\color{lowlight} 2021 &             &        &           &          &     46,924 &  0.160 & \color{lowlight} 29,397,681 \\
-\color{lowlight} 2022 &             &        &           &          &    608,601 &  1.898 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &             &        &           &          &    188,102 &  0.520 & \color{lowlight} 36,210,368 \\
-\addlinespace
-
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{Microsoft (H\;\ImageCheck\VideoCheck)}}} & & & & \\ \cmidrule{2-4}
-\color{lowlight} 2019 &             &        &            &         &    123,927 &  0.730 & \color{lowlight} 16,987,361 \\
-\color{lowlight} 2020 &   1,256,652 &  13.03 &     96,435 &   +0.42 &     96,836 &  0.445 & \color{lowlight} 21,751,085 \\
-\color{lowlight} 2021 &     564,383 &   7.12 &     78,926 &   -0.05 &     78,883 &  0.268 & \color{lowlight} 29,397,681 \\
-\color{lowlight} 2022 &     452,384 &   4.22 &    107,599 &   +1.11 &    108,798 &  0.339 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &     402,630 &   2.86 &    140,720 &   +0.37 &    141,236 &  0.390 & \color{lowlight} 36,210,368 \\
-\addlinespace
-
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{Pinterest (Q/H\;\ImageCheck\VideoCheck)}}} & & & & \\ \cmidrule{2-4}
-\color{lowlight} 2019 &             &        &            &         &      7,360 &  0.043 & \color{lowlight} 16,987,361 \\
-\color{lowlight} 2020 &             &        &      3,432 &   \same &      3,432 &  0.016 & \color{lowlight} 21,751,085 \\
-\color{lowlight} 2021 &       1,608 &   0.60 &      2,684 &  -16.15 &      2,283 &  0.008 & \color{lowlight} 29,397,681 \\
-\color{lowlight} 2022 &      37,136 &   1.13 &     32,964 &   +4.00 &     34,310 &  0.107 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &      57,774 &   1.15 &     50,437 &   +3.73 &     52,356 &  0.145 & \color{lowlight} 36,210,368 \\
-\addlinespace
-
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{Amazon (Y\;\ImageCheck)}}} & & & & \\ \cmidrule{2-4}
-\color{lowlight} 2019 &             &        &           &          &        549 &  0.003 & \color{lowlight} 16,987,361 \\
-\color{lowlight} 2020 &             &        &     2,235 &    \same &      2,235 &  0.010 & \color{lowlight} 21,751,085 \\
-\color{lowlight} 2021 &      27,244 &   0.81 &    33,848 &    -0.04 &     33,833 &  0.116 & \color{lowlight} 29,397,681 \\
-\color{lowlight} 2022 &      52,656 &   0.79 &    67,073 &    +4.49 &     70,157 &  0.220 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &      24,756 &   0.79 &    31,281 &    +3.39 &     32,359 &  0.090 & \color{lowlight} 36,210,368 \\
-\addlinespace
-
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{Automattic (\ImageCheck)}}} & & & & \\ \cmidrule{2-4}
-\color{lowlight} 2019 &             &        &           &          &     10,443 &  0.062 & \color{lowlight} 16,987,361 \\
-\color{lowlight} 2020 &             &        &           &          &      9,130 &  0.042 & \color{lowlight} 21,751,085 \\
-\color{lowlight} 2021 &             &        &           &          &      4,821 &  0.016 & \color{lowlight} 29,397,681 \\
-\color{lowlight} 2022 &             &        &           &          &      5,035 &  0.016 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &             &        &           &          &     19,591 &  0.054 & \color{lowlight} 36,210,368 \\
-
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{Quora}}} & & & & \\ \cmidrule{2-4}
-\color{lowlight} 2019 &             &        &           &          &          1 & $\qtiny$ & \color{lowlight} 16,987,361 \\
-\color{lowlight} 2020 &             &        &           &          &          2 & $\qtiny$ & \color{lowlight} 21,751,085 \\
-\color{lowlight} 2021 &             &        &           &          &         25 & $\qtiny$ & \color{lowlight} 29,397,681 \\
-\color{lowlight} 2022 &             &        &           &          &      2,242 &    0.007 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &             &        &           &          &      6,135 &    0.017 & \color{lowlight} 36,210,368 \\
-\addlinespace
-
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{Aylo née MindGeek (H\;\ImageCheck\VideoCheck)}}} & & & & \\ \cmidrule{2-4}
-\color{lowlight} 2019 &             &        &           &          &            &        & \color{lowlight} 16,987,361 \\
-\color{lowlight} 2020 &             &        &     4,171 &  +104.12 &     13,229 &  0.061 & \color{lowlight} 21,751,085 \\
-\color{lowlight} 2021 &      20,401 &   2.26 &     9,029 &    +0.82 &      9,103 &  0.031 & \color{lowlight} 29,397,681 \\
-\color{lowlight} 2022 &       9,588 &   4.80 &     1,996 &    +4.84 &      2,095 &  0.007 & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &       7,313 &   2.92 &     2,503 &    +3.65 &      2,596 &  0.007 & \color{lowlight} 36,210,368 \\
-\addlinespace
-
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{table}
-\centering\libertineLF
-
-\caption{CSAM pieces and CyberTipline reports disclosed by technology firms and NCMEC: 2019 to 2023 (pt.\ 3)}
-\label{tab:pieces-and-reports-3}
-
-\begin{tabular}{r@{\hskip 1.5em}rrr r@{\hskip 1.5em}rrr}
-\toprule
-& \multicolumn{3}{c}{Disclosed by Service Provider}
-& \hspace{3.5em}
-& \multicolumn{3}{c}{Disclosed by NCMEC} \\
-\cmidrule{2-4}\cmidrule{6-8}
-
-Year
-& \multicolumn{1}{c}{Pieces}
-& \multicolumn{1}{c}{per}
-& \multicolumn{1}{c}{Reports}
-& \multicolumn{1}{c}{$\Delta$\%}
-& \multicolumn{1}{c}{Reports}
-& \multicolumn{1}{c}{of (\%)}
-& \multicolumn{1}{c}{Total}\\[2ex]
-
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{Apple}}} & & & & \\ \cmidrule{2-4}
-\color{lowlight} 2019 &             &        &           &          &        205 & $\qtiny$ & \color{lowlight} 16,987,361 \\
-\color{lowlight} 2020 &             &        &           &          &        265 & $\qtiny$ & \color{lowlight} 21,751,085 \\
-\color{lowlight} 2021 &             &        &           &          &        160 & $\qtiny$ & \color{lowlight} 29,397,681 \\
-\color{lowlight} 2022 &             &        &           &          &        234 & $\qtiny$ & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &             &        &           &          &        267 & $\qtiny$ & \color{lowlight} 36,210,368 \\
-\addlinespace
-
-& \multicolumn{3}{c}{\textsc{\MakeLowercase{Wikimedia (\ImageCheck)}}} & & & & \\ \cmidrule{2-4}
-\color{lowlight} 2019 &             &        &           &          &         13 & $\qtiny$ & \color{lowlight} 16,987,361 \\
-\color{lowlight} 2020 &             &        &           &          &         11 & $\qtiny$ & \color{lowlight} 21,751,085 \\
-\color{lowlight} 2021 &             &        &           &          &          8 & $\qtiny$ & \color{lowlight} 29,397,681 \\
-\color{lowlight} 2022 &             &        &           &          &         29 & $\qtiny$ & \color{lowlight} 32,059,029 \\
-\color{lowlight} 2023 &             &        &           &          &         34 & $\qtiny$ & \color{lowlight} 36,210,368 \\
-
-\bottomrule
-\end{tabular}
-\end{table}
-
-Tables~\ref{tab:pieces-and-reports-1}--\ref{tab:pieces-and-reports-3} provide
-the data released by electronic service providers and \V{NCMEC} about
-CyberTipline reports and attached pieces, aggregated by corporation and year.
-Parenthesized material after provider names repeats the disclosure frequencies
-from Table~\ref{tab:survey} as Q/H/Y for every 4/6/12 months, respectively, and
-then adds picture and/or video icons if the provider proactively scans for
-\V{CSAM}. All but  automatically scans for \V{CSAM}. Pinterest is marked ``Q/H'' because
-the firm releases quarterly aggregates every six months.
-
-The $\Delta\%$ column shows the percentage difference between the two report
-counts in terms of the mean, just as in Figure~\ref{fig:reports-audit}. some of
-the entries are, in fact, identical; the corresponding entries are marked as
-$\equiv$. Also, some of the percentages for Quora, Apple, and the Wikimedia
-Foundation in the middle column for the data from \V{NCMEC} are too small to fit
-into the alloted three-digit precision and hence are marked as $\qtiny$.
-
-Since quantities in the first and last columns are repeated for every service
-provider, they are presented in gray. That has the benefit of making the tables
-look less busy or imposing. That effect is further aided by the open space for
-providers that do not make transparency disclosures about their CyberTipline
-reporting. Alas, the motivation for giving every provider the same table real
-estate was to avoid biasing the presentation.
-
-Providers are sorted in descending order of report counts for 2023.
+\input{appendix}
+}
 
 \end{document}
