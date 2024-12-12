@@ -1,6 +1,4 @@
 \documentclass[nonacm,screen]{acmart}
-%\documentclass[anonymous,nonacm,screen]{acmart}
-%\documentclass[sageh, shortAfour]{sagej}
 \pdfoutput=1
 \usepackage{graphicx}
 \usepackage{pifont}
@@ -38,7 +36,7 @@
 \newtheorem{finding}{Finding}
 
 \newif\iftechreport
-\techreportfalse
+\techreporttrue
 \newcommand\TechReport[1]{\iftechreport {#1}\fi}
 \newcommand\Journal[1]{\iftechreport\else{#1}\fi}
 
@@ -47,7 +45,7 @@
 \begin{document}
 
 \title{Putting the Count Back Into Accountability}
-\subtitle{A Comprehensive Analysis of Transparency Data About the Sexual Exploitation of Minors}
+\subtitle{An Analysis of Transparency Data About the Sexual Exploitation of Minors}
 
 \author{Robert Grimm}
 \orcid{0000-0002-8300-2153}
