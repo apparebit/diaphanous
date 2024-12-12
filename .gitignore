@@ -161,5 +161,8 @@ report/comment.cut
 report/report.pdf
 report/report.txt
 
+/arxiv
+/arxiv.zip
+
 # R packages
 rlib

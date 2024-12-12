@@ -85,6 +85,30 @@ do_wordcount() {
     log INFO "$WITHOUT_REFS words without, $WITH_REFS words with references"
 }
 
+prep_arxiv() {
+    # Make sure working directory exists.
+    [ ! -d ../arxiv ] && mkdir ../arxiv
+
+    # Combine all LaTeX sources into one.
+    log INFO "Stage arxiv"
+    latexpand report.tex -o ../arxiv/report.tex || exit "$?"
+
+    # Include the bibliography.
+    cp report.bbl ../arxiv/report.bbl
+    cp figure-*.pdf ../arxiv/
+
+    # Package it all up
+    log INFO "Create archive"
+    (cd .. && zip -r arxiv.zip arxiv/*)
+
+    # Make sure the paper still builds.
+    log INFO "Build archive version"
+    unset TEXINPUTS
+    (cd ../arxiv && pdflatex report) || exit "$?"
+    (cd ../arxiv && pdflatex report) || exit "$?"
+    (cd ../arxiv && pdflatex report) || exit "$?"
+}
+
 target=${1:-report}
 if [ $# -ne 0 ]; then
     shift
@@ -100,7 +124,10 @@ case $target in
     wordcount )
         do_wordcount
         ;;
-    *      )
+    arxiv )
+        prep_arxiv
+        ;;
+    *     )
         log ERROR "\"$target\" is not a valid build target!"
         exit 1
         ;;
