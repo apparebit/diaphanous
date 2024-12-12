@@ -159,6 +159,7 @@ report/*.blg
 report/*.out
 report/comment.cut
 report/report.pdf
+report/report.txt
 
 # R packages
 rlib

@@ -77,6 +77,14 @@ do_build() {
     check_latex "$1"
 }
 
+do_wordcount() {
+    pandoc report.tex -f latex --quiet -t plain -s -o report.txt
+    local WITHOUT_REFS="$(wc -w report.txt | cut -wf 1-2 | xargs)"
+    pandoc report.tex -f latex --quiet -C --bibliography=bibliography.bib -t plain -s -o report.txt
+    local WITH_REFS="$(wc -w report.txt | cut -wf 1-2 | xargs)"
+    log INFO "$WITHOUT_REFS words without, $WITH_REFS words with references"
+}
+
 target=${1:-report}
 if [ $# -ne 0 ]; then
     shift
@@ -88,6 +96,9 @@ case $target in
         ;;
     report )
         do_build report
+        ;;
+    wordcount )
+        do_wordcount
         ;;
     *      )
         log ERROR "\"$target\" is not a valid build target!"
