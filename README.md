@@ -7,7 +7,7 @@ validating and tidying the data and Python as well as R notebooks with the
 analysis for the corresponding report [Putting the Count Back Into
 Accountability: An Analysis of Transparency Data About the Sexual Exploitation
 of Minors](https://arxiv.org/abs/2402.14625), which is also available [through
-this repository](report/report.pdf).
+this repository](technical-report.pdf).
 
 Please cite as: Robert Grimm. Diaphanous: Transparency Disclosures About the
 Sexual Exploitation of Minors. Zenodo, 12 Dec. 2024,
