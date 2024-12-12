@@ -5,12 +5,13 @@ sexual exploitation of minors, i.e., people under the age of eighteen, in
 machine-readable form. It also includes a 4,400-line Python library for
 validating and tidying the data and Python as well as R notebooks with the
 analysis for the corresponding report [Putting the Count Back Into
-Accountability: An Audit of Social Media Transparency Disclosures, Focusing on
-Sexual Exploitation of Minors](https://arxiv.org/abs/2402.14625).
+Accountability: An Analysis of Transparency Data About the Sexual Exploitation
+of Minors](https://arxiv.org/abs/2402.14625), which is also available [through
+this repository](report/report.pdf).
 
 Please cite as: Robert Grimm. Diaphanous: Transparency Disclosures About the
-Sexual Exploitation of Minors. v0.1, Zenodo, 7 Oct. 2024,
-[![DOI](https://zenodo.org/badge/646089718.svg)](https://doi.org/10.5281/zenodo.13896438).
+Sexual Exploitation of Minors. Zenodo, 12 Dec. 2024,
+[![DOI](https://zenodo.org/badge/646089718.svg)](https://doi.org/10.5281/zenodo.13896437).
 
 
 ## The Code
