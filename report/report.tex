@@ -1,21 +1,18 @@
-\documentclass[nonacm,screen]{acmart}
+\documentclass[anonymous,nonacm,screen]{acmart}
 \pdfoutput=1
 \usepackage{graphicx}
 \usepackage{pifont}
 \usepackage{multirow}
 \usepackage{fontawesome5}
 
-\newcommand\ImageCheck{$\vcenter{\hbox{\scriptsize\faImage}}$}
-\newcommand\VideoCheck{\;$\vcenter{\hbox{\scriptsize\faVideo}}$}
+\citestyle{acmauthoryear}
+\setcitestyle{open={(},close={)}}
 
 \newcommand\same{\multicolumn{1}{c}{$\equiv$}}
 \newcommand\missing{\multicolumn{1}{r}{??}}
 \newcommand\qtiny{\epsilon}
 
 \definecolor{lowlight}{gray}{0.55}
-\definecolor{slate}{HTML}{864b79}
-\definecolor{DeepRed}{HTML}{8a0312}
-\definecolor{DeepGreen}{HTML}{0a580f}
 
 \makeatletter
 \renewcommand{\anon}[2][ANONYMIZED]{%
@@ -28,7 +25,6 @@
 
 \newcommand\hidden[1]{}
 \newcommand\V[1]{\textsc{\MakeLowercase{#1}}}
-\newcommand\icc[1]{\textsf{#1}}
 \newcommand\yes{\ding{52}}
 %\newcommand\no{\ding{56}}
 
@@ -36,7 +32,7 @@
 \newtheorem{finding}{Finding}
 
 \newif\iftechreport
-\techreporttrue
+\techreportfalse
 \newcommand\TechReport[1]{\iftechreport {#1}\fi}
 \newcommand\Journal[1]{\iftechreport\else{#1}\fi}
 
@@ -45,7 +41,7 @@
 \begin{document}
 
 \title{Putting the Count Back Into Accountability}
-\subtitle{An Analysis of Transparency Data About the Sexual Exploitation of Minors}
+\subtitle{Analyzing Transparency Data About the Sexual Exploitation of Minors}
 
 \author{Robert Grimm}
 \orcid{0000-0002-8300-2153}
@@ -71,7 +67,7 @@ the growth in \V{CSE} reports over the last 25~years and correlate it with the
 growth of social media user accounts. Third, we use two comparative audits to
 assess the quality of transparency data. Critical findings include: First,
 \V{US} law increasingly threatens the very population it claims to protect,
-i.e., children and adolescents. Second, the rapid growth of \V{CSE} report over
+i.e., children and adolescents. Second, the rapid growth of \V{CSE} reports over
 the last decade is linear and largely driven by an equivalent growth in social
 media user accounts. Third, the Covid-19 pandemic had no statistically relevant
 impact on report volume. Fourth, while half of surveyed organizations release
@@ -700,6 +696,7 @@ report ratios; almost all of them are \V{CSAM}.
 
 
 \TechReport{
+
 \begin{finding}
 Most of the technologies used for detecting \V{CSAM} are vulnerable to
 adversarial attack. \V{NCMEC} is still using \V{MD5}---16~years after \V{CERT}
@@ -764,7 +761,6 @@ Machine learning classifiers for images aren't more reliable either. A large
 number of attacks have been documented in the research literature, including
 both black box and white box attacks as well as attacks that falsely frame
 victims and that cloak illicit materials~\cite{MachadoSilvaea2020}.
-}
 
 
 \begin{finding}
@@ -772,7 +768,6 @@ Automated scanning for \V{CSAM} has already been weaponized on Discord,
 resulting in an unknown number of account terminations.
 \end{finding}
 
-\TechReport{
 \noindent{}Turning the above, mostly theoretical vulnerabilities into practical
 attacks and developing countermeasures are important topics for future work. But
 if we were to speculate about real-world attacks, one credible scenario starts
@@ -785,17 +780,17 @@ that were modified to match leaked PhotoDNA hashes. This latter attack is akin
 to swatting, but targets victims' internet accounts. Since many people rely on
 the same few accounts for a large number of services, a false flag for \V{CSAM}
 can have devastating consequences~\cite{Hill2022}.
-}
 
-\Journal{\noindent{}As described in the accompanying technical report, the image
+\hidden{\noindent{}As described in the accompanying technical report, the image
 hashing and machine learning technologies used for detecting \V{CSAM} are all
 vulnerable to adversarial attack. That is gravely concerning given the
 potentially devastating consequences of a false flag for
 \V{CSAM}~\cite{Hill2022}. Worse, such attacks have already happened, as
 illustrated by 2023 attack against Discord users~\cite{NoTextToSpeech2023}.}
-\TechReport{The latter attack also provides the basic outline for a 2023 attack
-against Discord users, except that no image modification was
-necessary~\cite{NoTextToSpeech2023, Woohoowi2023}.} It involved manipulating
+
+The latter attack also provides the basic outline for a 2023 attack against
+Discord users, except that no image modification was
+necessary~\cite{NoTextToSpeech2023, Woohoowi2023}. It involved manipulating
 users on Discord into posting a specific image. The image seems innocuous
 enough, showing an adolescent with headphones sitting in front of his computer
 and eating popcorn. Reliably, when users posted the image, they did not receive
@@ -807,12 +802,12 @@ safety team added the corresponding hashes to its database. But the firm was too
 aggressive and included the innocuous beginning without the naked brother,
 thereby creating an effective means of attacking gullible Discord users.
 
-\TechReport{ Discussions on Reddit and YouTube about this weaponization of
-falsely labelled \V{CSAM} employ a remarkable argot. Instead of using the term
-``child pornography,'' most participants substitute the initialism ``cheese
-pizza.'' While the term may have originated with sexual predators, it became an
-important part of the PizzaGate conspiracy theory, and by now, it seems firmly
-entrenched with the terminally online~\cite{Applebaum2016}.}
+Discussions on Reddit and YouTube about this weaponization of falsely labelled
+\V{CSAM} employ a remarkable argot. Instead of using the term ``child
+pornography,'' most participants substitute the initialism ``cheese pizza.''
+While the term may have originated with sexual predators, it became an important
+part of the PizzaGate conspiracy theory, and by now, it seems firmly entrenched
+with the terminally online~\cite{Applebaum2016}.
 
 
 \begin{finding}
@@ -870,6 +865,22 @@ opposed to what \V{NCMEC} euphemistically calls ``informational.''
 Figure~\ref{fig:flow} captures the distinction between unique and redundant
 attachments as well as actionable and informational reports as the final two
 stages on the right.
+}
+
+The extended technical report includes four more findings concerning the
+detection and reporting of \V{CSE}. In short and first, most technologies used
+for detecting \V{CSAM}, including \V{MD5} hashes (used by \V{NCMEC}) and
+PhotoDNA (used by most surveyed organizations), are vulnerable to adversarial
+attack. Second, that already is a practical concern: In 2023, an unknown number
+of Discord users lost their accounts due to having been manipulated into posting
+false positives for \V{CSAM}. Third, reversal rates for content takedowns and
+account terminations due to \V{CSE} have been increasing over the last few
+years, reaching 3.1\% for Meta, 1.1\% for Microsoft, and 12.8\% for Pinterest in
+2023. Fourth, many reports include identical or similar attachments, with
+similar images or videos reported between $3.10--4.62\times$ on average. At the
+same time, half of the reports do not include sufficient information to be
+actionable. These four findings also explain the remaining stages of
+Figure~\ref{fig:flow}.
 
 
 % --------------------------------------------------------------------------------------
