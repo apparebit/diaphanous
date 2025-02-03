@@ -1,4 +1,6 @@
 from pathlib import Path
+import re
+import sys
 
 import pandas as pd
 
@@ -239,3 +241,69 @@ def csam_reports(ncmec: pd.DataFrame) -> pd.DataFrame:
         .assign(WhatsApp=ncmec['WhatsApp'])
         .assign(**{'% Meta': lambda df: df['WhatsApp'] / df['Meta'] * 100})
     )
+
+
+FILE_NAME = re.compile("meta-([0-9]{4})-q([1-4]).csv")
+
+def extract(file: str) -> tuple[int, int, dict[str, list[None|str]]]:
+    """Extract the latest data from the file containing Meta's transparency data."""
+    match = FILE_NAME.match(Path(file).name)
+    if match is None:
+        raise ValueError(
+            f'file name "{file}" does not have the expected "meta-[year]-q[quarter].csv" format'
+        )
+
+    year = int(match.group(1))
+    quarter = int(match.group(2))
+    period = f"{year}Q{quarter}"
+    print(period)
+
+    data = pd.read_csv(file)
+
+    def query(firm: str, policy: str, metric: str) -> str:
+        values = data[
+            (data["app"] == firm) &
+            (data["policy_area"] == policy) &
+            (data["metric"] == metric) &
+            (data["period"] == period)
+        ]["value"]
+
+        if len(values) == 0:
+            return None
+        elif 1 < len(values):
+            raise ValueError(f'more than one value for "{metric}" for "{policy}" in {period}')
+        else:
+            return values.iloc[0]
+
+    def by_firm(firm: str) -> list[None | str]:
+        row = []
+
+        for metric in [
+            "Content Actioned",
+            "Content Appealed",
+            "Content Restored with appeal",
+            "Content Restored without appeal"
+        ]:
+            for policy in [
+                "Child Nudity & Sexual Exploitation",
+                "Child Endangerment: Nudity and Physical Abuse",
+                "Child Endangerment: Sexual Exploitation",
+            ]:
+                row.append(query(firm, policy, metric))
+
+        return (
+            f'{{"{year} Q{quarter}": (' +
+            ", ".join(["None" if v is None else v.replace(",", "_") for v in row]) +
+            ")},"
+        )
+
+    return (year, quarter, {
+        "Facebook": by_firm("Facebook"),
+        "Instagram": by_firm("Instagram")
+    })
+
+if __name__ == '__main__':
+    data = extract(sys.argv[1])
+    print(f"{data[0]}/Q{data[1]}:")
+    print(f"  Facebook: {data[2]['Facebook']}")
+    print(f"  Instagram: {data[2]['Instagram']}")

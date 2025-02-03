@@ -1,0 +1,45 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: >-
+  Diaphanous: Transparency Disclosures About the Sexual
+  Exploitation of Minors
+message: >-
+  If you use this dataset and attendant software, please
+  cite as below.
+type: dataset
+authors:
+  - given-names: Robert
+    family-names: Grimm
+    email: rgrimm@alum.mit.edu
+    orcid: 'https://orcid.org/0000-0002-8300-2153'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.13896437
+    description: Zenodo
+  - type: doi
+    value: 10.48550/arXiv.2402.14625
+    description: arXiv
+abstract: >-
+  This dataset collects transparency disclosures about
+  online child sexual exploitation. Sources are the US
+  clearinghouse for legally mandated reports about such
+  activities and materials, the National Center for Missing
+  and Exploited Children, as well as the technology industry
+  firms filing the reports. Criteria for inclusion of the
+  latter include industry rankings, population reach, and
+  report volume.
+keywords:
+  - child sexual exploitation
+  - child sexual abuse material
+  - CSAM
+  - transparency report
+  - social media
+  - CyberTipline
+  - National Center for Missing and Exploited Children
+  - NCMEC
+license: CC-BY-4.0
+commit: 549a2fd55c7b22d79098adbdc37ade8dbc5f9761
+version: v0.4
+date-released: '2024-12-12'
