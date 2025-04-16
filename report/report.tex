@@ -1,9 +1,11 @@
-\documentclass[anonymous,nonacm,screen]{acmart}
+\documentclass[anonymous,nonacm,screen,12pt]{acmart}
 \pdfoutput=1
 \usepackage{graphicx}
 \usepackage{pifont}
 \usepackage{multirow}
 \usepackage{fontawesome5}
+
+\doublespacing
 
 \citestyle{acmauthoryear}
 \setcitestyle{open={(},close={)}}
@@ -36,6 +38,14 @@
 \newcommand\TechReport[1]{\iftechreport {#1}\fi}
 \newcommand\Journal[1]{\iftechreport\else{#1}\fi}
 
+\geometry{twoside=true, head=13pt, foot=2pc,
+     paperwidth=8.5in, paperheight=11in,
+     includeheadfoot,
+     top=1in, bottom=1in, inner=1in, outer=1in,
+     marginparwidth=4pc,heightrounded
+     }%
+
+
 \AtBeginDocument{\libertineOsF}
 
 \begin{document}
@@ -54,25 +64,23 @@
 
 \begin{abstract}
 
-Alarmist and sensationalist statements about the ``explosion'' of online child
-sexual exploitation or \V{CSE} dominate much of the public discourse about the
-topic. Based on a new dataset collecting the transparency disclosures for 16
-\V{US}-based internet platforms and the national clearinghouse collecting
-legally mandated reports about \V{CSE}, this study seeks answers to two research
-questions: First, what does the data tell us about the growth of online \V{CSE}?
-Second, how reliable and trustworthy is that data? To answer the two questions,
-this study proceeds in three parts. First, we leverage a critical literature
-review to synthesize a granular model for \V{CSE} reporting. Second, we analyze
-the growth in \V{CSE} reports over the last 25~years and correlate it with the
-growth of social media user accounts. Third, we use two comparative audits to
-assess the quality of transparency data. Critical findings include: First,
-\V{US} law increasingly threatens the very population it claims to protect,
-i.e., children and adolescents. Second, the rapid growth of \V{CSE} reports over
-the last decade is linear and largely driven by an equivalent growth in social
-media user accounts. Third, the Covid-19 pandemic had no statistically relevant
-impact on report volume. Fourth, while half of surveyed organizations release
-meaningful and reasonably accurate transparency data, the other half either fail
-to make disclosures or release data with severe quality issues.
+Based on a new dataset collecting transparency disclosures for 16 \V{US}-based
+internet platforms and the national clearinghouse collecting legally mandated
+reports about \V{CSE}, this study seeks answers to two research questions: What
+does the data tell us about the growth of online \V{CSE}? How reliable and
+trustworthy is that data? To answer the questions, this study proceeds in three
+parts. First, we leverage a critical literature review to synthesize a granular
+model for \V{CSE} reporting. Second, we analyze the growth in \V{CSE} reports
+over the last 25~years and correlate it with the growth of social media user
+accounts. Third, we use two comparative audits to assess the quality of
+transparency data. Critical findings include: First, \V{US} law increasingly
+threatens the very population it claims to protect, i.e., children and
+adolescents. Second, the rapid growth of \V{CSE} reports over the last decade is
+linear and largely driven by an equivalent growth in social media user accounts.
+Third, the Covid-19 pandemic had no statistically relevant impact on report
+volume. Fourth, while half of surveyed organizations release meaningful and
+reasonably accurate transparency data, the other half either fail to make
+disclosures or release data with severe quality issues.
 
 \end{abstract}
 
@@ -1675,9 +1683,12 @@ LL2325 and by National Science Foundation grants CCF-2139612 and CCF-1910850.
 % \end{dci}
 \end{anonsuppress}
 
+{
+\singlespacing
 %\bibliographystyle{SageH}
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{bibliography}
+}
 
 \TechReport{
 \appendix
