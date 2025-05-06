@@ -24,6 +24,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     "Amazon": frozen({
         "brands": ("Twitch",),
         "sources": (
+            "https://www.aboutamazon.com/news/policy-news-views/amazon-csam-transparency-report-2024",
             "https://www.aboutamazon.com/news/policy-news-views/amazon-csam-transparency-report-2023",
             "https://www.aboutamazon.com/news/policy-news-views/amazon-csam-transparency-report-2022",
             "https://www.aboutamazon.com/news/policy-news-views/our-efforts-to-combat-child-sexual-abuse-material-in-2021",
@@ -42,15 +43,16 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "columns": (
             "reports",
             "images",
-            "other content",
-            "reported by trusted parties",
+            "other content reported by third parties",
+            "reported by hotlines",
             "accounts",
         ),
         "sums": frozen({
-            "pieces": ("images", "other content"),
+            "pieces": ("images", "other content reported by third parties"),
         }),
         "rows": (
             #fmt: off
+            {"2024": (64_195, 30_778, 337, 752, 3_959)},
             {"2023": (31_281, 24_653, 103, 611, 4_111)},
             {"2022": (67_073, 52_633, 23, 398, 7_322)},
             {"2021": (33_848, 25_540, 1_704, 780, 2_451)},
@@ -121,6 +123,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         }),
         "rows": (
             #fmt: off
+            {"2024 H1": (103_035, 609)},
             {"2023 Q4": (55_638, 317)},
             {"2023 Q3": (51_674, 242)},
             {"2023 Q2": (36_323, 158)},
@@ -170,7 +173,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         }),
         "rows": (
             # fmt: off
-            {"2024 Q3": [None, 1_400_000, 7_100_000, None, 136_200, 722_000, None, 38_000, 174_400, None, 10_600, 106_000]},
+            {"2024 Q4": (None, 2_500_000, 6_200_000, None, 199_300, 378_700, None, 55_700, 108_400, None, 11_900, 134_000)},
+            {"2024 Q3": (None, 1_400_000, 7_100_000, None, 136_200, 722_000, None, 38_000, 174_400, None, 10_600, 106_000)},
             {"2024 Q2": (None, 922_000, 9_700_000, None, 83_500, 410_000, None, 9_300, 90_000, None, 1_100, 52_300)},
             {"2024 Q1": (None, 771_700, 14_400_000, None, 78_100, 380_900, None, 11_200, 123_900, None, 500, 73_400)},
             {"2023 Q4": (None, 1_900_000, 16_200_000, None, 135_100, 1_000_000, None, 36_100, 317_500, None, 279_500, 1_200_000)},
@@ -216,6 +220,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "columns": ("accounts", "reports"),
         "rows": (
             # fmt: off
+            {"2024": (5, 16)},
             {"2023": (3, 37)},
             {"2022": (1, 6)},
             {"2021": (1, 4)},
@@ -226,6 +231,11 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     "Google": frozen({
         "sources": (
             "https://transparencyreport.google.com/child-sexual-abuse-material/",
+        ),
+        "comments": (
+            "The account and URL counts are for Google and YouTube together.",
+            "Unlike piece and report counts, Google does not break down these",
+            "counts by platform."
         ),
         "features": frozen({
             "data": None,
@@ -240,6 +250,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "columns": ("pieces", "reports", "accounts", "urls"),
         "rows": (
             # fmt: off
+            {"2024 H2": (2_286_288, 353_503, 282_584, 882_941)},
+            {"2024 H1": (2_508_680, 318_568, 360_375, 402_839)},
             {"2023 H2": (3_450_886, 496_105, 249_924, 381_103)},
             {"2023 H1": (4_025_703, 586_832, 259_576, 463_462)},
             {"2022 H2": (6_344_753, 891_215, 365_428, 437_020)},
@@ -287,6 +299,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         }),
         "rows": (
             # fmt: off
+            {"2024 Q4": (None, 946_400, 2_000_000, None, 138_700, 67_000, None, 60_400, 16_300, None, 9_400, 4_900)},
             {"2024 Q3": (None, 1_000_000, 5_600_000, None, 150_700, 122_400, None, 68_500, 25_600, None, 9_000, 6_700)},
             {"2024 Q2": (None, 176_800, 2_800_000, None, 31_700, 71_100, None, 5_300, 21_600, None, 400, 11_500)},
             {"2024 Q1": (None, 183_600, 2_700_000, None, 39_400, 68_600, None, 5_300, 26_900, None, 300, 11_100)},
@@ -329,6 +342,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "columns": ("pieces",),
         "rows": (
             # fmt: off
+            {"2024 H1": (65,)},
+            {"2023 H2": (210,)},
             {"2023 H1": (223,)},
             {"2022 H2": (274,)},
             {"2022 H1": (1663,)},
@@ -359,6 +374,10 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "sources": (
             "https://www.microsoft.com/en-us/corporate-responsibility/digital-safety-content-report",
         ),
+        "comments": (
+            "Semiannual counts are broken down into three lines:",
+            "Hosted consumer services, Bing Search Engine, and CyberTipline reports.",
+        ),
         "features": frozen({
             "data": "xls",
             "history": "same page (dropdown)",
@@ -372,37 +391,48 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "brands": ["GitHub", "LinkedIn"],
         "columns": (
             "pieces",
-            "automatically detected pieces",
+            "proactively detected pieces",
             "accounts",
             "reinstated accounts",
             "reports",
         ),
         "schema": frozen({
-            "automatically detected pieces": "float",
+            "proactively detected pieces": "float",
             "reinstated accounts": "float",
         }),
         "rows": (
+            {"2024 H1": (109_894, 99.3, None, None, None)},
+            {"2024 H1": (69_807, 99.5, 8_758, 2.4, None)},
+            {"2024 H1": (None, None, None, None, 51_827)},
+
             {"2023 H2": (66_603, 99.1, None, None, None)},
             {"2023 H2": (61_348, 99.2, 10_237, 0.8, None)},
             {"2023 H2": (None, None, None, None, 60_749)},
+
             {"2023 H1": (227_823, 94.7, None, None, None)},
             {"2023 H1": (46_856, 99.2, 7_456, 1.4, None)},
             {"2023 H1": (None, None, None, None, 79_971)},
+
             {"2022 H2": (200_000, 98.5, None, None, None)},
             {"2022 H2": (31_663, 99.2, 6_461, 1.6, None)},
             {"2022 H2": (None, None, None, None, 53_642)},
+
             {"2022 H1": (176_125, 93.5, None, None, None)},
             {"2022 H1": (40_722, 98.7, 10_207, 0.56, None)},
             {"2022 H1": (None, None, None, None, 53_957)},
+
             {"2021 H2": (274_392, 97.2, None, None, None)},
             {"2021 H2": (36_918, 99.4, 11_805, 0.04, None)},
             {"2021 H2": (None, None, None, None, 36_445)},
+
             {"2021 H1": (176_560, 97.2, None, None, None)},
             {"2021 H1": (76_061, 99.7, 18_568, 0.02, None)},
             {"2021 H1": (None, None, None, None, 42_481)},
+
             {"2020 H2": (360_338, 99.0, None, None, None)},
             {"2020 H2": (92_419, 99.9, 17_434, 0.0, None)},
             {"2020 H2": (None, None, None, None, 63_813)},
+
             {"2020 H1": (718_908, 99.8, None, None, None)},
             {"2020 H1": (84_581, 99.8, 15_935, 0.01, None)},
             {"2020 H1": (None, None, None, None, 32_622)},
@@ -439,9 +469,11 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "comments": (
             "Pin is lingo for a media card with picture, hence pin with CSAM is piece.",
             "Pinterest's disclosure language explains 2nd through 5th columns:",
-            "We deactivated a distinct images, which comprised b Pins, for violating",
+            "`We deactivated a distinct images, which comprised b Pins, for violating",
             "our CSE policy. Of these, we determined that c distinct images, which",
-            "comprised d Pins, were illegal CSAM, and we reported them to NCMEC.",
+            "comprised d Pins, were illegal CSAM, and we reported them to NCMEC.`",
+            "The percent of pins deactivated for child safety that was seen by more than 100 users",
+            "in 2024 Q2 is not 1%, as indicated below, but < 1%",
         ),
         "columns": (
             "reports",
@@ -460,6 +492,9 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         ),
         "rows": (
             # fmt: off
+            {"2024 Q2": (None, 7_180, 4_533_695, 1_384, 4_123, 705, 55_814, 5_429, 4_016, 82, 15, 2, 1)}, # See comments
+            {"2024 Q1": (None, 5_575, 3_322_789, 894, 3_770, 3_100, 68_230, 8_424, 5_191, 78, 19, 3, 1)},
+            {"2024 H1": (16_234, None, None, None, None, None, None, None, None, None, None, None, None)},
             {"2023 Q4": (None, 7_089, 3_602_828, 1_163, 7_488, 4_237, 173_110, 27_499, 19_754, 78, 18, 3, 1)},
             {"2023 Q3": (None, 5_489, 1_469_597, 2_246, 10_471, 318, 244_258, 65_254, 49_854, 73, 22, 4, 2)},
             {"2023 H2": (16_234, None, None, None, None, None, None, None, None, None, None, None, None)},
@@ -484,6 +519,10 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Pornhub": frozen({
         "sources": (
+            "https://help.pornhub.com/hc/en-us/articles/38743689517715-2024-Transparency-Report-Second-Half",
+            "https://help.pornhub.com/hc/en-us/articles/33098088051475-2024-Transparency-Report-First-Half",
+            "https://help.pornhub.com/hc/en-us/articles/27610703413267-2023-Transparency-Report-Second-Half",
+            "https://help.pornhub.com/hc/en-us/articles/19464887586579-2023-Transparency-Report-First-Half",
             "https://help.pornhub.com/hc/en-us/articles/14666334117267-2022-Transparency-Report",
             "https://help.pornhub.com/hc/en-us/articles/5357457259155-2021-Transparency-Report",
             "https://help.pornhub.com/hc/en-us/articles/4419860718483-2020-Transparency-Report",
@@ -518,7 +557,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         }),
         "rows": (
             # fmt: off
-            {"2024 H1": (1_450, 3_089, 670)},
+            {"2024 H2": (4_037, 5_707, 1_057)},
+            {"2024 H1": (1_471, 3_089, 670)},
             {"2023 H2": (1_289, 2_344, 1_018)},
             {"2023 H1": (1_214, 2_632, 1_319)},
             {"2022": (1_996, 3_604, 5_984)},
@@ -542,6 +582,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Reddit": frozen({
         "sources": (
+            "https://redditinc.com/policies/transparency-report-july-to-december-2024",
+            "https://redditinc.com/policies/transparency-report-january-to-june-2024",
             "https://www.redditinc.com/policies/transparency-report-july-to-december-2023",
             "https://www.redditinc.com/policies/2023-h1-transparency-report",
             "https://www.redditinc.com/policies/2022-transparency-report",
@@ -580,6 +622,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         }),
         "rows": (
             # fmt: off
+            {"2024 H2": (None, 113_568, 139_948, 171, 388, 18_425, 65_098, 11_466, 13.2)},
+            {"2024 H1": (None, 221_029, 323_150, 304, 1_110, 15_150, 176_679, 10_892, 15.1)},
             {"2023 H2": (None, 133_588, 349_189, 263, 1_536, 15_744, 128_513, 5_801, 8.6)},
             {"2023 H1": (149_084, 156_533, 181_083, 296, 987, 27_219, 68_900, 2_924, 7.8)},
             {"2022 H2": (31_574, 40_243, None, None, None, None, None, None, None), "redundant": True},
@@ -619,6 +663,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "schema": frozen({"accounts": "float"}),
         "rows": (
             # fmt: off
+            {"2024 H1": (1_737_563, 385_864, 632_436)},
             {"2023 H2": (1_046_296, 343_865, 398_736)},
             {"2023 H1": (548_509, 228_897, 292_489)},
             {"2022 H2": (527_787, 204_490, 265_285)},
@@ -728,6 +773,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Twitch": frozen({
         "sources": (
+            "https://safety.twitch.tv/s/article/H2-2024-Transparency-Report",
+            "https://safety.twitch.tv/s/article/H1-2024-Transparency-Report",
             "https://safety.twitch.tv/s/article/H2-2023-Transparency-Report",
             "https://safety.twitch.tv/s/article/H1-2023-Transparency-Report",
             "https://safety.twitch.tv/s/article/H2-2022-Transparency-Report",
@@ -755,6 +802,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "columns": ("reports",),
         "rows": (
             # fmt: off
+            {"2024 H2": (759,), "redundant": True},
+            {"2024 H1": (1_523,), "redundant": True},
             {"2023 H2": (3_272,), "redundant": True},
             {"2023 H1": (3_285,), "redundant": True},
             {"2022 H2": (7_585,), "redundant": True},
@@ -837,6 +886,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     "X": frozen({
         "aka": ("Twitter",),
         "sources": (
+            "https://transparency.x.com/en/reports/global-reports/2025-transparency-report#child-sexual-exploitation",
             "https://transparency.x.com/content/dam/transparency-twitter/2024/x-global-transparency-report-h1.pdf",
         ),
         "features": frozen({
@@ -867,6 +917,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         }),
         "rows": (
             # fmt: off
+            {"2024 H2": (None, None, None, 1_398, 1_383, 45_616, 268_301, 1_732_324, 58_528)},
             {"2024 H1": (None, None, None, 1_645, 12_926, 35_176, 335_412, 2_388_683, 392_951)},
             # fmt: on
         ),
@@ -889,6 +940,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "columns": ("pieces", "reports"),
         "rows": (
             # fmt: off
+            {"2024 H2": (242_121, 223_477)},
+            {"2024 H1": (320_498, 280_478)},
             {"2023 H2": (265_371, 225_440)},
             {"2023 H1": (213_209, 163_844)},
             {"2022 H2": (359_931, 238_827)},

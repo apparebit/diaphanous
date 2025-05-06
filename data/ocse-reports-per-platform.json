@@ -16,6 +16,7 @@
     "Amazon": {
         "brands": ["Twitch"],
         "sources": [
+            "https://www.aboutamazon.com/news/policy-news-views/amazon-csam-transparency-report-2024",
             "https://www.aboutamazon.com/news/policy-news-views/amazon-csam-transparency-report-2023",
             "https://www.aboutamazon.com/news/policy-news-views/amazon-csam-transparency-report-2022",
             "https://www.aboutamazon.com/news/policy-news-views/our-efforts-to-combat-child-sexual-abuse-material-in-2021",
@@ -34,17 +35,18 @@
         "columns": [
             "reports",
             "images",
-            "other content",
-            "reported by trusted parties",
+            "other content reported by third parties",
+            "reported by hotlines",
             "accounts"
         ],
         "sums": {
             "pieces": [
                 "images",
-                "other content"
+                "other content reported by third parties"
             ]
         },
         "rows": [
+            {"2024": [64195, 30778, 337, 752, 3959]},
             {"2023": [31281, 24653, 103, 611, 4111]},
             {"2022": [67073, 52633, 23, 398, 7322]},
             {"2021": [33848, 25540, 1704, 780, 2451]},
@@ -110,6 +112,7 @@
             ]
         },
         "rows": [
+            {"2024 H1": [103035, 609]},
             {"2023 Q4": [55638, 317]},
             {"2023 Q3": [51674, 242]},
             {"2023 Q2": [36323, 158]},
@@ -159,6 +162,8 @@
             ]
         },
         "rows": [
+            {"2024 Q4": [null, 2500000, 6200000, null, 199300, 378700, null, 55700, 108400, null, 11900, 134000]},
+            {"2024 Q3": [null, 1400000, 7100000, null, 136200, 722000, null, 38000, 174400, null, 10600, 106000]},
             {"2024 Q2": [null, 922000, 9700000, null, 83500, 410000, null, 9300, 90000, null, 1100, 52300]},
             {"2024 Q1": [null, 771700, 14400000, null, 78100, 380900, null, 11200, 123900, null, 500, 73400]},
             {"2023 Q4": [null, 1900000, 16200000, null, 135100, 1000000, null, 36100, 317500, null, 279500, 1200000]},
@@ -202,6 +207,7 @@
             "reports"
         ],
         "rows": [
+            {"2024": [5, 16]},
             {"2023": [3, 37]},
             {"2022": [1, 6]},
             {"2021": [1, 4]}
@@ -209,6 +215,11 @@
     },
     "Google": {
         "sources": ["https://transparencyreport.google.com/child-sexual-abuse-material/"],
+        "comments": [
+            "The account and URL counts are for Google and YouTube together.",
+            "Unlike piece and report counts, Google does not break down these",
+            "counts by platform."
+        ],
         "features": {
             "data": null,
             "history": "same page (dropdown)",
@@ -226,6 +237,8 @@
             "urls"
         ],
         "rows": [
+            {"2024 H2": [2286288, 353503, 282584, 882941]},
+            {"2024 H1": [2508680, 318568, 360375, 402839]},
             {"2023 H2": [3450886, 496105, 249924, 381103]},
             {"2023 H1": [4025703, 586832, 259576, 463462]},
             {"2022 H2": [6344753, 891215, 365428, 437020]},
@@ -272,6 +285,8 @@
             ]
         },
         "rows": [
+            {"2024 Q4": [null, 946400, 2000000, null, 138700, 67000, null, 60400, 16300, null, 9400, 4900]},
+            {"2024 Q3": [null, 1000000, 5600000, null, 150700, 122400, null, 68500, 25600, null, 9000, 6700]},
             {"2024 Q2": [null, 176800, 2800000, null, 31700, 71100, null, 5300, 21600, null, 400, 11500]},
             {"2024 Q1": [null, 183600, 2700000, null, 39400, 68600, null, 5300, 26900, null, 300, 11100]},
             {"2023 Q4": [null, 198500, 2100000, null, 34700, 79100, null, 4600, 26500, null, 11900, 86800]},
@@ -310,6 +325,8 @@
         "comments": ["numbers disclosed under 'content removed', hence pieces"],
         "columns": ["pieces"],
         "rows": [
+            {"2024 H1": [65]},
+            {"2023 H2": [210]},
             {"2023 H1": [223]},
             {"2022 H2": [274]},
             {"2022 H1": [1663]},
@@ -335,6 +352,10 @@
     },
     "Microsoft": {
         "sources": ["https://www.microsoft.com/en-us/corporate-responsibility/digital-safety-content-report"],
+        "comments": [
+            "Semiannual counts are broken down into three lines:",
+            "Hosted consumer services, Bing Search Engine, and CyberTipline reports."
+        ],
         "features": {
             "data": "xls",
             "history": "same page (dropdown)",
@@ -348,16 +369,19 @@
         "brands": ["GitHub", "LinkedIn"],
         "columns": [
             "pieces",
-            "automatically detected pieces",
+            "proactively detected pieces",
             "accounts",
             "reinstated accounts",
             "reports"
         ],
         "schema": {
-            "automatically detected pieces": "float",
+            "proactively detected pieces": "float",
             "reinstated accounts": "float"
         },
         "rows": [
+            {"2024 H1": [109894, 99.300, null, null, null]},
+            {"2024 H1": [69807, 99.500, 8758, 2.400, null]},
+            {"2024 H1": [null, null, null, null, 51827]},
             {"2023 H2": [66603, 99.100, null, null, null]},
             {"2023 H2": [61348, 99.200, 10237, 0.800, null]},
             {"2023 H2": [null, null, null, null, 60749]},
@@ -417,9 +441,11 @@
         "comments": [
             "Pin is lingo for a media card with picture, hence pin with CSAM is piece.",
             "Pinterest's disclosure language explains 2nd through 5th columns:",
-            "We deactivated a distinct images, which comprised b Pins, for violating",
+            "`We deactivated a distinct images, which comprised b Pins, for violating",
             "our CSE policy. Of these, we determined that c distinct images, which",
-            "comprised d Pins, were illegal CSAM, and we reported them to NCMEC."
+            "comprised d Pins, were illegal CSAM, and we reported them to NCMEC.`",
+            "The percent of pins deactivated for child safety that was seen by more than 100 users",
+            "in 2024 Q2 is not 1%, as indicated below, but < 1%"
         ],
         "columns": [
             "reports",
@@ -437,6 +463,9 @@
             "% pins reached >100"
         ],
         "rows": [
+            {"2024 Q2": [null, 7180, 4533695, 1384, 4123, 705, 55814, 5429, 4016, 82, 15, 2, 1]},
+            {"2024 Q1": [null, 5575, 3322789, 894, 3770, 3100, 68230, 8424, 5191, 78, 19, 3, 1]},
+            {"2024 H1": [16234, null, null, null, null, null, null, null, null, null, null, null, null]},
             {"2023 Q4": [null, 7089, 3602828, 1163, 7488, 4237, 173110, 27499, 19754, 78, 18, 3, 1]},
             {"2023 Q3": [null, 5489, 1469597, 2246, 10471, 318, 244258, 65254, 49854, 73, 22, 4, 2]},
             {"2023 H2": [16234, null, null, null, null, null, null, null, null, null, null, null, null]},
@@ -459,6 +488,10 @@
     },
     "Pornhub": {
         "sources": [
+            "https://help.pornhub.com/hc/en-us/articles/38743689517715-2024-Transparency-Report-Second-Half",
+            "https://help.pornhub.com/hc/en-us/articles/33098088051475-2024-Transparency-Report-First-Half",
+            "https://help.pornhub.com/hc/en-us/articles/27610703413267-2023-Transparency-Report-Second-Half",
+            "https://help.pornhub.com/hc/en-us/articles/19464887586579-2023-Transparency-Report-First-Half",
             "https://help.pornhub.com/hc/en-us/articles/14666334117267-2022-Transparency-Report",
             "https://help.pornhub.com/hc/en-us/articles/5357457259155-2021-Transparency-Report",
             "https://help.pornhub.com/hc/en-us/articles/4419860718483-2020-Transparency-Report"
@@ -495,7 +528,8 @@
             ]
         },
         "rows": [
-            {"2024 H1": [1450, 3089, 670]},
+            {"2024 H2": [4037, 5707, 1057]},
+            {"2024 H1": [1471, 3089, 670]},
             {"2023 H2": [1289, 2344, 1018]},
             {"2023 H1": [1214, 2632, 1319]},
             {"2022": [1996, 3604, 5984]},
@@ -512,6 +546,8 @@
     },
     "Reddit": {
         "sources": [
+            "https://redditinc.com/policies/transparency-report-july-to-december-2024",
+            "https://redditinc.com/policies/transparency-report-january-to-june-2024",
             "https://www.redditinc.com/policies/transparency-report-july-to-december-2023",
             "https://www.redditinc.com/policies/2023-h1-transparency-report",
             "https://www.redditinc.com/policies/2022-transparency-report",
@@ -551,6 +587,8 @@
             "account reversals percent (minor sexualization)": "float"
         },
         "rows": [
+            {"2024 H2": [null, 113568, 139948, 171, 388, 18425, 65098, 11466, 13.200]},
+            {"2024 H1": [null, 221029, 323150, 304, 1110, 15150, 176679, 10892, 15.100]},
             {"2023 H2": [null, 133588, 349189, 263, 1536, 15744, 128513, 5801, 8.600]},
             {"2023 H1": [149084, 156533, 181083, 296, 987, 27219, 68900, 2924, 7.800]},
             {"2022 H2": [31574, 40243, null, null, null, null, null, null, null], "redundant": true},
@@ -593,6 +631,7 @@
             "accounts": "float"
         },
         "rows": [
+            {"2024 H1": [1737563, 385864, 632436]},
             {"2023 H2": [1046296, 343865, 398736]},
             {"2023 H1": [548509, 228897, 292489]},
             {"2022 H2": [527787, 204490, 265285]},
@@ -699,6 +738,8 @@
     },
     "Twitch": {
         "sources": [
+            "https://safety.twitch.tv/s/article/H2-2024-Transparency-Report",
+            "https://safety.twitch.tv/s/article/H1-2024-Transparency-Report",
             "https://safety.twitch.tv/s/article/H2-2023-Transparency-Report",
             "https://safety.twitch.tv/s/article/H1-2023-Transparency-Report",
             "https://safety.twitch.tv/s/article/H2-2022-Transparency-Report",
@@ -728,6 +769,8 @@
         ],
         "columns": ["reports"],
         "rows": [
+            {"2024 H2": [759], "redundant": true},
+            {"2024 H1": [1523], "redundant": true},
             {"2023 H2": [3272], "redundant": true},
             {"2023 H1": [3285], "redundant": true},
             {"2022 H2": [7585], "redundant": true},
@@ -806,7 +849,10 @@
     },
     "X": {
         "aka": ["Twitter"],
-        "sources": ["https://transparency.x.com/content/dam/transparency-twitter/2024/x-global-transparency-report-h1.pdf"],
+        "sources": [
+            "https://transparency.x.com/en/reports/global-reports/2025-transparency-report#child-sexual-exploitation",
+            "https://transparency.x.com/content/dam/transparency-twitter/2024/x-global-transparency-report-h1.pdf"
+        ],
         "features": {
             "data": null,
             "history": null,
@@ -845,7 +891,10 @@
                 "accounts (human)"
             ]
         },
-        "rows": [{"2024 H1": [null, null, null, 1645, 12926, 35176, 335412, 2388683, 392951]}]
+        "rows": [
+            {"2024 H2": [null, null, null, 1398, 1383, 45616, 268301, 1732324, 58528]},
+            {"2024 H1": [null, null, null, 1645, 12926, 35176, 335412, 2388683, 392951]}
+        ]
     },
     "YouTube": {
         "sources": ["https://transparencyreport.google.com/child-sexual-abuse-material/"],
@@ -864,6 +913,8 @@
             "reports"
         ],
         "rows": [
+            {"2024 H2": [242121, 223477]},
+            {"2024 H1": [320498, 280478]},
             {"2023 H2": [265371, 225440]},
             {"2023 H1": [213209, 163844]},
             {"2022 H2": [359931, 238827]},
