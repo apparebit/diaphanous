@@ -19,6 +19,7 @@ def create_map(
     with_equal_earth: bool = False,
     with_animation: bool = False,  # Forced to False if with_panels
     with_antarctica: bool = True,  # Forced to True if with_albers or with_equal_earth
+    with_accounts: bool = False, # Use accounts or capita for normalization
 ) -> Any:
     # -------------------- Adjust options
     if with_panels:
@@ -28,24 +29,32 @@ def create_map(
     if with_albers or with_equal_earth:
         with_antarctica = True
 
+    data_column = 'reports_per_accounts' if with_accounts else 'reports_per_capita'
+
+    residual = 0
+    if with_panels:
+        residual = 1
+        frame = frame[frame['year'] != "2019"]
+
     # -------------------- Discretization
-    # Prepare reports_per_capita:
+    # Prepare color data:
     if discretization == 0:
-        color_column = 'reports_per_capita'
-        color_range = (0, 0.042)  # Extra 0.002 to offset top tick from label
+        color_column = data_column
+        # Extra 0.002 to offset top tick from label
+        color_range = (0, 0.112 if with_accounts else 0.042)
     else:
         bins = abs(int(discretization))
         color_column = 'color_data'
         color_range = (0, abs(bins))
         if discretization < 0:
             color_data = pd.cut(
-                frame['reports_per_capita'],
+                frame[data_column],
                 bins=bins,
                 labels=False,
             )
         else:
             color_data = pd.qcut(
-                frame['reports_per_capita'],
+                frame[data_column],
                 q=bins,
                 labels=False,
             )
@@ -60,8 +69,12 @@ def create_map(
         range_color=color_range,
         # hover_name='labels',
         # hover_data={'iso3': False, 'reports_per_capita': False, 'year': False},
-        labels={'reports_per_capita': 'Reports<br>per Capita'},
+        labels={
+            data_column: 'Reports per Accounts<br>' if with_accounts
+            else 'Reports per Capita<br>'
+        },
     )
+
     if with_albers:
         kwargs |= dict(projection='albers')
     elif with_equal_earth:
@@ -118,6 +131,8 @@ def create_map(
     if with_panels:
         fig.update_layout(
             margin=dict(t=0, r=0, b=0, l=0),
+            width=700,
+            height=360,
             #width=640,
             #height=1100 if with_antarctica else 960,
             coloraxis_colorbar_len=0,
@@ -179,11 +194,11 @@ def create_map(
             domain = fig.layout[trace_by_year[year]].domain
 
             if with_albers:
-                x = 0.53 if int(year) % 2 == 0 else 0.03
+                x = 0.53 if int(year) % 2 == residual else 0.03
                 y = domain.y[0] + 0.28
             else:
-                x = 0.57 if int(year) % 2 == 0 else 0.06
-                y = domain.y[0] + 0.12
+                x = 0.53 if int(year) % 2 == residual else 0.03
+                y = domain.y[0] + 0.10
 
             a.update(
                 text=year,
@@ -193,12 +208,13 @@ def create_map(
                 y=y,
                 yanchor='bottom',
                 font_size=12,
+                font_weight='bold',
             )
 
             #if with_antarctica and not with_equal_earth:
             a.update(
                 bgcolor='#ffffff',
-                borderpad=2,
+                borderpad=3,
             )
 
         fig.for_each_annotation(format_annotation)

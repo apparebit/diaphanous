@@ -12,7 +12,7 @@ __all__ = (
     'YEAR_LABELS',
     'ingest_reports_per_country',
     'without_populations',
-    'reports_per_capita_country_year',
+    'reports_per_country_year',
     'create_map',
     'DisplayMethod',
     'show_map',
@@ -43,7 +43,7 @@ from .country import (
     YEAR_LABELS,
     ingest_reports_per_country,
     without_populations,
-    reports_per_capita_country_year,
+    reports_per_country_year,
 )
 from .mapping import create_map, DisplayMethod, show_map
 

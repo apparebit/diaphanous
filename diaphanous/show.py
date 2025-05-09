@@ -41,7 +41,11 @@ def show(
         display(HTML(value))
         return
 
-    if isinstance(value, pd.Series):
+    if isinstance(value, list):
+        value = pd.DataFrame(value, columns=["data"])
+    elif isinstance(value, pd.Series):
+        if value.name is None:
+            value.name = "data"
         value = value.to_frame()
 
     if show_schema:

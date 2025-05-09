@@ -325,7 +325,7 @@ def ingest_reports_per_platform(
     # Combine rows for same year and platform.
     disclosures["NCMEC"] = (
         disclosures["NCMEC"]
-        .groupby(["period", "platform"])
+        .groupby(["period", "platform"], observed=False)
         ["reports"]
         .sum(min_count=1)
         .reset_index(level="platform")

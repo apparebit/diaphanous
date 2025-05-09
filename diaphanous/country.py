@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Any, Iterator, NamedTuple
+import warnings
 
 import numpy as np
 import pandas as pd
@@ -57,7 +58,7 @@ def read_reports(path: str | Path) -> pd.DataFrame:
             value_name='reports',
         )
         .astype({'iso3': 'category', 'year': 'category', 'reports': 'int'})
-        .groupby(['iso3', 'year'])
+        .groupby(['iso3', 'year'], observed=False)
         .sum()
     )
 
@@ -69,7 +70,7 @@ def read_reports(path: str | Path) -> pd.DataFrame:
         )
 
     # Sum up reports.
-    total_yearly_reports = reports.groupby(level='year')['reports'].sum()
+    total_yearly_reports = reports.groupby(level='year', observed=False)['reports'].sum()
     reports['reports_pct'] = reports['reports'] / total_yearly_reports * 100
 
     # Validate totals.
@@ -84,7 +85,7 @@ def read_reports(path: str | Path) -> pd.DataFrame:
             )
 
     # Add column with percentage fractions.
-    actual_pct = reports.groupby(level='year')['reports_pct'].sum()
+    actual_pct = reports.groupby(level='year', observed=False)['reports_pct'].sum()
     expected_pct = pd.Series([100.0] * len(YEAR_LABELS), index=YEAR_LABELS)
     if not actual_pct.equals(expected_pct):
         raise AssertionError(f'{actual_pct} instead of {expected_pct} report fractions')
@@ -118,12 +119,16 @@ def read_populations(path: str | Path) -> pd.DataFrame:
         )
 
     # Compute total population per year and add column with percentage fraction.
-    total_yearly_populations = populations.groupby(level='year')['population'].sum()
+    total_yearly_populations = populations.groupby(
+        level='year', observed=False
+    )['population'].sum()
     populations['population_pct'] = (
         populations['population'] / total_yearly_populations * 100
     )
 
-    actual_pct = populations.groupby(level='year')['population_pct'].sum()
+    actual_pct = populations.groupby(
+        level='year', observed=False
+    )['population_pct'].sum()
     expected_pct = pd.Series([100.0] * len(YEAR_LABELS), index=YEAR_LABELS)
     if not actual_pct.equals(expected_pct):
         raise AssertionError(
@@ -135,8 +140,7 @@ def read_populations(path: str | Path) -> pd.DataFrame:
 
 def read_online(path: str | Path) -> pd.DataFrame:
     online = (
-        pd.
-        read_csv(
+        pd.read_csv(
             path,
             usecols=['iso3', 'year', 'online'],
             dtype={'iso3': 'category', 'year': 'category', 'online': 'int'},
@@ -144,7 +148,7 @@ def read_online(path: str | Path) -> pd.DataFrame:
         .set_index(['iso3', 'year'])
     )
 
-    total_yearly_online = online.groupby(level='year')['online'].sum()
+    total_yearly_online = online.groupby(level='year', observed=False)['online'].sum()
     online['online_pct'] = online['online'] / total_yearly_online * 100
 
     if len(online) != 6_406:
@@ -153,6 +157,24 @@ def read_online(path: str | Path) -> pd.DataFrame:
         )
 
     return online
+
+
+def read_accounts(path: str | Path) -> pd.DataFrame:
+    accounts = (
+        pd.read_csv(
+            path,
+            thousands="_",
+            dtype=dict(
+                country='string',
+                iso3='category',
+                year='category',
+                accounts_per_capita='float64',
+            ),
+        )
+        .set_index(['iso3', 'year'])
+        .drop(columns=["country", "users"])
+    )
+    return accounts
 
 
 def read_countries(path: str | Path) -> pd.DataFrame:
@@ -238,14 +260,14 @@ def without_populations(
         .get_level_values('iso3')
         .difference(populations.index.get_level_values('iso3'))
         .to_frame()
-        .drop(columns='iso3')
+        .drop(columns='iso3')  # Remove column named iso3 but not index
         .merge(countries, how='left', on='iso3')
         .drop(columns='iso2')
     )
 
     reports_without = (
         reports[reports.index.get_level_values('iso3').isin(countries_without.index)]
-        .groupby('year')
+        .groupby('year', observed=False)
         .sum()
     )
 
@@ -265,12 +287,15 @@ def merge_reports_per_country(
     reports: pd.DataFrame,
     populations: pd.DataFrame,
     online: pd.DataFrame,
+    accounts: pd.DataFrame,
     countries: pd.DataFrame,
     regions: pd.DataFrame,
     arab_league: pd.DataFrame,
 ) -> pd.DataFrame:
     df = (
         reports.merge(populations, how='inner', left_index=True, right_index=True)
+        # index is (iso3, year)
+        .merge(accounts, how='left', on=['iso3', 'year'])
         # index is (iso3, year)
         .merge(online, how='left', on=['iso3', 'year'])
         # index still is (iso3, year)
@@ -282,7 +307,18 @@ def merge_reports_per_country(
         .merge(regions, how='left', on='region')
         .astype({'region': 'category'})  # Restore category lost on merge
     )
-    df.insert(4, 'reports_per_capita', df['reports'] / df['population'])
+
+    df.insert(
+        4,
+        'reports_per_capita',
+        df['reports'] / df['population']
+    )
+    df.insert(
+        5,
+        'reports_per_accounts',
+        df['reports_per_capita'] / df['accounts_per_capita']
+    )
+
     df['arab_league'] = df['iso3'].isin(arab_league['iso3'])
     df = df.set_index(['iso3', 'year'])
 
@@ -310,6 +346,7 @@ def summarize_arab_league(frame: pd.DataFrame) -> pd.DataFrame:
                 'reports': reports,
                 'reports_pct': year_in_league['reports_pct'].sum(),
                 'reports_per_capita': reports / population,
+                'reports_per_accounts': None,
                 'population': population,
                 'population_pct': year_in_league['population_pct'].sum(),
                 'country': 'Arab League',
@@ -322,14 +359,23 @@ def summarize_arab_league(frame: pd.DataFrame) -> pd.DataFrame:
         )
 
     addendum = pd.DataFrame(rows).set_index(['iso3', 'year'])
-    return pd.concat([frame, addendum])
+    if not addendum.empty:
+        with warnings.catch_warnings():
+            warnings.filterwarnings(
+                "ignore",
+                category=FutureWarning,
+                message="The behavior of DataFrame concatenation with empty or all-NA entries is deprecated. *"
+            )
+            frame = pd.concat([frame, addendum])
+    return frame
 
 
 class ReportsPerCountry(NamedTuple):
-    reports_per_capita: pd.DataFrame
+    reports_per_country: pd.DataFrame
     reports: pd.DataFrame
     populations: pd.DataFrame
     online: pd.DataFrame
+    accounts: pd.DataFrame
     countries: pd.DataFrame
     regions: pd.DataFrame
     arab_league: pd.DataFrame
@@ -356,6 +402,9 @@ def ingest_reports_per_country(
     online = read_online(path / 'internet-users.csv')
     logger(online, caption='online')
 
+    accounts = read_accounts(path / 'social-accounts-per-country.csv')
+    logger(accounts, caption='accounts')
+
     countries = read_countries(path / 'countries.csv')
     logger(countries, caption='countries')
 
@@ -373,9 +422,9 @@ def ingest_reports_per_country(
         logger(geometries, caption='geometries')
 
     reports_per_capita = merge_reports_per_country(
-        reports, populations, online, countries, regions, arab_league
+        reports, populations, online, accounts, countries, regions, arab_league
     )
-    logger(reports_per_capita, caption='reports per capita')
+    logger(reports_per_capita, caption='reports per country')
 
     reports_per_capita = summarize_arab_league(reports_per_capita)
 
@@ -384,6 +433,7 @@ def ingest_reports_per_country(
         reports,
         populations,
         online,
+        accounts,
         countries,
         regions,
         arab_league,
@@ -391,8 +441,8 @@ def ingest_reports_per_country(
     )
 
 
-def reports_per_capita_country_year(
-    reports_per_country: ReportsPerCountry,
+def reports_per_country_year(
+    reports_per_country: ReportsPerCountry, column="reports_per_capita"
 ) -> Iterator[Any]:
     """
     Create an iterator over the year and reports per capita per country, with
@@ -400,11 +450,11 @@ def reports_per_capita_country_year(
     country's rank.
     """
     sorted_and_grouped = (
-        reports_per_country.reports_per_capita.drop(
+        reports_per_country.reports_per_country.drop(
             columns=['region', 'superregion', 'continent']
         )
-        .sort_values('reports_per_capita', ascending=False)
-        .groupby('year')
+        .sort_values(column, ascending=False)
+        .groupby('year', observed=False)
     )
 
     for year, group in sorted_and_grouped:

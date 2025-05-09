@@ -65,12 +65,13 @@ and
 transparency reports to the Office for Juvenile Justice and Delinquency
 Prevention at the Department of Justice.
 
-Simon Kemp's [Digital 2024: Global Overview
+We Are Social & Meltwater's [Digital 2024 Global Overview
 Report](https://datareportal.com/reports/digital-2024-global-overview-report)
-includes statistics on the [global number of social media user
-identities](https://indd.adobe.com/embed/8892459e-f0f4-4cfd-bf47-f5da5728a5b5?startpage=207&allowFullscreen=true).
-They are an effective denominator for normalizing the CyberTipline reports per
-year.
+includes statistics on the [global number of social media
+accounts](https://indd.adobe.com/embed/8892459e-f0f4-4cfd-bf47-f5da5728a5b5?startpage=207&allowFullscreen=true).
+They make for an effective estimate of [population
+size](data/social-accounts.csv) when normalizing yearly CyberTipline report
+counts.
 
 
 ### Dataset 2: CyberTipline Report Contents and Recipients (2020 onward)
@@ -220,8 +221,9 @@ Island; the subantarctic dependency of Norway is an uninhabited nature reserve
 and hence rather unlikely to serve as actual location of internet users.
 
 This repository's Python package includes [code that
-enriches](diaphanous/country.py) this dataset with population counts,
-geometries, and region/continent information. It leverages the following data:
+enriches](diaphanous/country.py) this dataset with population counts, social
+account numbers, geometries, and region/continent information. It leverages the
+following data:
 
   * Per-country population counts by the [United Nations Population
     Division](https://population.un.org/dataportal/data/indicators/49/locations/4,8,12,16,20,24,660,28,32,51,533,36,40,31,44,48,50,52,112,56,84,204,60,64,68,535,70,72,76,92,96,100,854,108,132,116,120,124,136,140,148,152,156,344,446,158,170,174,178,184,188,384,191,192,531,196,203,408,180,208,262,212,214,218,818,222,226,232,233,748,231,238,234,242,246,250,254,258,266,270,268,276,288,292,300,304,308,312,316,320,831,324,624,328,332,336,340,348,352,356,360,364,368,372,833,376,380,388,392,832,400,398,404,296,412,414,417,418,428,422,426,430,434,438,440,442,450,454,458,462,466,470,584,474,478,480,175,484,583,492,496,499,500,504,508,104,516,520,524,528,540,554,558,562,566,570,807,580,578,512,586,585,591,598,600,604,608,616,620,630,634,410,498,638,642,643,646,652,654,659,662,663,666,670,882,674,678,682,686,688,690,694,702,534,703,705,90,706,710,728,724,144,275,729,740,752,756,760,762,764,626,768,772,776,780,788,792,795,796,798,800,804,784,826,834,840,850,858,860,548,862,704,876,732,887,894,716/start/2019/end/2022/table/pivotbylocation);
@@ -229,6 +231,22 @@ geometries, and region/continent information. It leverages the following data:
     Data](https://ourworldindata.org/internet) from statistics released by the
     International Telecommunication Union via WorldBank as well as the United
     Nations;
+  * Per-country ratios of [social accounts per
+    capita](data/social-accounts-per-country.csv) based on:
+
+      * [We Are Social & Hootsuite's Digital 2021 Local Country Headlines
+    Report](https://datareportal.com/reports/digital-2021-local-country-headlines)
+      * [We Are Social & Kepios' Digital 2022 Local Country Headlines
+    Report](https://datareportal.com/reports/digital-2022-local-country-headlines)
+      * [We Are Social & Meltwater's Digital 2023 Local Country Headlines
+    Report](https://datareportal.com/reports/digital-2023-local-country-headlines)
+      * [We Are Social & Meltwater's Digital 2024 Local Country Headlines
+    Report](https://datareportal.com/reports/digital-2024-local-country-headlines)
+
+    By dividing the reports per capita by social accounts per capita, we can
+    determine per-country reports per social accounts, i.e., report counts
+    normalized by likely population size.
+
   * Administrative boundaries for countries by [Natural Earth, version
     5.1.1](https://www.naturalearthdata.com/downloads/110m-cultural-vectors/);
   * Per-country ISO 3166 Alpha-2 and Alpha-3 codes scraped from [ISO's

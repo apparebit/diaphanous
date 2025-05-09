@@ -8,7 +8,7 @@ import pandas as pd
 
 from diaphanous import (
     ingest_reports_per_country,
-    reports_per_capita_country_year,
+    reports_per_country_year,
     create_map,
     show_map,
     REPORTS_PER_PLATFORM,
@@ -25,7 +25,7 @@ from diaphanous import (
 
 def just_map() -> None:
     country_data = ingest_reports_per_country('./data')
-    map_data = country_data.reports_per_capita.reset_index()
+    map_data = country_data.reports_per_country.reset_index()
     map_data['labels'] = (
         map_data['country'].astype(str)
         + ':<br>'
@@ -51,9 +51,9 @@ def reports_per_country(section: int = -1) -> None:
 
     country_data = ingest_reports_per_country('../data')
 
-    show(f'<h2>{secnum(2)}Regions Ranked by CSAM Reports</h2>')
+    show(f'<h2>{secnum(1)}Regions Ranked by CSAM Reports</h2>')
     most_reports = (
-        country_data.reports_per_capita.groupby(['year', 'region'])
+        country_data.reports_per_country.groupby(['year', 'region'], observed=False)
         .sum(numeric_only=True)
         .sort_values(by='reports', ascending=False)
         .drop(columns=['arab_league'])
@@ -83,13 +83,13 @@ def reports_per_country(section: int = -1) -> None:
             show('<hr>')
 
     # ----------------------------------------------------------------------------------
-    show(f'<h2>{secnum(3)}Countries Ranked by CSAM Reports per Capita</h2>')
-    rpc_range = country_data.reports_per_capita.agg(
+    show(f'<h2>{secnum(2)}Countries Ranked by CSAM Reports per Capita</h2>')
+    rpc_range = country_data.reports_per_country.agg(
         {'reports_per_capita': ['min', 'max']}
     )
     show(rpc_range, caption='Range of Reports per Capita', margin_bottom=0)
 
-    for year, year_data in reports_per_capita_country_year(country_data):
+    for year, year_data in reports_per_country_year(country_data):
         top = year_data.head(30)
         rank = top.index[top['iso3'] == '\u262a'][0]
         show(
@@ -131,8 +131,32 @@ def reports_per_country(section: int = -1) -> None:
     )
 
     # ----------------------------------------------------------------------------------
+    show(f'<h2>{secnum(3)}Countries Ranked by CSAM Reports per Social Accounts</h2>')
+    rpc_range = country_data.reports_per_country.agg(
+        {'reports_per_accounts': ['min', 'max']}
+    )
+    show(rpc_range, caption='Range of Reports per Accounts', margin_bottom=0)
+
+    for year, year_data in reports_per_country_year(
+        country_data, column='reports_per_accounts'
+    ):
+        top = year_data.head(30)
+        # rank = top.index[top['iso3'] == '\u262a'][0]
+        show(
+            top,
+            caption=f'Reports per Social Media Accounts and Country {year}',
+            highlight_columns='reports_per_accounts',
+            # highlight_rows=rank,
+            margin_top=2,
+            margin_bottom=0,
+        )
+
+        if year != YEAR_LABELS[-1]:
+            show('<hr>')
+
+    # ----------------------------------------------------------------------------------
     show(f'<h2>{secnum(4)}Mapping CSAM Reports per Capita and Year</h2>')
-    map_data = country_data.reports_per_capita.copy()
+    map_data = country_data.reports_per_country.copy()
     map_data = map_data.reset_index()
     show(map_data, show_schema=True, caption='map_data')
 
@@ -155,11 +179,49 @@ def reports_per_country(section: int = -1) -> None:
         map_data,
         discretization=0,
         with_panels=True,
-        with_albers=True,
+        #with_albers=True,
         with_antarctica=True,
     )
     show_map(fig)
-    fig.write_image(f'../figure/countries.svg')
+    fig.write_image(f'../figure/capita-countries.svg')
+
+    # ----------------------------------------------------------------------------------
+    show(f'<h2>{secnum(5)}Mapping CSAM Reports per Social Accounts and Year</h2>')
+    map_data = country_data.reports_per_country.copy()
+    map_data = map_data.reset_index()
+    show(map_data, show_schema=True, caption='map_data')
+
+    # The text for hover labels (without clunky hover data)
+    map_data['labels'] = (
+        map_data['country'].astype(str)
+        + ':<br>'
+        + map_data['reports_per_accounts'].apply(
+            lambda v: f'{v:.5f}' if not pd.isnull(v) else "NA"
+        ) + ' ('
+        + map_data['year'].astype(str)
+        + ')'
+    )
+
+    fig = create_map(
+        map_data,
+        with_panels=False,
+        with_antarctica=True,
+        with_animation=True,
+        with_accounts=True,
+    )
+    show_map(fig)
+
+    fig = create_map(
+        map_data,
+        discretization=0,
+        with_panels=True,
+        #with_albers=True,
+        with_antarctica=True,
+        with_accounts=True,
+    )
+    show_map(fig)
+    fig.write_image(f'../figure/account-countries.svg')
+
 
 # ======================================================================================
 
@@ -180,7 +242,7 @@ def _main(args: Sequence[str]) -> int:
     # Export platform data
     print('1. Exporting "data/ocse-reports-per-year-country-capita"\n')
     country_data = ingest_reports_per_country('./data', logger=logger)
-    country_data.reports_per_capita.reset_index().to_csv(
+    country_data.reports_per_country.reset_index().to_csv(
         'data/ocse-reports-per-year-country-capita.csv',
         index=False,
         columns=[
