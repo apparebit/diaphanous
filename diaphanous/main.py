@@ -43,6 +43,31 @@ def just_map() -> None:
     fig.write_image(f'./figure/reports-per-capita.svg')
 
 
+def reports_per_country_stats() -> pd.DataFrame:
+    # ----------------------------------------------------------------------------------
+    country_data = ingest_reports_per_country('../data')
+
+    # Dropping N/A gets rid of 2019 because reports_per_accounts aren't
+    # available for that year.
+    frame = country_data.reports_per_country
+    frame = frame[["reports_per_capita", "reports_per_accounts"]].dropna()
+
+    stats = frame.agg({
+        'reports_per_capita': ['min', 'median', 'mean', 'std', 'skew', 'max'],
+        'reports_per_accounts': ['min', 'median', 'mean', 'std', 'skew', 'max'],
+    })
+
+    stats.insert(
+        1,
+        "multiplier",
+        stats["reports_per_accounts"] / stats["reports_per_capita"],
+    )
+
+    show(f'<h2>Reports per Capita and Accounts Statistics</h2>')
+    show(stats, caption='Range of Reports per Capita/Accounts')
+    return frame
+
+
 def reports_per_country(section: int = -1) -> None:
     # ----------------------------------------------------------------------------------
 
@@ -89,9 +114,13 @@ def reports_per_country(section: int = -1) -> None:
     )
     show(rpc_range, caption='Range of Reports per Capita', margin_bottom=0)
 
+    top30_arab_league = {}
+
     for year, year_data in reports_per_country_year(country_data):
-        top = year_data.head(30)
-        rank = top.index[top['iso3'] == '\u262a'][0]
+        rank = year_data.index[year_data['iso3'] == '\u262a'][0]
+        top_size = 30 + (1 if rank <= 30 else 0)
+
+        top = year_data.head(top_size)
         show(
             top,
             caption=f'Reports per Capita and Country {year}',
@@ -102,33 +131,34 @@ def reports_per_country(section: int = -1) -> None:
         )
 
         in_arab_league = top['arab_league'].sum()
+        top30_arab_league[year] = in_arab_league
         if year == '2022':
             assert top.tail(10)['arab_league'].sum() == 0
 
         show(
             f"""
-            {in_arab_league} out of 20 countries with the most CSAM reports per
+            {in_arab_league} out of 30 countries with the most CSAM reports per
             capita in {year} are members of the Arab League. If the Arab League
-            were a country, its rank would be {rank}.<br><br>
+            were a country, its rank would rank {rank}.<br><br>
             """
         )
 
         if year != YEAR_LABELS[-1]:
             show('<hr>')
 
-    show(
-        """
-        <p>Member countries of the Arab League feature unusually prominently
-        when ranking countries by CSAM reports per capita. Notably, either Libya
-        or the United Arab Emirates is the worst ranked country. The substantial
-        differences between the two countries would seem to exclude wealth,
-        political stability, and effective policing as likely causes and instead
-        point to some shared cultural trait as likely reason.</p>
+    # show(
+    #     """
+    #     <p>Member countries of the Arab League feature unusually prominently
+    #     when ranking countries by CSAM reports per capita. Notably, either Libya
+    #     or the United Arab Emirates is the worst ranked country. The substantial
+    #     differences between the two countries would seem to exclude wealth,
+    #     political stability, and effective policing as likely causes and instead
+    #     point to some shared cultural trait as likely reason.</p>
 
-        <p>Note that such a shared cultural trait may be an actual trait or a
-        perceived trait.</p>
-        """
-    )
+    #     <p>Note that such a shared cultural trait may be an actual trait or a
+    #     perceived trait.</p>
+    #     """
+    # )
 
     # ----------------------------------------------------------------------------------
     show(f'<h2>{secnum(3)}Countries Ranked by CSAM Reports per Social Accounts</h2>')
@@ -149,6 +179,15 @@ def reports_per_country(section: int = -1) -> None:
             # highlight_rows=rank,
             margin_top=2,
             margin_bottom=0,
+        )
+
+        in_arab_league = top['arab_league'].sum()
+        show(
+            f"""
+            {in_arab_league} out of 30 countries with the most CSAM reports per
+            accounts in {year} compared to {top30_arab_league[year]} for reports
+            per capita are members of the Arab League.<br><br>
+            """
         )
 
         if year != YEAR_LABELS[-1]:
@@ -179,7 +218,6 @@ def reports_per_country(section: int = -1) -> None:
         map_data,
         discretization=0,
         with_panels=True,
-        #with_albers=True,
         with_antarctica=True,
     )
     show_map(fig)
@@ -215,7 +253,6 @@ def reports_per_country(section: int = -1) -> None:
         map_data,
         discretization=0,
         with_panels=True,
-        #with_albers=True,
         with_antarctica=True,
         with_accounts=True,
     )
@@ -255,6 +292,8 @@ def _main(args: Sequence[str]) -> int:
             'population',
             'population_pct',
             'reports_per_capita',
+            'accounts_per_capita',
+            'reports_per_accounts',
             'region',
             'superregion',
             'continent',

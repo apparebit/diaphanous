@@ -34,14 +34,15 @@ def create_map(
     residual = 0
     if with_panels:
         residual = 1
-        frame = frame[frame['year'] != "2019"]
+        frame = frame[frame['year'] != "2019"].copy()
+        frame[data_column] = frame[data_column] * 1000
 
     # -------------------- Discretization
     # Prepare color data:
     if discretization == 0:
         color_column = data_column
         # Extra 0.002 to offset top tick from label
-        color_range = (0, 0.112 if with_accounts else 0.042)
+        color_range = (0, 0.112 * 1000 if with_accounts else 0.042 * 1000)
     else:
         bins = abs(int(discretization))
         color_column = 'color_data'
@@ -124,18 +125,15 @@ def create_map(
 
     # -------------------- Adjust display of legend
 
-    fig.update_layout(
-        coloraxis_colorbar_tickformat='.3f',
-    )
+    # fig.update_layout(
+    #     coloraxis_colorbar_tickformat='.3f',
+    # )
 
     if with_panels:
         fig.update_layout(
             margin=dict(t=0, r=0, b=0, l=0),
-            width=700,
+            width=770,
             height=360,
-            #width=640,
-            #height=1100 if with_antarctica else 960,
-            coloraxis_colorbar_len=0,
             # title=dict(
             #     text='<i>CSAM Reports per Capita, Country, and Year</i>',
             #     font_size=22,
@@ -144,12 +142,17 @@ def create_map(
             #     xref='paper',
             #     # pad=dict(t=20, b=20),
             # ),
-            # coloraxis_showscale=False,
+            coloraxis_colorbar_len=0.8,
+            coloraxis_colorbar_thickness=10,
+            coloraxis_colorbar_ticklen=10,
+            coloraxis_colorbar_tickwidth=5,
+            coloraxis_colorbar_title="",
         )
     else:
         kwargs = dict(
             margin=dict(t=40, r=0, b=0, l=0),
             # paper_bgcolor='#000', # Can be helpful when debugging size issues
+            coloraxis_showscale=False,
         )
         if with_animation:
             kwargs |= dict(coloraxis_colorbar_len=1.1 if with_antarctica else 0.9)
@@ -157,8 +160,6 @@ def create_map(
             kwargs |= dict(coloraxis_colorbar_len=0.8 if with_antarctica else 0.7)
 
         fig.update_layout(**kwargs)
-
-    fig.update_layout(coloraxis_showscale=False)
 
     # -------------------- Add year label to each panel
     if with_panels:

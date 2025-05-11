@@ -220,7 +220,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "columns": ("accounts", "reports"),
         "rows": (
             # fmt: off
-            {"2024": (5, 16)},
+            #{"2024": (5, 16)}, # Wait until we have complete data for Microsoft
             {"2023": (3, 37)},
             {"2022": (1, 6)},
             {"2021": (1, 4)},
@@ -956,6 +956,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "NCMEC": frozen({
         "sources": (
+            "https://ncmec.org/content/dam/missingkids/pdfs/cybertiplinedata2024/2024-reports-by-esp.pdf",
             "https://www.missingkids.org/content/dam/missingkids/pdfs/2019-reports-by-esp.pdf",
             "https://www.missingkids.org/content/dam/missingkids/pdfs/2020-reports-by-esp.pdf",
             "https://www.missingkids.org/content/dam/missingkids/pdfs/2021-reports-by-esp.pdf",
@@ -1182,6 +1183,47 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2023": ("YouTube", None, None, None)},
             {"2023": ("ESP Total", 35_944_826, None, None)},
             {"2023": ("Total", 36_210_368, None, None)},
+            # ───────────────────────────────────────────────────────
+            {"2024": ("Alphabet", None, None, None)},
+            {"2024": ("Amazon", 390, None, None)},
+            {"2024": ("Amazon", 30_759, None, None)}, # AI Services
+            {"2024": ("Amazon", 42_051, None, None)}, # Photos
+            {"2024": ("Apple", 250, None, None)},
+            {"2024": ("Automattic", None, None, None)},
+            {"2024": ("Aylo", 5_478, None, None)},  # Pornhub
+            {"2024": ("Aylo", 3, None, None)},  # Redtube
+            {"2024": ("Aylo", 1, None, None)},  # Tube8
+            {"2024": ("Aylo", 2, None, None)},  # YouPorn
+            {"2024": ("Aylo", 23, None, None)},  # MyDirtyHobby
+            {"2024": ("Discord", 241_354, None, None)},
+            {"2024": ("Facebook", 8_590_357, None, None)},
+            {"2024": ("GitHub", None, None, None)},
+            {"2024": ("Google", 1_175_084, None, None)},
+            {"2024": ("Instagram", 3_320_008, None, None)},
+            {"2024": ("LinkedIn", 127, None, None)},
+            {"2024": ("Meta", None, None, None)},
+            {"2024": ("MindGeek", 30, None, None)}, # Pornhub
+            {"2024": ("Microsoft", 101_009, None, None)}, # Online Operations
+            {"2024": ("Microsoft", 1_324, None, None)}, # Xbox
+            {"2024": ("Microsoft", 324, None, None)}, # Other Products
+            {"2024": ("Omegle", 12, None, None)},
+            {"2024": ("Pinterest", 65_810, None, None)},
+            {"2024": ("Pornhub", None, None, None)},  # Under Aylo
+            {"2024": ("Quora", 8_778, None, None)},
+            {"2024": ("Reddit", 334_597, None, None)},
+            {"2024": ("Snap", 1_174_698, None, None)},
+            {"2024": ("Telegram", None, None, None)},
+            {"2024": ("TikTok", 1_359_806, None, None)},
+            {"2024": ("Tumblr", 4_047, None, None)},
+            {"2024": ("Twitch", 2_301, None, None)},
+            {"2024": ("Twitter", None, None, None)},
+            {"2024": ("WhatsApp", 1_851_086, None, None)},
+            {"2024": ("Wikimedia", 102, None, None)},
+            {"2024": ("Wordpress", 298, None, None)},
+            {"2024": ("X", 686_176, None, None)},
+            {"2024": ("YouTube", None, None, None)},
+            {"2024": ("ESP Total", 20_348_306, None, None)},
+            {"2024": ("Total", 20_512_803, None, None)},
             # fmt: on
         ),
     }),

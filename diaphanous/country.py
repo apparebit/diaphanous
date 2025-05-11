@@ -17,6 +17,7 @@ REPORT_TOTALS = {
     '2021': 29_397_681,
     '2022': 32_059_029,
     '2023': 36_210_368,
+    '2024': 20_512_803,
 }
 
 _PROBLEMATIC_GEOMETRIES = set(['France', 'Kosovo', 'N. Cyprus', 'Norway', 'Somaliland'])
@@ -445,13 +446,12 @@ def reports_per_country_year(
     reports_per_country: ReportsPerCountry, column="reports_per_capita"
 ) -> Iterator[Any]:
     """
-    Create an iterator over the year and reports per capita per country, with
-    the entries sorted in descending order by reports per capita. The index is a
-    country's rank.
+    Create an iterator over the year and corresponding data, with entries sorted
+    by the given column. The index is the country's one-based rank.
     """
     sorted_and_grouped = (
         reports_per_country.reports_per_country.drop(
-            columns=['region', 'superregion', 'continent']
+            columns=['superregion', 'continent']
         )
         .sort_values(column, ascending=False)
         .groupby('year', observed=False)

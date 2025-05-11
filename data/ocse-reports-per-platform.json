@@ -207,7 +207,6 @@
             "reports"
         ],
         "rows": [
-            {"2024": [5, 16]},
             {"2023": [3, 37]},
             {"2022": [1, 6]},
             {"2021": [1, 4]}
@@ -927,6 +926,7 @@
     },
     "NCMEC": {
         "sources": [
+            "https://ncmec.org/content/dam/missingkids/pdfs/cybertiplinedata2024/2024-reports-by-esp.pdf",
             "https://www.missingkids.org/content/dam/missingkids/pdfs/2019-reports-by-esp.pdf",
             "https://www.missingkids.org/content/dam/missingkids/pdfs/2020-reports-by-esp.pdf",
             "https://www.missingkids.org/content/dam/missingkids/pdfs/2021-reports-by-esp.pdf",
@@ -1147,7 +1147,47 @@
             {"2023": ["X", 273416, null, null]},
             {"2023": ["YouTube", null, null, null]},
             {"2023": ["ESP Total", 35944826, null, null]},
-            {"2023": ["Total", 36210368, null, null]}
+            {"2023": ["Total", 36210368, null, null]},
+            {"2024": ["Alphabet", null, null, null]},
+            {"2024": ["Amazon", 390, null, null]},
+            {"2024": ["Amazon", 30759, null, null]},
+            {"2024": ["Amazon", 42051, null, null]},
+            {"2024": ["Apple", 250, null, null]},
+            {"2024": ["Automattic", null, null, null]},
+            {"2024": ["Aylo", 5478, null, null]},
+            {"2024": ["Aylo", 3, null, null]},
+            {"2024": ["Aylo", 1, null, null]},
+            {"2024": ["Aylo", 2, null, null]},
+            {"2024": ["Aylo", 23, null, null]},
+            {"2024": ["Discord", 241354, null, null]},
+            {"2024": ["Facebook", 8590357, null, null]},
+            {"2024": ["GitHub", null, null, null]},
+            {"2024": ["Google", 1175084, null, null]},
+            {"2024": ["Instagram", 3320008, null, null]},
+            {"2024": ["LinkedIn", 127, null, null]},
+            {"2024": ["Meta", null, null, null]},
+            {"2024": ["MindGeek", 30, null, null]},
+            {"2024": ["Microsoft", 101009, null, null]},
+            {"2024": ["Microsoft", 1324, null, null]},
+            {"2024": ["Microsoft", 324, null, null]},
+            {"2024": ["Omegle", 12, null, null]},
+            {"2024": ["Pinterest", 65810, null, null]},
+            {"2024": ["Pornhub", null, null, null]},
+            {"2024": ["Quora", 8778, null, null]},
+            {"2024": ["Reddit", 334597, null, null]},
+            {"2024": ["Snap", 1174698, null, null]},
+            {"2024": ["Telegram", null, null, null]},
+            {"2024": ["TikTok", 1359806, null, null]},
+            {"2024": ["Tumblr", 4047, null, null]},
+            {"2024": ["Twitch", 2301, null, null]},
+            {"2024": ["Twitter", null, null, null]},
+            {"2024": ["WhatsApp", 1851086, null, null]},
+            {"2024": ["Wikimedia", 102, null, null]},
+            {"2024": ["Wordpress", 298, null, null]},
+            {"2024": ["X", 686176, null, null]},
+            {"2024": ["YouTube", null, null, null]},
+            {"2024": ["ESP Total", 20348306, null, null]},
+            {"2024": ["Total", 20512803, null, null]}
         ]
     }
 }
