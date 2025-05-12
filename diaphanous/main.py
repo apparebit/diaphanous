@@ -210,7 +210,11 @@ def reports_per_country(section: int = -1) -> None:
     )
 
     fig = create_map(
-        map_data, with_panels=False, with_antarctica=True, with_animation=True
+        map_data,
+        with_panels=False,
+        with_antarctica=True,
+        with_animation=True,
+        with_equal_earth=True,
     )
     show_map(fig)
 
@@ -219,6 +223,7 @@ def reports_per_country(section: int = -1) -> None:
         discretization=0,
         with_panels=True,
         with_antarctica=True,
+        with_equal_earth=True,
     )
     show_map(fig)
     fig.write_image(f'../figure/capita-countries.svg')
@@ -246,6 +251,7 @@ def reports_per_country(section: int = -1) -> None:
         with_antarctica=True,
         with_animation=True,
         with_accounts=True,
+        with_equal_earth=True,
     )
     show_map(fig)
 
@@ -255,6 +261,7 @@ def reports_per_country(section: int = -1) -> None:
         with_panels=True,
         with_antarctica=True,
         with_accounts=True,
+        with_equal_earth=True,
     )
     show_map(fig)
     fig.write_image(f'../figure/account-countries.svg')

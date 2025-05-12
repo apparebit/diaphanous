@@ -130,6 +130,12 @@ def create_map(
     # )
 
     if with_panels:
+        if with_accounts:
+            fig.update_layout(
+                coloraxis_colorbar_tickvals=[0, 20, 40, 60, 80, 100, 110],
+                coloraxis_colorbar_tickmode="array",
+            )
+
         fig.update_layout(
             margin=dict(t=0, r=0, b=0, l=0),
             width=770,
@@ -199,7 +205,7 @@ def create_map(
                 y = domain.y[0] + 0.28
             else:
                 x = 0.53 if int(year) % 2 == residual else 0.03
-                y = domain.y[0] + 0.10
+                y = domain.y[0] + 0.15
 
             a.update(
                 text=year,
