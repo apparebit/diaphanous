@@ -23,6 +23,7 @@ from rpy2.robjects.vectors import StrVector
 PACKAGES = (
     "car",
     "dplyr",
+    "estimatr",
     "ggplot2",
     "iccCounts",
     "patchwork",

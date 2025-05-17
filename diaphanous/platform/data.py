@@ -61,6 +61,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         ),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Amino": None,
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Apple": frozen({
         "sources": ["https://www.apple.com/legal/transparency/"],
         "comments": [
@@ -264,6 +266,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         ),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Imgur": None,
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Instagram": frozen({
         "sources": ("https://transparency.fb.com/sr/community-standards/",),
         "features": frozen({
@@ -326,6 +330,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         ),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Kik": None,
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "LinkedIn": frozen({
         "sources": ("https://about.linkedin.com/transparency/community-report",),
         "features": frozen({
@@ -357,8 +363,15 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         ),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "MediaLab": frozen({
+        "brands": ("Amino", "Imgur", "Kik"),
+        "features": frozen({
+            "social_media": True,
+        }),
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Meta": frozen({
-        "brands": ("Facebook", "Instagram", "WhatsApp"),
+        "brands": ("Facebook", "Instagram", "Threads", "WhatsApp"),
         "features": frozen({
             "social_media": True,
         }),
@@ -688,6 +701,12 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Telegram": None,
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Threads": frozen({
+        "features": frozen({
+            "social_media": True,
+        }),
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "TikTok": frozen({
         "sources": (
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-4/",
@@ -997,6 +1016,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             # fmt: off
             {"2019": ("Alphabet", 449_283, None, None)},
             {"2019": ("Amazon", 8, None, None)},
+            {"2019": ("Amino", 383, None, None)},
             {"2019": ("Apple", 205, None, None)},
             {"2019": ("Automattic", 10_443, None, None)},
             {"2019": ("Aylo", None, None, None)},
@@ -1004,8 +1024,11 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2019": ("Facebook", None, None, None)},
             {"2019": ("GitHub", 2, None, None)},
             {"2019": ("Google", None, None, None)},
+            {"2019": ("Imgur", 73_929, None, None)},
             {"2019": ("Instagram", None, None, None)},
+            {"2019": ("Kik", None, None, None)},
             {"2019": ("LinkedIn", 88, None, None)},
+            {"2019": ("MediaLab", 38, None, None)},
             {"2019": ("Meta", 15_884_511, None, None)},
             {"2019": ("Microsoft", 123_839, None, None)},
             {"2019": ("MindGeek", None, None, None)},
@@ -1016,6 +1039,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2019": ("Reddit", 724, None, None)},
             {"2019": ("Snap", 82_030, None, None)},
             {"2019": ("Telegram", None, None, None)},
+            {"2019": ("Threads", None, None, None)},
             {"2019": ("TikTok", 596, None, None)},
             {"2019": ("Tumblr", None, None, None)},
             {"2019": ("Twitch", 541, None, None)},
@@ -1030,6 +1054,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             # ───────────────────────────────────────────────────────
             {"2020": ("Alphabet", 546_704, None, None)},
             {"2020": ("Amazon", 2_235, None, None)},
+            {"2020": ("Amino", 97, None, None)},
             {"2020": ("Apple", 265, None, None)},
             {"2020": ("Automattic", 9_130, None, None)},
             {"2020": ("Aylo", None, None, None)},
@@ -1037,8 +1062,11 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2020": ("Facebook", None, None, None)},
             {"2020": ("GitHub", 2, None, None)},
             {"2020": ("Google", None, None, None)},
+            {"2020": ("Imgur", 31_571, None, None)},
             {"2020": ("Instagram", None, None, None)},
+            {"2020": ("Kik", 14_515, None, None)},
             {"2020": ("LinkedIn", 60, None, None)},
+            {"2020": ("MediaLab", None, None, None)},
             {"2020": ("Meta", 20_307_216, None, None)},
             {"2020": ("Microsoft", 96_776, None, None)},
             {"2020": ("MindGeek", 13_229, None, None)},
@@ -1049,6 +1077,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2020": ("Reddit", 2_233, None, None)},
             {"2020": ("Snap", 144_095, None, None)},
             {"2020": ("Telegram", None, None, None)},
+            {"2020": ("Threads", None, None, None)},
             {"2020": ("TikTok", 22_692, None, None)},
             {"2020": ("Tumblr", None, None, None)},
             {"2020": ("Twitch", None, None, None)},
@@ -1065,6 +1094,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2021": ("Amazon", 99, None, None)},
             {"2021": ("Amazon", 4, None, None)},
             {"2021": ("Amazon", 27_101, None, None)},
+            {"2021": ("Amino", 75, None, None)},
             {"2021": ("Apple", 160, None, None)},
             {"2021": ("Automattic", None, None, None)},
             {"2021": ("Aylo", None, None, None)},
@@ -1072,8 +1102,11 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2021": ("Facebook", 22_118_952, 28, 7.27)},
             {"2021": ("GitHub", 4, None, None)},
             {"2021": ("Google", None, 975, 6.77)},
+            {"2021": ("Imgur", 47_274, None, None)},
             {"2021": ("Instagram", 3_393_654, 22, 4.45)},
+            {"2021": ("Kik", 33_619, None, None)},
             {"2021": ("LinkedIn", 110, None, None)},
+            {"2021": ("MediaLab", None, None, None)},
             {"2021": ("Meta", None, None, None)},
             {"2021": ("MindGeek", 16, None, None)},
             {"2021": ("MindGeek", 21, None, None)},  # Redtube
@@ -1090,6 +1123,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2021": ("Reddit", 10_059, 233, 1.39)},
             {"2021": ("Snap", 512_522, None, None)},
             {"2021": ("Telegram", None, 229, 8.0)},
+            {"2021": ("Threads", None, None, None)},
             {"2021": ("TikTok", 154_618, None, None)},
             {"2021": ("Tumblr", 4_511, 52, 0.49)},
             {"2021": ("Twitch", 6_629, None, None)},
@@ -1105,6 +1139,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2022": ("Alphabet", 2_174_548, None, None)},
             {"2022": ("Amazon", 106, None, None)},
             {"2022": ("Amazon", 55_543, None, None)},
+            {"2022": ("Amino", 177, None, None)},
             {"2022": ("Apple", 234, None, None)},
             {"2022": ("Automattic", None, None, None)},
             {"2022": ("Aylo", None, None, None)},
@@ -1112,8 +1147,11 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2022": ("Facebook", 21_165_208, 10, 4.4)},
             {"2022": ("GitHub", 6, None, None)},
             {"2022": ("Google", None, 916, 4.2)},
+            {"2022": ("Imgur", 64_211, None, None)},
             {"2022": ("Instagram", 5_007_902, 13, 3.7)},
+            {"2022": ("Kik", 36_801, None, None)},
             {"2022": ("LinkedIn", 201, None, None)},
+            {"2022": ("MediaLab", None, None, None)},
             {"2022": ("Meta", None, None, None)},
             {"2022": ("MindGeek", 91, None, None)},
             {"2022": ("MindGeek", 6, None, None)},  # Redtube
@@ -1131,6 +1169,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2022": ("Reddit", 52_592, 275, 2.4)},
             {"2022": ("Snap", 551_086, None, None)},
             {"2022": ("Telegram", None, 73, 5.1)},
+            {"2022": ("Threads", None, None, None)},
             {"2022": ("TikTok", 288_125, 1, 0.2)},
             {"2022": ("Tumblr", 4_845, 92, 0.9)},
             {"2022": ("Twitch", 14_508, None, None)},
@@ -1146,6 +1185,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2023": ("Alphabet", 1_470_958, None, None)},
             {"2023": ("Amazon", 197, None, None)},
             {"2023": ("Amazon", 25_497, None, None)},
+            {"2023": ("Amino", 433, None, None)},
             {"2023": ("Apple", 267, None, None)},
             {"2023": ("Automattic", None, None, None)},
             {"2023": ("Aylo", 29, None, None)},  # Tube8
@@ -1155,8 +1195,11 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2023": ("Facebook", 17_838_422, None, None)},
             {"2023": ("Google", None, None, None)},
             {"2023": ("GitHub", 1, None, None)},
+            {"2023": ("Imgur", 58_957, None, None)},
             {"2023": ("Instagram", 11_430_007, None, None)},
+            {"2023": ("Kik", 17_394, None, None)},
             {"2023": ("LinkedIn", 209, None, None)},
+            {"2023": ("MediaLab", None, None, None)},
             {"2023": ("Meta", None, None, None)},
             {"2023": ("MindGeek", 44, None, None)},
             {"2023": ("MindGeek", 7, None, None)},  # Redtube
@@ -1172,6 +1215,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2023": ("Reddit", 290_141, None, None)},
             {"2023": ("Snap", 713_055, None, None)},
             {"2023": ("Telegram", None, None, None)},
+            {"2023": ("Threads", 663, None, None)},
             {"2023": ("TikTok", 590_376, None, None)},
             {"2023": ("Tumblr", 19_335, None, None)},
             {"2023": ("Twitch", 6_665, None, None)},
@@ -1188,6 +1232,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2024": ("Amazon", 390, None, None)},
             {"2024": ("Amazon", 30_759, None, None)}, # AI Services
             {"2024": ("Amazon", 42_051, None, None)}, # Photos
+            {"2024": ("Amino", 109, None, None)},
             {"2024": ("Apple", 250, None, None)},
             {"2024": ("Automattic", None, None, None)},
             {"2024": ("Aylo", 5_478, None, None)},  # Pornhub
@@ -1199,8 +1244,11 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2024": ("Facebook", 8_590_357, None, None)},
             {"2024": ("GitHub", None, None, None)},
             {"2024": ("Google", 1_175_084, None, None)},
+            {"2024": ("Imgur", 554_710, None, None)},
             {"2024": ("Instagram", 3_320_008, None, None)},
+            {"2024": ("Kik", 114_155, None, None)},
             {"2024": ("LinkedIn", 127, None, None)},
+            {"2024": ("MediaLab", None, None, None)},
             {"2024": ("Meta", None, None, None)},
             {"2024": ("MindGeek", 30, None, None)}, # Pornhub
             {"2024": ("Microsoft", 101_009, None, None)}, # Online Operations
@@ -1213,6 +1261,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2024": ("Reddit", 334_597, None, None)},
             {"2024": ("Snap", 1_174_698, None, None)},
             {"2024": ("Telegram", None, None, None)},
+            {"2024": ("Threads", 3_354, None, None)},
             {"2024": ("TikTok", 1_359_806, None, None)},
             {"2024": ("Tumblr", 4_047, None, None)},
             {"2024": ("Twitch", 2_301, None, None)},

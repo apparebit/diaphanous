@@ -53,6 +53,7 @@
             {"2020": [2235, null, null, null, null]}
         ]
     },
+    "Amino": null,
     "Apple": {
         "sources": ["https://www.apple.com/legal/transparency/"],
         "comments": ["Transparency reports cover government requests only."],
@@ -248,6 +249,7 @@
             {"2020 H1": [1461582, 112595, 77940, 331865]}
         ]
     },
+    "Imgur": null,
     "Instagram": {
         "sources": ["https://transparency.fb.com/sr/community-standards/"],
         "features": {
@@ -309,6 +311,7 @@
             {"2019 Q2": [526200, null, null, null, null, null, null, null, null, null, null, null]}
         ]
     },
+    "Kik": null,
     "LinkedIn": {
         "sources": ["https://about.linkedin.com/transparency/community-report"],
         "features": {
@@ -337,8 +340,14 @@
             {"2019 H1": [22]}
         ]
     },
+    "MediaLab": {
+        "brands": ["Amino", "Imgur", "Kik"],
+        "features": {
+            "social_media": true
+        }
+    },
     "Meta": {
-        "brands": ["Facebook", "Instagram", "WhatsApp"],
+        "brands": ["Facebook", "Instagram", "Threads", "WhatsApp"],
         "features": {
             "social_media": true
         },
@@ -652,6 +661,11 @@
         ]
     },
     "Telegram": null,
+    "Threads": {
+        "features": {
+            "social_media": true
+        }
+    },
     "TikTok": {
         "sources": [
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-4/",
@@ -966,6 +980,7 @@
         "rows": [
             {"2019": ["Alphabet", 449283, null, null]},
             {"2019": ["Amazon", 8, null, null]},
+            {"2019": ["Amino", 383, null, null]},
             {"2019": ["Apple", 205, null, null]},
             {"2019": ["Automattic", 10443, null, null]},
             {"2019": ["Aylo", null, null, null]},
@@ -973,8 +988,11 @@
             {"2019": ["Facebook", null, null, null]},
             {"2019": ["GitHub", 2, null, null]},
             {"2019": ["Google", null, null, null]},
+            {"2019": ["Imgur", 73929, null, null]},
             {"2019": ["Instagram", null, null, null]},
+            {"2019": ["Kik", null, null, null]},
             {"2019": ["LinkedIn", 88, null, null]},
+            {"2019": ["MediaLab", 38, null, null]},
             {"2019": ["Meta", 15884511, null, null]},
             {"2019": ["Microsoft", 123839, null, null]},
             {"2019": ["MindGeek", null, null, null]},
@@ -985,6 +1003,7 @@
             {"2019": ["Reddit", 724, null, null]},
             {"2019": ["Snap", 82030, null, null]},
             {"2019": ["Telegram", null, null, null]},
+            {"2019": ["Threads", null, null, null]},
             {"2019": ["TikTok", 596, null, null]},
             {"2019": ["Tumblr", null, null, null]},
             {"2019": ["Twitch", 541, null, null]},
@@ -998,6 +1017,7 @@
             {"2019": ["Total", 16987361, null, null]},
             {"2020": ["Alphabet", 546704, null, null]},
             {"2020": ["Amazon", 2235, null, null]},
+            {"2020": ["Amino", 97, null, null]},
             {"2020": ["Apple", 265, null, null]},
             {"2020": ["Automattic", 9130, null, null]},
             {"2020": ["Aylo", null, null, null]},
@@ -1005,8 +1025,11 @@
             {"2020": ["Facebook", null, null, null]},
             {"2020": ["GitHub", 2, null, null]},
             {"2020": ["Google", null, null, null]},
+            {"2020": ["Imgur", 31571, null, null]},
             {"2020": ["Instagram", null, null, null]},
+            {"2020": ["Kik", 14515, null, null]},
             {"2020": ["LinkedIn", 60, null, null]},
+            {"2020": ["MediaLab", null, null, null]},
             {"2020": ["Meta", 20307216, null, null]},
             {"2020": ["Microsoft", 96776, null, null]},
             {"2020": ["MindGeek", 13229, null, null]},
@@ -1017,6 +1040,7 @@
             {"2020": ["Reddit", 2233, null, null]},
             {"2020": ["Snap", 144095, null, null]},
             {"2020": ["Telegram", null, null, null]},
+            {"2020": ["Threads", null, null, null]},
             {"2020": ["TikTok", 22692, null, null]},
             {"2020": ["Tumblr", null, null, null]},
             {"2020": ["Twitch", null, null, null]},
@@ -1032,6 +1056,7 @@
             {"2021": ["Amazon", 99, null, null]},
             {"2021": ["Amazon", 4, null, null]},
             {"2021": ["Amazon", 27101, null, null]},
+            {"2021": ["Amino", 75, null, null]},
             {"2021": ["Apple", 160, null, null]},
             {"2021": ["Automattic", null, null, null]},
             {"2021": ["Aylo", null, null, null]},
@@ -1039,8 +1064,11 @@
             {"2021": ["Facebook", 22118952, 28, 7.270]},
             {"2021": ["GitHub", 4, null, null]},
             {"2021": ["Google", null, 975, 6.770]},
+            {"2021": ["Imgur", 47274, null, null]},
             {"2021": ["Instagram", 3393654, 22, 4.450]},
+            {"2021": ["Kik", 33619, null, null]},
             {"2021": ["LinkedIn", 110, null, null]},
+            {"2021": ["MediaLab", null, null, null]},
             {"2021": ["Meta", null, null, null]},
             {"2021": ["MindGeek", 16, null, null]},
             {"2021": ["MindGeek", 21, null, null]},
@@ -1057,6 +1085,7 @@
             {"2021": ["Reddit", 10059, 233, 1.390]},
             {"2021": ["Snap", 512522, null, null]},
             {"2021": ["Telegram", null, 229, 8.000]},
+            {"2021": ["Threads", null, null, null]},
             {"2021": ["TikTok", 154618, null, null]},
             {"2021": ["Tumblr", 4511, 52, 0.490]},
             {"2021": ["Twitch", 6629, null, null]},
@@ -1071,6 +1100,7 @@
             {"2022": ["Alphabet", 2174548, null, null]},
             {"2022": ["Amazon", 106, null, null]},
             {"2022": ["Amazon", 55543, null, null]},
+            {"2022": ["Amino", 177, null, null]},
             {"2022": ["Apple", 234, null, null]},
             {"2022": ["Automattic", null, null, null]},
             {"2022": ["Aylo", null, null, null]},
@@ -1078,8 +1108,11 @@
             {"2022": ["Facebook", 21165208, 10, 4.400]},
             {"2022": ["GitHub", 6, null, null]},
             {"2022": ["Google", null, 916, 4.200]},
+            {"2022": ["Imgur", 64211, null, null]},
             {"2022": ["Instagram", 5007902, 13, 3.700]},
+            {"2022": ["Kik", 36801, null, null]},
             {"2022": ["LinkedIn", 201, null, null]},
+            {"2022": ["MediaLab", null, null, null]},
             {"2022": ["Meta", null, null, null]},
             {"2022": ["MindGeek", 91, null, null]},
             {"2022": ["MindGeek", 6, null, null]},
@@ -1097,6 +1130,7 @@
             {"2022": ["Reddit", 52592, 275, 2.400]},
             {"2022": ["Snap", 551086, null, null]},
             {"2022": ["Telegram", null, 73, 5.100]},
+            {"2022": ["Threads", null, null, null]},
             {"2022": ["TikTok", 288125, 1, 0.200]},
             {"2022": ["Tumblr", 4845, 92, 0.900]},
             {"2022": ["Twitch", 14508, null, null]},
@@ -1111,6 +1145,7 @@
             {"2023": ["Alphabet", 1470958, null, null]},
             {"2023": ["Amazon", 197, null, null]},
             {"2023": ["Amazon", 25497, null, null]},
+            {"2023": ["Amino", 433, null, null]},
             {"2023": ["Apple", 267, null, null]},
             {"2023": ["Automattic", null, null, null]},
             {"2023": ["Aylo", 29, null, null]},
@@ -1120,8 +1155,11 @@
             {"2023": ["Facebook", 17838422, null, null]},
             {"2023": ["Google", null, null, null]},
             {"2023": ["GitHub", 1, null, null]},
+            {"2023": ["Imgur", 58957, null, null]},
             {"2023": ["Instagram", 11430007, null, null]},
+            {"2023": ["Kik", 17394, null, null]},
             {"2023": ["LinkedIn", 209, null, null]},
+            {"2023": ["MediaLab", null, null, null]},
             {"2023": ["Meta", null, null, null]},
             {"2023": ["MindGeek", 44, null, null]},
             {"2023": ["MindGeek", 7, null, null]},
@@ -1137,6 +1175,7 @@
             {"2023": ["Reddit", 290141, null, null]},
             {"2023": ["Snap", 713055, null, null]},
             {"2023": ["Telegram", null, null, null]},
+            {"2023": ["Threads", 663, null, null]},
             {"2023": ["TikTok", 590376, null, null]},
             {"2023": ["Tumblr", 19335, null, null]},
             {"2023": ["Twitch", 6665, null, null]},
@@ -1152,6 +1191,7 @@
             {"2024": ["Amazon", 390, null, null]},
             {"2024": ["Amazon", 30759, null, null]},
             {"2024": ["Amazon", 42051, null, null]},
+            {"2024": ["Amino", 109, null, null]},
             {"2024": ["Apple", 250, null, null]},
             {"2024": ["Automattic", null, null, null]},
             {"2024": ["Aylo", 5478, null, null]},
@@ -1163,8 +1203,11 @@
             {"2024": ["Facebook", 8590357, null, null]},
             {"2024": ["GitHub", null, null, null]},
             {"2024": ["Google", 1175084, null, null]},
+            {"2024": ["Imgur", 554710, null, null]},
             {"2024": ["Instagram", 3320008, null, null]},
+            {"2024": ["Kik", 114155, null, null]},
             {"2024": ["LinkedIn", 127, null, null]},
+            {"2024": ["MediaLab", null, null, null]},
             {"2024": ["Meta", null, null, null]},
             {"2024": ["MindGeek", 30, null, null]},
             {"2024": ["Microsoft", 101009, null, null]},
@@ -1177,6 +1220,7 @@
             {"2024": ["Reddit", 334597, null, null]},
             {"2024": ["Snap", 1174698, null, null]},
             {"2024": ["Telegram", null, null, null]},
+            {"2024": ["Threads", 3354, null, null]},
             {"2024": ["TikTok", 1359806, null, null]},
             {"2024": ["Tumblr", 4047, null, null]},
             {"2024": ["Twitch", 2301, null, null]},

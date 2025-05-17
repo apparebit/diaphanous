@@ -238,6 +238,7 @@ def csam_reports(ncmec: pd.DataFrame) -> pd.DataFrame:
         .assign(Meta=ncmec['Meta'])
         .assign(Facebook=ncmec['Facebook'])
         .assign(Instagram=ncmec['Instagram'])
+        .assign(Threads=ncmec['Threads'])
         .assign(WhatsApp=ncmec['WhatsApp'])
         .assign(**{'% Meta': lambda df: df['WhatsApp'] / df['Meta'] * 100})
     )

@@ -116,37 +116,41 @@ generated](diaphanous/platform/export.py) from a [Python
 module](diaphanous/platform/data.py). Both formats have the same structure
 and contain the same information.
 
-The dataset incorporates information about these platforms:
+The dataset incorporates information about the following technology
+organizations and their platforms:
 
-  * Amazon (owns Twitch)
+  * Amazon
+      * Twitch
   * Apple
-  * Automattic (owns Tumblr and Wordpress)
+  * Automattic
+      * Tumblr
+      * Wordpress
   * Aylo (née MindGeek)
+      * Pornhub
   * Discord
-  * Facebook (Meta)
-  * GitHub (Microsoft)
-  * Google (owns YouTube)
-  * Instagram (Meta)
-  * LinkedIn (Microsoft)
-  * Meta (owns Facebook, Instagram, and WhatsApp)
-  * Microsoft (owns GitHub and LinkedIn)
-  * MindGeek (now Aylo)
+  * Google
+      * YouTube
+  * MediaLab
+      * Amino
+      * Imgur
+      * Kik
+  * Meta
+      * Facebook
+      * Instagram
+      * Threads
+      * WhatsApp
+  * Microsoft
+      * GitHub
+      * LinkedIn
   * Omegle
   * Pinterest
-  * Pornhub (Aylo)
   * Quora
   * Reddit
   * Snap
   * Telegram
   * TikTok
-  * Tumblr (Automattic)
-  * Twitch (Amazon)
-  * Twitter (now X)
-  * WhatsApp (Meta)
   * Wikimedia
-  * Wordpress (Automattic)
   * X (née Twitter)
-  * YouTube (Google)
 
 Surveyed organizations fall into at least one of the following categories:
 
@@ -155,8 +159,7 @@ Surveyed organizations fall into at least one of the following categories:
   * Popular platforms based on the European Commission's list of [very large
     online
     platforms](https://digital-strategy.ec.europa.eu/en/policies/list-designated-vlops-and-vloses),
-  * Platforms with considerable reported child sexual exploitation activity
-    based on NCMEC's transparency disclosures.
+  * Platforms with at least 100,000 CyberTipline reports in one year
 
 A separate [codebook](codebook.md) documents the JSON and Python formats.
 Basically, they consist of a top-level object that maps organization names to an
