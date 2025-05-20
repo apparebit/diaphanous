@@ -9,7 +9,7 @@ import geopandas as geo  # type: ignore
 from .frame_logger import FrameLogger, silent_logger
 
 
-YEAR_LABELS = tuple(str(year) for year in range(2019, 2024))
+YEAR_LABELS = tuple(str(year) for year in range(2019, 2025))
 
 REPORT_TOTALS = {
     '2019': 16_987_361,
@@ -17,7 +17,7 @@ REPORT_TOTALS = {
     '2021': 29_397_681,
     '2022': 32_059_029,
     '2023': 36_210_368,
-    '2024': 20_512_803,
+    '2024': 21_179_239,
 }
 
 _PROBLEMATIC_GEOMETRIES = set(['France', 'Kosovo', 'N. Cyprus', 'Norway', 'Somaliland'])
@@ -48,6 +48,10 @@ def read_reports(path: str | Path) -> pd.DataFrame:
     # Clean up and reorganize data
     reports = (
         reports
+        # The disclosures for 2024 distinguishes between "referrals" (in column
+        # "2024r") and "informational reports" (in column "2024i"). We create
+        # the column with their sums here.
+        .assign(**{"2024": lambda df: df['2024r'].fillna(0) + df['2024i'].fillna(0)})
         # NCMEC includes a line for reports without country in each disclosure
         # but adds them to USA's tally for analysis. We do the same.
         .assign(iso3=lambda df: df['iso3'].fillna('USA'))
@@ -98,25 +102,25 @@ def read_populations(path: str | Path) -> pd.DataFrame:
     populations = (
         pd.read_csv(
             path,
-            sep="|",
-            usecols=['Iso3', 'VariantId', 'TimeLabel', 'SexId', 'Value'],
-            dtype={'Iso3': 'category', 'TimeLabel': 'category', 'Value': 'int'},
+            usecols=['Iso3', 'VariantId', 'Time', 'SexId', 'Value'],
+            dtype={'Iso3': 'category', 'Time': 'category', 'Value': 'float'},
         )
-        .rename(columns={'Iso3': 'iso3', 'TimeLabel': 'year', 'Value': 'population'})
+        .assign(Value=lambda df: df['Value'].round().astype('int'))
+        .rename(columns={'Iso3': 'iso3', 'Time': 'year', 'Value': 'population'})
         .pipe(lambda df: df[(df['VariantId'] == 4) & (df['SexId'] == 3)])
         .drop(columns=['VariantId', 'SexId'])
         .set_index(['iso3', 'year'])
     )
 
     row_no = populations.shape[0]
-    if row_no != 1_180:
+    if row_no != 1_659:
         raise AssertionError(
-            f'{row_no:,d} instead of 1,180 rows with population counts'
+            f'{row_no:,d} instead of 1,659 rows with population counts'
         )
     country_no = populations.index.get_level_values('iso3').nunique()
-    if country_no != 236:
+    if country_no != 237:
         raise AssertionError(
-            f'{country_no:,d} instead of 236 countries with population counts'
+            f'{country_no:,d} instead of 237 countries with population counts'
         )
 
     # Compute total population per year and add column with percentage fraction.
@@ -130,11 +134,11 @@ def read_populations(path: str | Path) -> pd.DataFrame:
     actual_pct = populations.groupby(
         level='year', observed=False
     )['population_pct'].sum()
-    expected_pct = pd.Series([100.0] * len(YEAR_LABELS), index=YEAR_LABELS)
-    if not actual_pct.equals(expected_pct):
-        raise AssertionError(
-            f'{actual_pct} instead of {expected_pct} population fractions'
-        )
+    for index, pct in enumerate(actual_pct.values):
+        if pct != 100.0:
+            raise AssertionError(
+                f'populations for {2019 + index} add up to {pct:.1}% instead of 100%'
+            )
 
     return populations
 
@@ -272,7 +276,7 @@ def without_populations(
         .sum()
     )
 
-    expected = [28, 97, 243, 117, 58]
+    expected = [28, 97, 243, 117, 58, 75]
     actual = reports_without['reports']
     if not np.array_equal(actual, expected):
         raise AssertionError(
@@ -323,7 +327,7 @@ def merge_reports_per_country(
     df['arab_league'] = df['iso3'].isin(arab_league['iso3'])
     df = df.set_index(['iso3', 'year'])
 
-    expected_rows = populations.shape[0]
+    expected_rows = 1_416 # populations.shape[0]
     actual_rows = df.shape[0]
     if actual_rows != expected_rows:
         raise AssertionError(

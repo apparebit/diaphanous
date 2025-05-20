@@ -14,7 +14,6 @@ from playwright.sync_api import sync_playwright, Page
 #     base, _, _ = (query["basepath"][0] + query["relativepath"][0]).rpartition("/")
 #     print(f'  ⦿ base="{base}"')
 
-
 def digital2023():
     for index in range(1, 286):
         yield (
@@ -29,6 +28,15 @@ def digital2024():
         yield (
             "https://indd.adobe.com/content/2/"
             "eede3550-b3a7-4ebf-b417-3258cb4f15dc/3416970665860/package/82zp/"
+            f"publication-{index}.html"
+        )
+
+
+def digital2025():
+    for index in range(1, 287):
+        yield (
+            "https://indd.adobe.com/content/2/"
+            "846e6c08-8bce-4853-b2c6-2e0e33b2e213/3480934980441/package/7qep/"
             f"publication-{index}.html"
         )
 
@@ -71,7 +79,8 @@ def capture_deck(name: str, urls: Iterable[str]) -> None:
         finally:
             browser.close()
 
-capture_deck("digital2024", digital2024())
-capture_deck("digital2023", digital2023())
+#capture_deck("digital2023", digital2023())
+#capture_deck("digital2024", digital2024())
+capture_deck("digital2025", digital2025())
 
 # When done: pdfunite slide-*.pdf digital202x.pdf

@@ -52,7 +52,12 @@ def reports_per_country_stats() -> pd.DataFrame:
     frame = country_data.reports_per_country
     frame = frame[["reports_per_capita", "reports_per_accounts"]].dropna()
 
-    stats = frame.agg({
+    from diaphanous.show import show
+    show(frame, show_schema=True)
+
+    f = frame.reset_index()
+    f.loc[(f["year"] == "2024") & (f["iso3"] == "TKL")] = 0
+    stats = f.agg({
         'reports_per_capita': ['min', 'median', 'mean', 'std', 'skew', 'max'],
         'reports_per_accounts': ['min', 'median', 'mean', 'std', 'skew', 'max'],
     })

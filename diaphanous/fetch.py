@@ -112,7 +112,7 @@ IDENT = [
 def fetch_populations(
     path: str | Path,
     start: int = 2019,
-    end: int = 2023,
+    end: int = 2024,
     batch_size: int = 10,
 ) -> None:
     """

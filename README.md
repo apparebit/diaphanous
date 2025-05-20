@@ -59,9 +59,10 @@ The [CyberTipline reports per year](data/ocse-reports-per-year.csv) dataset
 captures the number of reports NCMEC received on its CyberTipline since
 inception in March 1998, largely based on the table included in Appendix A of
 its
-[2022](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf)
+[2022](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf),
+[2023](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency-CY-2023-Report.pdf),
 and
-[2023](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency-CY-2023-Report.pdf)
+[2024](https://www.missingkids.org/content/dam/missingkids/pdfs/cybertiplinedata2024/OJJDP-NCMEC-Transparency-CY-2024.pdf)
 transparency reports to the Office for Juvenile Justice and Delinquency
 Prevention at the Department of Justice.
 
@@ -95,9 +96,10 @@ NCMEC received by:
 Labels for the uniqueness classification use "unique" for precisely hashed
 attachments and "similar" for perceptually hashed ones. The dataset combines
 several tables from NCMEC's
-[2022](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf)
+[2022](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf),
+[2023](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency-CY-2023-Report.pdf),
 and
-[2023](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency-CY-2023-Report.pdf)
+[2024](https://www.missingkids.org/content/dam/missingkids/pdfs/cybertiplinedata2024/OJJDP-NCMEC-Transparency-CY-2024.pdf)
 transparency reports to the Office for Juvenile Justice and Delinquency
 Prevention at the Department of Justice.
 
@@ -208,8 +210,8 @@ NCMEC's per-country breakdown of CyberTipline reports for
 [2020](https://www.missingkids.org/content/dam/missingkids/pdfs/2020-reports-by-country.pdf),
 [2021](https://www.missingkids.org/content/dam/missingkids/pdfs/2021-reports-by-country.pdf),
 [2022](https://www.missingkids.org/content/dam/missingkids/pdfs/2022-reports-by-country.pdf),
-and
-[2023](https://www.missingkids.org/content/dam/missingkids/pdfs/2023-reports-by-country.pdf)
+[2023](https://www.missingkids.org/content/dam/missingkids/pdfs/2023-reports-by-country.pdf),
+and [2024](https://ncmec.org/content/dam/missingkids/pdfs/cybertiplinedata2024/2024-reports-by-country.pdf)
 in machine-readable form. The CSV table is mostly straightforward: Its first two
 columns comprise the country name and ISO three-letter code, followed by a
 column per year from 2019 through 2022.
@@ -245,6 +247,8 @@ following data:
     Report](https://datareportal.com/reports/digital-2023-local-country-headlines)
       * [We Are Social & Meltwater's Digital 2024 Local Country Headlines
     Report](https://datareportal.com/reports/digital-2024-local-country-headlines)
+      * [We Are Social & Meltwater's Digital 2025 Local Country Headlines
+    Report](https://datareportal.com/reports/digital-2025-local-country-headlines)
 
     By dividing the reports per capita by social accounts per capita, we can
     determine per-country reports per social accounts, i.e., report counts
