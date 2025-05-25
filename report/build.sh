@@ -26,8 +26,14 @@ log() {
     print -u 2 "${STYLE}$1: $2${RESET}"
 }
 
+FIGURES=(
+    account-countries-2023 account-countries
+    capita-countries
+    comparable-reports meta platforms reports-best
+)
+
 prepare_figures() {
-    for name in meta reports reports-best-fit platforms countries continents flow share comparable-reports; do
+    for name in $FIGURES; do
         rsvg-convert -f pdf -o "figure-${name}.pdf" "../figure/${name}.svg"
     done
 }
@@ -53,6 +59,15 @@ check_latex() {
 
     if [[ -n $warnings ]]; then
         log ERROR "Please fix the following LaTeX warnings:\n$warnings"
+        exit 1
+    fi
+
+    local errors=$(
+        grep -e '^! LaTeX Error:' "$1.log" |
+        sed -e 's/\\/\\\\/g')
+
+    if [[ -n $errors ]]; then
+        log ERROR "Please fix the following LaTeX errors:\n$errors"
         exit 1
     fi
 }
