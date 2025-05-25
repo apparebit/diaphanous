@@ -241,6 +241,7 @@ def csam_reports(ncmec: pd.DataFrame) -> pd.DataFrame:
         .assign(Threads=ncmec['Threads'])
         .assign(WhatsApp=ncmec['WhatsApp'])
         .assign(**{'% Meta': lambda df: df['WhatsApp'] / df['Meta'] * 100})
+        .assign(**{'% prev': lambda df: df['WhatsApp'].pct_change() * 100})
     )
 
 
