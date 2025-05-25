@@ -29,6 +29,7 @@ PACKAGES = (
     "patchwork",
     "purrr",
     "scales",
+    "segmented",
     "svglite",
     "this.path",
     "tidyr",

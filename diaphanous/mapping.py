@@ -14,7 +14,9 @@ def create_map(
     # a negative number results in as many equal-sized intervals as its
     # magnitude. Clever.
     discretization: int = 0,
-    with_panels: bool = True,
+    with_range: None | int = None,
+    with_legend: bool = False,
+    with_panels: bool = False,
     with_albers: bool = False,
     with_equal_earth: bool = False,
     with_animation: bool = False,  # Forced to False if with_panels
@@ -29,20 +31,22 @@ def create_map(
     if with_albers or with_equal_earth:
         with_antarctica = True
 
+    frame = (frame[frame['year'] != '2019'] if with_panels else frame).copy()
     data_column = 'reports_per_accounts' if with_accounts else 'reports_per_capita'
-
-    residual = 0
-    if with_panels:
-        residual = 1
-        frame = frame[frame['year'] != "2019"].copy()
-        frame[data_column] = frame[data_column] * 1000
+    frame[data_column] = frame[data_column] * 1000
+    residual = 1 if with_panels else 0
 
     # -------------------- Discretization
     # Prepare color data:
     if discretization == 0:
         color_column = data_column
-        # Extra 0.002 to offset top tick from label
-        color_range = (0, 0.112 * 1000 if with_accounts else 0.042 * 1000)
+        # We only need 80 and 40, but add a bit for spacing labels (currently none)
+        if with_range is not None:
+            color_range = 0, with_range
+        elif with_accounts:
+            color_range = 0, 84
+        else:
+            color_range = 0, 42
     else:
         bins = abs(int(discretization))
         color_column = 'color_data'
@@ -129,17 +133,17 @@ def create_map(
     #     coloraxis_colorbar_tickformat='.3f',
     # )
 
-    if with_panels:
+    if with_legend:
         if with_accounts:
             fig.update_layout(
-                coloraxis_colorbar_tickvals=[0, 20, 40, 60, 80, 100, 110],
+                coloraxis_colorbar_tickvals=[0, 20, 40, 60, 80, 100, 120],
                 coloraxis_colorbar_tickmode="array",
             )
 
         fig.update_layout(
             margin=dict(t=0, r=0, b=0, l=0),
             width=770,
-            height=360,
+            height=570 if with_panels else 360,
             # title=dict(
             #     text='<i>CSAM Reports per Capita, Country, and Year</i>',
             #     font_size=22,
@@ -148,7 +152,7 @@ def create_map(
             #     xref='paper',
             #     # pad=dict(t=20, b=20),
             # ),
-            coloraxis_colorbar_len=0.8,
+            coloraxis_colorbar_len=0.5 if with_panels else 0.8,
             coloraxis_colorbar_thickness=10,
             coloraxis_colorbar_ticklen=10,
             coloraxis_colorbar_tickwidth=5,

@@ -61,7 +61,11 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         ),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-    "Amino": None,
+    "Amino": frozen({
+        "features": frozen({
+            "social_media": True,
+        }),
+    }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Apple": frozen({
         "sources": ["https://www.apple.com/legal/transparency/"],
@@ -154,6 +158,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "social_media": True,
         }),
         "columns": (
+            "reports",
             "pieces (Child Nudity & Sexual Exploitation)",
             "pieces (Child Endangerment: Nudity and Physical Abuse)",
             "pieces (Child Endangerment: Sexual Exploitation)",
@@ -175,32 +180,32 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         }),
         "rows": (
             # fmt: off
-            {"2024 Q4": (None, 2_500_000, 6_200_000, None, 199_300, 378_700, None, 55_700, 108_400, None, 11_900, 134_000)},
-            {"2024 Q3": (None, 1_400_000, 7_100_000, None, 136_200, 722_000, None, 38_000, 174_400, None, 10_600, 106_000)},
-            {"2024 Q2": (None, 922_000, 9_700_000, None, 83_500, 410_000, None, 9_300, 90_000, None, 1_100, 52_300)},
-            {"2024 Q1": (None, 771_700, 14_400_000, None, 78_100, 380_900, None, 11_200, 123_900, None, 500, 73_400)},
-            {"2023 Q4": (None, 1_900_000, 16_200_000, None, 135_100, 1_000_000, None, 36_100, 317_500, None, 279_500, 1_200_000)},
-            {"2023 Q3": (None, 1_800_000, 16_900_000, None, 112_200, 266_600, None, 20_300, 87_800, None, 1_800, 116_600)},
-            {"2023 Q2": (None, 1_700_000, 7_200_000, None, 94_400, 146_800, None, 20_500, 38_700, None, 1_400, 41_300)},
-            {"2023 Q1": (None, 1_900_000, 8_900_000, None, 91_800, 104_500, None, 12_300, 20_800, None, 5_400, 17_200)},
-            {"2022 Q4": (None, 2_500_000, 25_100_000, None, 94_700, 23_000, None, 13_600, 2_600, None, 541_700, 75_800)},
-            {"2022 Q3": (None, 2_300_000, 30_100_000, None, 85_000, 414_200, None, 14_600, 4_000, None, 29_900, 205_300)},
-            {"2022 Q2": (None, 1_900_000, 20_400_000, None, 61_700, 404_000, None, 11_300, 1_400, None, 18_700, 15_900)},
-            {"2022 Q1": (None, 2_100_000, 16_500_000, None, 4_000, 800, None, 700, 100, None, 21_200, 687_800)},
-            {"2021 Q4": (None, 1_800_000, 19_800_000, None, 3_700, 800, None, 800, 70, None, 19_200, 180_500)},
-            {"2021 Q3": (None, 1_800_000, 21_200_000, None, 2_300, 700, None, 700, 30, None, 167_200, 2_800)},
-            {"2021 Q2": (None, 2_300_000, 25_600_000, None, 3_000, 1_000, None, 800, 50, None, 21_100, 2_800)},
-            {"2021 Q1": (5_000_000, None, None, 3_800, None, None, 300, None, None, 46_600, None, None)},
-            {"2020 Q4": (5_300_000, None, None, 4_600, None, None, 100, None, None, 3_200, None, None)},
-            {"2020 Q3": (12_400_000, None, None, 300, None, None, 0, None, None, 1_200, None, None)},
-            {"2020 Q2": (9_400_000, None, None, 40, None, None, 0, None, None, 50, None, None)},
-            {"2020 Q1": (8_500_000, None, None, 55_000, None, None, 3_700, None, None, 500, None, None)},
-            {"2019 Q4": (13_300_000, None, None, 72_900, None, None, 4_400, None, None, 2_500, None, None)},
-            {"2019 Q3": (11_400_000, None, None, 128_800, None, None, 13_300, None, None, 3_400, None, None)},
-            {"2019 Q2": (6_900_000, None, None, 145_000, None, None, 14_200, None, None, 1_500, None, None)},
-            {"2019 Q1": (5_800_000, None, None, 27_400, None, None, 800, None, None, 5_300, None, None)},
-            {"2018 Q4": (7_200_000, None, None, None, None, None, None, None, None, None, None, None)},
-            {"2018 Q3": (9_000_000, None, None, None, None, None, None, None, None, None, None, None)},
+            {"2024 Q4": (None, None, 2_500_000, 6_200_000, None, 199_300, 378_700, None, 55_700, 108_400, None, 11_900, 134_000)},
+            {"2024 Q3": (None, None, 1_400_000, 7_100_000, None, 136_200, 722_000, None, 38_000, 174_400, None, 10_600, 106_000)},
+            {"2024 Q2": (None, None, 922_000, 9_700_000, None, 83_500, 410_000, None, 9_300, 90_000, None, 1_100, 52_300)},
+            {"2024 Q1": (None, None, 771_700, 14_400_000, None, 78_100, 380_900, None, 11_200, 123_900, None, 500, 73_400)},
+            {"2023 Q4": (None, None, 1_900_000, 16_200_000, None, 135_100, 1_000_000, None, 36_100, 317_500, None, 279_500, 1_200_000)},
+            {"2023 Q3": (None, None, 1_800_000, 16_900_000, None, 112_200, 266_600, None, 20_300, 87_800, None, 1_800, 116_600)},
+            {"2023 Q2": (None, None, 1_700_000, 7_200_000, None, 94_400, 146_800, None, 20_500, 38_700, None, 1_400, 41_300)},
+            {"2023 Q1": (None, None, 1_900_000, 8_900_000, None, 91_800, 104_500, None, 12_300, 20_800, None, 5_400, 17_200)},
+            {"2022 Q4": (None, None, 2_500_000, 25_100_000, None, 94_700, 23_000, None, 13_600, 2_600, None, 541_700, 75_800)},
+            {"2022 Q3": (None, None, 2_300_000, 30_100_000, None, 85_000, 414_200, None, 14_600, 4_000, None, 29_900, 205_300)},
+            {"2022 Q2": (None, None, 1_900_000, 20_400_000, None, 61_700, 404_000, None, 11_300, 1_400, None, 18_700, 15_900)},
+            {"2022 Q1": (None, None, 2_100_000, 16_500_000, None, 4_000, 800, None, 700, 100, None, 21_200, 687_800)},
+            {"2021 Q4": (None, None, 1_800_000, 19_800_000, None, 3_700, 800, None, 800, 70, None, 19_200, 180_500)},
+            {"2021 Q3": (None, None, 1_800_000, 21_200_000, None, 2_300, 700, None, 700, 30, None, 167_200, 2_800)},
+            {"2021 Q2": (None, None, 2_300_000, 25_600_000, None, 3_000, 1_000, None, 800, 50, None, 21_100, 2_800)},
+            {"2021 Q1": (None, 5_000_000, None, None, 3_800, None, None, 300, None, None, 46_600, None, None)},
+            {"2020 Q4": (None, 5_300_000, None, None, 4_600, None, None, 100, None, None, 3_200, None, None)},
+            {"2020 Q3": (None, 12_400_000, None, None, 300, None, None, 0, None, None, 1_200, None, None)},
+            {"2020 Q2": (None, 9_400_000, None, None, 40, None, None, 0, None, None, 50, None, None)},
+            {"2020 Q1": (None, 8_500_000, None, None, 55_000, None, None, 3_700, None, None, 500, None, None)},
+            {"2019 Q4": (None, 13_300_000, None, None, 72_900, None, None, 4_400, None, None, 2_500, None, None)},
+            {"2019 Q3": (None, 11_400_000, None, None, 128_800, None, None, 13_300, None, None, 3_400, None, None)},
+            {"2019 Q2": (None, 6_900_000, None, None, 145_000, None, None, 14_200, None, None, 1_500, None, None)},
+            {"2019 Q1": (None, 5_800_000, None, None, 27_400, None, None, 800, None, None, 5_300, None, None)},
+            {"2018 Q4": (None, 7_200_000, None, None, None, None, None, None, None, None, None, None, None)},
+            {"2018 Q3": (None, 9_000_000, None, None, None, None, None, None, None, None, None, None, None)},
             # fmt: on
         ),
     }),
@@ -266,7 +271,11 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         ),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-    "Imgur": None,
+    "Imgur": frozen({
+        "features": frozen({
+            "social_media": True,
+        }),
+    }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Instagram": frozen({
         "sources": ("https://transparency.fb.com/sr/community-standards/",),
@@ -281,6 +290,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "social_media": True,
         }),
         "columns": (
+            "reports",
             "pieces (Child Nudity & Sexual Exploitation)",
             "pieces (Child Endangerment: Nudity and Physical Abuse)",
             "pieces (Child Endangerment: Sexual Exploitation)",
@@ -303,34 +313,38 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         }),
         "rows": (
             # fmt: off
-            {"2024 Q4": (None, 946_400, 2_000_000, None, 138_700, 67_000, None, 60_400, 16_300, None, 9_400, 4_900)},
-            {"2024 Q3": (None, 1_000_000, 5_600_000, None, 150_700, 122_400, None, 68_500, 25_600, None, 9_000, 6_700)},
-            {"2024 Q2": (None, 176_800, 2_800_000, None, 31_700, 71_100, None, 5_300, 21_600, None, 400, 11_500)},
-            {"2024 Q1": (None, 183_600, 2_700_000, None, 39_400, 68_600, None, 5_300, 26_900, None, 300, 11_100)},
-            {"2023 Q4": (None, 198_500, 2_100_000, None, 34_700, 79_100, None, 4_600, 26_500, None, 11_900, 86_800)},
-            {"2023 Q3": (None, 227_700, 1_600_000, None, 44_400, 38_200, None, 5_600, 14_300, None, 1_100, 3_100)},
-            {"2023 Q2": (None, 320_700, 1_700_000, None, 22_000, 22_800, None, 5_200, 6_300, None, 700, 700)},
-            {"2023 Q1": (None, 567_100, 8_700_000, None, 29_100, 20_600, None, 4_300, 2_100, None, 2_400, 1_600)},
-            {"2022 Q4": (None, 620_700, 9_700_000, None, 16_000, 5_800, None, 2_000, 100, None, 4_900, 2_400)},
-            {"2022 Q3": (None, 1_000_000, 1_300_000, None, 36_000, 3_500, None, 4_100, 200, None, 6_400, 7_100)},
-            {"2022 Q2": (None, 480_500, 1_200_000, None, 29_200, 4_100, None, 3_800, 200, None, 5_900, 400)},
-            {"2022 Q1": (None, 600_700, 1_500_000, None, 0, 0, None, 0, 20, None, 10_700, 154_200)},
-            {"2021 Q4": (None, 983_400, 2_600_000, None, 0, 0, None, 0, 0, None, 13_600, 1_600)},
-            {"2021 Q3": (None, 526_500, 1_600_000, None, 0, 0, None, 0, 0, None, 168_300, 300)},
-            {"2021 Q2": (None, 458_300, 1_400_000, None, 0, 0, None, 0, 0, None, 4_500, 300)},
-            {"2021 Q1": (812_400, None, None, 0, None, None, 0, None, None, 3_500, None, None)},
-            {"2020 Q4": (809_400, None, None, 0, None, None, 0, None, None, 2_900, None, None)},
-            {"2020 Q3": (1_000_000, None, None, 0, None, None, 10, None, None, 700, None, None)},
-            {"2020 Q2": (481_400, None, None, 0, None, None, 0, None, None, 30, None, None)},
-            {"2020 Q1": (1_000_000, None, None, 53_400, None, None, 16_100, None, None, 200, None, None)},
-            {"2019 Q4": (686_400, None, None, None, None, None, None, None, None, None, None, None)},
-            {"2019 Q3": (755_800, None, None, None, None, None, None, None, None, None, None, None)},
-            {"2019 Q2": (526_200, None, None, None, None, None, None, None, None, None, None, None)},
+            {"2024 Q4": (None, None, 946_400, 2_000_000, None, 138_700, 67_000, None, 60_400, 16_300, None, 9_400, 4_900)},
+            {"2024 Q3": (None, None, 1_000_000, 5_600_000, None, 150_700, 122_400, None, 68_500, 25_600, None, 9_000, 6_700)},
+            {"2024 Q2": (None, None, 176_800, 2_800_000, None, 31_700, 71_100, None, 5_300, 21_600, None, 400, 11_500)},
+            {"2024 Q1": (None, None, 183_600, 2_700_000, None, 39_400, 68_600, None, 5_300, 26_900, None, 300, 11_100)},
+            {"2023 Q4": (None, None, 198_500, 2_100_000, None, 34_700, 79_100, None, 4_600, 26_500, None, 11_900, 86_800)},
+            {"2023 Q3": (None, None, 227_700, 1_600_000, None, 44_400, 38_200, None, 5_600, 14_300, None, 1_100, 3_100)},
+            {"2023 Q2": (None, None, 320_700, 1_700_000, None, 22_000, 22_800, None, 5_200, 6_300, None, 700, 700)},
+            {"2023 Q1": (None, None, 567_100, 8_700_000, None, 29_100, 20_600, None, 4_300, 2_100, None, 2_400, 1_600)},
+            {"2022 Q4": (None, None, 620_700, 9_700_000, None, 16_000, 5_800, None, 2_000, 100, None, 4_900, 2_400)},
+            {"2022 Q3": (None, None, 1_000_000, 1_300_000, None, 36_000, 3_500, None, 4_100, 200, None, 6_400, 7_100)},
+            {"2022 Q2": (None, None, 480_500, 1_200_000, None, 29_200, 4_100, None, 3_800, 200, None, 5_900, 400)},
+            {"2022 Q1": (None, None, 600_700, 1_500_000, None, 0, 0, None, 0, 20, None, 10_700, 154_200)},
+            {"2021 Q4": (None, None, 983_400, 2_600_000, None, 0, 0, None, 0, 0, None, 13_600, 1_600)},
+            {"2021 Q3": (None, None, 526_500, 1_600_000, None, 0, 0, None, 0, 0, None, 168_300, 300)},
+            {"2021 Q2": (None, None, 458_300, 1_400_000, None, 0, 0, None, 0, 0, None, 4_500, 300)},
+            {"2021 Q1": (None, 812_400, None, None, 0, None, None, 0, None, None, 3_500, None, None)},
+            {"2020 Q4": (None, 809_400, None, None, 0, None, None, 0, None, None, 2_900, None, None)},
+            {"2020 Q3": (None, 1_000_000, None, None, 0, None, None, 10, None, None, 700, None, None)},
+            {"2020 Q2": (None, 481_400, None, None, 0, None, None, 0, None, None, 30, None, None)},
+            {"2020 Q1": (None, 1_000_000, None, None, 53_400, None, None, 16_100, None, None, 200, None, None)},
+            {"2019 Q4": (None, 686_400, None, None, None, None, None, None, None, None, None, None, None)},
+            {"2019 Q3": (None, 755_800, None, None, None, None, None, None, None, None, None, None, None)},
+            {"2019 Q2": (None, 526_200, None, None, None, None, None, None, None, None, None, None, None)},
             # fmt: on
         ),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-    "Kik": None,
+    "Kik": frozen({
+        "features": frozen({
+            "social_media": True,
+        }),
+    }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "LinkedIn": frozen({
         "sources": ("https://about.linkedin.com/transparency/community-report",),
@@ -375,12 +389,48 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "features": frozen({
             "social_media": True,
         }),
+        "sources": (
+            "https://transparency.meta.com/ncmec-q2-2023/",
+            "https://transparency.meta.com/integrity-reports-q3-2023/",
+            "https://transparency.meta.com/integrity-reports-q4-2023/",
+            "https://transparency.meta.com/integrity-reports-q1-2024",
+            "https://transparency.meta.com/integrity-reports-q2-2024",
+            "https://transparency.meta.com/integrity-reports-q3-2024",
+            "https://transparency.meta.com/integrity-reports-q4-2024",
+        ),
+        "columns": (
+            "reports",
+            "pieces (Child Nudity & Sexual Exploitation)",
+            "pieces (Child Endangerment: Nudity and Physical Abuse)",
+            "pieces (Child Endangerment: Sexual Exploitation)",
+            "appeals (Child Nudity & Sexual Exploitation)",
+            "appeals (Child Endangerment: Nudity and Physical Abuse)",
+            "appeals (Child Endangerment: Sexual Exploitation)",
+            "reversals (Child Nudity & Sexual Exploitation)",
+            "reversals (Child Endangerment: Nudity and Physical Abuse)",
+            "reversals (Child Endangerment: Sexual Exploitation)",
+            "reversals w/o appeal (Child Nudity & Sexual Exploitation)",
+            "reversals w/o appeal (Child Endangerment: Nudity and Physical Abuse)",
+            "reversals w/o appeal (Child Endangerment: Sexual Exploitation)",
+            #"proactive rate",  TODO!
+        ),
         "sums": frozen({
             "pieces": [
                 "pieces (Child Nudity & Sexual Exploitation)",
                 "pieces (Child Endangerment: Sexual Exploitation)",
             ],
         }),
+        "rows": (
+            # fmt: off
+            {"2024 Q4": (2_000_000, None, None, None, None, None, None, None, None, None, None, None, None)},
+            {"2024 Q3": (1_600_000, None, None, None, None, None, None, None, None, None, None, None, None)},
+            {"2024 Q2": (2_800_000, None, None, None, None, None, None, None, None, None, None, None, None)},
+            {"2024 Q1": (5_200_000, None, None, None, None, None, None, None, None, None, None, None, None)},
+            {"2023 Q4": (6_000_000, None, None, None, None, None, None, None, None, None, None, None, None)},
+            {"2023 Q3": (7_600_000, None, None, None, None, None, None, None, None, None, None, None, None)},
+            {"2023 Q2": (3_700_000, None, None, None, None, None, None, None, None, None, None, None, None)},
+            # fmt: on
+        ),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Microsoft": frozen({
@@ -699,7 +749,11 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         ),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-    "Telegram": None,
+    "Telegram": frozen({
+        "features": frozen({
+            "social_media": True,
+        }),
+    }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Threads": frozen({
         "features": frozen({
@@ -893,7 +947,11 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         }),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-    "Wikimedia": None,
+    "Wikimedia": frozen({
+        "features": frozen({
+            "social_media": False,
+        }),
+    }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Wordpress": frozen({
         "sources": ("https://transparency.automattic.com",),

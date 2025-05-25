@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from functools import partial
+import math
 from pathlib import Path
 import sys
 import traceback
@@ -43,7 +43,7 @@ def just_map() -> None:
     fig.write_image(f'./figure/reports-per-capita.svg')
 
 
-def reports_per_country_stats() -> pd.DataFrame:
+def reports_per_country_stats() -> tuple[pd.DataFrame, pd.DataFrame]:
     # ----------------------------------------------------------------------------------
     country_data = ingest_reports_per_country('../data')
 
@@ -61,7 +61,6 @@ def reports_per_country_stats() -> pd.DataFrame:
         'reports_per_capita': ['min', 'median', 'mean', 'std', 'skew', 'max'],
         'reports_per_accounts': ['min', 'median', 'mean', 'std', 'skew', 'max'],
     })
-
     stats.insert(
         1,
         "multiplier",
@@ -70,10 +69,12 @@ def reports_per_country_stats() -> pd.DataFrame:
 
     show(f'<h2>Reports per Capita and Accounts Statistics</h2>')
     show(stats, caption='Range of Reports per Capita/Accounts')
-    return frame
+    return stats, frame
 
 
-def reports_per_country(section: int = -1) -> None:
+def reports_per_country(
+    section: int = -1, capita_mean: float = math.nan, accounts_mean: float = math.nan
+) -> None:
     # ----------------------------------------------------------------------------------
 
     def secnum(subsection: int) -> str:
@@ -119,7 +120,7 @@ def reports_per_country(section: int = -1) -> None:
     )
     show(rpc_range, caption='Range of Reports per Capita', margin_bottom=0)
 
-    top30_arab_league = {}
+    arab_league = {}
 
     for year, year_data in reports_per_country_year(country_data):
         rank = year_data.index[year_data['iso3'] == '\u262a'][0]
@@ -136,7 +137,10 @@ def reports_per_country(section: int = -1) -> None:
         )
 
         in_arab_league = top['arab_league'].sum()
-        top30_arab_league[year] = in_arab_league
+        if year != "2019":
+            arab_league.setdefault("year", []).append(year)
+            arab_league.setdefault("capita", []).append(in_arab_league)
+
         if year == '2022':
             assert top.tail(10)['arab_league'].sum() == 0
 
@@ -148,22 +152,34 @@ def reports_per_country(section: int = -1) -> None:
             """
         )
 
+        show(
+            f"""
+            {len(year_data[year_data["reports_per_capita"] <= capita_mean])} out of
+            {len(year_data)} countries
+            ({len(year_data[year_data["reports_per_capita"] <= capita_mean])
+               / len(year_data) * 100:.1f}%)
+            have a rate that is
+            at most {capita_mean * 1000:.1f}
+            reports per 1,000 capita.<br>
+
+            {len(year_data[year_data["reports_per_capita"] <= 0.008])} out of
+            {len(year_data)} countries
+            ({len(year_data[year_data["reports_per_capita"] <= 0.008])
+               / len(year_data) * 100:.1f}%)
+            have a rate that is at most 8
+            reports per 1,000 capita.<br>
+
+            {len(year_data[year_data["reports_per_capita"] <= 0.016])} out of
+            {len(year_data)} countries
+            ({len(year_data[year_data["reports_per_capita"] <= 0.016])
+               / len(year_data) * 100:.1f}%)
+            have a rate that is at most 16
+            reports per 1,000 capita.
+            """
+        )
+
         if year != YEAR_LABELS[-1]:
             show('<hr>')
-
-    # show(
-    #     """
-    #     <p>Member countries of the Arab League feature unusually prominently
-    #     when ranking countries by CSAM reports per capita. Notably, either Libya
-    #     or the United Arab Emirates is the worst ranked country. The substantial
-    #     differences between the two countries would seem to exclude wealth,
-    #     political stability, and effective policing as likely causes and instead
-    #     point to some shared cultural trait as likely reason.</p>
-
-    #     <p>Note that such a shared cultural trait may be an actual trait or a
-    #     perceived trait.</p>
-    #     """
-    # )
 
     # ----------------------------------------------------------------------------------
     show(f'<h2>{secnum(3)}Countries Ranked by CSAM Reports per Social Accounts</h2>')
@@ -175,6 +191,12 @@ def reports_per_country(section: int = -1) -> None:
     for year, year_data in reports_per_country_year(
         country_data, column='reports_per_accounts'
     ):
+        if year == "2019":
+            continue
+
+        rpa = year_data['reports_per_accounts']
+        year_data['pct_rate_diff'] = (rpa - rpa.shift(1)) / rpa
+
         top = year_data.head(30)
         # rank = top.index[top['iso3'] == '\u262a'][0]
         show(
@@ -187,22 +209,55 @@ def reports_per_country(section: int = -1) -> None:
         )
 
         in_arab_league = top['arab_league'].sum()
+        arab_league.setdefault("accounts", []).append(in_arab_league)
+        index = arab_league["year"].index(year)
         show(
             f"""
             {in_arab_league} out of 30 countries with the most CSAM reports per
-            accounts in {year} compared to {top30_arab_league[year]} for reports
+            accounts in {year} compared to {arab_league["capita"][index]} for reports
             per capita are members of the Arab League.<br><br>
+            """
+        )
+
+        show(
+            f"""
+            {len(year_data[year_data["reports_per_accounts"] <= accounts_mean])} out of
+            {len(year_data)} countries
+            ({len(year_data[year_data["reports_per_accounts"] <= accounts_mean])
+              / len(year_data)*100:.1f}%)
+            have a rate that is
+            at most {accounts_mean * 1000:.1f}
+            reports per 1,000 social media accounts.<br>
+
+            {len(year_data[year_data["reports_per_accounts"] <= 0.008])} out of
+            {len(year_data)} countries
+            ({len(year_data[year_data["reports_per_accounts"] <= 0.008])
+              / len(year_data)*100:.1f}%)
+            have a rate that is at most 8
+            reports per 1,000 social media accounts.<br>
+
+            {len(year_data[year_data["reports_per_accounts"] <= 0.016])} out of
+            {len(year_data)} countries
+            ({len(year_data[year_data["reports_per_accounts"] <= 0.016])
+              / len(year_data)*100:.1f}%)
+            have a rate that is at most 16
+            reports per 1,000 social media accounts.
             """
         )
 
         if year != YEAR_LABELS[-1]:
             show('<hr>')
 
+    show(pd.DataFrame(arab_league).describe())
+
     # ----------------------------------------------------------------------------------
     show(f'<h2>{secnum(4)}Mapping CSAM Reports per Capita and Year</h2>')
     map_data = country_data.reports_per_country.copy()
     map_data = map_data.reset_index()
     show(map_data, show_schema=True, caption='map_data')
+
+    # Exclude extreme outlier for 2024
+    map_data = map_data[(map_data['iso3'] != 'TKL') | (map_data['year'] != "2024")]
 
     # The text for hover labels (without clunky hover data)
     map_data['labels'] = (
@@ -226,12 +281,25 @@ def reports_per_country(section: int = -1) -> None:
     fig = create_map(
         map_data,
         discretization=0,
+        with_legend=True,
         with_panels=True,
         with_antarctica=True,
         with_equal_earth=True,
     )
     show_map(fig)
     fig.write_image(f'../figure/capita-countries.svg')
+
+    for year in YEAR_LABELS:
+        show(f"<h2>{year}</h2>")
+        fig = create_map(
+            map_data[map_data["year"] == year],
+            discretization=0,
+            with_legend=True,
+            with_antarctica=True,
+            with_equal_earth=True,
+        )
+        show_map(fig)
+        fig.write_image(f'../figure/capita-countries-{year}.svg')
 
     # ----------------------------------------------------------------------------------
     show(f'<h2>{secnum(5)}Mapping CSAM Reports per Social Accounts and Year</h2>')
@@ -263,6 +331,7 @@ def reports_per_country(section: int = -1) -> None:
     fig = create_map(
         map_data,
         discretization=0,
+        with_legend=True,
         with_panels=True,
         with_antarctica=True,
         with_accounts=True,
@@ -270,6 +339,20 @@ def reports_per_country(section: int = -1) -> None:
     )
     show_map(fig)
     fig.write_image(f'../figure/account-countries.svg')
+
+    for year in YEAR_LABELS[1:]:
+        show(f"<h2>{year}</h2>")
+        fig = create_map(
+            map_data[map_data["year"] == year],
+            discretization=0,
+            with_legend=True,
+            with_antarctica=True,
+            with_equal_earth=True,
+            with_accounts=True,
+            with_range=120 if year == "2021" else None
+        )
+        show_map(fig)
+        fig.write_image(f'../figure/account-countries-{year}.svg')
 
 
 # ======================================================================================
