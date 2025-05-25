@@ -53,7 +53,11 @@
             {"2020": [2235, null, null, null, null]}
         ]
     },
-    "Amino": null,
+    "Amino": {
+        "features": {
+            "social_media": true
+        }
+    },
     "Apple": {
         "sources": ["https://www.apple.com/legal/transparency/"],
         "comments": ["Transparency reports cover government requests only."],
@@ -143,6 +147,7 @@
             "social_media": true
         },
         "columns": [
+            "reports",
             "pieces (Child Nudity & Sexual Exploitation)",
             "pieces (Child Endangerment: Nudity and Physical Abuse)",
             "pieces (Child Endangerment: Sexual Exploitation)",
@@ -163,32 +168,32 @@
             ]
         },
         "rows": [
-            {"2024 Q4": [null, 2500000, 6200000, null, 199300, 378700, null, 55700, 108400, null, 11900, 134000]},
-            {"2024 Q3": [null, 1400000, 7100000, null, 136200, 722000, null, 38000, 174400, null, 10600, 106000]},
-            {"2024 Q2": [null, 922000, 9700000, null, 83500, 410000, null, 9300, 90000, null, 1100, 52300]},
-            {"2024 Q1": [null, 771700, 14400000, null, 78100, 380900, null, 11200, 123900, null, 500, 73400]},
-            {"2023 Q4": [null, 1900000, 16200000, null, 135100, 1000000, null, 36100, 317500, null, 279500, 1200000]},
-            {"2023 Q3": [null, 1800000, 16900000, null, 112200, 266600, null, 20300, 87800, null, 1800, 116600]},
-            {"2023 Q2": [null, 1700000, 7200000, null, 94400, 146800, null, 20500, 38700, null, 1400, 41300]},
-            {"2023 Q1": [null, 1900000, 8900000, null, 91800, 104500, null, 12300, 20800, null, 5400, 17200]},
-            {"2022 Q4": [null, 2500000, 25100000, null, 94700, 23000, null, 13600, 2600, null, 541700, 75800]},
-            {"2022 Q3": [null, 2300000, 30100000, null, 85000, 414200, null, 14600, 4000, null, 29900, 205300]},
-            {"2022 Q2": [null, 1900000, 20400000, null, 61700, 404000, null, 11300, 1400, null, 18700, 15900]},
-            {"2022 Q1": [null, 2100000, 16500000, null, 4000, 800, null, 700, 100, null, 21200, 687800]},
-            {"2021 Q4": [null, 1800000, 19800000, null, 3700, 800, null, 800, 70, null, 19200, 180500]},
-            {"2021 Q3": [null, 1800000, 21200000, null, 2300, 700, null, 700, 30, null, 167200, 2800]},
-            {"2021 Q2": [null, 2300000, 25600000, null, 3000, 1000, null, 800, 50, null, 21100, 2800]},
-            {"2021 Q1": [5000000, null, null, 3800, null, null, 300, null, null, 46600, null, null]},
-            {"2020 Q4": [5300000, null, null, 4600, null, null, 100, null, null, 3200, null, null]},
-            {"2020 Q3": [12400000, null, null, 300, null, null, 0, null, null, 1200, null, null]},
-            {"2020 Q2": [9400000, null, null, 40, null, null, 0, null, null, 50, null, null]},
-            {"2020 Q1": [8500000, null, null, 55000, null, null, 3700, null, null, 500, null, null]},
-            {"2019 Q4": [13300000, null, null, 72900, null, null, 4400, null, null, 2500, null, null]},
-            {"2019 Q3": [11400000, null, null, 128800, null, null, 13300, null, null, 3400, null, null]},
-            {"2019 Q2": [6900000, null, null, 145000, null, null, 14200, null, null, 1500, null, null]},
-            {"2019 Q1": [5800000, null, null, 27400, null, null, 800, null, null, 5300, null, null]},
-            {"2018 Q4": [7200000, null, null, null, null, null, null, null, null, null, null, null]},
-            {"2018 Q3": [9000000, null, null, null, null, null, null, null, null, null, null, null]}
+            {"2024 Q4": [null, null, 2500000, 6200000, null, 199300, 378700, null, 55700, 108400, null, 11900, 134000]},
+            {"2024 Q3": [null, null, 1400000, 7100000, null, 136200, 722000, null, 38000, 174400, null, 10600, 106000]},
+            {"2024 Q2": [null, null, 922000, 9700000, null, 83500, 410000, null, 9300, 90000, null, 1100, 52300]},
+            {"2024 Q1": [null, null, 771700, 14400000, null, 78100, 380900, null, 11200, 123900, null, 500, 73400]},
+            {"2023 Q4": [null, null, 1900000, 16200000, null, 135100, 1000000, null, 36100, 317500, null, 279500, 1200000]},
+            {"2023 Q3": [null, null, 1800000, 16900000, null, 112200, 266600, null, 20300, 87800, null, 1800, 116600]},
+            {"2023 Q2": [null, null, 1700000, 7200000, null, 94400, 146800, null, 20500, 38700, null, 1400, 41300]},
+            {"2023 Q1": [null, null, 1900000, 8900000, null, 91800, 104500, null, 12300, 20800, null, 5400, 17200]},
+            {"2022 Q4": [null, null, 2500000, 25100000, null, 94700, 23000, null, 13600, 2600, null, 541700, 75800]},
+            {"2022 Q3": [null, null, 2300000, 30100000, null, 85000, 414200, null, 14600, 4000, null, 29900, 205300]},
+            {"2022 Q2": [null, null, 1900000, 20400000, null, 61700, 404000, null, 11300, 1400, null, 18700, 15900]},
+            {"2022 Q1": [null, null, 2100000, 16500000, null, 4000, 800, null, 700, 100, null, 21200, 687800]},
+            {"2021 Q4": [null, null, 1800000, 19800000, null, 3700, 800, null, 800, 70, null, 19200, 180500]},
+            {"2021 Q3": [null, null, 1800000, 21200000, null, 2300, 700, null, 700, 30, null, 167200, 2800]},
+            {"2021 Q2": [null, null, 2300000, 25600000, null, 3000, 1000, null, 800, 50, null, 21100, 2800]},
+            {"2021 Q1": [null, 5000000, null, null, 3800, null, null, 300, null, null, 46600, null, null]},
+            {"2020 Q4": [null, 5300000, null, null, 4600, null, null, 100, null, null, 3200, null, null]},
+            {"2020 Q3": [null, 12400000, null, null, 300, null, null, 0, null, null, 1200, null, null]},
+            {"2020 Q2": [null, 9400000, null, null, 40, null, null, 0, null, null, 50, null, null]},
+            {"2020 Q1": [null, 8500000, null, null, 55000, null, null, 3700, null, null, 500, null, null]},
+            {"2019 Q4": [null, 13300000, null, null, 72900, null, null, 4400, null, null, 2500, null, null]},
+            {"2019 Q3": [null, 11400000, null, null, 128800, null, null, 13300, null, null, 3400, null, null]},
+            {"2019 Q2": [null, 6900000, null, null, 145000, null, null, 14200, null, null, 1500, null, null]},
+            {"2019 Q1": [null, 5800000, null, null, 27400, null, null, 800, null, null, 5300, null, null]},
+            {"2018 Q4": [null, 7200000, null, null, null, null, null, null, null, null, null, null, null]},
+            {"2018 Q3": [null, 9000000, null, null, null, null, null, null, null, null, null, null, null]}
         ]
     },
     "GitHub": {
@@ -249,7 +254,11 @@
             {"2020 H1": [1461582, 112595, 77940, 331865]}
         ]
     },
-    "Imgur": null,
+    "Imgur": {
+        "features": {
+            "social_media": true
+        }
+    },
     "Instagram": {
         "sources": ["https://transparency.fb.com/sr/community-standards/"],
         "features": {
@@ -266,6 +275,7 @@
             "social_media": true
         },
         "columns": [
+            "reports",
             "pieces (Child Nudity & Sexual Exploitation)",
             "pieces (Child Endangerment: Nudity and Physical Abuse)",
             "pieces (Child Endangerment: Sexual Exploitation)",
@@ -286,32 +296,36 @@
             ]
         },
         "rows": [
-            {"2024 Q4": [null, 946400, 2000000, null, 138700, 67000, null, 60400, 16300, null, 9400, 4900]},
-            {"2024 Q3": [null, 1000000, 5600000, null, 150700, 122400, null, 68500, 25600, null, 9000, 6700]},
-            {"2024 Q2": [null, 176800, 2800000, null, 31700, 71100, null, 5300, 21600, null, 400, 11500]},
-            {"2024 Q1": [null, 183600, 2700000, null, 39400, 68600, null, 5300, 26900, null, 300, 11100]},
-            {"2023 Q4": [null, 198500, 2100000, null, 34700, 79100, null, 4600, 26500, null, 11900, 86800]},
-            {"2023 Q3": [null, 227700, 1600000, null, 44400, 38200, null, 5600, 14300, null, 1100, 3100]},
-            {"2023 Q2": [null, 320700, 1700000, null, 22000, 22800, null, 5200, 6300, null, 700, 700]},
-            {"2023 Q1": [null, 567100, 8700000, null, 29100, 20600, null, 4300, 2100, null, 2400, 1600]},
-            {"2022 Q4": [null, 620700, 9700000, null, 16000, 5800, null, 2000, 100, null, 4900, 2400]},
-            {"2022 Q3": [null, 1000000, 1300000, null, 36000, 3500, null, 4100, 200, null, 6400, 7100]},
-            {"2022 Q2": [null, 480500, 1200000, null, 29200, 4100, null, 3800, 200, null, 5900, 400]},
-            {"2022 Q1": [null, 600700, 1500000, null, 0, 0, null, 0, 20, null, 10700, 154200]},
-            {"2021 Q4": [null, 983400, 2600000, null, 0, 0, null, 0, 0, null, 13600, 1600]},
-            {"2021 Q3": [null, 526500, 1600000, null, 0, 0, null, 0, 0, null, 168300, 300]},
-            {"2021 Q2": [null, 458300, 1400000, null, 0, 0, null, 0, 0, null, 4500, 300]},
-            {"2021 Q1": [812400, null, null, 0, null, null, 0, null, null, 3500, null, null]},
-            {"2020 Q4": [809400, null, null, 0, null, null, 0, null, null, 2900, null, null]},
-            {"2020 Q3": [1000000, null, null, 0, null, null, 10, null, null, 700, null, null]},
-            {"2020 Q2": [481400, null, null, 0, null, null, 0, null, null, 30, null, null]},
-            {"2020 Q1": [1000000, null, null, 53400, null, null, 16100, null, null, 200, null, null]},
-            {"2019 Q4": [686400, null, null, null, null, null, null, null, null, null, null, null]},
-            {"2019 Q3": [755800, null, null, null, null, null, null, null, null, null, null, null]},
-            {"2019 Q2": [526200, null, null, null, null, null, null, null, null, null, null, null]}
+            {"2024 Q4": [null, null, 946400, 2000000, null, 138700, 67000, null, 60400, 16300, null, 9400, 4900]},
+            {"2024 Q3": [null, null, 1000000, 5600000, null, 150700, 122400, null, 68500, 25600, null, 9000, 6700]},
+            {"2024 Q2": [null, null, 176800, 2800000, null, 31700, 71100, null, 5300, 21600, null, 400, 11500]},
+            {"2024 Q1": [null, null, 183600, 2700000, null, 39400, 68600, null, 5300, 26900, null, 300, 11100]},
+            {"2023 Q4": [null, null, 198500, 2100000, null, 34700, 79100, null, 4600, 26500, null, 11900, 86800]},
+            {"2023 Q3": [null, null, 227700, 1600000, null, 44400, 38200, null, 5600, 14300, null, 1100, 3100]},
+            {"2023 Q2": [null, null, 320700, 1700000, null, 22000, 22800, null, 5200, 6300, null, 700, 700]},
+            {"2023 Q1": [null, null, 567100, 8700000, null, 29100, 20600, null, 4300, 2100, null, 2400, 1600]},
+            {"2022 Q4": [null, null, 620700, 9700000, null, 16000, 5800, null, 2000, 100, null, 4900, 2400]},
+            {"2022 Q3": [null, null, 1000000, 1300000, null, 36000, 3500, null, 4100, 200, null, 6400, 7100]},
+            {"2022 Q2": [null, null, 480500, 1200000, null, 29200, 4100, null, 3800, 200, null, 5900, 400]},
+            {"2022 Q1": [null, null, 600700, 1500000, null, 0, 0, null, 0, 20, null, 10700, 154200]},
+            {"2021 Q4": [null, null, 983400, 2600000, null, 0, 0, null, 0, 0, null, 13600, 1600]},
+            {"2021 Q3": [null, null, 526500, 1600000, null, 0, 0, null, 0, 0, null, 168300, 300]},
+            {"2021 Q2": [null, null, 458300, 1400000, null, 0, 0, null, 0, 0, null, 4500, 300]},
+            {"2021 Q1": [null, 812400, null, null, 0, null, null, 0, null, null, 3500, null, null]},
+            {"2020 Q4": [null, 809400, null, null, 0, null, null, 0, null, null, 2900, null, null]},
+            {"2020 Q3": [null, 1000000, null, null, 0, null, null, 10, null, null, 700, null, null]},
+            {"2020 Q2": [null, 481400, null, null, 0, null, null, 0, null, null, 30, null, null]},
+            {"2020 Q1": [null, 1000000, null, null, 53400, null, null, 16100, null, null, 200, null, null]},
+            {"2019 Q4": [null, 686400, null, null, null, null, null, null, null, null, null, null, null]},
+            {"2019 Q3": [null, 755800, null, null, null, null, null, null, null, null, null, null, null]},
+            {"2019 Q2": [null, 526200, null, null, null, null, null, null, null, null, null, null, null]}
         ]
     },
-    "Kik": null,
+    "Kik": {
+        "features": {
+            "social_media": true
+        }
+    },
     "LinkedIn": {
         "sources": ["https://about.linkedin.com/transparency/community-report"],
         "features": {
@@ -351,12 +365,45 @@
         "features": {
             "social_media": true
         },
+        "sources": [
+            "https://transparency.meta.com/ncmec-q2-2023/",
+            "https://transparency.meta.com/integrity-reports-q3-2023/",
+            "https://transparency.meta.com/integrity-reports-q4-2023/",
+            "https://transparency.meta.com/integrity-reports-q1-2024",
+            "https://transparency.meta.com/integrity-reports-q2-2024",
+            "https://transparency.meta.com/integrity-reports-q3-2024",
+            "https://transparency.meta.com/integrity-reports-q4-2024"
+        ],
+        "columns": [
+            "reports",
+            "pieces (Child Nudity & Sexual Exploitation)",
+            "pieces (Child Endangerment: Nudity and Physical Abuse)",
+            "pieces (Child Endangerment: Sexual Exploitation)",
+            "appeals (Child Nudity & Sexual Exploitation)",
+            "appeals (Child Endangerment: Nudity and Physical Abuse)",
+            "appeals (Child Endangerment: Sexual Exploitation)",
+            "reversals (Child Nudity & Sexual Exploitation)",
+            "reversals (Child Endangerment: Nudity and Physical Abuse)",
+            "reversals (Child Endangerment: Sexual Exploitation)",
+            "reversals w/o appeal (Child Nudity & Sexual Exploitation)",
+            "reversals w/o appeal (Child Endangerment: Nudity and Physical Abuse)",
+            "reversals w/o appeal (Child Endangerment: Sexual Exploitation)"
+        ],
         "sums": {
             "pieces": [
                 "pieces (Child Nudity & Sexual Exploitation)",
                 "pieces (Child Endangerment: Sexual Exploitation)"
             ]
-        }
+        },
+        "rows": [
+            {"2024 Q4": [2000000, null, null, null, null, null, null, null, null, null, null, null, null]},
+            {"2024 Q3": [1600000, null, null, null, null, null, null, null, null, null, null, null, null]},
+            {"2024 Q2": [2800000, null, null, null, null, null, null, null, null, null, null, null, null]},
+            {"2024 Q1": [5200000, null, null, null, null, null, null, null, null, null, null, null, null]},
+            {"2023 Q4": [6000000, null, null, null, null, null, null, null, null, null, null, null, null]},
+            {"2023 Q3": [7600000, null, null, null, null, null, null, null, null, null, null, null, null]},
+            {"2023 Q2": [3700000, null, null, null, null, null, null, null, null, null, null, null, null]}
+        ]
     },
     "Microsoft": {
         "sources": ["https://www.microsoft.com/en-us/corporate-responsibility/digital-safety-content-report"],
@@ -660,7 +707,11 @@
             "* total accounts enforced EU 366,609; NorthAm 730,147; RestWorld 258,407"
         ]
     },
-    "Telegram": null,
+    "Telegram": {
+        "features": {
+            "social_media": true
+        }
+    },
     "Threads": {
         "features": {
             "social_media": true
@@ -853,7 +904,11 @@
             "social_media": true
         }
     },
-    "Wikimedia": null,
+    "Wikimedia": {
+        "features": {
+            "social_media": false
+        }
+    },
     "Wordpress": {
         "sources": ["https://transparency.automattic.com"],
         "features": {
