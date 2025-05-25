@@ -516,8 +516,12 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Pinterest": frozen({
         "sources": (
-            "https://policy.pinterest.com/en/transparency-report",
             "https://help.pinterest.com/en/guide/transparency-report-archive",
+            "https://policy.pinterest.com/en/transparency-report-h1-2022",
+            "https://policy.pinterest.com/en/transparency-report-h2-2022",
+            "https://policy.pinterest.com/en/transparency-report-h1-2023",
+            "https://policy.pinterest.com/en/transparency-report-h2-2023",
+            "https://policy.pinterest.com/en/transparency-report",
         ),
         "features": frozen({
             "data": None,
@@ -893,6 +897,11 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "sources": (
             "https://transparency.twitter.com",
             "https://blog.twitter.com/en_us/topics/company/2023/an-update-on-twitter-transparency-reporting",
+            "https://transparency.x.com/content/dam/transparency-twitter/download/2019-jul-dec/Twitter_Transparency_Report-16_Jul-Dec-2019.zip",
+            "https://transparency.x.com/content/dam/transparency-twitter/download/2020-jan-jun/Twitter_Transparency_Report-17_Jan-Jun-2020.zip",
+            "https://transparency.x.com/content/dam/transparency-twitter/download/2020-jul-dec/Twitter_Transparency_Report-18_Jul-Dec-2020.zip",
+            "https://transparency.x.com/content/dam/transparency-twitter/download/2021-jan-jun/Twitter_Transparency_Report-19_Jan-Jun-2021.zip",
+            "https://transparency.x.com/content/dam/transparency-twitter/download/2021-jul-dec/Twitter-Transparency-Report-20-Jul-Dec-2021.zip",
         ),
         "features": frozen({
             "data": None,
@@ -963,8 +972,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     "X": frozen({
         "aka": ("Twitter",),
         "sources": (
-            "https://transparency.x.com/en/reports/global-reports/2025-transparency-report#child-sexual-exploitation",
             "https://transparency.x.com/content/dam/transparency-twitter/2024/x-global-transparency-report-h1.pdf",
+            "https://transparency.x.com/en/reports/global-reports/2025-transparency-report",
         ),
         "features": frozen({
             "data": None,
@@ -1039,8 +1048,12 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "https://www.missingkids.org/content/dam/missingkids/pdfs/2021-reports-by-esp.pdf",
             "https://www.missingkids.org/content/dam/missingkids/pdfs/2022-reports-by-esp.pdf",
             "https://www.missingkids.org/content/dam/missingkids/pdfs/2023-reports-by-esp.pdf",
+            "https://www.missingkids.org/content/dam/missingkids/pdfs/cybertiplinedata2024/2024-reports-by-esp.pdf",
             "https://www.missingkids.org/content/dam/missingkids/pdfs/2021-notifications-by-ncmec-per-esp.pdf",
             "https://www.missingkids.org/content/dam/missingkids/pdfs/2022-notifications-by-ncmec-per-esp.pdf",
+            "https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf",
+            "https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency-CY-2023-Report.pdf",
+            "https://www.missingkids.org/content/dam/missingkids/pdfs/cybertiplinedata2024/OJJDP-NCMEC-Transparency-CY-2024.pdf",
         ),
         "features": frozen({
             "data": None,
