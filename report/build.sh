@@ -136,6 +136,9 @@ case $target in
     report )
         do_build report
         ;;
+    provenance )
+        do_build provenance
+        ;;
     wordcount )
         do_wordcount
         ;;

@@ -957,6 +957,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Wikimedia": frozen({
+        "sources": ("https://wikimediafoundation.org/about/transparency/",),
         "features": frozen({
             "social_media": False,
         }),
