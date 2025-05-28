@@ -1,25 +1,27 @@
 # You are not drunk. Python is.
 __all__ = (
     '__version__',
-    'REPORTS_PER_PLATFORM',
-    'ingest_reports_per_platform',
-    'wide_ncmec_reports',
-    'long_ncmec_reports',
+    'annualize',
     'combine_brands',
-    'encode_reports_per_platform',
     'compare_all_platform_reports',
-    'REPORT_TOTALS',
-    'YEAR_LABELS',
-    'ingest_reports_per_country',
-    'without_populations',
-    'reports_per_country_year',
+    'compare_platform_reports',
     'create_map',
-    'DisplayMethod',
-    'show_map',
     'delete_latex_tables',
-    'show',
-    'to_schema',
+    'DisplayMethod',
+    'encode_reports_per_platform',
     'fetch_populations',
+    'ingest_reports_per_country',
+    'ingest_reports_per_platform',
+    'long_ncmec_reports',
+    'REPORT_TOTALS',
+    'reports_per_country_year',
+    'REPORTS_PER_PLATFORM',
+    'show',
+    'show_map',
+    'to_schema',
+    'wide_ncmec_reports',
+    'without_populations',
+    'YEAR_LABELS',
 )
 
 __version__ = "0.1"
@@ -33,7 +35,9 @@ from .platform.ingest import (
     combine_brands,
 )
 from .platform.export import encode_reports_per_platform
-from .platform.compare import compare_all_platform_reports
+from .platform.compare import (
+    annualize, compare_all_platform_reports, compare_platform_reports
+)
 
 # CSAM Reports per Country
 from .fetch import fetch_populations
