@@ -914,6 +914,7 @@
         }
     },
     "Wikimedia": {
+        "sources": ["https://wikimediafoundation.org/about/transparency/"],
         "features": {
             "social_media": false
         }
