@@ -1,11 +1,11 @@
-\documentclass[anonymous,nonacm,screen,12pt]{acmart}
+\documentclass[nonacm,screen,12pt]{acmart}
 \pdfoutput=1
 \usepackage{graphicx}
 \usepackage{pifont}
 \usepackage{multirow}
 \usepackage{fontawesome5}
 
-\doublespacing
+%\doublespacing
 
 \citestyle{acmauthoryear}
 \setcitestyle{open={(},close={)}}
@@ -13,49 +13,35 @@
 \newcommand\same{\multicolumn{1}{c}{$\equiv$}}
 \newcommand\missing{\multicolumn{1}{r}{??}}
 \newcommand\qtiny{\epsilon}
+\newcommand\ImageCheck{$\vcenter{\hbox{\scriptsize\faImage}}$}
+\newcommand\VideoCheck{$\vcenter{\hbox{\scriptsize\faVideo}}$}
 
 \definecolor{lowlight}{gray}{0.6}
-
-
-\makeatletter
-% \renewcommand{\anon}[2][ANONYMIZED]{%
-%   \if@ACM@anonymous%
-%     #1%
-%   \else%
-%     #2%
-%   \fi}
-\makeatother
 
 \newcommand\hidden[1]{}
 \newcommand\G[1]{\textcolor{lowlight}{#1}}
 \newcommand\V[1]{\textsc{\MakeLowercase{#1}}}
 \newcommand\yes{\ding{51}}
 \newcommand\YES{\ding{52}}
-%\newcommand\no{\ding{56}}
 
 \theoremstyle{definition}
 \newtheorem{finding}{Finding}
 \newtheorem{takeout}{Take-Away}
 
-\newenvironment{itemize*}%
-  {\begin{itemize}%
-    \footnotesize%
-    \setlength{\itemsep}{0pt}%
-    \setlength{\parskip}{0pt}}%
-  {\end{itemize}}
-
 \newif\iftechreport
-\techreportfalse
+\techreporttrue
 \newcommand\TechReport[1]{\iftechreport {#1}\fi}
 \newcommand\Journal[1]{\iftechreport\else{#1}\fi}
 
 \geometry{twoside=true, head=13pt, foot=2pc,
      paperwidth=8.5in, paperheight=11in,
      includeheadfoot,
-     top=0.95in, bottom=0.95in, inner=0.95in, outer=0.95in,
-     marginparwidth=4pc,heightrounded
+     top={\dimexpr46pt+0.5in\relax},
+     bottom={\dimexpr46pt+0.5in\relax},
+     inner={\dimexpr46pt+0.5in\relax},
+     outer={\dimexpr46pt+0.5in\relax},
+     marginparwidth=2pc,heightrounded
      }%
-
 
 \AtBeginDocument{\libertineOsF}
 
@@ -248,7 +234,10 @@ human population (United Nations), internet users (International
 Telecommunication Union), and social media accounts (DataReportal). We visualize
 results for the per-country rankings as choropleth maps using Natural Earth
 outlines~\cite{PattersonKelso2022} and the Equal Earth
-projection~\cite{SavricPattersonea2019}.
+projection~\cite{SavricPattersonea2019}. Machine-readable files for all data and
+hyperlinks to their sources are included with the supplemental materials for
+this article (\emph{citation elided for review}); we discuss data curation in
+more detail below.
 
 
 \subsection{Comparative Data Audits}
@@ -418,7 +407,7 @@ content, 96.8\% of all reports received by \V{NCMEC} in 2024 involve \V{CSAM}
 and at least 99.2\% of all reports for the four year before do the same.
 Finally, for Meta, we treat its ``child nudity \& sexual exploitation'' category
 as pieces. In \V{Q2}~2021, Meta switched to the more precise ``child
-endangerment: sexual exploitation,'' which we also treat as pieces. including
+endangerment: sexual exploitation,'' which we also treat as pieces. Including
 the earlier, imprecise category maximizes coverage for the service provider
 filing at least 91.5\% of all reports in 2019--2021.
 
@@ -516,7 +505,7 @@ counts, narrow the scope to~2020--2024, and compare reports per capita with
 reports per social media accounts. When ranking countries by the former,
 $9\leq{}n\leq{}14$, $\overline{n}=12.2$ of the worst thirty countries are
 members of the Arab League, a phenomenon that has no obvious explanation and was
-prominently noted by~\cite{Childlight2024} as well. The fact that the country
+prominently noted by~\citet{Childlight2024} as well. The fact that the country
 with the most reports per capita alternates between Libya and the United Arab
 Emirates (\V{UAE}) makes this even more puzzling. After all, the two countries
 are substantially different---with Libya spending much of the 2010s in a state
@@ -578,8 +567,8 @@ differentiating countries with the highest rates is helpful when country
 rankings are required. That global and per country rates are closely aligned is
 reassuring. That the worst-ranked countries consistently are global
 troublespots, however, cuts both ways: The consistency can be seen as reassuring
-or as a flag for inaccurate data, since conducting population surveys in
-warzones seems difficult.
+or as a flag for inaccurate data, since conducting representative population
+surveys in warzones would seem unusually fraught with threats to validity.
 
 While social media accounts seems like a strong contender for population driving
 much of the growth in CyberTipline report counts, it definitely is not the only
@@ -593,8 +582,8 @@ that the number of service providers filing reports has grown from 230 in~2021
 to 294 in~2024. Moreover, service providers, including Meta~\cite{Meta2023a},
 Reddit~\cite{Reddit2025}, and Snap~\cite{Snap2024}, acknowledged improved
 detection of \V{CSAM} and more generally \V{CSE} in recent transparency
-disclosures, which points towards improved detection as a major contributor to
-the increase.
+disclosures, which points towards improved detection as a major remaining
+contributor to the increase.
 
 
 \begin{finding}
@@ -651,12 +640,12 @@ are roughly $5,700\times$ larger than Europol's aggregates, suggesting that the
 misrepresentation isn't the only problem with that data.
 
 Having said that, Europol's report does contain compelling evidence that the
-pandemic did, in fact, result in significantly more incidents involving
-\V{CSAM}, albeit \emph{at a different timescale}. When looking at CyberTipline
-reports \V{NCMEC} forwarded to European law enforcement agencies during the
-first half of 2020 at \emph{monthly} granularity, there is a $5\times$ spike for
-March 2020 only. Given the date, the pandemic is the most plausible cause. Alas,
-the effect is not sustained enough to be detectable in yearly statistics.
+pandemic did, in fact, result in noticeably more incidents involving \V{CSAM},
+albeit \emph{at a different timescale}. When looking at CyberTipline reports
+\V{NCMEC} forwarded to European law enforcement agencies during the first half
+of 2020 at \emph{monthly} granularity, there is a $5\times$ spike for March 2020
+only. Given the date, the pandemic is the most plausible cause. Alas, the effect
+is not sustained enough to be detectable in yearly statistics.
 
 
 \begin{finding}
@@ -689,12 +678,12 @@ disclose the number of forwarded messages; for unencrypted chats, it is thirty.
 
 \begin{figure}
 \centering\libertineLF
-\includegraphics[scale=0.6]{figure-meta}
+\includegraphics[scale=0.7]{figure-meta}
 
 \caption{Meta: Quarterly pieces (left) as well as yearly pieces and reports
-(right). The dashed lines indicate significant changes to Meta's metrics, with
-the firm starting to include Instagram's pieces in \V{Q2}~2019 and switching to
-more precise metrics in \V{Q2}~2021 (see \emph{Methods}).}
+(right). The dashed lines indicates major changes to Meta's metrics, with the
+firm starting to include Instagram's pieces in \V{Q2}~2019 and switching to more
+precise metrics in \V{Q2}~2021 (see \emph{Methods}).}
 
 \label{fig:meta}
 \end{figure}
@@ -709,15 +698,15 @@ of 33.2\% for 2024, which serves as counterfactual to claims that the
 introduction of \V{E2EE} leads to a decline in report counts.
 
 Additionally, Meta's disclosures of piece counts, as illustrated in
-Figure~\ref{fig:meta}, show a significant decline that started in 2023 and
-continued in 2024. That decline may very well presage the drop in reports for
-2024, even if the right panel demonstrates that the relationship between pieces
-and reports is not linear. Furthermore, while Meta started updating Messenger in
-December 2023, quarterly piece counts (shown in the left panel) and report
-counts (not shown) both declined only modestly during \V{Q4}~2023. In short,
-most of the decline in piece counts for 2023 was not caused by \V{E2EE}, and we
-cannot exclude other factors contributing to the drop in report counts the
-following year.
+Figure~\ref{fig:meta}, show a major decline that started in 2023 and continued
+in 2024. That decline may very well presage the drop in reports for 2024, even
+if the right panel demonstrates that the relationship between pieces and reports
+is not linear. Furthermore, while Meta started updating Messenger in December
+2023, quarterly piece counts (shown in the left panel) and report counts (not
+shown) both declined only modestly during \V{Q4}~2023. In short, most of the
+decline in piece counts for 2023 was not caused by \V{E2EE}, and we cannot
+exclude other factors contributing to the drop in report counts the following
+year.
 
 
 % --------------------------------------------------------------------------------------
@@ -796,7 +785,7 @@ decided to round transparency statistics in the first place.
 
 \begin{figure}
 \centering\libertineLF
-\includegraphics[scale=0.7]{figure-comparable-reports}
+\includegraphics[scale=0.6]{figure-comparable-reports}
 
 \caption{Mean difference plots for nine service providers individually and all
 of them together. Each plot has its own scales, and the x-axis is logarithmic
@@ -852,9 +841,10 @@ its transparency disclosures. Sure enough, if we add WhatsApp's report count for
 percent difference ceases to be an outlier, coming down to 2.3\%. That would
 also bring it into range with the remaining 29 percent differences, all of which
 have magnitude smaller than 5\%. That's small enough to conclude that the other
-eight service providers make a good faith effort at data collection and
-disclosure. Then again, even if we include the outliers, the intra-class
-correlation coefficient is 0.9999, indicating very strong concordance.
+eight service providers---Amazon, Aylo, Google, Microsoft, Pinterest, Reddit,
+and Snap---make a good faith effort at data collection and disclosure. Then
+again, even if we include the outliers, the intra-class correlation coefficient
+is 0.9999, indicating very strong concordance.
 
 Meanwhile, the mean difference plots make another pattern clearly discernible,
 namely that the majority of percentage differences is positive. That holds for
@@ -871,7 +861,7 @@ undercounting or \V{NCMEC} overcounting or both. In practice, it seems unlikely
 that \V{NCMEC} would overcount for all providers but Reddit, which has the same
 yearly report counts as \V{NCMEC} across five out of six years and five out of
 seven equal pairs. In either case, with 1.1\% on average ignoring the four
-outliers, the respective bias is small.
+outliers, the respective bias is very small.
 
 
 % ======================================================================================
@@ -898,9 +888,10 @@ overhead of CyberTipline reporting may incentivize some providers to try
 ignoring \V{CSE} on their platforms. The problem with such a laissez-faire
 approach to content moderation is that, in this day and age, it seems pretty
 much impossible to maintain plausible deniability about \V{CSAM} and \V{CSE}.
-That way, laissez-faire turns into willful
-negligence~\cite{SalterSokolov2024}---just what several claims the lawsuit that
-shut down Omegle assert~\cite{LongGoldbergea2022}.
+That way, laissez-faire turns into willful negligence~\cite{SalterSokolov2024},
+which can pierce safe harbor protections in case of sex trafficking. For
+instance, the lawsuit that caused Omegle to shut down alleges negligence in half
+of its claims~\cite{LongGoldbergea2022}.
 
 
 \subsection{Predicting the Future}
@@ -915,9 +906,9 @@ increased automation. That cost differential becomes a powerful incentive to
 report any and all content and actions that could remotely be construed as
 \V{CSE}, including memes or content shared in
 outrage~\cite{GrossmanPfefferkornea2024}. In other words, service providers are
-strongly incentivized to overreport. That, in turn, poses a significant
-challenge for \V{NCMEC}, which needs to process the combined report streams of
-all service providers.
+strongly incentivized to overreport. That, in turn, poses a major challenge for
+\V{NCMEC}, which needs to process the combined report streams of all service
+providers.
 
 \begin{takeout}
 With almost all reports encompassing \V{CSAM}, it is too coarse a criterion for
@@ -925,8 +916,8 @@ categorizing the content of CyberTipline reports. More granular accounting is
 urgently needed.
 \end{takeout}
 
-Now, \V{NCMEC} enjoyed a reprieve from the crushing absolute number of
-CyberTipline reports in 2024, down 43.5\% from the peak of \V{36.2~M} reports
+\noindent{}Now, \V{NCMEC} enjoyed a reprieve from the crushing absolute number
+of CyberTipline reports in 2024, down 43.5\% from the peak of \V{36.2~M} reports
 the previous year. The question is how long will that reprieve last? We answer
 the question based on two different ways of relating the old and new reporting
 regimes. The first way is the obvious one, i.e., it is based on the ratio
@@ -943,7 +934,7 @@ leverage this ranking because reports that capture more than one incident also
 are informational. According to \V{NCMEC}'s disclosures, the percentage
 fractions of actionable reports in 2020--2024 are 46.1\%, 62.6\%, 49.1\%,
 50.3\%, and 78.4\%, respectively. Just as expected, the percentage fraction of
-actionable reports increases significantly in 2024. More interestingly, in the
+actionable reports increases substantially in 2024. More interestingly, in the
 years 2020, 2022, and 2023, the percentage fractions of actionable reports are
 close, with $\overline{n} = 48.5\%$. We ignore the outlier in 2021 and treat the
 mean as the real percentage fraction for the old reporting regime. To derive the
@@ -965,8 +956,8 @@ projections as well.
 
 \begin{takeout}
 As illustrated by these projections, meaningful analysis requires incorporating
-events such as the significant decline of CyberTipline reports for~2024. But
-doing so requires additional data, such as the relationship between reports and
+events such as decline over 40\% of CyberTipline reports for~2024. But doing so
+requires additional data, such as the relationship between reports and
 incidents, and not just for the one abnormal year.
 \end{takeout}
 
@@ -986,11 +977,12 @@ encourage \V{US} service providers to rationalize their operation by instituting
 the same transparency practices globally. So far, however, the Brussels effect
 does not seem to have taken hold for transparency
 disclosures~\cite{Bradford2020}. Besides the fact that the \V{DSA} only took
-effect in 2023, two factors significantly complicate transparency disclosures.
-First, the audience for transparency data is generally ill-defined. That means
-that service providers have little guidance on what metrics to disclose. The
-Santa Clara Principles~\cite{AccessNowACLUFoundationOfNorthernCaliforniaea2021}
-and \V{DSA} provide some guidance but are surprisingly high-level and imprecise.
+effect in 2023, two factors seriously complicate the release of transparency
+disclosures. First, the audience for transparency data is generally ill-defined.
+That means that service providers have little guidance on what metrics to
+disclose. The Santa Clara
+Principles~\cite{AccessNowACLUFoundationOfNorthernCaliforniaea2021} and \V{DSA}
+provide some guidance but are surprisingly high-level and imprecise.
 
 Second, while the audience for transparency disclosures remains relatively
 ill-defined, the negative reputational impact of transparency disclosures can be
@@ -1050,11 +1042,11 @@ combined with redundant disclosures, ideally involving several independent
 parties, it also facilitates validation of disclosures.
 \end{takeout}
 
-The usual discourse about service providers and \V{CSE} seems to be based on an
-assumption that, given enough content moderation, online \V{CSE} can be
-minimized if not eradicated. This article is certainly based on the assumption
-that, given enough data on the spread of \V{CSE}, we can understand the
-spread---and then develop more effective strategies for containing it. This
+\noindent{}The usual discourse about service providers and \V{CSE} seems to be
+based on an assumption that, given enough content moderation, online \V{CSE} can
+be minimized if not eradicated. This article is certainly based on the
+assumption that, given enough data on the spread of \V{CSE}, we can understand
+the spread---and then develop more effective strategies for containing it. This
 narrative has certainly been embraced by social media platforms. They often
 treat transparency disclosures as opportunities for touting the effectiveness of
 their stewardship of our online interactions.
@@ -1099,25 +1091,26 @@ Amendment protections against unreasonable
 search~\cite{GrossmanPfefferkornea2024}, which complicates operation of the
 CyberTipline. At the same time, \V{NCMEC} is not a law enforcement agency.
 Instead it probably is best understood as an organization that seeks to protect
-a uniquely vulnerable population, children, from some of the worst crimes and to
-support the victims and their families in their recovery.
+a uniquely vulnerable population, children, from some of the worst crimes and,
+failing that, to support the victims and their families in their recovery.
 
 That goes a long way towards explaining its tendency towards using too broad a
-brush in public statements about the threats of \V{CSE}. Examples include the
-insistence on characterizing the growth in CyberTipline reports as exponential,
-even after a substantial decline, or the reductive declaration that Meta's drop
-in reported incidents must be caused by \V{E2EE}. At the same time, the only
-reason that this study could complicate the picture are \V{NCMEC}'s transparency
-disclosures. In fact, since 2022, when we started this study, \V{NCMEC} has been
-improving its transparency disclosures every year by enlarging the scope with
-additional metrics and by adding granularity to existing statistics. That is an
-excellent track record, especially when compared to the tech industry, and we
-hope \V{NCMEC} continues to do so.
+brush in public statements about the threats of \V{CSE}. Examples from this
+study include the insistence on characterizing the growth in CyberTipline
+reports as exponential, even after a substantial decline, or the reductive
+declaration that Meta's drop in reported incidents must be caused by \V{E2EE}.
+At the same time, the only reason that this study could complicate the picture
+for the examples are \V{NCMEC}'s transparency disclosures. In fact, since 2022,
+when we started this study, \V{NCMEC} has been improving its transparency
+disclosures every year by enlarging the scope with additional metrics and by
+adding granularity to existing statistics. That is an excellent track record,
+especially when compared to service providers, and we sure hope \V{NCMEC}
+continues doing so.
 
 \begin{takeout}
 Given its globally significant role, \V{NCMEC}'s transparency disclosures are
 uniquely important for understanding the spread of online \V{CSE}. Their
-continued release and improvement are a significant contribution.
+continued release and improvement are a major contribution.
 \end{takeout}
 
 
@@ -1160,24 +1153,31 @@ implications.
 \begin{acks}
 An \V{NCMEC} employee helped complicate my thinking about \V{CSAM}---while
 somehow also avoiding to answer all of my questions. Meanwhile Karin Wolman did
-answer my questions about 18 \V{US} Code. Peyton Loftus helped with manual data
-entry. Jan Vitek provided helpful feedback on earlier versions of this article.
-Thank you!
+answer my questions about 18 \V{US} Code. Peyton Loftus helped with the manual
+data entry. Jan Vitek provided helpful feedback on earlier versions of this
+article.% Judy Donlin was supportive when revisions took longer than expected.
+Thank y'all!
 
 This work was supported in part by \V{MEYS}, \V{ERC} \V{CZ} program, grant no.\
 LL2325 and by National Science Foundation grants CCF-2139612 and CCF-1910850.
 \end{acks}
 
-\begin{dci}
 The author worked as a software engineer for Meta from 2018 to 2019 and served
 as a consultant for litigation against the firm in 2022. However, he did not
 work on content moderation while employed by the company and does not retain any
 interest in the firm, financial or otherwise.
-\end{dci}
 \end{anonsuppress}
 
 %\bibliographystyle{SageH}
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{bibliography}
+
+\TechReport{
+
+\appendix
+\input{table}
+\input{provenance}
+
+}
 
 \end{document}

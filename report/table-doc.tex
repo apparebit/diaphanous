@@ -1,0 +1,58 @@
+\documentclass[nonacm,screen]{acmart}
+\pdfoutput=1
+\usepackage{graphicx}
+\usepackage{pifont}
+\usepackage{multirow}
+\usepackage{fontawesome5}
+
+\citestyle{acmauthoryear}
+\setcitestyle{open={(},close={)}}
+
+\newcommand\same{\multicolumn{1}{c}{$\equiv$}}
+\newcommand\missing{\multicolumn{1}{r}{??}}
+\newcommand\qtiny{\epsilon}
+
+\definecolor{lowlight}{gray}{0.6}
+
+\newcommand\hidden[1]{}
+\newcommand\G[1]{\textcolor{lowlight}{#1}}
+\newcommand\V[1]{\textsc{\MakeLowercase{#1}}}
+\newcommand\yes{\ding{51}}
+\newcommand\YES{\ding{52}}
+\newcommand\ImageCheck{$\vcenter{\hbox{\scriptsize\faImage}}$}
+\newcommand\VideoCheck{$\vcenter{\hbox{\scriptsize\faVideo}}$}
+%\newcommand\no{\ding{56}}
+
+\theoremstyle{definition}
+\newtheorem{finding}{Finding}
+\newtheorem{takeout}{Take-Away}
+
+\newenvironment{itemize*}%
+  {\begin{itemize}%
+    \footnotesize%
+    \setlength{\itemsep}{0pt}%
+    \setlength{\parskip}{0pt}}%
+  {\end{itemize}}
+
+\geometry{twoside=true, head=13pt, foot=2pc,
+     paperwidth=8.5in, paperheight=11in,
+     includeheadfoot,
+     top=0.95in, bottom=0.95in, inner=0.95in, outer=0.95in,
+     marginparwidth=4pc,heightrounded
+     }%
+
+
+\AtBeginDocument{\libertineOsF}
+
+\begin{document}
+
+
+\title{Providers v NCMEC}
+\author{}
+\authorsaddresses{}
+\maketitle
+\vspace*{-2.5em}
+
+\input{table}
+
+\end{document}
