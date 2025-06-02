@@ -1,11 +1,10 @@
-\documentclass[nonacm,screen,12pt]{acmart}
+\documentclass[anonymous,nonacm,screen,12pt]{acmart}
 \pdfoutput=1
 \usepackage{graphicx}
 \usepackage{pifont}
-\usepackage{multirow}
 \usepackage{fontawesome5}
 
-%\doublespacing
+\doublespacing
 
 \citestyle{acmauthoryear}
 \setcitestyle{open={(},close={)}}
@@ -13,35 +12,44 @@
 \newcommand\same{\multicolumn{1}{c}{$\equiv$}}
 \newcommand\missing{\multicolumn{1}{r}{??}}
 \newcommand\qtiny{\epsilon}
-\newcommand\ImageCheck{$\vcenter{\hbox{\scriptsize\faImage}}$}
-\newcommand\VideoCheck{$\vcenter{\hbox{\scriptsize\faVideo}}$}
 
-\definecolor{lowlight}{gray}{0.6}
+\definecolor{lowlight}{gray}{0.55}
 
-\newcommand\hidden[1]{}
+\ifdefined\ToWordProcessor
+    \message{boom: to word proc}
+    \newcommand\V[1]{{#1}}
+    \newcommand\yes{🗸}
+    \newcommand\YES{✔️}
+    \newcommand\ImageCheck{📸}
+    \newcommand\VideoCheck{📹}
+\else
+    \message{boom: latex}
+    \newcommand\V[1]{\textsc{\MakeLowercase{#1}}}
+    \newcommand\yes{\ding{51}}
+    \newcommand\YES{\ding{52}}
+    \newcommand\ImageCheck{$\vcenter{\hbox{\scriptsize\faImage}}$}
+    \newcommand\VideoCheck{$\vcenter{\hbox{\scriptsize\faVideo}}$}
+\fi
+
 \newcommand\G[1]{\textcolor{lowlight}{#1}}
-\newcommand\V[1]{\textsc{\MakeLowercase{#1}}}
-\newcommand\yes{\ding{51}}
-\newcommand\YES{\ding{52}}
+\newcommand\hidden[1]{}
 
 \theoremstyle{definition}
 \newtheorem{finding}{Finding}
 \newtheorem{takeout}{Take-Away}
 
 \newif\iftechreport
-\techreporttrue
-\newcommand\TechReport[1]{\iftechreport {#1}\fi}
+\techreportfalse
+\newcommand\DirectorsCut[1]{\iftechreport {#1}\fi}
 \newcommand\Journal[1]{\iftechreport\else{#1}\fi}
 
 \geometry{twoside=true, head=13pt, foot=2pc,
      paperwidth=8.5in, paperheight=11in,
      includeheadfoot,
-     top={\dimexpr46pt+0.5in\relax},
-     bottom={\dimexpr46pt+0.5in\relax},
-     inner={\dimexpr46pt+0.5in\relax},
-     outer={\dimexpr46pt+0.5in\relax},
-     marginparwidth=2pc,heightrounded
+     top=0.9in, bottom=0.9in, inner=0.9in, outer=0.9in,
+     marginparwidth=4pc,heightrounded
      }%
+
 
 \AtBeginDocument{\libertineOsF}
 
@@ -49,22 +57,14 @@
 
 \title{Putting the Count Back Into Accountability}
 \subtitle{Analyzing Transparency Data About the Sexual Exploitation of Minors}
-
-\author{Robert Grimm}
-\orcid{0000-0002-8300-2153}
-\affiliation{%
-    \institution{Charles University}
-    \city{Prague}
-    \country{Czech Republic}
-}
-\email{rgrimm@alum.mit.edu}
+\credits
 
 \begin{abstract}
 
 Based on transparency disclosures for 17~US-based internet platforms and the
 national clearinghouse collecting legally mandated reports about child sexual
 exploitation (\V{CSE}), this study answers two research questions: What does the
-data tell us about the growth of online V{CSE}? How reliable is that data?
+data tell us about the growth of online \V{CSE}? How reliable is that data?
 First, we analyze the growth in \V{CSE} reports over the last 25~years to derive
 a model and identify the underlying population. Second, we perform two
 comparative audits to assess the quality of transparency data. Critical findings
@@ -231,13 +231,10 @@ congressional appropriations committees, which include total report counts going
 back to 1998 but otherwise cover only 2020--2024, as well its per-country
 breakdowns, which cover 2019--2024. Our analysis also draws on datasets about
 human population (United Nations), internet users (International
-Telecommunication Union), and social media accounts (DataReportal). We visualize
-results for the per-country rankings as choropleth maps using Natural Earth
-outlines~\cite{PattersonKelso2022} and the Equal Earth
-projection~\cite{SavricPattersonea2019}. Machine-readable files for all data and
-hyperlinks to their sources are included with the supplemental materials for
-this article (\emph{citation elided for review}); we discuss data curation in
-more detail below.
+Telecommunication Union), and social media accounts (DataReportal).
+Machine-readable files for all data and hyperlinks to their sources are included
+with the supplemental materials for this article (\emph{citation elided for
+review}); we discuss data curation in more detail below.
 
 
 \subsection{Comparative Data Audits}
@@ -268,7 +265,7 @@ divergence that is proportional to the number of messages and caused by
 exhibit discernible patterns, i.e., be random errors.
 
 We characterize concordance with the intra-class correlation coefficient
-(\V{ICC}) for count data~\cite{LCarrasco2022}. However, due to the small number
+(\V{ICC}) for count data~\cite{Carrasco2022}. However, due to the small number
 of per-year, per-provider samples, with $1\leq{}n\leq{}6$ and
 $\overline{n}=3.7$, we could only compute a goodness-of-fit for the entire
 dataset, across all nine providers, with $N=33$. When comparing a Poisson model
@@ -293,7 +290,7 @@ test to confirm their statistical significance.
 
 \caption{An overview of surveyed service providers and their subsidiaries as
 well brands. Criteria for inclusion are being a popular social medium (Social),
-a very large platforms in the \V{EU} (XL), or a filer of $\geq100,000$ reports
+a very large platforms in the \V{EU} (XL), or a filer of $\geq 100,000$ reports
 in a year (100k). \emph{Disclosures} identifies when providers started making
 disclosures about \V{CSE} and the current release frequency. \emph{Audits}
 indicates how the validity of the provider's data was assessed.}
@@ -305,44 +302,44 @@ indicates how the validity of the provider's data was assessed.}
 \multicolumn{2}{l}{\textbf{Disclosures}} &
 \multicolumn{1}{c}{\textbf{Audits}} \\
 \midrule
-Amazon                 &        &  \YES  &        & 2020..           & Y & Reports 2020--2024\\
-\hskip1.2em Twitch     &  \YES  &        &        & H1~2020..        & H &               \\
+Amazon                 &        &  \YES  &        & 2020..           & Y & Reports 2020--2024 \\
+\hskip1.2em Twitch     &  \YES  &        &        & H1~2020..        & H &                    \\
 %\addlinespace
-\G{Apple}              &        &\G{\yes}&        &                  &   &      ---      \\
-\G{Automattic}         &        &        &        &                  &   &      ---      \\
-\hskip1.2em \G{Tumblr} &\G{\yes}&        &        &                  &   &               \\
+\G{Apple}              &        &\G{\yes}&        &                  &   &         ---        \\
+\G{Automattic}         &        &        &        &                  &   &         ---        \\
+\hskip1.2em \G{Tumblr} &\G{\yes}&        &        &                  &   &                    \\
 %\addlinespace
 Aylo (MindGeek)        &        &        &        &                  &   & Reports 2020--2024 \\
-\hskip1.2em Pornhub    &        &  \YES  &        & 2020..           & H &               \\
+\hskip1.2em Pornhub    &        &  \YES  &        & 2020..           & H &                    \\
 %\addlinespace
-Discord                &  \YES  &        &  \YES  & H2~2020..        & H & CSE Metrics   \\
+Discord                &  \YES  &        &  \YES  & H2~2020..        & H & CSE Metrics        \\
 Google                 &        &  \YES  &  \YES  & H1~2020..        & H & Reports 2020--2024 \\
-\hskip1.2em YouTube    &  \YES  &  \YES  &  \YES  & H1~2020..        & H &               \\
+\hskip1.2em YouTube    &  \YES  &  \YES  &  \YES  & H1~2020..        & H &                    \\
 %\addlinespace
-\G{MediaLab}           &        &        &        &                  &   &      ---      \\
-\hskip1.2em \G{Imgur}  &        &        &\G{\yes}&                  &   &               \\
-\hskip1.2em \G{Kik}    &        &        &\G{\yes}&                  &   &               \\
+\G{MediaLab}           &        &        &        &                  &   &         ---        \\
+\hskip1.2em \G{Imgur}  &        &        &\G{\yes}&                  &   &                    \\
+\hskip1.2em \G{Kik}    &        &        &\G{\yes}&                  &   &                    \\
 %\addlinespace
-Meta                   &        &  \YES  &  \YES  &                  &   & Data Q3'21--Q4'24 \\
-\hskip1.2em Facebook   &  \YES  &  \YES  &  \YES  & Q3~2018..        & Q & \& Reports 2024  \\
-\hskip1.2em Instagram  &  \YES  &  \YES  &  \YES  & Q2~2019..        & Q &               \\
-\hskip1.2em Threads    &  \YES  &        &        &                  &   &               \\
-\hskip1.2em WhatsApp   &  \YES  &        &  \YES  &                  &   &               \\
+Meta                   &        &  \YES  &  \YES  &                  &   & Data Q3'21--Q4'24  \\
+\hskip1.2em Facebook   &  \YES  &  \YES  &  \YES  & Q3~2018..        & Q & \& Reports 2024    \\
+\hskip1.2em Instagram  &  \YES  &  \YES  &  \YES  & Q2~2019..        & Q &                    \\
+\hskip1.2em Threads    &  \YES  &        &        &                  &   &                    \\
+\hskip1.2em WhatsApp   &  \YES  &        &  \YES  &                  &   &                    \\
 %\addlinespace
 Microsoft              &        &  \YES  &  \YES  & H1~2020..        & H & Reports 2020--2023 \\
-\hskip1.2em LinkedIn   &  \YES  &  \YES  &        & H1~2019..        & H &               \\
-\hskip1.2em Skype      &  \YES  &        &        &                  &   &               \\
-\hskip1.2em Teams      &  \YES  &        &        &                  &   &               \\
+\hskip1.2em LinkedIn   &  \YES  &  \YES  &        & H1~2019..        & H &                    \\
+\hskip1.2em Skype      &  \YES  &        &        &                  &   &                    \\
+\hskip1.2em Teams      &  \YES  &        &        &                  &   &                    \\
 %\addlinespace
 NCMEC                  &        &        &        & 2019..           & Y & Reports 2019--2024 \\
-\G{Omegle}             &        &        &\G{\yes}&                  &   &      ---      \\
+\G{Omegle}             &        &        &\G{\yes}&                  &   &         ---        \\
 Pinterest              &  \YES  &  \YES  &        & H1~2020..        & Q & Reports 2020--2023 \\
-\G{Quora}              &\G{\yes}&        &        &                  &   &      ---      \\
+\G{Quora}              &\G{\yes}&        &        &                  &   &         ---        \\
 Reddit                 &  \YES  &        &  \YES  & 2019..           & H & Reports 2019--2024 \\
 Snap                   &  \YES  &  \YES  &  \YES  & H2~2019..        & H & Reports 2022--2023 \\
-TikTok                 &  \YES  &  \YES  &  \YES  & Q1~2022..        & Q & CSE Metrics   \\
-\G{Wikimedia}          &        &\G{\yes}&        &                  &   &      ---      \\
-X (Twitter)            &  \YES  &  \YES  &  \YES  & H1~2024..        & H & Reports 2024 \\
+TikTok                 &  \YES  &  \YES  &  \YES  & Q1~2022..        & Q & CSE Metrics        \\
+\G{Wikimedia}          &        &\G{\yes}&        &                  &   &         ---        \\
+X (Twitter)            &  \YES  &  \YES  &  \YES  & H1~2024..        & H & Reports 2024       \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -434,7 +431,7 @@ bottom-right y-axis).}
 Figure~\ref{fig:reports} shows three different views onto yearly CyberTipline
 report counts, each with a different scale. First, the blue line in the upper
 panel tracks the absolute number of reports in millions from 1998--2024, with
-the right y-axis covering the range from 0 to \V{40~M} reports. Second, the
+the right y-axis covering the range from 0 to 40\V{M} reports. Second, the
 orange line in the upper panel tracks the number of reports per 1,000 social
 media accounts, with the left y-axis covering the range from~0 to~8 reports per
 1k accounts. For both curves, gray lines indicate the linear least squares fit
@@ -467,15 +464,15 @@ of the exponential model.
 \V{NCMEC} attributes much of the drop in 2024 to a change in reporting
 practices. Starting that year, service providers can file a single report for
 viral content and memes that qualify as \V{CSAM} instead of filing a report each
-time that same content is posted. That way, the \V{20.5~M} filed reports account
-for \V{29.2~M} incidents~\cite{NcmecCyberTipline2024}. \V{NCMEC} notes that the
-decline by \V{7~M} from the previous year's peak of \V{36.2~M} reports is
+time that same content is posted. That way, the 20.5\V{M} filed reports account
+for 29.2\V{M} incidents~\cite{NcmecCyberTipline2024}. \V{NCMEC} notes that the
+decline by 7\V{M} from the previous year's peak of 36.2\V{M} reports is
 unexpected, especially since child sex trafficking and online enticement became
 reportable that same year. It then blames Meta's deployment of end-to-end
 encryption (\V{E2EE}) for that difference. Alas, that underestimates the
 magnitude of the difference because if the growth of the prior decade had
 continued, 3.93~million more reports than in 2023 would have been filed in 2024,
-making for a difference of \V{10.9~M} reports.
+making for a difference of 10.9\V{M} reports.
 
 
 \begin{finding}
@@ -550,8 +547,9 @@ are troublespots. In~2020 and~2021, the country with the highest reports per
 social media accounts is Eritrea. While Afghanistan and Yemen are ranked second-
 and third-worst in 2021, they are the worst ranked two countries for 2022--2024.
 Common to all three countries is that they were recently engaged in (civil)
-wars, with the attendant lawlessness apparently also making the online sexual
-exploitation of minors worse.
+wars~\cite{GlobalConflictTracker2025, GlobalConflictTracker2025a,
+GlobalConflictTracker2025b}, with the attendant lawlessness apparently also
+making the online sexual exploitation of minors worse.
 
 While worst-rated countries have rates in the double digits, rates for the vast
 majority of countries for both human population and social media accounts are
@@ -649,8 +647,9 @@ is not sustained enough to be detectable in yearly statistics.
 
 
 \begin{finding}
-\V{NCMEC}'s own transparency data suggests that end-to-end encryption (\V{E2EE})
-does not necessarily lead to a depression of reports online \V{CSE}.
+The publicly available transparency data neither proves nor disproves that
+end-to-end encryption is a major cause for the steep decline of CyberTipline
+reports in 2024. But it does suggest a plausible alternative explanation.
 \end{finding}
 
 \noindent{}In late 2023, just as Meta was starting to update its Messenger chat
@@ -658,15 +657,16 @@ service to utilize \V{E2EE} by default, \V{NCMEC} published a blog post
 describing Meta's decision to do so a ``devastating blow to child
 protection''~\cite{NCMEC2023}. Then, in its transparency disclosures for 2024,
 the organization bemoans the negative impact of \V{E2EE} on Meta's report
-volume~\cite{NcmecCyberTipline2024, NcmecOjjdp2024}. While the drop in Meta's
-reports from \V{30.7~M} reports in 2023 to \V{13.8~M} reports in 2024 is huge
-and may be at least partially caused by \V{E2EE}, the publicly available data
-points towards a more complex reality than \V{NCMEC} acknowledges.
+volume~\cite{NcmecCyberTipline2024, NcmecOjjdp2024}. The drop in Meta's
+reports---from 30.7\V{M} reports in 2023 to 13.8\V{M} reports in
+2024---certainly is steep. \V{E2EE} may very well have been a contributing
+factor. But the publicly available data points towards a more complex reality
+than \V{NCMEC} acknowledges.
 
-Meta's WhatsApp service has been using end-to-end encryption since 2016; with
-2~billion users compared to Messenger's 1~billion, it also is the more popular
-chat service. Yet despite WhatsApp's encryption, Meta has been moderating
-messages and reporting those involving \V{CSE} to
+To begin with, Meta's WhatsApp service has been using end-to-end encryption
+since 2016; with 2~billion users compared to Messenger's 1~billion, it also is
+the more popular chat service. Yet despite WhatsApp's encryption, Meta has been
+moderating messages and reporting those involving \V{CSE} to
 \V{NCMEC}~\cite{ElkindGillumea2021}. First, metadata is not encrypted and may
 suffice for detecting some suspicious activities, for example, when an adult
 keeps interacting with minors even though there are no familial or professional
@@ -688,25 +688,33 @@ precise metrics in \V{Q2}~2021 (see \emph{Methods}).}
 \label{fig:meta}
 \end{figure}
 
-\V{NCMEC}'s own transparency disclosures demonstrate that the two mechanisms
-have impact in practice. The hotline started distinguishing between Meta's
-brands in its transparency disclosures in 2021. Over the four years until 2024,
-WhatsApp submitted 1.4, 1.0, 1.4, and 1.9 million CyberTipline reports. These
-figures are substantial: Besides Meta, only Google, Snap, and TikTok filed more
-than a million reports in a year. They also represent a year-over-year increase
-of 33.2\% for 2024, which serves as counterfactual to claims that the
-introduction of \V{E2EE} leads to a decline in report counts.
+\V{NCMEC}'s own transparency disclosures demonstrate that these monitoring
+mechanisms have impact in practice. The hotline started distinguishing between
+Meta's brands in its transparency disclosures in 2021. Over the four years to
+2024, WhatsApp submitted 1.4, 1.0, 1.4, and 1.9 million CyberTipline reports.
+These figures are substantial: Besides Meta, only Google, Snap, and TikTok filed
+more than a million reports in a year. They also represent a year-over-year
+increase of 33.2\% for 2024. That implies that Facebook and Instagram are
+responsible for Meta's overall decline that year. Even if we are inclined to
+believe that the latter was mostly caused by \V{E2EE}, WhatsApp's increase over
+the same time period happened \emph{despite} \V{E2EE}. Furthermore, Snap
+deployed \V{E2EE} for photos and videos in 2019, yet has been filing more
+reports year-over-year for every year since~\cite{TeunissenNapier2022}.
 
-Additionally, Meta's disclosures of piece counts, as illustrated in
-Figure~\ref{fig:meta}, show a major decline that started in 2023 and continued
-in 2024. That decline may very well presage the drop in reports for 2024, even
-if the right panel demonstrates that the relationship between pieces and reports
-is not linear. Furthermore, while Meta started updating Messenger in December
-2023, quarterly piece counts (shown in the left panel) and report counts (not
-shown) both declined only modestly during \V{Q4}~2023. In short, most of the
-decline in piece counts for 2023 was not caused by \V{E2EE}, and we cannot
-exclude other factors contributing to the drop in report counts the following
-year.
+Meta's disclosures of piece counts provide further evidence that \V{E2EE} may
+not be the primary cause of the overall decline in reports. As illustrated in
+the right panel of Figure~\ref{fig:meta}, Meta's overall piece count
+substantially declined in both 2023 as well as 2024. Meta started deploying
+\V{E2EE} in December 2023. So even if we exclude \V{Q4}~2023, the left panel of
+Figure~\ref{fig:meta} shows that pieces substantially declined year-over-year
+for the first three quarters, too---when Meta had not even begun deploying
+\V{E2EE}. The fact that reports increased while pieces decreased in 2023 implies
+a shift from image- and video-based \V{CSE}, notably \V{CSAM}, to other forms of
+\V{CSE}, notably online enticement. While \V{E2EE} does make detection of
+\V{CSAM} harder, metadata can help identify the latter by tracing inappropriate
+contact between adults and minors. In summary, none of this disproves the
+potential impact of \V{E2EE}. But it also doesn't support \V{E2EE} having this
+impact and suggests some independent factor as plausible alternative.
 
 
 % --------------------------------------------------------------------------------------
@@ -917,12 +925,12 @@ urgently needed.
 \end{takeout}
 
 \noindent{}Now, \V{NCMEC} enjoyed a reprieve from the crushing absolute number
-of CyberTipline reports in 2024, down 43.5\% from the peak of \V{36.2~M} reports
+of CyberTipline reports in 2024, down 43.5\% from the peak of 36.2\V{M} reports
 the previous year. The question is how long will that reprieve last? We answer
 the question based on two different ways of relating the old and new reporting
 regimes. The first way is the obvious one, i.e., it is based on the ratio
-between the compressed number of reports, i.e., \V{20.5~M} and the uncompressed
-number of incidents, i.e., \V{29.2~M}. That gives us a scaling factor $\sigma_1
+between the compressed number of reports, i.e., 20.5\V{M} and the uncompressed
+number of incidents, i.e., 29.2\V{M}. That gives us a scaling factor $\sigma_1
 = 20.5 / 29.2 = 0.702$. Alas, we already know that this scaling factor is on the
 strict side, as it accounts for memes and similar content only.
 
@@ -945,9 +953,9 @@ component) and add it to the fraction for actionable reports for the same regime
 21.6\% = 0.618$.
 
 With the two scaling factors in place, we can now adjust the yearly report rate
-$r = 3.93$~\V{M} from our model for 2014--2023 to project growth from 2025
-onward to be between $\sigma_2 r = 2.43$~\V{M} and $\sigma_1 r = 2.76$~\V{M}
-reports per year. If we assume that \V{40~M} reports is \V{NCMEC}'s breaking
+$r = 3.93$\V{M} from our model for 2014--2023 to project growth from 2025
+onward to be between $\sigma_2 r = 2.43$\V{M} and $\sigma_1 r = 2.76$\V{M}
+reports per year. If we assume that 40\V{M} reports is \V{NCMEC}'s breaking
 point, that gives the organization between 7 and 8~years until CyberTipline
 reports come close to overwhelming its capacity again. This does assume that
 social media accounts keep growing and \V{CSE} detection keeps improving at
@@ -1094,18 +1102,17 @@ Instead it probably is best understood as an organization that seeks to protect
 a uniquely vulnerable population, children, from some of the worst crimes and,
 failing that, to support the victims and their families in their recovery.
 
-That goes a long way towards explaining its tendency towards using too broad a
-brush in public statements about the threats of \V{CSE}. Examples from this
-study include the insistence on characterizing the growth in CyberTipline
-reports as exponential, even after a substantial decline, or the reductive
-declaration that Meta's drop in reported incidents must be caused by \V{E2EE}.
-At the same time, the only reason that this study could complicate the picture
-for the examples are \V{NCMEC}'s transparency disclosures. In fact, since 2022,
-when we started this study, \V{NCMEC} has been improving its transparency
-disclosures every year by enlarging the scope with additional metrics and by
-adding granularity to existing statistics. That is an excellent track record,
-especially when compared to service providers, and we sure hope \V{NCMEC}
-continues doing so.
+That goes a long way towards explaining why \V{NCMEC} uses too broad a brush at
+times when describing the impact of \V{CSE}. Examples from this study include
+the insistence on characterizing the growth in CyberTipline reports as
+exponential even after a substantial decline, or the reductive declaration that
+Meta's drop in reported incidents must be caused by \V{E2EE}. At the same time,
+the only reason that this study could complicate the picture for the examples
+are \V{NCMEC}'s transparency disclosures. In fact, since 2022, when we started
+this study, \V{NCMEC} has been improving its transparency disclosures every year
+by enlarging the scope with additional metrics and by adding granularity to
+existing statistics. That is an excellent track record, especially when compared
+to service providers, and we sure hope \V{NCMEC} continues doing so.
 
 \begin{takeout}
 Given its globally significant role, \V{NCMEC}'s transparency disclosures are
@@ -1119,21 +1126,22 @@ continued release and improvement are a major contribution.
 \section{Conclusion}
 \label{sec:conclusion}
 
-In summary, the evidentiary record does \emph{not} support the more
-sensationalist claims about online child sexual exploitation. There is \emph{no}
-``explosion'' of \V{CSAM}. The internet is \emph{not} ``overrun with images of
-child sexual abuse.'' When taking yearly rates into account, the pandemic did
-\emph{not} trigger more sexual exploitation overall, even if there was a marked
-spike in March 2020.
+In summary, the evidentiary record for CyberTipline reports does \emph{not}
+support the more sensationalist claims about online child sexual exploitation.
+There is \emph{no} ``explosion'' of \V{CSAM}. The internet is \emph{not}
+``overrun with images of child sexual abuse.'' When taking yearly growth into
+account, the pandemic did \emph{not} trigger more sexual exploitation overall,
+even if there was a marked spike in March 2020.
 
 Nonetheless, the evidentiary record does support the claim that \V{US}-based
-social media with their unprecedented global reach and propensity for virality
+social media, with their unprecedented global reach and propensity for virality,
 are the biggest driving force behind the growth of CyberTipline reports over the
 decade from 2014 to 2023. While that growth threatened to overwhelm \V{NCMEC},
-i.e., the very organization serving as a critical global resource, an unexpected
-decline in reports for 2024 has resulted in a reprieve. Our projections based on
-a linear model for growth and two different metrics for the decline in 2024
-suggest that \V{NCMEC} will be at breaking point in 7 to 8~years.
+i.e., the very organization serving as a critical global resource, improvements
+to the reporting of repeated incidents combined with an unexpected decline in
+reports for 2024 have resulted in a reprieve. Our projections based on a linear
+model for growth and two different metrics for the decline in 2024 suggest that
+\V{NCMEC} will be at breaking point in 7 to 8~years.
 
 As far as transparency is concerned, many technology firms did better than we
 expected. As this study has amply demonstrated, transparency disclosures needn't
@@ -1150,6 +1158,7 @@ implications.
 % ======================================================================================
 
 \begin{anonsuppress}
+
 \begin{acks}
 An \V{NCMEC} employee helped complicate my thinking about \V{CSAM}---while
 somehow also avoiding to answer all of my questions. Meanwhile Karin Wolman did
@@ -1166,16 +1175,27 @@ The author worked as a software engineer for Meta from 2018 to 2019 and served
 as a consultant for litigation against the firm in 2022. However, he did not
 work on content moderation while employed by the company and does not retain any
 interest in the firm, financial or otherwise.
+
 \end{anonsuppress}
 
-%\bibliographystyle{SageH}
 \bibliographystyle{ACM-Reference-Format}
-\bibliography{bibliography}
 
-\TechReport{
+\ifdefined\ToWordProcessor
+    \section*{References}
+
+    \bibliography{export}
+\else
+    \bibliography{bibliography}
+\fi
+
+\DirectorsCut{
 
 \appendix
+
+\section*{CyberTipline Reports by Service Provider}
 \input{table}
+
+\section*{Data Provenance}
 \input{provenance}
 
 }
