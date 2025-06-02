@@ -11,6 +11,7 @@ if [[ "$nocolor" != "nocolor" ]] && [ -t 2 ]; then
     WARNING="\e[1;38;5;208m"
     SUCCESS="\e[1;32m"
     INFO="\e[1;34m"
+    TRACE=""
     RESET="\e[0m"
 else
     BOLD=""
@@ -18,6 +19,7 @@ else
     WARNING=""
     SUCCESS=""
     INFO=""
+    TRACE=""
     RESET=""
 fi
 
@@ -92,12 +94,29 @@ do_build() {
     check_latex "$1"
 }
 
+do_latex() {
+    log INFO "$LATEX_ENGINE $1"
+    $LATEX_ENGINE -interaction=batchmode "$1"
+    check_latex "$1"
+}
+
 do_wordcount() {
     pandoc report.tex -f latex --quiet -t plain -s -o report.txt
     local WITHOUT_REFS="$(wc -w report.txt | cut -wf 1-2 | xargs)"
     pandoc report.tex -f latex --quiet -C --bibliography=bibliography.bib -t plain -s -o report.txt
     local WITH_REFS="$(wc -w report.txt | cut -wf 1-2 | xargs)"
     log INFO "$WITHOUT_REFS words without, $WITH_REFS words with references"
+}
+
+do_docx_export() {
+    do_build report
+    log INFO "Prepare text"
+    python ../script/export.py
+    log INFO "Convert to docx"
+    pandoc export.tex export-main.tex -f latex -t markdown-citations \
+        --default-image-extension=".svg" \
+        --citeproc --bibliography=export.bib --csl=apa.csl \
+        -t docx -s -o report.docx
 }
 
 prep_arxiv() {
@@ -130,23 +149,35 @@ if [ $# -ne 0 ]; then
 fi
 
 case $target in
-    figure )
+    figures )
         prepare_figures
         ;;
     report )
         do_build report
         ;;
-    provenance )
-        do_build provenance
+    supplements )
+        do_latex provenance-doc
+        do_latex table-doc
         ;;
     wordcount )
         do_wordcount
+        ;;
+    docx )
+        do_docx_export
         ;;
     arxiv )
         prep_arxiv
         ;;
     *     )
         log ERROR "\"$target\" is not a valid build target!"
+        log TRACE "Valid targets are:"
+        log TRACE "  figures     - convert SVG graphics to PDF"
+        log TRACE "  report      - generate the report in PDF format"
+        log TRACE "  docx        - generate the report in docx format,"
+        log TRACE "                albeit without figures and tables"
+        log TRACE "  supplements - generate the supplemental PDFs"
+        log TRACE "  wordcount   - count the number of words in the report"
+        log TRACE "  arxiv       - prepare the arXiv preprint"
         exit 1
         ;;
 esac

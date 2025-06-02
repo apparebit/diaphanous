@@ -161,6 +161,10 @@ report/comment.cut
 report/report.pdf
 report/report.txt
 
+# Generated during conversion
+report/export-main.tex
+report/export.bib
+
 /arxiv
 /arxiv.zip
 
