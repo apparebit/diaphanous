@@ -143,6 +143,8 @@ def fetch_populations(
             + f"/start/{start}/end/{end}?format=csv"
         )
 
+        print(f"    {url}")
+
         response = urlopen(Request(url))
         if response.status != 200:
             error = http.client.responses.get(http.HTTPStatus(response.status))
