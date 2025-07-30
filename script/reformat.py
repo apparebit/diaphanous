@@ -5,6 +5,10 @@ import sys
 from typing import Any
 
 
+# A format string determines how to reorder columns and insert literal text. It
+# comprises zero-based column indices (up to column 9) and backtick surrounded
+# literal text, all written together without spaces. Also see tool
+# documentation below.
 FORMAT_STRING = re.compile(
     r"""
     ^ (?:
@@ -16,6 +20,7 @@ FORMAT_STRING = re.compile(
 )
 
 
+# A token that does not require quoting in CSV format.
 SIMPLE_TOKEN = re.compile(
     r"""
     ^ (?:
@@ -100,7 +105,7 @@ def parse_lines(lines: list[str]) -> tuple[list[list[str]], list[int]]:
 
 def format_token(value: None | str) -> str:
     """Format the token."""
-    if value is None or value == "0":
+    if value is None or value.casefold() in ("na", "n/a", "null", "none"):
         return ""
     if SIMPLE_TOKEN.match(value):
         return value
@@ -157,26 +162,46 @@ def main(args: list[str]) -> None:
     """Run this tool."""
     parser = argparse.ArgumentParser(
         "reformat",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+        formatter_class=argparse.RawTextHelpFormatter,
+        epilog="""\
+This tool reads in text resulting from copying and pasting data tables out of
+PDF documents and produces well-formed CSV text that can be selected
+column-by-column. All columns must be separated by at least one space, except
+that alphanumeric text at the beginning of a line is treated as one column,
+independent of spaces. Hence the second column must be numeric. A cell
+containing 0 remains 0, but a cell that is a case-insensitive match for "null",
+"none", "na", or "n/a" becomes empty.
+
+Format strings determine the content for output columns. They consist of
+single-digit token indices and backtick-delimited literals, all written without
+spaces. Indices are zero-based and may be repeated. Backtick delimited literals
+are repeated for every row.
+
+The default format string is "012", which emits the first three tokens for every
+row. If a row has less than three tokens, the corresponding cells are empty.
+
+The format string "`2025`012" also emits the first three tokens for every row,
+but prefixed with a column containing "2025" (presumably the year for the data).
+"""
     )
     parser.add_argument(
         "-i", "--input",
         default="raw.txt",
-        help="read from file"
+        help="read from file (default: raw.txt)"
     )
     parser.add_argument(
         "-o", "--output",
-        help="write to file"
+        help="write to file (default: standard output)"
     )
     parser.add_argument(
         "--compact",
         action="store_true",
-        help="use compact format without spaces",
+        help="use compact format without spaces (default: disabled)",
     )
     parser.add_argument(
         "-f", "--format",
         default="012",
-        help="provide a format string using",
+        help="provide a format string (default: 012)",
     )
 
     options = parser.parse_args(args)

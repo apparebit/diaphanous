@@ -7,6 +7,8 @@ figures are removed as well.
 import re
 
 BIBCITE = re.compile(r'\\bibcite\{([^}]+)\}')
+DOUBLE_CURLY_OPEN = re.compile(r'\{\{(?=[A-Za-z])')
+DOUBLE_CURLY_CLOSE = re.compile(r'(?<=[A-Za-z])\}\}')
 FIGURE1 = re.compile(r'\\ref\{fig:reports\}')
 FIGURE2 = re.compile(r'\\ref\{fig:meta\}')
 FIGURE3 = re.compile(r'\\ref\{fig:reports-audit\}')
@@ -51,6 +53,10 @@ def process_bibtex(bib: str, aux: str, out: str) -> None:
                 key = key.strip()
                 if key in ("file", "issn", "langid", "urldate"):
                     continue
+
+                if key == "type":
+                    line = DOUBLE_CURLY_OPEN.sub("", line)
+                    line = DOUBLE_CURLY_CLOSE.sub("", line)
 
                 if key.strip() not in ("urldata", "langid", "file"):
                     print(line, end="", file=fd)
