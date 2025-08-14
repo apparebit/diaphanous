@@ -43,10 +43,12 @@ year,observer,count,topic
 2021,Pinterest,2684,Pinterest
 2022,Pinterest,32964,Pinterest
 2023,Pinterest,50437,Pinterest
+2024,Pinterest,25223,Pinterest
 2020,NCMEC,3432,Pinterest
 2021,NCMEC,2283,Pinterest
 2022,NCMEC,34310,Pinterest
 2023,NCMEC,52356,Pinterest
+2024,NCMEC,65810,Pinterest
 2019,Reddit,724,Reddit
 2020,Reddit,2233,Reddit
 2021,Reddit,10059,Reddit
@@ -61,7 +63,9 @@ year,observer,count,topic
 2024,NCMEC,334597,Reddit
 2022,Snap,550755,Snap
 2023,Snap,691225,Snap
+2024,Snap,1050278,Snap
 2022,NCMEC,551086,Snap
 2023,NCMEC,713055,Snap
+2024,NCMEC,1174698,Snap
 2024,X,684505,X
 2024,NCMEC,686176,X

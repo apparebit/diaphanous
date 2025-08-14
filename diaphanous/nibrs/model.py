@@ -455,6 +455,7 @@ class Column(enum.StrEnum):
     VARIANT = "Variant"
     COUNT = "Count"
     PERCENT = "Percent"
+    RANK = "Rank"
 
 
 class Entry(enum.StrEnum):

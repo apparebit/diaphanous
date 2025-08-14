@@ -183,6 +183,46 @@ class Demographics:
         """Get the name of the source table."""
         return self._source.capitalize()[:-1]
 
+    def age_group_sex_race(self) -> pl.DataFrame:
+        """Get the 3-way frequency table for age group, sex, and race"""
+        return getattr(self._csam_data, self._source).lazy().with_columns(
+            _AGE_ID_TO_GROUP,
+        ).group_by(
+            Column.GROUP, Id.SEX, Id.RACE
+        ).agg(
+            pl.len().alias(Column.COUNT),
+        ).with_columns(
+            pl.col(Id.SEX).replace(
+                {v.value: v.name for v in Sex.__members__.values()},
+                return_dtype=pl.String,
+                default="NOT_SPECIFIED",
+            ),
+            pl.col(Id.RACE).replace(
+                {v.value: v.name for v in Race.__members__.values()},
+                return_dtype=pl.String,
+                default="NOT_SPECIFIED"
+            ),
+            pl.when(pl.col(Column.GROUP).eq("Child"))
+            .then(pl.lit(1))
+            .otherwise(
+                pl.when(pl.col(Column.GROUP).eq("Adolescent"))
+                .then(pl.lit(2))
+                .otherwise(
+                    pl.when(pl.col(Column.GROUP).eq("Adult"))
+                    .then(pl.lit(3))
+                    .otherwise(pl.lit(4))
+                )
+            ).alias(Column.RANK)
+        ).sort(
+            [Column.RANK, Id.SEX, Id.RACE]
+        ).select(
+            pl.col(Column.RANK),
+            pl.col(Column.GROUP),
+            pl.col(Id.SEX).alias("Sex"),
+            pl.col(Id.RACE).alias("Race"),
+            pl.col(Column.COUNT),
+        ).collect()
+
     def age_groups(self) -> pl.DataFrame:
         """Get a data frame with the size of age groups."""
         return with_total_and_percent(self._stats.filter(

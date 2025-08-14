@@ -180,6 +180,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         }),
         "rows": (
             # fmt: off
+            {"2025 Q1": (None, None, 1_500_000, 4_600_000, None, 163_000, 398_100, None, 32_000, 127_000, None, 42_700, 287_400)},
             {"2024 Q4": (None, None, 2_500_000, 6_200_000, None, 199_300, 378_700, None, 55_700, 108_400, None, 11_900, 134_000)},
             {"2024 Q3": (None, None, 1_400_000, 7_100_000, None, 136_200, 722_000, None, 38_000, 174_400, None, 10_600, 106_000)},
             {"2024 Q2": (None, None, 922_000, 9_700_000, None, 83_500, 410_000, None, 9_300, 90_000, None, 1_100, 52_300)},
@@ -313,6 +314,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         }),
         "rows": (
             # fmt: off
+            {"2025 Q1": (None, None, 616_000, 1_500_000, None, 58_800, 93_200, None, 23_500, 28_900, None, 7_200, 32_500)},
             {"2024 Q4": (None, None, 946_400, 2_000_000, None, 138_700, 67_000, None, 60_400, 16_300, None, 9_400, 4_900)},
             {"2024 Q3": (None, None, 1_000_000, 5_600_000, None, 150_700, 122_400, None, 68_500, 25_600, None, 9_000, 6_700)},
             {"2024 Q2": (None, None, 176_800, 2_800_000, None, 31_700, 71_100, None, 5_300, 21_600, None, 400, 11_500)},
@@ -397,6 +399,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "https://transparency.meta.com/integrity-reports-q2-2024",
             "https://transparency.meta.com/integrity-reports-q3-2024",
             "https://transparency.meta.com/integrity-reports-q4-2024",
+            "https://transparency.meta.com/integrity-reports-q1-2025",
         ),
         "columns": (
             "reports",
@@ -422,6 +425,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         }),
         "rows": (
             # fmt: off
+            {"2025 Q1": (1_700_000, None, None, None, None, None, None, None, None, None, None, None, None)},
             {"2024 Q4": (2_000_000, None, None, None, None, None, None, None, None, None, None, None, None)},
             {"2024 Q3": (1_600_000, None, None, None, None, None, None, None, None, None, None, None, None)},
             {"2024 Q2": (2_800_000, None, None, None, None, None, None, None, None, None, None, None, None)},
@@ -517,10 +521,12 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     "Pinterest": frozen({
         "sources": (
             "https://help.pinterest.com/en/guide/transparency-report-archive",
+            "https://help.pinterest.com/en/guide/transparency-report-archive#chapter-26356",
             "https://policy.pinterest.com/en/transparency-report-h1-2022",
             "https://policy.pinterest.com/en/transparency-report-h2-2022",
             "https://policy.pinterest.com/en/transparency-report-h1-2023",
             "https://policy.pinterest.com/en/transparency-report-h2-2023",
+            "https://policy.pinterest.com/en/transparency-report-h1-2024",
             "https://policy.pinterest.com/en/transparency-report",
         ),
         "features": frozen({
@@ -536,22 +542,27 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "comments": (
             "Pin is lingo for a media card with picture, hence pin with CSAM is piece.",
             "Pinterest's disclosure language explains 2nd through 5th columns:",
-            "`We deactivated a distinct images, which comprised b Pins, for violating",
-            "our CSE policy. Of these, we determined that c distinct images, which",
-            "comprised d Pins, were illegal CSAM, and we reported them to NCMEC.`",
-            "The percent of pins deactivated for child safety that was seen by more than 100 users",
-            "in 2024 Q2 is not 1%, as indicated below, but < 1%",
+            "`We deactivated N1 distinct images, which comprised N2 Pins, for violating",
+            "our CSE policy. Of these, we determined that N3 distinct images, which",
+            "comprised N4 Pins, were illegal CSAM, and we reported them to NCMEC.`",
+            "The percent of pins deactivated for child safety seen by 10-100 users ",
+            "in Q3 2024 and seen by >100 users in Q2 and Q3 2024 actually is <1%",
         ),
         "columns": (
             "reports",
             "distinct images",
             "pins",
+            "pins appealed",
+            "pins reversed",
             "distinct images CSAM",
             "pieces",
             "boards",
+            "boards appealed",
+            "boards reversed",
             "accounts",
             "account appeals",
             "account reversals",
+            "actioned user reports",
             "% pins reached 0",
             "% pins reached 1-9",
             "% pins reached 10-100",
@@ -559,27 +570,31 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         ),
         "rows": (
             # fmt: off
-            {"2024 Q2": (None, 7_180, 4_533_695, 1_384, 4_123, 705, 55_814, 5_429, 4_016, 82, 15, 2, 1)}, # See comments
-            {"2024 Q1": (None, 5_575, 3_322_789, 894, 3_770, 3_100, 68_230, 8_424, 5_191, 78, 19, 3, 1)},
-            {"2024 H1": (16_234, None, None, None, None, None, None, None, None, None, None, None, None)},
-            {"2023 Q4": (None, 7_089, 3_602_828, 1_163, 7_488, 4_237, 173_110, 27_499, 19_754, 78, 18, 3, 1)},
-            {"2023 Q3": (None, 5_489, 1_469_597, 2_246, 10_471, 318, 244_258, 65_254, 49_854, 73, 22, 4, 2)},
-            {"2023 H2": (16_234, None, None, None, None, None, None, None, None, None, None, None, None)},
-            {"2023 Q2": (None, 9_691, 3_877_286, 1_071, 16_336, 48_039, 172_633, 20_136, 9_874, 83, 14, 2, 1)},
-            {"2023 Q1": (None, 8_393, 1_846_326, 2_348, 23_479, 17_715, 63_761, 8_524, 3_925, 65, 26, 6, 3)},
-            {"2023 H1": (34_203, None, None, None, None, None, None, None, None, None, None, None, None)},
-            {"2022 Q4": (None, 12_733, 1_716_192, 5_292, 24_288, 1_108, 33_228, 5_731, 2_686, 51, 35,9, 4)},
-            {"2022 Q3": (None, 10_772, 687_825, 2_987, 7_318, 633, 21_033, 3_896, 2_053, 61, 29, 6, 3)},
-            {"2022 H2": (27_995, None, None, None, None, None, None, None, None, None, None, None, None)},
-            {"2022 Q2": (None, 9_085, 712_295, 2_038, 4_988, 1_162, 37_694, 7_467, 5_971, 61, 30, 6, 2)},
-            {"2022 Q1": (None, 2_499, 300_003, 184, 542, 492, 10_743, 2_164, 1_169, 63, 28, 6, 3)},
-            {"2022 H1": (4_969, None, None, None, None, None, None, None, None, None, None, None, None)},
-            {"2021 Q4": (None, 2_545, 104_029, 228, 627, 578, 17_423, 3_110, 2_120, 83, 13, 3, 2)},
-            {"2021 Q3": (None, 2_362, 262_164, 295, 981, 862, 28_289, 5_718, 4_305, 72, 21, 4, 2)},
-            {"2021 H2": (1_794, None, None, None, None, None, None, None, None, None, None, None, None)},
-            {"2021 H1": (890, None, None, None, None, None, None, None, None, None, None, None, None)},
-            {"2020 H2": (1_794, None, None, None, None, None, None, None, None, None, None, None, None)},
-            {"2020 H1": (1_638, None, None, None, None, None, None, None, None, None, None, None, None)},
+            #           Reports|       |         Pins          |      | Pieces|       Boards      |        Accounts        |       |         Reach          |
+            {"2024 Q4": (  None, 27_692, 5_591_489, 1_087,   21,   786,  3_111,    542,    0,    0, 134_105,  8_197,  5_377, 13_094,   59,   37,    2,    1)},
+            {"2024 Q3": (  None, 40_223, 4_269_964,   332,   25, 1_992,  8_517,  1_068,    0,    0,  78_233, 15_623,  7_249,  9_624,   79,   20,    1,    1)}, # See comments for last two quantities
+            {"2024 H2": ( 8_989,   None,      None,  None, None,  None,   None,   None, None, None,    None,   None,   None,   None, None, None, None, None)},
+            {"2024 Q2": (  None,  7_180, 4_533_695,    99,    1, 1_384,  4_123,    705,    1,    1,  55_814,  5_429,  4_016,  5_349,   82,   15,    2,    1)}, # See comments for last quantity
+            {"2024 Q1": (  None,  5_575, 3_322_789,    13,    0,   894,  3_770,  3_100,    0,    0,  68_230,  8_424,  5_191,  8_370,   78,   19,    3,    1)},
+            {"2024 H1": (16_234,   None,      None,  None, None,  None,   None,   None, None, None,    None,   None,   None,   None, None, None, None, None)},
+            {"2023 Q4": (  None,  7_089, 3_602_828,    34,    6, 1_163,  7_488,  4_237,    0,    0, 173_110, 27_499, 19_754,  7_034,   78,   18,    3,    1)},
+            {"2023 Q3": (  None,  5_489, 1_469_597,     2,    2, 2_246, 10_471,    318,    0,    0, 244_258, 65_254, 49_854,  7_303,   73,   22,    4,    2)},
+            {"2023 H2": (16_234,   None,      None,  None, None,  None,   None,   None, None, None,    None,   None,   None,   None, None, None, None, None)},
+            {"2023 Q2": (  None,  9_691, 3_877_286,  None, None, 1_071, 16_336, 48_039, None, None, 172_633, 20_136,  9_874,  3_896,   83,   14,    2,    1)},
+            {"2023 Q1": (  None,  8_393, 1_846_326,  None, None, 2_348, 23_479, 17_715, None, None,  63_761,  8_524,  3_925,  5_726,   65,   26,    6,    3)},
+            {"2023 H1": (34_203,   None,      None,  None, None,  None,   None,   None, None, None,    None,   None,   None,   None, None, None, None, None)},
+            {"2022 Q4": (  None, 12_733, 1_716_192,  None, None, 5_292, 24_288,  1_108, None, None,  33_228,  5_731,  2_686,  4_940,   51,   35,    9,    4)},
+            {"2022 Q3": (  None, 10_772,   687_825,  None, None, 2_987,  7_318,    633, None, None,  21_033,  3_896,  2_053,  2_513,   61,   29,    6,    3)},
+            {"2022 H2": (27_995,   None,      None,  None, None,  None,   None,   None, None, None,    None,   None,   None,   None, None, None, None, None)},
+            {"2022 Q2": (  None,  9_085,   712_295,  None, None, 2_038,  4_988,  1_162, None, None,  37_694,  7_467,  5_971,  2_399,   61,   30,    6,    2)},
+            {"2022 Q1": (  None,  2_499,   300_003,  None, None,   184,    542,    492, None, None,  10_743,  2_164,  1_169,  1_735,   63,   28,    6,    3)},
+            {"2022 H1": ( 4_969,   None,      None,  None, None,  None,   None,   None, None, None,    None,   None,   None,   None, None, None, None, None)},
+            {"2021 Q4": (  None,  2_545,   104_029,  None, None,   228,    627,    578, None, None,  17_423,  3_110,  2_120,  1_044,   83,   13,    3,    2)},
+            {"2021 Q3": (  None,  2_362,   262_164,  None, None,   295,    981,    862, None, None,  28_289,  5_718,  4_305,  1_378,   72,   21,    4,    2)},
+            {"2021 H2": ( 1_794,   None,      None,  None, None,  None,   None,   None, None, None,    None,   None,   None,   None, None, None, None, None)},
+            {"2021 H1": (   890,   None,      None,  None, None,  None,   None,   None, None, None,    None,   None,   None,   None, None, None, None, None)},
+            {"2020 H2": ( 1_794,   None,      None,  None, None,  None,   None,   None, None, None,    None,   None,   None,   None, None, None, None, None)},
+            {"2020 H1": ( 1_638,   None,      None,  None, None,  None,   None,   None, None, None,    None,   None,   None,   None, None, None, None, None)},
             # fmt: on
         ),
     }),
@@ -706,6 +721,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     "Snap": frozen({
         "sources": (
             "https://values.snap.com/privacy/transparency",
+            "https://values.snap.com/privacy/transparency-h1-2024",
             "https://values.snap.com/privacy/transparency-h2-2023",
             "https://values.snap.com/privacy/transparency-h1-2023",
             "https://values.snap.com/privacy/transparency-h2-2022",
@@ -730,6 +746,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "schema": frozen({"accounts": "float"}),
         "rows": (
             # fmt: off
+            {"2024 H2": (1_228_929, 242_306, 417_842)},
             {"2024 H1": (1_737_563, 385_864, 632_436)},
             {"2023 H2": (1_046_296, 343_865, 398_736)},
             {"2023 H1": (548_509, 228_897, 292_489)},

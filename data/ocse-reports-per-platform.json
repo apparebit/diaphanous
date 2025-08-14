@@ -168,6 +168,7 @@
             ]
         },
         "rows": [
+            {"2025 Q1": [null, null, 1500000, 4600000, null, 163000, 398100, null, 32000, 127000, null, 42700, 287400]},
             {"2024 Q4": [null, null, 2500000, 6200000, null, 199300, 378700, null, 55700, 108400, null, 11900, 134000]},
             {"2024 Q3": [null, null, 1400000, 7100000, null, 136200, 722000, null, 38000, 174400, null, 10600, 106000]},
             {"2024 Q2": [null, null, 922000, 9700000, null, 83500, 410000, null, 9300, 90000, null, 1100, 52300]},
@@ -296,6 +297,7 @@
             ]
         },
         "rows": [
+            {"2025 Q1": [null, null, 616000, 1500000, null, 58800, 93200, null, 23500, 28900, null, 7200, 32500]},
             {"2024 Q4": [null, null, 946400, 2000000, null, 138700, 67000, null, 60400, 16300, null, 9400, 4900]},
             {"2024 Q3": [null, null, 1000000, 5600000, null, 150700, 122400, null, 68500, 25600, null, 9000, 6700]},
             {"2024 Q2": [null, null, 176800, 2800000, null, 31700, 71100, null, 5300, 21600, null, 400, 11500]},
@@ -372,7 +374,8 @@
             "https://transparency.meta.com/integrity-reports-q1-2024",
             "https://transparency.meta.com/integrity-reports-q2-2024",
             "https://transparency.meta.com/integrity-reports-q3-2024",
-            "https://transparency.meta.com/integrity-reports-q4-2024"
+            "https://transparency.meta.com/integrity-reports-q4-2024",
+            "https://transparency.meta.com/integrity-reports-q1-2025"
         ],
         "columns": [
             "reports",
@@ -396,6 +399,7 @@
             ]
         },
         "rows": [
+            {"2025 Q1": [1700000, null, null, null, null, null, null, null, null, null, null, null, null]},
             {"2024 Q4": [2000000, null, null, null, null, null, null, null, null, null, null, null, null]},
             {"2024 Q3": [1600000, null, null, null, null, null, null, null, null, null, null, null, null]},
             {"2024 Q2": [2800000, null, null, null, null, null, null, null, null, null, null, null, null]},
@@ -477,10 +481,12 @@
     "Pinterest": {
         "sources": [
             "https://help.pinterest.com/en/guide/transparency-report-archive",
+            "https://help.pinterest.com/en/guide/transparency-report-archive#chapter-26356",
             "https://policy.pinterest.com/en/transparency-report-h1-2022",
             "https://policy.pinterest.com/en/transparency-report-h2-2022",
             "https://policy.pinterest.com/en/transparency-report-h1-2023",
             "https://policy.pinterest.com/en/transparency-report-h2-2023",
+            "https://policy.pinterest.com/en/transparency-report-h1-2024",
             "https://policy.pinterest.com/en/transparency-report"
         ],
         "features": {
@@ -500,49 +506,57 @@
         "comments": [
             "Pin is lingo for a media card with picture, hence pin with CSAM is piece.",
             "Pinterest's disclosure language explains 2nd through 5th columns:",
-            "`We deactivated a distinct images, which comprised b Pins, for violating",
-            "our CSE policy. Of these, we determined that c distinct images, which",
-            "comprised d Pins, were illegal CSAM, and we reported them to NCMEC.`",
-            "The percent of pins deactivated for child safety that was seen by more than 100 users",
-            "in 2024 Q2 is not 1%, as indicated below, but < 1%"
+            "`We deactivated N1 distinct images, which comprised N2 Pins, for violating",
+            "our CSE policy. Of these, we determined that N3 distinct images, which",
+            "comprised N4 Pins, were illegal CSAM, and we reported them to NCMEC.`",
+            "The percent of pins deactivated for child safety seen by 10-100 users ",
+            "in Q3 2024 and seen by >100 users in Q2 and Q3 2024 actually is <1%"
         ],
         "columns": [
             "reports",
             "distinct images",
             "pins",
+            "pins appealed",
+            "pins reversed",
             "distinct images CSAM",
             "pieces",
             "boards",
+            "boards appealed",
+            "boards reversed",
             "accounts",
             "account appeals",
             "account reversals",
+            "actioned user reports",
             "% pins reached 0",
             "% pins reached 1-9",
             "% pins reached 10-100",
             "% pins reached >100"
         ],
         "rows": [
-            {"2024 Q2": [null, 7180, 4533695, 1384, 4123, 705, 55814, 5429, 4016, 82, 15, 2, 1]},
-            {"2024 Q1": [null, 5575, 3322789, 894, 3770, 3100, 68230, 8424, 5191, 78, 19, 3, 1]},
-            {"2024 H1": [16234, null, null, null, null, null, null, null, null, null, null, null, null]},
-            {"2023 Q4": [null, 7089, 3602828, 1163, 7488, 4237, 173110, 27499, 19754, 78, 18, 3, 1]},
-            {"2023 Q3": [null, 5489, 1469597, 2246, 10471, 318, 244258, 65254, 49854, 73, 22, 4, 2]},
-            {"2023 H2": [16234, null, null, null, null, null, null, null, null, null, null, null, null]},
-            {"2023 Q2": [null, 9691, 3877286, 1071, 16336, 48039, 172633, 20136, 9874, 83, 14, 2, 1]},
-            {"2023 Q1": [null, 8393, 1846326, 2348, 23479, 17715, 63761, 8524, 3925, 65, 26, 6, 3]},
-            {"2023 H1": [34203, null, null, null, null, null, null, null, null, null, null, null, null]},
-            {"2022 Q4": [null, 12733, 1716192, 5292, 24288, 1108, 33228, 5731, 2686, 51, 35, 9, 4]},
-            {"2022 Q3": [null, 10772, 687825, 2987, 7318, 633, 21033, 3896, 2053, 61, 29, 6, 3]},
-            {"2022 H2": [27995, null, null, null, null, null, null, null, null, null, null, null, null]},
-            {"2022 Q2": [null, 9085, 712295, 2038, 4988, 1162, 37694, 7467, 5971, 61, 30, 6, 2]},
-            {"2022 Q1": [null, 2499, 300003, 184, 542, 492, 10743, 2164, 1169, 63, 28, 6, 3]},
-            {"2022 H1": [4969, null, null, null, null, null, null, null, null, null, null, null, null]},
-            {"2021 Q4": [null, 2545, 104029, 228, 627, 578, 17423, 3110, 2120, 83, 13, 3, 2]},
-            {"2021 Q3": [null, 2362, 262164, 295, 981, 862, 28289, 5718, 4305, 72, 21, 4, 2]},
-            {"2021 H2": [1794, null, null, null, null, null, null, null, null, null, null, null, null]},
-            {"2021 H1": [890, null, null, null, null, null, null, null, null, null, null, null, null]},
-            {"2020 H2": [1794, null, null, null, null, null, null, null, null, null, null, null, null]},
-            {"2020 H1": [1638, null, null, null, null, null, null, null, null, null, null, null, null]}
+            {"2024 Q4": [null, 27692, 5591489, 1087, 21, 786, 3111, 542, 0, 0, 134105, 8197, 5377, 13094, 59, 37, 2, 1]},
+            {"2024 Q3": [null, 40223, 4269964, 332, 25, 1992, 8517, 1068, 0, 0, 78233, 15623, 7249, 9624, 79, 20, 1, 1]},
+            {"2024 H2": [8989, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+            {"2024 Q2": [null, 7180, 4533695, 99, 1, 1384, 4123, 705, 1, 1, 55814, 5429, 4016, 5349, 82, 15, 2, 1]},
+            {"2024 Q1": [null, 5575, 3322789, 13, 0, 894, 3770, 3100, 0, 0, 68230, 8424, 5191, 8370, 78, 19, 3, 1]},
+            {"2024 H1": [16234, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+            {"2023 Q4": [null, 7089, 3602828, 34, 6, 1163, 7488, 4237, 0, 0, 173110, 27499, 19754, 7034, 78, 18, 3, 1]},
+            {"2023 Q3": [null, 5489, 1469597, 2, 2, 2246, 10471, 318, 0, 0, 244258, 65254, 49854, 7303, 73, 22, 4, 2]},
+            {"2023 H2": [16234, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+            {"2023 Q2": [null, 9691, 3877286, null, null, 1071, 16336, 48039, null, null, 172633, 20136, 9874, 3896, 83, 14, 2, 1]},
+            {"2023 Q1": [null, 8393, 1846326, null, null, 2348, 23479, 17715, null, null, 63761, 8524, 3925, 5726, 65, 26, 6, 3]},
+            {"2023 H1": [34203, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+            {"2022 Q4": [null, 12733, 1716192, null, null, 5292, 24288, 1108, null, null, 33228, 5731, 2686, 4940, 51, 35, 9, 4]},
+            {"2022 Q3": [null, 10772, 687825, null, null, 2987, 7318, 633, null, null, 21033, 3896, 2053, 2513, 61, 29, 6, 3]},
+            {"2022 H2": [27995, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+            {"2022 Q2": [null, 9085, 712295, null, null, 2038, 4988, 1162, null, null, 37694, 7467, 5971, 2399, 61, 30, 6, 2]},
+            {"2022 Q1": [null, 2499, 300003, null, null, 184, 542, 492, null, null, 10743, 2164, 1169, 1735, 63, 28, 6, 3]},
+            {"2022 H1": [4969, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+            {"2021 Q4": [null, 2545, 104029, null, null, 228, 627, 578, null, null, 17423, 3110, 2120, 1044, 83, 13, 3, 2]},
+            {"2021 Q3": [null, 2362, 262164, null, null, 295, 981, 862, null, null, 28289, 5718, 4305, 1378, 72, 21, 4, 2]},
+            {"2021 H2": [1794, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+            {"2021 H1": [890, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+            {"2020 H2": [1794, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+            {"2020 H1": [1638, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]}
         ]
     },
     "Pornhub": {
@@ -661,6 +675,7 @@
     "Snap": {
         "sources": [
             "https://values.snap.com/privacy/transparency",
+            "https://values.snap.com/privacy/transparency-h1-2024",
             "https://values.snap.com/privacy/transparency-h2-2023",
             "https://values.snap.com/privacy/transparency-h1-2023",
             "https://values.snap.com/privacy/transparency-h2-2022",
@@ -690,6 +705,7 @@
             "accounts": "float"
         },
         "rows": [
+            {"2024 H2": [1228929, 242306, 417842]},
             {"2024 H1": [1737563, 385864, 632436]},
             {"2023 H2": [1046296, 343865, 398736]},
             {"2023 H1": [548509, 228897, 292489]},

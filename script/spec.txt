@@ -1,0 +1,145 @@
+// === Nodes and Flows ===
+
+Online enticement of children [0.520] Violation of US Law #d6402c
+Obscene material sent to a child [0.127] Violation of US Law #d6402c
+Child sexual molestation [0.050] Violation of US Law #d6402c
+Child sex trafficking [0.048] Violation of US Law #d6402c
+Misleading words/images online [0.023] Violation of US Law #d6402c
+Misleading domain name [0.019] Violation of US Law #d6402c
+Child sex tourism [0.006] Violation of US Law #d6402c
+
+Adults producing CSAM [9] CSAM #d6402c
+Adults distributing/accessing CSAM [9] CSAM #d6402c
+
+Minors selling self-produced sexual content [9] CSAM #fe8c02
+Adults producing/distributing/accessing\nvirtual CSAM incl. animation [9] CSAM #fe8c02
+
+Adults distributing/accessing porn collections\ncontaining occasional CSAM [9] CSAM #ffca00
+Minors/adults shit-posting CSAM,\ni.e., as memes [10] CSAM #ffca00
+Adults posting CSAM to alert other adults\nor recruit them for “community policing" [9] CSAM #ffca00
+Teenagers exchanging sexual photos/videos\ninvolving other teenagers without consent [9] CSAM #ffca00
+
+Teenagers exchanging sexual photos/videos\nof themselves with consent [9] CSAM #069335
+Adults owning sexual photos/videos of minors\nabove age of consent, taken with consent [9] CSAM #069335
+Adults, e.g., parents or teachers, documenting\nCSAM sent to minors in their care [9] CSAM #069335
+
+CSAM [18] Violation of US Law #d6402c
+CSAM [18] Violation of US Law #fe8c02
+CSAM [37] Violation of US Law #ffca00
+CSAM [27] Violation of US Law #069335
+
+Violation of US Law [14.793] Reported to\nNCMEC #d6402c
+Violation of US Law [4] False Negative #d6402c
+Violation of US Law [14] Reported to\nNCMEC #fe8c02
+Violation of US Law [4] False Negative #fe8c02
+Violation of US Law [30] Reported to\nNCMEC #ffca00
+Violation of US Law [7] False Negative #ffca00
+Violation of US Law [22] Reported to\nNCMEC #069335
+Violation of US Law [5] False Negative #069335
+
+Incidental False Positive [18] Reported to\nNCMEC #3078ea
+Adversarial False Positive [2] Reported to\nNCMEC #750787
+
+Reported to\nNCMEC [7.3965] Unique #d6402c
+Reported to\nNCMEC [7.3965] Redundant #d6402c
+Reported to\nNCMEC [7] Unique #fe8c02
+Reported to\nNCMEC [7] Redundant #fe8c02
+Reported to\nNCMEC [15] Unique #ffca00
+Reported to\nNCMEC [15] Redundant #ffca00
+Reported to\nNCMEC [11] Unique #069335
+Reported to\nNCMEC [11] Redundant #069335
+Reported to\nNCMEC [9] Unique #3078ea
+Reported to\nNCMEC [9] Redundant #3078ea
+Reported to\nNCMEC [1] Unique #750787
+Reported to\nNCMEC [1] Redundant #750787
+
+Unique [3.69825] Actionable #d6402c
+Unique [3.69825] Informational #d6402c
+Unique [3.5] Actionable #fe8c02
+Unique [3.5] Informational #fe8c02
+Unique [7.5] Actionable #ffca00
+Unique [7.5] Informational #ffca00
+Unique [5.5] Actionable #069335
+Unique [5.5] Informational #069335
+Unique [4.5] Actionable #3078ea
+Unique [4.5] Informational #3078ea
+Unique [0.5] Actionable #750787
+Unique [0.5] Informational #750787
+
+Actionable [3.29825] International\nLaw Enforcement #d6402c
+Actionable [0.4] US Law Enforcement #d6402c
+Actionable [3.1] International\nLaw Enforcement #fe8c02
+Actionable [0.4] US Law Enforcement #fe8c02
+Actionable [6.7] International\nLaw Enforcement #ffca00
+Actionable [0.8] US Law Enforcement #ffca00
+Actionable [4.9] International\nLaw Enforcement #069335
+Actionable [0.6] US Law Enforcement #069335
+Actionable [4.0] International\nLaw Enforcement #3078ea
+Actionable [0.5] US Law Enforcement #3078ea
+Actionable [0.4] International\nLaw Enforcement #750787
+Actionable [0.1] US Law Enforcement #750787
+
+// === Settings ===
+
+size w 1800
+  h 900
+margin l 0
+  r 0
+  t 0
+  b 0
+bg color #ffffff
+  transparent Y
+node w 12
+  h 50
+  spacing 59
+  border 0
+  theme none
+  color #888888
+  opacity 1
+flow curvature 0.3
+  inheritfrom outside-in
+  color #999999
+  opacity 0.45
+layout order exact
+  justifyorigins N
+  justifyends N
+  reversegraph N
+  attachincompletesto nearest
+labels color #000000
+  hide N
+  highlight 0.85
+  fontface sans-serif
+  linespacing 0.2
+  relativesize 110
+  magnify 100
+labelname appears Y
+  size 20
+  weight 400
+labelvalue appears N
+  fullprecision Y
+  position below
+  weight 400
+labelposition autoalign 0
+  scheme auto
+  first before
+  breakpoint 4
+value format ',.'
+  prefix ''
+  suffix ''
+themeoffset a 9
+  b 1
+  c 3
+  d 0
+meta mentionsankeymatic N
+  listimbalances Y
+
+// === Moved Nodes ===
+
+move Online enticement of children 0.14, 0
+move Obscene material sent to a child 0.14, 0
+move Child sexual molestation 0.14, 0
+move Child sex trafficking 0.14, 0
+move Misleading words/images online 0.14, 0
+move Misleading domain name 0.14, 0
+move Child sex tourism 0.14, 0
+move Reported to\nNCMEC 0, -0.01
