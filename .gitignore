@@ -170,5 +170,4 @@ report/export.bib
 
 # R packages
 rlib
-
-report-archive
+.Rproj.user
