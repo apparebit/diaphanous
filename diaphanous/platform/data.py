@@ -228,7 +228,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "columns": ("accounts", "reports"),
         "rows": (
             # fmt: off
-            #{"2024": (5, 16)}, # Wait until we have complete data for Microsoft
+            {"2024": (5, 16)},
             {"2023": (3, 37)},
             {"2022": (1, 6)},
             {"2021": (1, 4)},
@@ -364,6 +364,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "columns": ("pieces",),
         "rows": (
             # fmt: off
+            {"2024 H2": (112,)},
             {"2024 H1": (65,)},
             {"2023 H2": (210,)},
             {"2023 H1": (223,)},
@@ -468,6 +469,10 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "reinstated accounts": "float",
         }),
         "rows": (
+            {"2024 H2": (226_811, 99.82, None, None, None)},
+            {"2024 H2": (53_982, 99.64, 9_269, 4.49, None)},
+            {"2024 H2": (None, None, None, None, 49_617)},
+
             {"2024 H1": (109_894, 99.3, None, None, None)},
             {"2024 H1": (69_807, 99.5, 8_758, 2.4, None)},
             {"2024 H1": (None, None, None, None, 51_827)},

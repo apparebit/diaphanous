@@ -214,6 +214,7 @@
             "reports"
         ],
         "rows": [
+            {"2024": [5, 16]},
             {"2023": [3, 37]},
             {"2022": [1, 6]},
             {"2021": [1, 4]}
@@ -343,6 +344,7 @@
         "comments": ["numbers disclosed under 'content removed', hence pieces"],
         "columns": ["pieces"],
         "rows": [
+            {"2024 H2": [112]},
             {"2024 H1": [65]},
             {"2023 H2": [210]},
             {"2023 H1": [223]},
@@ -438,6 +440,9 @@
             "reinstated accounts": "float"
         },
         "rows": [
+            {"2024 H2": [226811, 99.820, null, null, null]},
+            {"2024 H2": [53982, 99.640, 9269, 4.490, null]},
+            {"2024 H2": [null, null, null, null, 49617]},
             {"2024 H1": [109894, 99.300, null, null, null]},
             {"2024 H1": [69807, 99.500, 8758, 2.400, null]},
             {"2024 H1": [null, null, null, null, 51827]},
