@@ -65,7 +65,9 @@ def show(
         return
 
     columns = value.columns
-    is_reports_table = 'reports' in columns and 'Δ%' in columns and 'NCMEC' in columns
+    is_reports_table = all(
+        c in columns for c in ('reports', 'Δ%', 'NCMEC', 'esp%', 'total%')
+    )
     if is_reports_table and lowlight_columns is None:
         lowlight_columns = ['esp%', 'esp', 'total', 'esp/total%']
 
@@ -86,15 +88,20 @@ def show(
             value,
             style,
             column='Δ%',
-            threshold=1.5,
+            threshold=1.0,
             low=0.1,
             vmin=0,
             vmax=200,
         )
-
         style.format('≡', subset=pd.IndexSlice[
             value['reports'] == value['NCMEC'], 'Δ%'
         ])
+        style.set_properties(
+            **{'background-color': "#ccffba"},
+            subset=pd.IndexSlice[
+                value['reports'] == value['NCMEC'], 'reports':'NCMEC'
+            ]
+        )
 
     display(style)
 
@@ -273,9 +280,12 @@ def highlight_magnitude(
     high: float = 0,
     vmin: None | float = None,
     vmax: None | float = None,
+    highlight_columns: None | list[str] = None,
 ) -> Styler:
     magnitude = frame[column].fillna(0).abs()
-    above_threshold = magnitude > threshold
+    matching_rows = magnitude > threshold
+    if highlight_columns is None:
+        highlight_columns = ['reports', 'Δ%', 'NCMEC']
     return style.background_gradient(
         cmap=colormap,
         low=low,
@@ -283,7 +293,7 @@ def highlight_magnitude(
         vmin=vmin,
         vmax=vmax,
         gmap=magnitude,
-        subset=(above_threshold, frame.columns),  # type: ignore[arg-type]
+        subset=(matching_rows, highlight_columns),  # type: ignore[arg-type]
     )
 
 
