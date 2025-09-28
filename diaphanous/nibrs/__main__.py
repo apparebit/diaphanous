@@ -25,5 +25,5 @@ if __name__ == "__main__":
         Id.YEAR, Id.GROUP, Id.RACE, Id.SEX, sorted=True
     ))
     by_age_race_sex.write_csv(
-        root / "data" / "nibrs" / "offenders_by_age_race_sex.csv"
+        root / "data" / "nibrs" / "offenders-by-group-race-sex.csv"
     )

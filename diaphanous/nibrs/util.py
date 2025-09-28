@@ -62,18 +62,19 @@ def with_total_and_percent(
 
 def humanize_frame(frame: pl.DataFrame) -> pl.DataFrame:
     """
-    Humanize NIBRS data. This function converts numeric as well as letter codes
-    appearing as column values as well as their column names to meaningful
-    English terms. It does assume that columns are named after the identifiers
-    of the `model.Id` enumeration.
+    Humanize NIBRS data. This function converts numeric values and one/two
+    letter codes to human-readable labels. It generally assumes that columns
+    still have their original names.
     """
     baptism = {}
 
     for column in frame.columns:
-        if column == "age":
-            baptism["age"] = "Age"
+        # Handle exceptional column names
+        if column in ("age", "count"):
+            baptism[column] = column.title()
             continue
 
+        # Handle members of Id.
         try:
             ident = Id(column)
         except:
