@@ -23,18 +23,17 @@ from rpy2.robjects.vectors import StrVector
 
 
 PACKAGES = (
+    "tidyverse",
     "car",
-    "dplyr",
     "estimatr",
-    "ggplot2",
     "iccCounts",
     "patchwork",
-    "purrr",
     "scales",
     "segmented",
     "svglite",
     "this.path",
-    "tidyr",
+    "vcd",
+    "vcdExtra",
 )
 
 

@@ -1,7 +1,7 @@
 import polars as pl
 import great_tables as gt
 
-from .model import Column, Entry
+from .model import Column, Entry, Id
 
 
 def configure() -> None:
@@ -60,6 +60,40 @@ def with_total_and_percent(
     )
 
 
+def humanize_frame(frame: pl.DataFrame) -> pl.DataFrame:
+    """
+    Humanize NIBRS data. This function converts numeric as well as letter codes
+    appearing as column values as well as their column names to meaningful
+    English terms. It does assume that columns are named after the identifiers
+    of the `model.Id` enumeration.
+    """
+    baptism = {}
+
+    for column in frame.columns:
+        if column == "age":
+            baptism["age"] = "Age"
+            continue
+
+        try:
+            ident = Id(column)
+        except:
+            continue
+
+        baptism[ident] = ident.name.title()
+
+        value_range = ident.value_range()
+        if value_range is None:
+            continue
+
+        frame = frame.with_columns(
+            pl.col(column).cast(pl.String).replace({
+                str(v): to_title(k) for k, v in value_range.__members__.items()
+            })
+        )
+
+    return frame.rename(baptism)
+
+
 def format_table(frame: pl.DataFrame, title: None | str = None) -> gt.GT:
     """Format the given data frame as a good-looking table"""
     table = gt.GT(frame)
@@ -73,7 +107,7 @@ def format_table(frame: pl.DataFrame, title: None | str = None) -> gt.GT:
             columns=[c for c in frame.columns if frame.schema[c].is_integer()]
         )
         .fmt_percent(
-            columns=[c for c in frame.columns if Column.PERCENT in c],
+            columns=[c for c in frame.columns if Column.PERCENT in c or "%" in c],
             decimals=1,
         )
         .tab_options(table_font_names=gt.system_fonts("industrial"))

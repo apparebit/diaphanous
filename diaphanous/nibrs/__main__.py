@@ -1,20 +1,29 @@
 from pathlib import Path
-from .util import configure
-from .data import load
+import shutil
+
+from .data import load_all
+from .model import Id, Column
+from .util import configure, humanize_frame
+
+
+CRITERIA = (Id.YEAR, Id.GROUP, Id.RACE, Id.SEX)
 
 
 if __name__ == "__main__":
+    root = Path(__file__).parent.parent.parent
+    width, _ = shutil.get_terminal_size()
     configure()
-    data = load()
+
+    data = load_all()
     offenders = data.offender_demographics()
-    offender_age_sex_race = offenders.age_group_sex_race()
-    offender_age_sex_race.write_csv(
-        Path(__file__).parent.parent.parent
-        / "data" / "nibrs" / "offender-age-group-sex-race.csv"
+
+    humanize_frame(offenders.data()).write_csv(
+        root / "data" / "nibrs" / "offenders.csv"
     )
 
-    print(data.caseload())
-    print(data.severity())
-    print(data.completion())
-    print(offender_age_sex_race)
-    print((lambda pair: pair[1])(offenders.age_distribution()))
+    by_age_race_sex = humanize_frame(offenders.by(
+        Id.YEAR, Id.GROUP, Id.RACE, Id.SEX, sorted=True
+    ))
+    by_age_race_sex.write_csv(
+        root / "data" / "nibrs" / "offenders_by_age_race_sex.csv"
+    )

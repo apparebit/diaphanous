@@ -1,12 +1,11 @@
-from .data import CsamData, load
+from .data import CsamData, load, load_all
 from .model import (
-    AGE_GROUPS, Clearance, Column, CriminalAct, Entry, Ethnicity, Id,
+    Clearance, Column, CriminalAct, Entry, Ethnicity, Id,
     JuvenileDisposition, Location, OffenseCode, Race, Sex, Using
 )
-from .util import configure
+from .util import configure, format_table, humanize_frame
 
 __all__ = (
-    "AGE_GROUPS",
     "Clearance",
     "Column",
     "configure",
@@ -14,9 +13,12 @@ __all__ = (
     "CsamData",
     "Entry",
     "Ethnicity",
+    "format_table",
+    "humanize_frame",
     "Id",
     "JuvenileDisposition",
     "load",
+    "load_all",
     "Location",
     "OffenseCode",
     "Race",

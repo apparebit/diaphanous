@@ -34,7 +34,8 @@ dependencies = [
     "kaleido",       # 0.2.1   -- required for exporting images from Plotly
     "matplotlib",    # 3.7.1   -- required for background gradient in table
     "rpy2",          #         -- required for R integration
-    "polars",        # 1.31.0  -- better dataframes
+    "polars",        # 1.31.0  -- better data frames
+    "altair",        #         -- better plots
     "great_tables",  #         -- better tables
 ]
 
@@ -43,9 +44,7 @@ dynamic = ["version"]
 [project.optional-dependencies]
 
 dev = [
-    "mypy",
     "pandas-stubs",    # required for type-checking code, eliminates 93 errors.
-    "black[jupyter]",
     "flit",
     "vermin",          # check minimum required Python version
 ]

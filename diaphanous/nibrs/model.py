@@ -286,8 +286,11 @@ class Id(enum.StrEnum):
     AGE = "age_id"
     AGENCY = "agency_id"
     ARRESTEE = "arrestee_id"
+    CLEARED_EXCEPT = "cleared_except_id"
     CRIMINAL_ACT = "criminal_act_id"
     ETHNICITY = "ethnicity_id"
+    # Not a valid foreign key but makes API nicer:
+    GROUP = "age_group"
     INCIDENT = "incident_id"
     LOCATION = "location_id"
     OFFENDER = "offender_id"
@@ -296,6 +299,30 @@ class Id(enum.StrEnum):
     SEX = "sex_code"
     SUSPECT_USING = "suspect_using_id"
     VICTIM = "victim_id"
+    YEAR = "data_year"
+
+    def value_range(self) -> None | enum.StrEnum:
+        """Get the enumeration of possible values for a column with this name."""
+        if self == self.CLEARED_EXCEPT:
+            return Clearance
+        if self == self.CRIMINAL_ACT:
+            return CriminalAct
+        if self == self.ETHNICITY:
+            return Ethnicity
+        if self == self.GROUP:
+            return Group
+        if self == self.LOCATION:
+            return Location
+        if self == self.OFFENSE:
+            return OffenseCode
+        if self == self.RACE:
+            return Race
+        if self == self.SEX:
+            return Sex
+        if self == self.SUSPECT_USING:
+            return Using
+
+        return None
 
 
 class JuvenileDisposition(enum.StrEnum):
@@ -412,6 +439,8 @@ class Race(enum.IntEnum):
     UNKNOWN = 98
     NOT_SPECIFIED = 99
 
+    HISPANIC = 100  # Not in NIBRS, added to simplify folding of ethnicity
+
 
 class Sex(enum.StrEnum):
     """The single letter codes for the sex."""
@@ -434,17 +463,20 @@ class Using(enum.IntEnum):
 # Derived Data
 
 
-AGE_GROUPS = ("Child", "Adolescent", "Adult")
-"""The three age groups."""
+class Group(enum.IntEnum):
+    """The age groups. The values were chosen to sort into a convenient order."""
+    CHILD = 1
+    ADOLESCENT = 2
+    ADULT = 3
+    UNKNOWN = 4
 
 
 class Column(enum.StrEnum):
     """
-    The column names of demographics and other descriptive statistics.
+    The column names of demographics and other descriptive statistics. The
+    corresponding long table uses this enumeration thusly:
 
-    When collecting descriptive statistics, this module favors a long table
-    format:
-
+      - `YEAR` provides the year
       - `Id.AGE`, `AGE`, and `GROUP` characterize the age
       - `CATEGORY` and `VARIANT` provide two-level identifiers for variables
       - `COUNT` and `PERCENT` provide the actual values
@@ -456,6 +488,7 @@ class Column(enum.StrEnum):
     COUNT = "Count"
     PERCENT = "Percent"
     RANK = "Rank"
+    YEAR = "Year"
 
 
 class Entry(enum.StrEnum):
@@ -464,15 +497,30 @@ class Entry(enum.StrEnum):
 
     The `TOTAL` variant's value is `🖩 Total`. The calculator icon serves as a
     visual marker that distinguishes the row from other rows showing variant
-    values. Its Unicode code point is U+1F5A9 and is included in the [Noto Sans
-    Symbols 2](https://fonts.google.com/noto/specimen/Noto+Sans+Symbols+2) font.
+    values. Its Unicode code point is U+1F5A9 and it is included in the [Noto
+    Sans Symbols 2](https://fonts.google.com/noto/specimen/Noto+Sans+Symbols+2)
+    font.
     """
     ADOLESCENT = "Adolescent"
     ADULT = "Adult"
     CHILD = "Child"
     SIZE = "Size"
-    TOTAL = "🖩 Total"
+    TOTAL = "🖩 Total"
     UNKNOWN = "Unknown"
+
+
+Count = enum.StrEnum("Count", {
+    s.upper() if s[0] != "🖩" else s[2:].upper(): t
+    for s in ("Child", "Adolescent", "Adult", "🖩 Total")
+    for t in (f"{s} Count",)
+})
+
+
+Percent = enum.StrEnum("Percent", {
+    s.upper() if s[0] != "🖩" else s[2:].upper(): t
+    for s in ("Child", "Adolescent", "Adult", "🖩 Total")
+    for t in (f"{s} Percent",)
+})
 
 
 class AbstractDemographics(metaclass=ABCMeta):

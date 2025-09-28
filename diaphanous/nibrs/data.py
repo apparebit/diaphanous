@@ -11,7 +11,7 @@ from .model import (
     AbstractDemographics, Column, CriminalAct, Entry, Id, NIBRS_SOURCE_FILES,
     NibrsSchema, NibrsTable, OffenseCode
 )
-from .util import format_table, with_total_and_percent
+from .util import format_table
 
 
 def _associated_offenses(
@@ -389,42 +389,107 @@ class CsamData:
         Generate a data frame with the number of offenders, incidents, and
         arrestees.
         """
-        offenders = len(self.offenders)
-        incidents = len(self.incidents)
-        assert incidents == len(self.offenses)
-        arrestees = len(self.arrestees)
+        frames = [
+            getattr(self, label.lower()).lazy().group_by(
+                pl.col(Id.YEAR), maintain_order=True,
+            ).agg(
+                pl.len().alias(Column.COUNT),
+            ).select(
+                pl.col(Id.YEAR).cast(pl.String),
+                pl.lit(label, dtype=pl.String).alias(Column.VARIANT),
+                pl.col(Column.COUNT),
+            )
+            for label in ("Offenders", "Incidents", "Arrestees")
+        ]
 
-        return pl.DataFrame({
-            Column.VARIANT: ["Offenders", "Incidents", "Arrestees"],
-            Column.COUNT: [offenders, incidents, arrestees],
-        })
+        frame = pl.concat(
+            frames,
+            how="vertical"
+        ).collect().pivot(
+            on=Id.YEAR,
+            index=Column.VARIANT,
+            values=Column.COUNT,
+            maintain_order=True,
+        )
+
+        first_year = frame.columns[1]
+        return frame.select(
+            pl.col(Column.VARIANT),
+            pl.col(first_year).alias(f"Count {first_year}"),
+            *(
+                selection
+                for i, c in enumerate(frame.columns[2:])
+                for selection in (
+                    pl.col(c).sub(
+                        pl.col(frame.columns[i + 2 - 1])
+                    ).truediv(
+                        pl.col(frame.columns[i + 2 - 1])
+                    ).alias(f"∆% {c}"),
+                    pl.col(c).alias(f"Count {c}"),
+                )
+            )
+        )
 
     def caseload_table(self) -> gt.GT:
         """Generate a table from the `caseload` data frame."""
-        return format_table(self.caseload(), "CSAM Caseload")
+        return format_table(
+            self.caseload(), "CSAM Caseload"
+        ).tab_spanner_delim(
+            delim=" ", reverse=True
+        )
 
     def severity(self) -> pl.DataFrame:
         """
         Generate a data frame with the number of offenses that are supply-side
-        vs demand-size. The former include production, distribution, promotion,
+        vs demand-side. The former include production, distribution, promotion,
         and transmission, whereas the latter include buying, possessing, and
         using.
         """
-        supply = self.offenses.select(
-            pl.col("is_more_severe").sum()
-        ).item()
-        total = len(self.offenses)
-        demand = total - supply
+        frame = self.offenses.lazy().group_by(
+            Id.YEAR, maintain_order=True
+        ).agg(
+            pl.col("is_more_severe").sum().alias("Supply"),
+            pl.len().alias(Entry.TOTAL),
+        ).select(
+            pl.col(Id.YEAR).cast(pl.String),
+            pl.col("Supply"),
+            pl.col(Entry.TOTAL).sub(pl.col("Supply")).alias("Demand"),
+            pl.col(Entry.TOTAL),
+        ).unpivot(
+            index=Id.YEAR,
+            variable_name=Column.VARIANT,
+            value_name=Column.COUNT,
+        ).collect().pivot(
+            on=Id.YEAR,
+            index=Column.VARIANT,
+            values=Column.COUNT,
+            maintain_order=True,
+            separator=" ",
+        )
 
-        return pl.DataFrame({
-            Column.VARIANT: ["Supply", "Demand", Entry.TOTAL],
-            Column.COUNT: [supply , demand, total],
-            Column.PERCENT: [it / total for it in (supply, demand, total)],
-        })
+        # This almost is business as usual. The only complication is that we
+        # perform the percent calculation for each column with yearly counts.
+        return frame.select(
+            pl.col(Column.VARIANT),
+            *(
+                selection
+                for c in frame.columns[1:] #if c != Column.VARIANT
+                for selection in (
+                    pl.col(c).alias(f"Count {c}"),
+                    pl.col(c).truediv(
+                        pl.col(c).filter(pl.col(Column.VARIANT).eq(Entry.TOTAL)).first()
+                    ).alias(f"Percent {c}"),
+                )
+            )
+        )
 
     def severity_table(self) -> gt.GT:
         """Generate a table from the `severity` data frame."""
-        return format_table(self.severity(), "Offense Severity")
+        return format_table(
+            self.severity(), "Offense Severity"
+        ).tab_spanner_delim(
+            delim=" ", reverse=True
+        )
 
     def completion(self) -> pl.DataFrame:
         """
@@ -432,36 +497,63 @@ class CsamData:
         attempted, that have been completed, and that turned out to be
         unfounded.
         """
-        return with_total_and_percent(self.offenses.select(
-            pl.col("attempted_complete_flag")
-            .value_counts()
-            .struct.unnest()
+        return self.offenses.lazy().group_by(
+            Id.YEAR, maintain_order=True,
+        ).agg(
+            pl.col("attempted_complete_flag").value_counts(),
+        ).explode(
+            "attempted_complete_flag"
+        ).unnest(
+            "attempted_complete_flag"
         ).select(
-            pl.col("attempted_complete_flag").map_elements(
-                lambda el: (
-                    "Attempted" if el == "A" else
-                    "Completed" if el == "C" else
-                    "Unfounded" if el == "U" else
-                    el
-                ),
-                return_dtype=pl.String,
-            ).alias(Column.VARIANT),
-            pl.col("count").cast(pl.Int64).alias(Column.COUNT),
-        ))
+            pl.col(Id.YEAR).cast(pl.String),
+            pl.col("attempted_complete_flag").replace({
+                "A": "Attempted", "C": "Completed", "U": "Unfounded",
+            }).alias(Column.VARIANT),
+            pl.col("count").alias(Column.COUNT),
+        ).collect().pivot(
+            on=Id.YEAR,
+            index=Column.VARIANT,
+            values=Column.COUNT,
+        )
 
     def completion_table(self) -> gt.GT:
         """Generate a table from the `completion` data frame."""
         return format_table(self.completion(), "Offense Completion")
 
-    def arrestee_demographics(self) -> AbstractDemographics:
+    def arrestee_demographics(
+        self,
+        /,
+        fold_ethnicity: bool = True,
+        simplify_race: bool = True,
+        nullify_unknown: bool = True,
+    ) -> AbstractDemographics:
         """Generate a demographic summary of arrestees."""
         from .demographics import Demographics
-        return Demographics(self, "arrestees")
+        return Demographics(
+            self,
+            "arrestees",
+            fold_ethnicity=fold_ethnicity,
+            simplify_race=simplify_race,
+            nullify_unknown=nullify_unknown,
+        )
 
-    def offender_demographics(self) -> AbstractDemographics:
+    def offender_demographics(
+        self,
+        /,
+        fold_ethnicity: bool = True,
+        simplify_race: bool = True,
+        nullify_unknown: bool = True,
+    ) -> AbstractDemographics:
         """Generate a demographic summary of offenders."""
         from .demographics import Demographics
-        return Demographics(self, "offenders")
+        return Demographics(
+            self,
+            "offenders",
+            fold_ethnicity=fold_ethnicity,
+            simplify_race=simplify_race,
+            nullify_unknown=nullify_unknown,
+        )
 
     def as_list(self) -> list[pl.DataFrame]:
         """
@@ -499,14 +591,14 @@ class CsamData:
             getattr(self, field.name).write_parquet(path / f"{field.name}.parquet")
 
 
-def load() -> CsamData:
-    """Load NIBRS data involving CSAM."""
+def load(year: int) -> CsamData:
+    """Load NIBRS data involving CSAM for the given year."""
     def trace(path: Path) -> None:
         print(str(path))
 
     root = Path(__file__).parent.parent.parent
-    archives = root / "data" / "nibrs" / "2023"
-    ingested = root / "data" / "nibrs" / "ingested" / "2023"
+    archives = root / "data" / "nibrs" / f"{year}"
+    ingested = root / "data" / "nibrs" / "ingested" / archives.name
 
     if not ingested.exists():
         data = CsamData.ingest_zip(archives, trace)
@@ -515,3 +607,8 @@ def load() -> CsamData:
         data = CsamData.load(ingested)
 
     return data
+
+
+def load_all() -> CsamData:
+    """Load all NIBRS data involving CSAM."""
+    return CsamData.merge(*(load(y) for y in range(2023, 2025)))
