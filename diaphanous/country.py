@@ -49,9 +49,9 @@ def read_reports(path: str | Path) -> pd.DataFrame:
     reports = (
         reports
         # The disclosures for 2024 distinguishes between "referrals" (in column
-        # "2024r") and "informational reports" (in column "2024i"). We create
-        # the column with their sums here.
-        .assign(**{"2024": lambda df: df['2024r'].fillna(0) + df['2024i'].fillna(0)})
+        # "ref2024") and "informational reports" (in column "info2024"). We
+        # create the column with their sums here.
+        .assign(**{"2024": lambda df: df['ref2024'].fillna(0) + df['info2024'].fillna(0)})
         # NCMEC includes a line for reports without country in each disclosure
         # but adds them to USA's tally for analysis. We do the same.
         .assign(iso3=lambda df: df['iso3'].fillna('USA'))
