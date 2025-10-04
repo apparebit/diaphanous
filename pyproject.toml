@@ -6,7 +6,7 @@ build-backend = "flit_core.buildapi"
 name = "diaphanous"
 description = "CSAM reporting by social media and NCMEC"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.13"
 license = {text = "Apache 2.0"}
 authors = [{name = "Robert Grimm", email = "rgrimm@alum.mit.edu"}]
 classifiers = [
@@ -18,25 +18,26 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Internet",
     "Topic :: Sociology",
 ]
 
 dependencies = [
-    "ipykernel",     # 6.23.1  -- required for runing notebooks, includes ipython
-    "pandas",        # 2.0.1   -- dataframes
-    "geopandas",     # 0.13.0  -- geographical data (effectively unused currently)
-    "jinja2",        # 3.1.2   -- required for styling Pandas
-    "plotly",        # 5.14.1  -- one option for graphing Pandas
-    "nbformat",      # 5.9.0   -- required for rendering Plotly MIME types
-    "kaleido",       # 0.2.1   -- required for exporting images from Plotly
-    "matplotlib",    # 3.7.1   -- required for background gradient in table
-    "rpy2",          #         -- required for R integration
-    "polars",        # 1.31.0  -- better data frames
-    "altair",        #         -- better plots
-    "great_tables",  #         -- better tables
+    "ipykernel",          # 6.23.1  -- required for runing notebooks, includes ipython
+    "pandas",             # 2.0.1   -- dataframes
+    "geopandas",          # 0.13.0  -- geographical data (effectively unused currently)
+    "jinja2",             # 3.1.2   -- required for styling Pandas
+    "plotly",             # 5.14.1  -- one option for graphing Pandas
+    "nbformat",           # 5.9.0   -- required for rendering Plotly MIME types
+    "kaleido",            # 0.2.1   -- required for exporting images from Plotly
+    "matplotlib",         # 3.7.1   -- required for background gradient in table
+    "rpy2",               #         -- required for R integration
+    "polars",             # 1.31.0  -- better data frames
+    "altair",             #         -- better plots
+    "vl-convert-python",  #         -- save to SVG from Altair
+    "great_tables",       #         -- better tables
+    "selenium",           #         -- save to PDF from great_tables
 ]
 
 dynamic = ["version"]
@@ -54,7 +55,7 @@ Repository = "https://github.com/apparebit/diaphanous"
 
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.13"
 files = ["diaphanous/**/*.py"]
 mypy_path = ["stubs"]
 warn_unused_configs = true
@@ -82,3 +83,7 @@ show_error_codes = true
 target-version = ['py311']
 skip-string-normalization = true
 include = '\.(py|ipynb)'
+
+
+[tool.pyright]
+pythonVersion = "3.13"
