@@ -19,6 +19,7 @@ from diaphanous import (
     fetch_populations,
 )
 
+from diaphanous.platform.tabulate import tabulate
 
 # ======================================================================================
 
@@ -402,6 +403,10 @@ def _main(args: Sequence[str]) -> int:
     with open(tmp_path, mode='w', encoding='utf') as file:
         file.write('\n'.join(encode_reports_per_platform(REPORTS_PER_PLATFORM)))
     tmp_path.replace(json_path)
+
+    print('3. Exporing "data/ocse-reports-per-platform.csv"')
+    tabulate().write_csv("data/ocse-reports-per-platform.csv")
+
     print('Done!')
     return 0
 
