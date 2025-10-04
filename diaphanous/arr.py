@@ -38,7 +38,7 @@ PACKAGES = (
 
 
 try:
-    from IPython import get_ipython
+    from IPython import get_ipython # type: ignore
     IS_NOTEBOOK = get_ipython() is not None
 except:
     IS_NOTEBOOK = False
@@ -80,7 +80,12 @@ def install(
     # Install missing R packages
     r_utils = rpackages.importr("utils")
     r_utils.chooseCRANmirror(ind=1)
-    r_utils.install_packages(StrVector(todo), lib=rlib)
+    r_utils.install_packages(
+        StrVector(todo),
+        lib=rlib,
+        repos="https://lib.stat.cmu.edu/R/CRAN",
+        type="binary"
+    )
 
 
 if not IS_NOTEBOOK:
@@ -93,12 +98,11 @@ if not IS_NOTEBOOK:
 
 else:
 
+    from IPython.display import display, HTML
     _write_console_buffer = StringIO()
-    _original_consolewrite_print = rinterface_lib.callbacks.consolewrite_print
+    _original_consolewrite_print = rinterface_lib.callbacks.consolewrite_print # type: ignore
 
     def flush_console() -> None:
-        from IPython.display import display, HTML
-
         if _write_console_buffer.tell() == 0:
             return
 
@@ -108,8 +112,6 @@ else:
         _write_console_buffer.truncate(0)
 
     def write_console(s: str) -> None:
-        from IPython.display import display, HTML
-
         if s == "[1]":
             return
 
@@ -123,7 +125,7 @@ else:
         display(HTML(s[1:]))
 
     def enable_write_hook() -> None:
-        rinterface_lib.callbacks.consolewrite_print = write_console
+        rinterface_lib.callbacks.consolewrite_print = write_console # type: ignore
 
     def disable_write_hook() -> None:
-        rinterface_lib.callbacks.consolewrite_print = _original_consolewrite_print
+        rinterface_lib.callbacks.consolewrite_print = _original_consolewrite_print # type: ignore
