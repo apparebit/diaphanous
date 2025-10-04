@@ -34,6 +34,7 @@ class FeatureType(TypedDict):
 class DisclosureType(TypedDict, total=False):
     """A dictionary with a specific platform's transparency disclosures."""
 
+    aka: Sequence[str]
     brands: Sequence[str]
     comments: Sequence[str]
     sources: Sequence[str]
@@ -46,7 +47,6 @@ class DisclosureType(TypedDict, total=False):
 
     # Computed columns
     sums: dict[str, Sequence[str]]
-    products: dict[str, Sequence[str]]
 
 
 # The dictionary with social media transparency disclosures.
@@ -54,24 +54,39 @@ DisclosureCollectionType = TypedDict(
     "DisclosureCollectionType",
     {
         "@": "MetadataType",
+        "Alphabet": "DisclosureType",
+        "Amazon": "DisclosureType",
+        "Amino": "DisclosureType",
+        "Apple": "DisclosureType",
         "Automattic": "DisclosureType",
+        "Aylo": "DisclosureType",
         "Discord": "DisclosureType",
         "Facebook": "DisclosureType",
+        "GitHub": "DisclosureType",
         "Google": "DisclosureType",
+        "Imgur": "DisclosureType",
         "Instagram": "DisclosureType",
+        "Kik": "DisclosureType",
         "LinkedIn": "DisclosureType",
+        "MediaLab": "DisclosureType",
         "Meta": "DisclosureType",
         "Microsoft": "DisclosureType",
+        "Omegle": "DisclosureType",
         "Pinterest": "DisclosureType",
+        "Pornhub": "DisclosureType",
         "Quora": "DisclosureType",
         "Reddit": "DisclosureType",
         "Snap": "DisclosureType",
         "Telegram": None,
+        "Threads": "DisclosureType",
         "TikTok": "DisclosureType",
         "Tumblr": "DisclosureType",
+        "Twitch": "DisclosureType",
         "Twitter": "DisclosureType",
         "WhatsApp": "DisclosureType",
+        "Wikimedia": "DisclosureType",
         "Wordpress": "DisclosureType",
+        "X": "DisclosureType",
         "YouTube": "DisclosureType",
         "NCMEC": "DisclosureType",
     },

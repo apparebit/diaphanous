@@ -1,8 +1,15 @@
 from types import MappingProxyType
+from typing import TYPE_CHECKING
+
 from .type import DisclosureCollectionType
 from .. import __version__
 
-frozen = MappingProxyType
+
+# Pylance does not recognize MappingProxyType as adhering to TypedDict declarations.
+if TYPE_CHECKING:
+    frozen = lambda x: x
+else:
+    frozen = MappingProxyType
 
 REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     "@": frozen({
