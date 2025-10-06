@@ -1,5 +1,6 @@
 from collections.abc import Iterator, Sequence
 from io import StringIO
+import shutil
 import subprocess
 from typing import Any, cast, Literal
 
@@ -247,75 +248,33 @@ def distill_differences(frame: pl.DataFrame) -> pl.DataFrame:
 
 
 def analyze_differences(differences: pl.DataFrame) -> None:
-    histogram = differences.select(pl.col("pct_diff").hist())
-    alt.Chart(
-        differences
-    ).mark_bar().encode(
-        alt.X("pct_diff:Q", bin=True),
-        alt.Y("count()"),
-    ).save("diff-hist.svg")
+    section("Histogram of Percent Differences")
+    print(differences.select(pl.col("pct_diff").hist()))
 
-    source = _prepare_arr(differences)
-    print(source)
-    completion = subprocess.run(["R", "--vanilla"],
-        input=source,
-        encoding="utf8",
-        stderr=subprocess.STDOUT,
-        stdout=subprocess.PIPE,
-    )
-    completion.check_returncode()
-    output = completion.stdout
-    print(output)
+    # alt.Chart(
+    #     differences
+    # ).mark_bar().encode(
+    #     alt.X("pct_diff:Q", bin=True),
+    #     alt.Y("count()"),
+    # ).save("histogram.svg")
+    # print('\n🡆  See "histogram.svg"')
+
+    section("Mean Difference Plots")
+    _analyze_mean_differences(differences)
+    print('\n🡆  See "figure/comparable-reports.svg"')
+
+    section("Sign of Differences")
+    print(_analyze_sign_counts(differences))
+
+    section("Reddit vs Other Platforms")
+    print(_analyze_match_counts(differences))
 
 
-def _prepare_arr(differences: pl.DataFrame) -> str:
-    buffer = StringIO()
-    differences.with_columns(pl.col("pct_diff").mul(100)).write_csv(buffer)
-
-    match_counts = _get_match_counts(differences).get_column("count")
-    sign_counts = _get_sign_counts(differences).filter(
-        pl.col("sign").ne(0)
-    ).get_column("count")
-
-    def S(name: None | str = None) -> str:
-        name = "┈" * 6 if name is None else f" {name} "
-        return f"cat(\"\\n┈┈┈┈{name}{'┈' * (80 - len(name) - 4)}\\n\")"
-
-    return f"""\
-
+def _analyze_mean_differences(differences: pl.DataFrame) -> None:
+    runr(differences, """
 library(tidyverse)
 library(patchwork)
 library(scales)
-
-# --------------------------------------------------------------------------------------
-{S()}
-dt.match <- data.frame(
-    platform = c("Reddit", "Reddit", "Other", "Other"),
-    has_match = c("yes", "no", "yes", "no"),
-    freq = c({", ".join(str(c) for c in match_counts)})
-)
-print(dt.match)
-dt.match.contab <- xtabs(freq ~ platform + has_match, data = dt.match)
-
-{S('Platform Independence')}
-dt.match.test <- fisher.test(dt.match.contab)
-print(dt.match.test)
-
-# --------------------------------------------------------------------------------------
-{S()}
-dt.sign <- c({", ".join(str(c) for c in sign_counts)})
-print(dt.sign)
-
-{S('Directional Bias')}
-dt.sign.test <- binom.test(
-    dt.sign,
-    p = 0.5,
-    alternative = "two.sided",
-)
-print(dt.sign.test)
-
-# --------------------------------------------------------------------------------------
-{S('Mean Difference Plots')}
 
 COLORS <- c(
     "2019" = "#0D0887",
@@ -379,11 +338,11 @@ plot_pct_diff_over_mean <- function(platform, data, all.platforms = FALSE) {{
         limits = xlimits,
     )
 
-    graph <- graph + theme_light() #linedraw()
+    graph <- graph + theme_light() + theme(axis.title = element_text(face = "italic"))
     return(graph)
 }}
 
-difference.data <- read.csv(text = "{buffer.getvalue()}")
+difference.data <- read.csv(text = "{CSV_DATA}")
 platforms <- unique(difference.data$platform)
 plots <- vector("list", length(platforms) + 1)
 
@@ -409,13 +368,20 @@ design <- "ABC
            GHI
            JJJ"
 
-plot.grid <- wrap_plots(plots, ncol=3, guides="collect", design=design)
-ggsave("comparable-reports.svg", plot.grid, width=8, height=8)
-    """
+plot.grid <- wrap_plots(
+    plots,
+    ncol=3,
+    guides="collect",
+    design=design,
+    axis_titles = "collect"
+)
+ggsave("figure/comparable-reports.svg", plot.grid, width=8, height=8)
+printr()
+    """)
 
 
-def _get_match_counts(frame: pl.DataFrame) -> pl.DataFrame:
-    return frame.select(
+def _analyze_match_counts(differences: pl.DataFrame) -> str:
+    counts = differences.select(
         pl.when(
             pl.col("diff").eq(0)
         ).then(
@@ -434,22 +400,114 @@ def _get_match_counts(frame: pl.DataFrame) -> pl.DataFrame:
         "platform", "matches"
     ).agg(
         pl.len().alias("count")
-    ).sort("platform", "matches", descending=True)
+    ).sort(
+        "platform", "matches", descending=True
+    ).select(
+        pl.col("count")
+    )
+
+    return runr(counts, """
+dt.ftable <- data.frame(
+    platform = c("Reddit", "Reddit", "Other", "Other"),
+    has_match = c("yes", "no", "yes", "no"),
+    freq = c({VECTOR_DATA})
+)
+dt.contab <- xtabs(freq ~ platform + has_match, data = dt.ftable)
+printr(fisher.test(dt.contab))
+    """)
 
 
-def _get_sign_counts(frame: pl.DataFrame) -> pl.DataFrame:
-    return frame.select(
+def _analyze_sign_counts(differences: pl.DataFrame) -> str:
+    counts = differences.select(
         pl.col("diff").sign()
     ).group_by(
         pl.col("diff")
     ).agg(
         pl.len()
+    ).filter(
+        pl.col("diff").ne(0)
     ).select(
         pl.col("diff").alias("sign"),
         pl.col("len").alias("count"),
     ).sort(
         pl.col("sign"), descending=True
+    ).select(
+        pl.col("count")
     )
+
+    return runr(counts, """
+result <- binom.test(
+    c({VECTOR_DATA}),
+    p = 0.5,
+    alternative = "two.sided",
+)
+printr(result)
+""")
+
+# --------------------------------------------------------------------------------------
+
+_WIDTH, _ = shutil.get_terminal_size()
+
+def section(title: str) -> None:
+    print(f"\n\n════ {title} {'═' * (_WIDTH - 6 - len(title))}\n")
+
+
+_MARKER_B1 = "### BEGIN"
+_MARKER_B2 = "-RESULT ###"
+_MARKER_BEGIN = f"{_MARKER_B1}{_MARKER_B2}"
+_MARKER_E1 = "### END"
+_MARKER_E2 = "-RESULT ###"
+_MARKER_END = f"{_MARKER_E1}{_MARKER_E2}"
+
+_PRINTR = f"""
+printr <- function(value = NULL) {{
+    if (is.null(value)) {{
+        lines <- c()
+    }} else {{
+        lines <- capture.output(print(value))
+        lines <- gsub("\t", "    ", lines)
+    }}
+
+    cat2 <- function(...) cat(paste0(c(...), collapse = ""))
+    cat2("{_MARKER_B1}", "{_MARKER_B2}", "\\n")
+    for (line in lines) {{
+        cat2(line, "\\n")
+    }}
+    cat2("{_MARKER_E1}", "{_MARKER_E2}", "\\n")
+}}
+"""
+
+def runr(data: pl.DataFrame, template: str) -> str:
+    if len(data) == 1:
+        values = data.row(0)
+    elif len(data.columns) == 1:
+        values = data.get_column(data.columns[0]).to_list()
+    else:
+        values = None
+
+    if values is not None:
+        code = template.format(VECTOR_DATA=", ".join((str(v) for v in values)))
+    else:
+        buffer = StringIO()
+        data.write_csv(buffer)
+        code = template.format(CSV_DATA=buffer.getvalue())
+
+    input = _PRINTR + code
+    completion = subprocess.run(["R", "--vanilla"],
+        input=input,
+        encoding="utf8",
+        stderr=subprocess.STDOUT,
+        stdout=subprocess.PIPE,
+    )
+    completion.check_returncode()
+    output = completion.stdout
+
+    if _MARKER_BEGIN not in output or _MARKER_END not in output:
+        raise ValueError(f"R code did not produce result:\n{output}")
+
+    _, _, result = completion.stdout.partition(_MARKER_BEGIN)
+    result, _, _ = result.partition(_MARKER_END)
+    return result[1:]
 
 # --------------------------------------------------------------------------------------
 
