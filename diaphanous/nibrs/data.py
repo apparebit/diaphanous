@@ -1,17 +1,20 @@
 import dataclasses
 from pathlib import Path
 import shutil
-from typing import Callable, Self
+from typing import Callable, Self, TYPE_CHECKING
 import zipfile
 
 import great_tables as gt
 import polars as pl
 
 from .model import (
-    AbstractDemographics, Column, CriminalAct, Entry, Id, NIBRS_SOURCE_FILES,
+    Column, CriminalAct, Entry, Id, NIBRS_SOURCE_FILES,
     NibrsSchema, NibrsTable, OffenseCode
 )
 from .util import format_table
+
+if TYPE_CHECKING:
+    from .demographics import Demographics
 
 
 def _associated_offenses(
@@ -527,7 +530,7 @@ class CsamData:
         fold_ethnicity: bool = True,
         simplify_race: bool = True,
         nullify_unknown: bool = True,
-    ) -> AbstractDemographics:
+    ) -> "Demographics":
         """Generate a demographic summary of arrestees."""
         from .demographics import Demographics
         return Demographics(
@@ -544,7 +547,7 @@ class CsamData:
         fold_ethnicity: bool = True,
         simplify_race: bool = True,
         nullify_unknown: bool = True,
-    ) -> AbstractDemographics:
+    ) -> "Demographics":
         """Generate a demographic summary of offenders."""
         from .demographics import Demographics
         return Demographics(

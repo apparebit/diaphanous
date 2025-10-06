@@ -50,7 +50,7 @@ def with_total_and_percent(
     """
     total = table.select(pl.col(count).sum()).item()
 
-    data = {column: [None] for column in table.columns}
+    data: dict[str, list[None | str]] = {column: [None] for column in table.columns}
     data[name] = [Entry.TOTAL.value]
     data[count] = [total]
     total_row = pl.DataFrame(data).with_columns(pl.col(count).cast(pl.Int64))
@@ -101,9 +101,12 @@ def format_table(frame: pl.DataFrame, title: None | str = None) -> gt.GT:
     if title is not None:
         table = table.tab_header(title)
 
+    first = frame.columns[0]
+    if first.casefold() in ("variant", "year"):
+        table = table.tab_stub(rowname_col=first)
+
     return (
         table
-        .tab_stub(rowname_col=frame.columns[0])
         .fmt_integer(
             columns=[c for c in frame.columns if frame.schema[c].is_integer()]
         )
@@ -112,5 +115,6 @@ def format_table(frame: pl.DataFrame, title: None | str = None) -> gt.GT:
             decimals=1,
         )
         .tab_options(table_font_names=gt.system_fonts("industrial"))
+        .sub_missing(missing_text="")
         .opt_horizontal_padding(scale=2)
     )

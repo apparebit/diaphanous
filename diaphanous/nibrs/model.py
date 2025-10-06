@@ -301,7 +301,7 @@ class Id(enum.StrEnum):
     VICTIM = "victim_id"
     YEAR = "data_year"
 
-    def value_range(self) -> None | enum.StrEnum:
+    def value_range(self) -> None | type[enum.Enum]:
         """Get the enumeration of possible values for a column with this name."""
         if self == self.CLEARED_EXCEPT:
             return Clearance
@@ -521,52 +521,3 @@ Percent = enum.StrEnum("Percent", {
     for s in ("Child", "Adolescent", "Adult", "🖩 Total")
     for t in (f"{s} Percent",)
 })
-
-
-class AbstractDemographics(metaclass=ABCMeta):
-
-    @abstractmethod
-    def source(self) -> str: ...
-
-    @abstractmethod
-    def age_groups(self) -> pl.DataFrame: ...
-
-    @abstractmethod
-    def age_group_table(self) -> gt.GT: ...
-
-    @abstractmethod
-    def race_vs_sex(self) -> pl.DataFrame: ...
-
-    @abstractmethod
-    def race_vs_sex_table(self) -> gt.GT: ...
-
-    @abstractmethod
-    def age_distribution(self, grouped: bool = True) -> tuple[str, pl.DataFrame]: ...
-
-    @abstractmethod
-    def variant_distribution(self, variant: str) -> tuple[str, pl.DataFrame]: ...
-
-    @abstractmethod
-    def clearance_distribution(
-        self, label: str, *clearance: Clearance
-    ) -> tuple[str, pl.DataFrame]: ...
-
-    @abstractmethod
-    def location_distribution(
-        self, label: str, *location: Location
-    ) -> tuple[str, pl.DataFrame]: ...
-
-    @abstractmethod
-    def using_distribution(
-        self, label: str, *using: Using
-    ) -> tuple[str, pl.DataFrame]: ...
-
-    @abstractmethod
-    def chart_counts(
-        self, overlay_label: None | str = None, overlay: None | pl.DataFrame = None
-    ) -> alt.Chart: ...
-
-    @abstractmethod
-    def chart_ratios(
-        self, *distributions: tuple[str, pl.DataFrame], smooth: bool = False
-    ) -> alt.Chart: ...

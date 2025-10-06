@@ -14,16 +14,12 @@ if __name__ == "__main__":
     width, _ = shutil.get_terminal_size()
     configure()
 
-    data = load_all()
-    offenders = data.offender_demographics()
-
-    humanize_frame(offenders.data()).write_csv(
-        root / "data" / "nibrs" / "offenders.csv"
+    nibrs = load_all()
+    offenders = humanize_frame(
+        nibrs.offender_demographics().by(
+            Id.YEAR, Id.GROUP, Id.RACE, Id.SEX, sorted=True
+        )
     )
 
-    by_age_race_sex = humanize_frame(offenders.by(
-        Id.YEAR, Id.GROUP, Id.RACE, Id.SEX, sorted=True
-    ))
-    by_age_race_sex.write_csv(
-        root / "data" / "nibrs" / "offenders-by-group-race-sex.csv"
-    )
+    print(offenders)
+    offenders.write_csv(root / "data" / "nibrs" / "offenders.csv")
