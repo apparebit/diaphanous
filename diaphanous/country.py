@@ -174,7 +174,7 @@ def read_accounts(path: str | Path) -> pd.DataFrame:
                 iso3='category',
                 year='category',
                 accounts_per_capita='float64',
-            ),
+            ), # type: ignore
         )
         .set_index(['iso3', 'year'])
         .drop(columns=["country", "users"])

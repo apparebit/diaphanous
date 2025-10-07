@@ -137,6 +137,20 @@ def reports_per_country(
             margin_bottom=0,
         )
 
+        deu_rank = year_data[year_data['iso3'] == 'DEU']
+        usa_rank = year_data[year_data['iso3'] == 'USA']
+        show(
+            f"""
+            <p>Germany has a rate of
+            {deu_rank['reports_per_capita'].iloc[0] * 1000:.1f}
+            reports per 1,000 capita, ranking {deu_rank.index[0]}.
+
+            <p>The US has a rate of
+            {usa_rank['reports_per_capita'].iloc[0] * 1000:.1f}
+            reports per 1,000 capita, ranking {usa_rank.index[0]}.
+            """
+        )
+
         in_arab_league = top['arab_league'].sum()
         if year != "2019":
             arab_league.setdefault("year", []).append(year)
@@ -207,6 +221,20 @@ def reports_per_country(
             # highlight_rows=rank,
             margin_top=2,
             margin_bottom=0,
+        )
+
+        deu_rank = year_data[year_data['iso3'] == 'DEU']
+        usa_rank = year_data[year_data['iso3'] == 'USA']
+        show(
+            f"""
+            <p>Germany has a rate of
+            {deu_rank['reports_per_accounts'].iloc[0] * 1000:.1f}
+            reports per 1,000 social media accounts, ranking {deu_rank.index[0]}.
+
+            <p>The US has a rate of
+            {usa_rank['reports_per_accounts'].iloc[0] * 1000:.1f}
+            reports per 1,000 social media accounts, ranking {usa_rank.index[0]}.
+            """
         )
 
         in_arab_league = top['arab_league'].sum()
@@ -359,12 +387,12 @@ def reports_per_country(
 # ======================================================================================
 
 
-def logger(df: pd.DataFrame, caption: None | str = None) -> None:
+def logger(frame: pd.DataFrame, caption: None | str = None) -> None:
     if caption is not None:
         title = f'Table "{caption}"'
         print(title)
         print(f'{"-" * len(title)}\n')
-        print(to_schema(df).to_string())
+        print(to_schema(frame).to_string())
         print('\n')
 
 
