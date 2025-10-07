@@ -24,7 +24,7 @@ for (year in 2023:2024) {
 
   svg(paste0("figure/us-age-race-sex-", year, ".svg"))
   vcd::mosaic(
-    ~ Group + Race + Sex, data = nibrs.24.contab, direction = c("v", "h", "v"),
+    ~ Group + Race + Sex, data = us.contab, direction = c("v", "h", "v"),
     shade = TRUE,
     main = paste0("Offenders by Age Group/Race/Sex (U.S., ", year, ")"),
     rot_labels = c(0, 0, 45, 0),
