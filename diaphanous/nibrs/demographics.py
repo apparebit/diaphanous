@@ -4,8 +4,7 @@ import polars as pl
 
 from .data import CsamData
 from .model import Entry, Ethnicity, Group, Id, Race, Sex
-from .util import humanize_frame
-
+from .util import to_title
 
 # _BG_PALETTE = "Greens"
 # _CHILD_ADOLESCENT_ADULT = (
@@ -128,14 +127,6 @@ class Demographics:
         """Get the raw data."""
         return self._frame
 
-    def humanized(self) -> pl.DataFrame:
-        """
-        Get the humanized data. This method drops unused columns, folds
-        ethnicity into race, and coarsens the combined race/ethnicity column. It
-        also replaces NIBRS coded values with meaningful labels.
-        """
-        return humanize_frame(self._frame)
-
     def with_incidents(self, frame: None | pl.DataFrame = None) -> pl.DataFrame:
         """Get the source table joined with incidents."""
         return (self.data() if frame is None else frame).join(
@@ -200,11 +191,15 @@ class Demographics:
 
     def age_distribution(self) -> pl.DataFrame:
         return self.by(
-            Id.YEAR, Id.AGE, Id.GROUP, sorted=True
+            Id.YEAR, Id.AGE, Id.GROUP, Id.SEX, sorted=True
         ).with_columns(
-            pl.col("age_group").replace_strict({
+            pl.col(Id.GROUP).replace_strict({
                 Group.CHILD: Entry.CHILD,
                 Group.ADOLESCENT: Entry.ADOLESCENT,
                 Group.ADULT: Entry.ADULT,
-            }, return_dtype=pl.String)
+            }, return_dtype=pl.String),
+            pl.col(Id.SEX).replace(
+                Id.SEX.humanized_values(),
+                return_dtype=pl.String
+            ),
         )

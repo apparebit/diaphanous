@@ -1,8 +1,11 @@
 from collections.abc import Iterator, Sequence
 from io import StringIO
+import os
+from pathlib import Path
+import re
 import shutil
 import subprocess
-from typing import Any, cast, Literal
+from typing import Any, cast, Literal, Self
 
 import altair as alt
 import great_tables as gt
@@ -220,58 +223,116 @@ def _sum_if_whole_year(metric: str) -> pl.Expr:
         pl.lit(None, dtype=pl.Int64)
     )
 
-# --------------------------------------------------------------------------------------
+# ======================================================================================
 
-def distill_differences(frame: pl.DataFrame) -> pl.DataFrame:
-    return frame.lazy().filter(
-        pl.col("source").ne("NCMEC")
-    ).select(
-        pl.col("target", "year", "variable", "value"),
-    ).join(
-        frame.lazy().filter(
-            pl.col("source").eq("NCMEC")
-        ).select(
-            pl.col("target", "year", "variable", "value"),
-        ),
-        on=["target", "year", "variable"],
-        how="inner",
-    ).select(
-        pl.col("target").alias("platform"),
-        pl.col("year"),
-        pl.col("value").alias("provider"),
-        pl.col("value").add(pl.col("value_right")).truediv(2).alias("mean"),
-        pl.col("value_right").sub(pl.col("value")).alias("diff"),
-        pl.col("value_right").alias("ncmec"),
-    ).with_columns(
-        pl.col("diff").truediv(pl.col("mean")).alias("pct_diff")
-    ).collect()
+class Analyzer:
 
+    def __init__(
+        self,
+        path: str | Path,
+        with_icc: bool = False,
+    ) -> None:
+        self._path = Path(path)
+        self._file: Any = None
+        self._data = tabulate()
+        self._diffs = _distill_differences(self._data)
+        self._with_icc = with_icc
 
-def analyze_differences(differences: pl.DataFrame) -> None:
-    section("Histogram of Percent Differences")
-    print(differences.select(pl.col("pct_diff").hist()))
+    def __enter__(self) -> Self:
+        self._file = open(self._path, mode="w", encoding="utf8")
+        self._file.write(_HEAD)
+        return self
 
-    # alt.Chart(
-    #     differences
-    # ).mark_bar().encode(
-    #     alt.X("pct_diff:Q", bin=True),
-    #     alt.Y("count()"),
-    # ).save("histogram.svg")
-    # print('\n🡆  See "histogram.svg"')
+    def __exit__(self, _, __, ___) -> None:
+        self._file.write("</main>\n</body>\n")
+        self._file.close()
+        self._file = None
 
-    section("Mean Difference Plots")
-    _analyze_mean_differences(differences)
-    print('\n🡆  See "figure/comparable-reports.svg"')
+    def run(self) -> None:
+        self.h2("Platforms vs NCMEC")
 
-    section("Sign of Differences")
-    print(_analyze_sign_counts(differences))
+        self.h3("The Data")
+        self.html(f"""
+            <ul>
+            <li>{len(self._diffs.select(
+                pl.col("platform").unique()
+            ))} out of {len(self._data.select(
+                pl.col("target").unique()
+            )) - 2} surveyed platforms make necessary disclosures
+            </li><li>{len(self._diffs)} data pairs
+                <ul>
+                <li>{len(self._diffs.filter(pl.col("pct_diff").abs().le(0.10)))}
+                    differ by less than 10%
+                </li><li>{len(self._diffs.filter(pl.col("pct_diff").abs().le(0.01)))}
+                    differ by less than 1%
+                </li><li>{len(self._diffs.filter(pl.col("pct_diff").sign().gt(0)))}
+                    positive differences
+                </li><li>{len(self._diffs.filter(pl.col("pct_diff").sign().eq(0)))}
+                    with no difference
+                </li><li>{len(self._diffs.filter(pl.col("pct_diff").sign().lt(0)))}
+                    negative differences
+                </li><li>{self._diffs.select(
+                        pl.col("pct_diff").mean()
+                    ).item() * 100:.2}%
+                    mean difference
+                </li><li>{self._diffs.filter(
+                        pl.col("platform").ne("Aylo").or_(
+                            pl.col("year").ne(2020)
+                        )
+                    ).select(
+                        pl.col("pct_diff").mean()
+                    ).item() * 100:.2}% mean difference, discounting one explained
+                    outlier
+                </li><li>{self._diffs.filter(
+                        pl.col("platform").ne("Aylo").or_(
+                            pl.col("year").ne(2020)
+                        ).and_(
+                            pl.col("platform").ne("Pinterest").or_(
+                                pl.col("year").ne(2024)
+                            )
+                        )
+                    ).select(
+                        pl.col("pct_diff").mean()
+                    ).item() * 100:.2}% mean difference, discounting top two outliers
+                </li></ul></li>
+            </ul>
+        """)
 
-    section("Reddit vs Other Platforms")
-    print(_analyze_match_counts(differences))
+        comparison = juxtapose(self._data)
+        self.html(
+            format_juxtaposition(comparison, with_highlights=True).as_raw_html()
+        )
+        self._see_path()
 
+        self.h3("A Histogram of Percent Differences")
+        self.chart(
+            alt.Chart(
+                self._diffs
+            ).mark_bar().encode(
+                alt.X("pct_diff:Q", bin=True),
+                alt.Y("count()"),
+            )
+        )
+        self._see_path()
 
-def _analyze_mean_differences(differences: pl.DataFrame) -> None:
-    runr(differences, """
+        self.h3("Mean Difference Plots")
+        self.emit_mean_difference_plots()
+
+        if self._with_icc:
+            self.h3("Intraclass Correlation Coefficient")
+            self.emit_icc()
+
+        self.h3("Sign of Differences")
+        self.emit_sign_test()
+
+        self.h3("Reddit vs Other Platforms")
+        self.emit_reddit_vs_others()
+
+        self.h2("A Decade of Seemingly Linear Growth")
+        self.emit_regression_models()
+
+    def emit_mean_difference_plots(self) -> None:
+        self._runr(self._diffs, """
 library(tidyverse)
 library(patchwork)
 library(scales)
@@ -377,36 +438,81 @@ plot.grid <- wrap_plots(
 )
 ggsave("figure/comparable-reports.svg", plot.grid, width=8, height=8)
 printr()
-    """)
+        """)
+        self.svg(
+            Path("figure/comparable-reports.svg"),
+            "Percentage Differences vs Mean Differences"
+        )
 
+    def emit_icc(self) -> None:
+        print("This may take a while...")
+        frame = self._diffs.select(
+            pl.col("provider").alias("y"),
+            pl.format("{}{}", pl.col("platform"), pl.col("year")).alias("id"),
+            pl.lit("platform", dtype=pl.String).alias("observer"),
+        ).vstack(
+            self._diffs.select(
+                pl.col("ncmec").alias("y"),
+                pl.format("{}{}", pl.col("platform"), pl.col("year")).alias("id"),
+                pl.lit("ncmec", dtype=pl.String).alias("observer"),
+            )
+        )
 
-def _analyze_match_counts(differences: pl.DataFrame) -> str:
-    counts = differences.select(
-        pl.when(
-            pl.col("diff").eq(0)
-        ).then(
-            pl.lit("yes")
-        ).otherwise(
-            pl.lit("no")
-        ).alias("matches"),
-        pl.when(
-            pl.col("platform").eq("Reddit")
-        ).then(
-            pl.lit("Reddit")
-        ).otherwise(
-            pl.lit("Other")
-        ).alias("platform")
-    ).group_by(
-        "platform", "matches"
-    ).agg(
-        pl.len().alias("count")
-    ).sort(
-        "platform", "matches", descending=True
-    ).select(
-        pl.col("count")
-    )
+        self._runr(frame, """
+library(iccCounts)
+library(ggplot2)
 
-    return runr(counts, """
+data <- read.csv(text="{CSV_DATA}")
+data.icc <- icc_counts(
+    data,
+    y="y",
+    id="id",
+    met="observer",
+    type="con",
+    fam="nbinom2"
+)
+printr(ICC(data.icc))
+printr(VarComp(data.icc))
+
+data.gof <- GOF_check(data.icc)
+printr(DispersionTest(data.gof))
+
+data.plot <- data.gof$plot_env + geom_point(size=2) + theme_linedraw()
+ggsave("figure/comparable-reports-icc-gof.svg", data.plot)
+        """)
+
+        self.svg(
+            "figure/comparable-reports-icc-gof.svg",
+            caption="Goodness of Fit"
+        )
+
+    def emit_reddit_vs_others(self) -> None:
+        counts = self._diffs.select(
+            pl.when(
+                pl.col("diff").eq(0)
+            ).then(
+                pl.lit("yes")
+            ).otherwise(
+                pl.lit("no")
+            ).alias("matches"),
+            pl.when(
+                pl.col("platform").eq("Reddit")
+            ).then(
+                pl.lit("Reddit")
+            ).otherwise(
+                pl.lit("Other")
+            ).alias("platform")
+        ).group_by(
+            "platform", "matches"
+        ).agg(
+            pl.len().alias("count")
+        ).sort(
+            "platform", "matches", descending=True
+        ).select(
+            pl.col("count")
+        )
+
+        self._runr(counts, """
 dt.ftable <- data.frame(
     platform = c("Reddit", "Reddit", "Other", "Other"),
     has_match = c("yes", "no", "yes", "no"),
@@ -414,53 +520,290 @@ dt.ftable <- data.frame(
 )
 dt.contab <- xtabs(freq ~ platform + has_match, data = dt.ftable)
 printr(fisher.test(dt.contab))
-    """)
+        """)
 
+    def emit_sign_test(self) -> None:
+        counts = self._diffs.select(
+            pl.col("diff").sign()
+        ).group_by(
+            pl.col("diff")
+        ).agg(
+            pl.len()
+        ).filter(
+            pl.col("diff").ne(0)
+        ).select(
+            pl.col("diff").alias("sign"),
+            pl.col("len").alias("count"),
+        ).sort(
+            pl.col("sign"), descending=True
+        ).select(
+            pl.col("count")
+        )
 
-def _analyze_sign_counts(differences: pl.DataFrame) -> str:
-    counts = differences.select(
-        pl.col("diff").sign()
-    ).group_by(
-        pl.col("diff")
-    ).agg(
-        pl.len()
-    ).filter(
-        pl.col("diff").ne(0)
-    ).select(
-        pl.col("diff").alias("sign"),
-        pl.col("len").alias("count"),
-    ).sort(
-        pl.col("sign"), descending=True
-    ).select(
-        pl.col("count")
-    )
-
-    return runr(counts, """
+        self._runr(counts, """
 result <- binom.test(
     c({VECTOR_DATA}),
     p = 0.5,
     alternative = "two.sided",
 )
 printr(result)
-""")
+        """)
 
-# --------------------------------------------------------------------------------------
+    def emit_regression_models(self) -> None:
+        frame = pl.read_csv("data/ocse-reports-per-year.csv").filter(
+            pl.col("year").ge(2014).and_(pl.col("year").lt(2024))
+        ).join(
+            pl.read_csv("data/social-accounts.csv"),
+            on="year",
+            how="left",
+        )
 
-_WIDTH, _ = shutil.get_terminal_size()
+        self.h3("Poisson Regression")
+        self._runr(frame, """
+data <- read.csv(text="{CSV_DATA}")
 
-def section(title: str) -> None:
-    print(f"\n\n════ {title} {'═' * (_WIDTH - 6 - len(title))}\n")
+data.poisson <- glm(reports ~ year, family = "poisson", data = data)
+printr(data.poisson)
+printr(confint(data.poisson))
+printr(exp(confint(data.poisson)))
+
+svg("figure/mod-poisson.svg")
+par(mfrow = c(3, 2))
+plot(data.poisson, which = 1:6)
+dev.off()
+        """)
+
+        self.svg("figure/mod-poisson.svg")
+
+        self.h3("Negative Binomial Regression")
+        self._runr(frame, """
+library(MASS)
+data <- read.csv(text="{CSV_DATA}")
+data.nbinom <- glm.nb(reports ~ year, data = data)
+
+printr(data.nbinom)
+printr(confint(data.nbinom))
+printr(exp(confint(data.nbinom)))
+
+svg("figure/mod-nbinom.svg")
+par(mfrow = c(3, 2))
+plot(data.nbinom, which = 1:6)
+dev.off()
+        """)
+
+        self.svg("figure/mod-nbinom.svg")
+
+    def h2(self, title: str) -> None:
+        _print_heading(title)
+        self._section(title, level=2)
+
+    def h3(self, title: str) -> None:
+        _print_heading(title, weight="heavy")
+        self._section(title, level=3)
+
+    def _section(self, title: str, level: Literal[2, 3, 4] = 2) -> None:
+        self.html(f"\n\n<h{level}>{title}</h{level}>\n")
+
+    def _runr(self, frame: pl.DataFrame, template: str) -> None:
+        fragments = _runr(frame, template)
+
+        skip_hr = not _IS_DEBUG
+        printed = False
+        for fragment in fragments:
+            if fragment.strip() == "":
+                continue
+
+            if not skip_hr:
+                _print_heading(weight="light")
+                printed = True
+            skip_hr = False
+            print(fragment)
+            printed = True
+
+            self.html(f"<pre><code>\n{fragment}\n</code></pre>\n")
+
+        if not printed:
+            self._see_path()
+
+    def html(self, html: str) -> None:
+        self._file.write(html)
+
+    def chart(self, chart: Any, caption: None | str = None) -> None:
+        buffer = StringIO()
+        chart.save(buffer, format="svg")
+        self._figure(buffer.getvalue(), caption)
+
+    def svg(self, path: str | Path, caption: None | str = None) -> None:
+        self._figure(Path(path).read_text("utf8"), caption)
+
+    def _figure(self, html: str, caption: None | str = None) -> None:
+        self._file.write("<figure>\n")
+        self._file.write(html)
+        if caption is not None:
+            self._file.write(f"<figcaption>{caption}</figcaption>\n")
+        self._file.write("</figure>\n")
+
+    def _see_path(self) -> None:
+        print(f'See "{self._path.name}"')
 
 
-_MARKER_B1 = "### BEGIN"
-_MARKER_B2 = "-RESULT ###"
-_MARKER_BEGIN = f"{_MARKER_B1}{_MARKER_B2}"
-_MARKER_E1 = "### END"
-_MARKER_E2 = "-RESULT ###"
-_MARKER_END = f"{_MARKER_E1}{_MARKER_E2}"
+def _distill_differences(pieces_and_reports: pl.DataFrame) -> pl.DataFrame:
+    return pieces_and_reports.lazy().filter(
+        pl.col("source").ne("NCMEC")
+    ).select(
+        pl.col("target", "year", "variable", "value"),
+    ).join(
+        pieces_and_reports.lazy().filter(
+            pl.col("source").eq("NCMEC")
+        ).select(
+            pl.col("target", "year", "variable", "value"),
+        ),
+        on=["target", "year", "variable"],
+        how="inner",
+    ).select(
+        pl.col("target").alias("platform"),
+        pl.col("year"),
+        pl.col("value").alias("provider"),
+        pl.col("value").add(pl.col("value_right")).truediv(2).alias("mean"),
+        pl.col("value_right").sub(pl.col("value")).alias("diff"),
+        pl.col("value_right").alias("ncmec"),
+    ).with_columns(
+        pl.col("diff").truediv(pl.col("mean")).alias("pct_diff")
+    ).collect()
+
+
+_HEAD = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The CyberTipline Reporting System</title>
+
+<style>
+/* ----------------------------------- General ----------------------------------- */
+*::before, *, *::after {
+    box-sizing: inherit;
+}
+:root {
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui,
+        helvetica neue, Cantarell, Ubuntu, roboto, noto, helvetica, arial, sans-serif;
+    line-height: 1.5;
+    --black: #1d1d20;
+    --white: #f5f5f8;
+}
+body {
+    margin: 3rem 0.5rem;
+}
+
+svg {
+    display: block;
+}
+.vega-embed {
+    display: block !important;
+}
+
+main > * {
+    max-width: 75rch;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+h2 {
+    margin-top: 3rem;
+}
+
+h3 {
+    margin-top: 2rem;
+}
+
+figcaption {
+    text-align: right;
+    font-style: italic;
+    font-weight: 500;
+}
+/* ----------------------------------- Table ----------------------------------- */
+
+.mytable {
+    border-collapse: separate;
+    border-spacing: 0;
+    line-height: 1.2;
+    margin-bottom: 3rem;
+}
+.mytable caption {
+    font-size: 1.2em;
+    text-align: left;
+    font-style: italic;
+    padding: 0.45em 0;
+}
+.mytable caption > :where(cite, dfn, em, i) {
+    font-style: normal;
+}
+.mytable th {
+    font-weight: normal;
+}
+.mytable thead th {
+    font-weight: bold;
+}
+.mytable :where(th, td) {
+    padding: 0.25em 0.5em;
+}
+.mytable thead > tr:first-of-type {
+    background: #e0e0e0;
+}
+.mytable thead > tr {
+    background: #f0f0f0;
+}
+.mytable thead > tr:last-of-type > :where(th, td) {
+    padding-bottom: 0.35em;
+    border-bottom: solid 0.15em var(--black);
+}
+.mytable tbody > tr:first-of-type > :where(th, td) {
+    padding-top: 0.35em;
+}
+.mytable tbody > tr:nth-child(even) {
+    background: #f0f0f0
+}
+.mytable td {
+    font-variant-numeric: tabular-nums;
+}
+.mytable :where(.left-except-2) :where(th, td) {
+    text-align: left;
+}
+.mytable :where(.left-except-2) :where(th, td):nth-child(2) {
+    text-align: right;
+}
+.mytable :where(.right-except-2, .right-except-2-3) :where(th, td) {
+    text-align: right;
+}
+.mytable :where(.right-except-2, .right-except-2-3) :where(th, td):nth-child(2) {
+    text-align: left;
+}
+.mytable :where(.right-except-2-3) :where(th, td):nth-child(3) {
+    text-align: left;
+}
+.mytable tbody > tr.highlight > td {
+    text-align: center;
+}
+</style>
+</head>
+<body>
+<main>
+<h1>The CyberTipline Reporting System</h1>
+"""
+
+
+_MARKER_BEGIN = "### BEGIN-RESULT ###"
+_MARKER_END = "### END-RESULT ###"
 
 _PRINTR = f"""
 printr <- function(value = NULL) {{
+    cat2 <- function(...) cat(paste0(c(...), collapse = ""))
+
+    # Split markers to avoid spurious matches. Print marker before
+    # capturing the output to avoid missed output.
+    cat2("#", "#", "#", " BEGIN-RESULT ", "#", "#", "#", "\\n")
+
     if (is.null(value)) {{
         lines <- c()
     }} else {{
@@ -468,16 +811,20 @@ printr <- function(value = NULL) {{
         lines <- gsub("\t", "    ", lines)
     }}
 
-    cat2 <- function(...) cat(paste0(c(...), collapse = ""))
-    cat2("{_MARKER_B1}", "{_MARKER_B2}", "\\n")
     for (line in lines) {{
         cat2(line, "\\n")
     }}
-    cat2("{_MARKER_E1}", "{_MARKER_E2}", "\\n")
+
+    cat2("#", "#", "#", " END-RESULT ", "#", "#", "#", "\\n")
 }}
 """
 
-def runr(data: pl.DataFrame, template: str) -> str:
+_RESULT_REGEX = re.compile(fr"{_MARKER_BEGIN}(.*?){_MARKER_END}", re.DOTALL)
+_TRIM_WS = re.compile(r"^(?:[ \t]*\n)*(.*?)(?:\n*)$", re.DOTALL)
+_WIDTH, _ = shutil.get_terminal_size()
+_IS_DEBUG = bool(os.getenv("DEBUG"))
+
+def _runr(data: pl.DataFrame, template: str) -> list[str]:
     if len(data) == 1:
         values = data.row(0)
     elif len(data.columns) == 1:
@@ -493,21 +840,54 @@ def runr(data: pl.DataFrame, template: str) -> str:
         code = template.format(CSV_DATA=buffer.getvalue())
 
     input = _PRINTR + code
+
+    if _IS_DEBUG:
+        _print_heading("R Input", weight = "light")
+        print(input)
+
     completion = subprocess.run(["R", "--vanilla"],
         input=input,
         encoding="utf8",
         stderr=subprocess.STDOUT,
         stdout=subprocess.PIPE,
     )
-    completion.check_returncode()
     output = completion.stdout
 
-    if _MARKER_BEGIN not in output or _MARKER_END not in output:
-        raise ValueError(f"R code did not produce result:\n{output}")
+    if _IS_DEBUG:
+        _print_heading("R Output", weight = "light")
+        print(output)
 
-    _, _, result = completion.stdout.partition(_MARKER_BEGIN)
-    result, _, _ = result.partition(_MARKER_END)
-    return result[1:]
+    if completion.returncode != 0:
+        raise ValueError(f"R exited due to error:\n{output}")
+
+    results = _RESULT_REGEX.findall(output)
+    if not results:
+        raise ValueError(f"R did not produce result:\n{output}")
+
+    trimmed_results = []
+    for result in results:
+        match = _TRIM_WS.match(result)
+        assert match is not None
+        trimmed_results.append(match.group(1))
+    return trimmed_results
+
+
+def _print_heading(
+    title: None | str = None, weight: Literal["light", "heavy", "double"] = "double",
+) -> None:
+    if weight == "light":
+        dash = "─"
+    elif weight == "heavy":
+        dash = "━"
+    else:
+        dash = "═"
+
+    if title is None:
+        title = ""
+    else:
+        title = f" {title} "
+
+    print(f"\n\n{dash * 4}{title}{dash * (_WIDTH - 4 - len(title))}\n")
 
 # --------------------------------------------------------------------------------------
 
@@ -685,10 +1065,5 @@ if __name__ == "__main__":
     pl.Config.set_tbl_rows(200)
     pl.Config.set_thousands_separator(",")
 
-    pieces_and_reports = tabulate()
-    differences = distill_differences(pieces_and_reports)
-    print(differences)
-    analyze_differences(differences)
-
-    comparison = juxtapose(pieces_and_reports)
-    format_juxtaposition(comparison, with_highlights=True).save("report-counts.pdf")
+    with Analyzer("report.html") as analyzer:
+        analyzer.run()

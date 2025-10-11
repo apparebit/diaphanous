@@ -1,7 +1,7 @@
 import polars as pl
 import great_tables as gt
 
-from .model import Column, Entry, Id
+from ._const import TOTAL
 
 
 def configure() -> None:
@@ -42,7 +42,7 @@ def to_title(label: str) -> str:
 
 
 def with_total_and_percent(
-    table: pl.DataFrame, name: str = Column.VARIANT, count: str = Column.COUNT
+    table: pl.DataFrame, name: str = "Variant", count: str = "Count"
 ) -> pl.DataFrame:
     """
     Add a new row with the total count and a new column with percentage values
@@ -51,48 +51,13 @@ def with_total_and_percent(
     total = table.select(pl.col(count).sum()).item()
 
     data: dict[str, list[None | str]] = {column: [None] for column in table.columns}
-    data[name] = [Entry.TOTAL.value]
+    data[name] = [TOTAL]
     data[count] = [total]
     total_row = pl.DataFrame(data).with_columns(pl.col(count).cast(pl.Int64))
 
     return pl.concat([table, total_row]).with_columns(
-        (pl.col(count) / total).alias(Column.PERCENT)
+        (pl.col(count) / total).alias("Percent")
     )
-
-
-def humanize_frame(frame: pl.DataFrame) -> pl.DataFrame:
-    """
-    Humanize NIBRS data. This function converts numeric values and one/two
-    letter codes to human-readable labels. It generally assumes that columns
-    still have their original names.
-    """
-    baptism = {}
-
-    for column in frame.columns:
-        # Handle exceptional column names
-        if column in ("age", "count"):
-            baptism[column] = column.title()
-            continue
-
-        # Handle members of Id.
-        try:
-            ident = Id(column)
-        except:
-            continue
-
-        baptism[ident] = ident.name.title()
-
-        value_range = ident.value_range()
-        if value_range is None:
-            continue
-
-        frame = frame.with_columns(
-            pl.col(column).cast(pl.String).replace({
-                str(v): to_title(k) for k, v in value_range.__members__.items()
-            })
-        )
-
-    return frame.rename(baptism)
 
 
 def format_table(frame: pl.DataFrame, title: None | str = None) -> gt.GT:
@@ -105,13 +70,19 @@ def format_table(frame: pl.DataFrame, title: None | str = None) -> gt.GT:
     if first.casefold() in ("variant", "year"):
         table = table.tab_stub(rowname_col=first)
 
+    percent_columns = []
+    for column in frame.columns:
+        name = column.casefold()
+        if "percent" in name or "pct" in name or "%" in name:
+            percent_columns.append(column)
+
     return (
         table
         .fmt_integer(
             columns=[c for c in frame.columns if frame.schema[c].is_integer()]
         )
         .fmt_percent(
-            columns=[c for c in frame.columns if Column.PERCENT in c or "%" in c],
+            columns=percent_columns,
             decimals=1,
         )
         .tab_options(table_font_names=gt.system_fonts("industrial"))

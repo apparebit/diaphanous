@@ -7,6 +7,7 @@ import zipfile
 import great_tables as gt
 import polars as pl
 
+from .finish import finish_caseload, finish_severity
 from .model import (
     Column, CriminalAct, Entry, Id, NIBRS_SOURCE_FILES,
     NibrsSchema, NibrsTable, OffenseCode
@@ -119,12 +120,12 @@ def _ingest_csam_data(path: Path) -> list[pl.LazyFrame]:
                     CriminalAct.OPERATING_PROMOTING_ASSISTING_ABETTING,
                     CriminalAct.TRANSPORTING_TRANSMITTING_IMPORTING,
                 ])
-            ).list.any().alias("is_more_severe"),
+            ).list.any().alias("supply"),
         ),
         on=Id.OFFENSE,
         how="left",
     ).with_columns(
-        pl.col("is_more_severe").fill_null(False)
+        pl.col("supply").fill_null(False)
     )
 
     # Combine with offenses that involve pornography or obscene materials to
@@ -135,9 +136,7 @@ def _ingest_csam_data(path: Path) -> list[pl.LazyFrame]:
         offenses_exploiting_children,
         on=Id.OFFENSE,
         how="inner",
-    )
-
-    offenses_involving_csam = offenses_involving_csam.join(
+    ).join(
         suspect_using.group_by(
             pl.col(Id.OFFENSE)
         ).agg(
@@ -415,28 +414,12 @@ class CsamData:
             maintain_order=True,
         )
 
-        first_year = frame.columns[1]
-        return frame.select(
-            pl.col(Column.VARIANT),
-            pl.col(first_year).alias(f"Count {first_year}"),
-            *(
-                selection
-                for i, c in enumerate(frame.columns[2:])
-                for selection in (
-                    pl.col(c).sub(
-                        pl.col(frame.columns[i + 2 - 1])
-                    ).truediv(
-                        pl.col(frame.columns[i + 2 - 1])
-                    ).alias(f"∆% {c}"),
-                    pl.col(c).alias(f"Count {c}"),
-                )
-            )
-        )
+        return finish_caseload(frame)
 
     def caseload_table(self) -> gt.GT:
         """Generate a table from the `caseload` data frame."""
         return format_table(
-            self.caseload(), "CSAM Caseload"
+            self.caseload(), "CSAM Caseload (US)"
         ).tab_spanner_delim(
             delim=" ", reverse=True
         )
@@ -451,7 +434,7 @@ class CsamData:
         frame = self.offenses.lazy().group_by(
             Id.YEAR, maintain_order=True
         ).agg(
-            pl.col("is_more_severe").sum().alias("Supply"),
+            pl.col("supply").sum().alias("Supply"),
             pl.len().alias(Entry.TOTAL),
         ).select(
             pl.col(Id.YEAR).cast(pl.String),
@@ -470,26 +453,12 @@ class CsamData:
             separator=" ",
         )
 
-        # This almost is business as usual. The only complication is that we
-        # perform the percent calculation for each column with yearly counts.
-        return frame.select(
-            pl.col(Column.VARIANT),
-            *(
-                selection
-                for c in frame.columns[1:] #if c != Column.VARIANT
-                for selection in (
-                    pl.col(c).alias(f"Count {c}"),
-                    pl.col(c).truediv(
-                        pl.col(c).filter(pl.col(Column.VARIANT).eq(Entry.TOTAL)).first()
-                    ).alias(f"Percent {c}"),
-                )
-            )
-        )
+        return finish_severity(frame)
 
     def severity_table(self) -> gt.GT:
         """Generate a table from the `severity` data frame."""
         return format_table(
-            self.severity(), "Offense Severity"
+            self.severity(), "Offense Severity (US)"
         ).tab_spanner_delim(
             delim=" ", reverse=True
         )

@@ -6,6 +6,8 @@ import altair as alt
 import great_tables as gt
 import polars as pl
 
+from ._const import TOTAL
+from .util import to_title
 
 # Files and Schemas
 
@@ -226,15 +228,15 @@ class SchemaExtension(enum.Enum):
         "using_ids": pl.List(pl.Int16),
         "criminal_act_id": pl.Int16,
         "other_criminal_act_ids": pl.List(pl.Int16),
-        "is_more_severe": pl.Boolean,
+        "supply": pl.Boolean,
     })
     """
     Extra offense columns.
 
     The primary `criminal_act_id` must be 4, i.e., exploitation of children. At
     most two `other_criminal_act_ids` are optional. If they include cultivation
-    (2), distribution (3), promotion (5), or transmission (7), the offense
-    `is_more_severe`.
+    (2), distribution (3), promotion (5), or transmission (7), the offense is
+    treated as `supply`.
     """
 
 
@@ -301,7 +303,7 @@ class Id(enum.StrEnum):
     VICTIM = "victim_id"
     YEAR = "data_year"
 
-    def value_range(self) -> None | type[enum.Enum]:
+    def value_model(self) -> None | type[enum.Enum]:
         """Get the enumeration of possible values for a column with this name."""
         if self == self.CLEARED_EXCEPT:
             return Clearance
@@ -323,6 +325,42 @@ class Id(enum.StrEnum):
             return Using
 
         return None
+
+    def humanized_values(self) -> None | dict[str,str]:
+        value_model = self.value_model()
+        if value_model is None:
+            return None
+
+        try:
+            return {str(v): to_title(k) for k, v in value_model.__members__.items()}
+        except:
+            return None
+
+
+def humanize_values(column: str) -> pl.Expr:
+    name = column.lower()
+
+    if name in ("age", "count"):
+        return pl.col(column).alias(column.title())
+    else:
+        try:
+            ident = Id(column)
+        except:
+            return pl.col(column.title())
+
+        replacements = ident.humanized_values()
+        if replacements is None:
+            return pl.col(column).alias(ident.name.title())
+
+        return pl.col(column).cast(pl.String).replace(
+            replacements
+        ).alias(ident.name.title())
+
+
+def humanize_frame(frame: pl.DataFrame) -> pl.DataFrame:
+    return frame.select(
+        *(humanize_values(c) for c in frame.columns)
+    )
 
 
 class JuvenileDisposition(enum.StrEnum):
@@ -505,19 +543,19 @@ class Entry(enum.StrEnum):
     ADULT = "Adult"
     CHILD = "Child"
     SIZE = "Size"
-    TOTAL = "🖩 Total"
+    TOTAL = TOTAL
     UNKNOWN = "Unknown"
 
 
 Count = enum.StrEnum("Count", {
     s.upper() if s[0] != "🖩" else s[2:].upper(): t
-    for s in ("Child", "Adolescent", "Adult", "🖩 Total")
+    for s in ("Child", "Adolescent", "Adult", TOTAL)
     for t in (f"{s} Count",)
 })
 
 
 Percent = enum.StrEnum("Percent", {
     s.upper() if s[0] != "🖩" else s[2:].upper(): t
-    for s in ("Child", "Adolescent", "Adult", "🖩 Total")
+    for s in ("Child", "Adolescent", "Adult", TOTAL)
     for t in (f"{s} Percent",)
 })

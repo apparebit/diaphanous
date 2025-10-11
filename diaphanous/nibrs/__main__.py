@@ -2,8 +2,8 @@ from pathlib import Path
 import shutil
 
 from .data import load_all
-from .model import Id, Column
-from .util import configure, humanize_frame
+from .model import humanize_frame, Id
+from .util import configure
 
 
 CRITERIA = (Id.YEAR, Id.GROUP, Id.RACE, Id.SEX)
@@ -20,6 +20,4 @@ if __name__ == "__main__":
             Id.YEAR, Id.GROUP, Id.RACE, Id.SEX, sorted=True
         )
     )
-
-    print(offenders)
     offenders.write_csv(root / "data" / "nibrs" / "offenders.csv")

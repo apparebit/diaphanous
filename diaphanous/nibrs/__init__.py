@@ -3,7 +3,7 @@ from .model import (
     Clearance, Column, CriminalAct, Entry, Ethnicity, Id,
     JuvenileDisposition, Location, OffenseCode, Race, Sex, Using
 )
-from .util import configure, format_table, humanize_frame
+from .util import configure, format_table
 
 __all__ = (
     "Clearance",
@@ -14,7 +14,6 @@ __all__ = (
     "Entry",
     "Ethnicity",
     "format_table",
-    "humanize_frame",
     "Id",
     "JuvenileDisposition",
     "load",
