@@ -1,13 +1,14 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Self
+from typing import Literal, Self
 
 import great_tables as gt
 import polars as pl
 
-from .nibrs.finish import finish_caseload, finish_severity
+from ._const import TOTAL
+from .finish import finish_caseload, finish_severity
 from .nibrs.model import Id, Column, Entry
-from .nibrs.util import format_table
+from .util import format_table
 
 
 _ROOT = Path(__file__).parent.parent
@@ -58,19 +59,21 @@ class Data:
             ).insert_column(
                 0,
                 pl.lit(year, dtype=pl.Int16).alias(Id.YEAR)
-            ).insert_column(
-                2,
-                pl.col("id").is_in([
-                    "143211", "143212", "143214", "143220",
-                    "143511", "143512", "143514", "143520",
-                ]).alias("supply"),
-            ).insert_column(
-                3,
-                pl.col("id").is_in([
-                    "143213", "143230", "143513", "143530",
-                ]).alias("demand")
             ).with_columns(
-                pl.col("18-21").add(pl.col(">=21")).alias("adult")
+                pl.col("18-21").add(pl.col(">=21")).alias("adult"),
+                pl.when(
+                    pl.col("id").is_in(["143210", "143220", "143510", "143520"])
+                ).then(
+                    pl.lit("Producer"),
+                ).otherwise(
+                    pl.when(
+                        pl.col("id").is_in(["143230", "143530"])
+                    ).then(
+                        pl.lit("Consumer"),
+                    ).otherwise(
+                        None
+                    ),
+                ).alias("supply"),
             ))
 
         all_suspects = pl.concat(suspects)
@@ -136,20 +139,23 @@ class Data:
             ).insert_column(
                 0,
                 pl.lit(year, dtype=pl.Int16).alias(Id.YEAR)
-            ).insert_column(
-                2,
-                pl.col("id").is_in([
-                    "143211", "143212", "143214", "143220",
-                    "143511", "143512", "143514", "143520",
-                ]).alias("supply"),
-            ).insert_column(
-                3,
-                pl.col("id").is_in([
-                    "143213", "143230", "143513", "143530",
-                ]).alias("demand")
+            ).with_columns(
+                pl.when(
+                    pl.col("id").is_in(["143210", "143220", "143510", "143520"])
+                ).then(
+                    pl.lit("Production"),
+                ).otherwise(
+                    pl.when(
+                        pl.col("id").is_in(["143230", "143530"])
+                    ).then(
+                        pl.lit("Consumption"),
+                    ).otherwise(
+                        None
+                    ),
+                ).alias("supply"),
             ).select(
                 pl.col(
-                    Id.YEAR, "id", "description", "supply", "demand",
+                    Id.YEAR, "id", "description", "supply",
                     "incidents", "attempted", "solved",
                     "suspects", "male_suspects", "female_suspects",
                 )
@@ -191,24 +197,28 @@ class Data:
         )
 
     def severity(self) -> pl.DataFrame:
-        frame = self.incidents.lazy().group_by(Id.YEAR).agg(
-            pl.col("incidents").filter(pl.col("supply")).sum().alias("Supply"),
-            pl.col("incidents").filter(pl.col("demand")).sum().alias("Demand"),
-        ).with_columns(
-            pl.col("Supply").add(pl.col("Demand")).alias(Entry.TOTAL)
-        ).unpivot(
-            index=Id.YEAR,
-            variable_name=Column.VARIANT,
-            value_name=Column.COUNT,
-        ).collect().pivot(
-            on=Id.YEAR,
-            index=Column.VARIANT,
-            values=Column.COUNT,
-            maintain_order=True,
-            separator=" ",
+        frame = self.incidents.filter(
+            pl.col("supply").is_not_null()
+        ).rename({
+            "supply": "Variant",
+        }).group_by(
+            Id.YEAR, "Variant"
+        ).agg(
+            pl.col("incidents").sum().alias("Count")
         )
 
-        return finish_severity(frame)
+        total = frame.group_by(
+            Id.YEAR
+        ).agg(
+            pl.lit(TOTAL).alias("Variant"),
+            pl.col("Count").sum()
+        )
+
+        return finish_severity(pl.concat([frame, total]).pivot(
+            on=Id.YEAR,
+            values="Count",
+            maintain_order=True,
+        ))
 
     def severity_table(self) -> gt.GT:
         return format_table(
@@ -219,14 +229,16 @@ class Data:
 
     def age_distribution(self) -> pl.DataFrame:
         return self.suspects.filter(
-            pl.col("id").is_in(["143200", "143500"]).and_(pl.col("sex").ne("X"))
+            pl.col("supply").is_not_null().and_(pl.col("sex").ne("X"))
+        ).with_columns(
+            pl.col("sex").replace({"M": "Male", "W": "Female"}),
         ).unpivot(
             on=_AGE_RANGES,
-            index=[Id.YEAR, "sex"],
+            index=[Id.YEAR, "sex", "supply"],
             variable_name="age_range",
             value_name="count",
         ).group_by(
-            pl.col(Id.YEAR, "age_range", "sex"),
+            pl.col(Id.YEAR, "age_range", "sex", "supply"),
         ).agg(
             pl.col("count").sum(),
         ).with_columns(
@@ -235,10 +247,7 @@ class Data:
                 {r: "Adolescent" for r in _ADOLESCENT_RANGES} |
                 {r: "Adult" for r in _ADULT_RANGES}
             ).alias(Id.GROUP),
-            pl.col("sex").replace({
-                "W": "Female",
-                "M": "Male",
-            }),
+            pl.col("sex", "supply"),
             pl.when(
                 pl.col("age_range").is_in(["<6", ">=60"])
             ).then(
@@ -264,42 +273,11 @@ class Data:
                 pl.col("age_last").sub(pl.col("age_first"))
             )
         ).select(
-            pl.col(Id.YEAR, "count", Id.GROUP, "sex"),
+            pl.col(Id.YEAR),
             pl.int_ranges("age_first", "age_last").alias("age"),
-        ).explode("age").sort("age")
-
-    def demographics(self) -> pl.DataFrame:
-        return self.suspects.filter(
-            pl.col("id").is_in(["143200", "143500"]).and_(pl.col("sex").ne("X"))
-        ).unpivot(
-            on=["child", "adolescent", "adult"],
-            index=[Id.YEAR, "sex"],
-            variable_name=Id.GROUP,
-            value_name="count",
-        ).group_by(
-            pl.col(Id.YEAR, Id.GROUP, "sex")
-        ).agg(
-            pl.col("count").sum()
-        ).select(
-            pl.col(Id.YEAR).alias("Year"),
-            pl.col(Id.GROUP).replace_strict({
-                "child": 1,
-                "adolescent": 2,
-                "adult": 3,
-            }).alias("Group"),
-            pl.col("sex").replace({
-                "M": "Male",
-                "W": "Female",
-            }).alias("Sex"),
-            pl.col("count").alias("Count"),
-        ).sort(
-            "Year", "Group", "Sex"
-        ).with_columns(
-            pl.col("Group").replace_strict({
-                1: "Child",
-                2: "Adolescent",
-                3: "Adult",
-            })
+            pl.col(Id.GROUP, "sex", "supply", "count")
+        ).explode("age").sort(
+            Id.YEAR, "age", "sex", "supply"
         )
 
 
@@ -311,5 +289,7 @@ if __name__ == "__main__":
     print(data.incidents)
     print(data.caseload())
     print(data.severity())
+    print(data.age_distribution())
+
     # print(data.suspects)
     # data.demographics().write_csv(_ROOT / "data" / "bka" / "suspects.csv")

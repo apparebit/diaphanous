@@ -4,7 +4,6 @@ import polars as pl
 
 from .data import CsamData
 from .model import Entry, Ethnicity, Group, Id, Race, Sex
-from .util import to_title
 
 # _BG_PALETTE = "Greens"
 # _CHILD_ADOLESCENT_ADULT = (
@@ -41,16 +40,6 @@ _AGE_ID_TO_GROUP = (
     ).alias(
         Id.GROUP
     )
-)
-
-_FOLD_HISPANIC_INTO_RACE = (
-    pl.when(
-        pl.col(Id.ETHNICITY).eq(Ethnicity.HISPANIC)
-    ).then(
-        pl.lit(Race.HISPANIC, dtype=pl.Int16)
-    ).otherwise(
-        pl.col(Id.RACE)
-    ).alias(Id.RACE),
 )
 
 
@@ -116,7 +105,7 @@ class Demographics:
         self._csam_data = csam_data
         self._source = source
         self._frame = frame.select(
-            pl.col(Id.YEAR, "age", Id.GROUP, Id.SEX, Id.RACE)
+            pl.col(Id.YEAR, "age", Id.GROUP, Id.SEX, Id.RACE, Id.INCIDENT, Id.OFFENDER)
         )
 
     def name(self) -> str:
@@ -137,7 +126,14 @@ class Demographics:
 
     def with_offenses(self, frame: None | pl.DataFrame = None) -> pl.DataFrame:
         """Get the source table joined with offenses."""
-        return (self.data() if frame is None else frame).join(
+        frame = self.data() if frame is None else frame
+        if Id.OFFENSE not in frame.columns:
+            frame = frame.join(
+                self._csam_data.incidents.select(Id.INCIDENT, Id.OFFENSE),
+                on=Id.INCIDENT,
+                how="left",
+            )
+        return frame.join(
             self._csam_data.offenses.drop(Id.YEAR),
             on=Id.OFFENSE,
             how="left",
@@ -152,8 +148,8 @@ class Demographics:
         """
         Tabulate this demographic by the combination of the given criteria.
         Valid identifiers are `AGE`, `CLEARED_EXCEPT`, `ETHNICITY`, `GROUP`,
-        `LOCATION`, `RACE`, `SEX`, `SUSPECT_USING`, and `YEAR`. In fact, you
-        probably want to always use `YEAR` as the first argument.
+        `LOCATION`, `RACE`, `SEX`, `SUPPLY`, `SUSPECT_USING`, and `YEAR`. In
+        fact, you probably want to always use `YEAR` as the first argument.
         """
         requires_incidents = False
         requires_offenses = False
@@ -166,7 +162,7 @@ class Demographics:
                 raise ValueError(f"criterion {criterion} is unsupported")
             elif criterion == Id.CLEARED_EXCEPT:
                 requires_incidents = True
-            elif criterion in (Id.LOCATION, Id.SUSPECT_USING):
+            elif criterion in (Id.LOCATION, Id.SUPPLY, Id.SUSPECT_USING):
                 requires_offenses = True
             groups.append("age" if criterion is Id.AGE else criterion)
 
@@ -179,7 +175,7 @@ class Demographics:
             frame = self.with_offenses(frame)
 
         frame = frame.group_by(
-            *groups, maintain_order=True
+            *groups, maintain_order=not sorted
         ).agg(
             pl.len().alias("count"),
         )
@@ -191,7 +187,7 @@ class Demographics:
 
     def age_distribution(self) -> pl.DataFrame:
         return self.by(
-            Id.YEAR, Id.AGE, Id.GROUP, Id.SEX, sorted=True
+            Id.YEAR, Id.AGE, Id.GROUP, Id.SEX, Id.SUPPLY, sorted=True
         ).with_columns(
             pl.col(Id.GROUP).replace_strict({
                 Group.CHILD: Entry.CHILD,
@@ -202,4 +198,10 @@ class Demographics:
                 Id.SEX.humanized_values(),
                 return_dtype=pl.String
             ),
-        )
+            pl.col(Id.SUPPLY).cast(pl.String).replace(
+                Id.SUPPLY.humanized_values(),
+                return_dtype=pl.String
+            )
+        ).rename({
+            Id.SEX: "sex"
+        })

@@ -7,12 +7,12 @@ import zipfile
 import great_tables as gt
 import polars as pl
 
-from .finish import finish_caseload, finish_severity
+from ..finish import finish_caseload, finish_severity
 from .model import (
     Column, CriminalAct, Entry, Id, NIBRS_SOURCE_FILES,
     NibrsSchema, NibrsTable, OffenseCode
 )
-from .util import format_table
+from ..util import format_table
 
 if TYPE_CHECKING:
     from .demographics import Demographics
@@ -401,7 +401,7 @@ class CsamData:
                 pl.lit(label, dtype=pl.String).alias(Column.VARIANT),
                 pl.col(Column.COUNT),
             )
-            for label in ("Offenders", "Incidents", "Arrestees")
+            for label in ("Incidents", "Offenders", "Arrestees")
         ]
 
         frame = pl.concat(
@@ -434,12 +434,12 @@ class CsamData:
         frame = self.offenses.lazy().group_by(
             Id.YEAR, maintain_order=True
         ).agg(
-            pl.col("supply").sum().alias("Supply"),
+            pl.col("supply").sum().alias("Production"),
             pl.len().alias(Entry.TOTAL),
         ).select(
             pl.col(Id.YEAR).cast(pl.String),
-            pl.col("Supply"),
-            pl.col(Entry.TOTAL).sub(pl.col("Supply")).alias("Demand"),
+            pl.col(Entry.TOTAL).sub(pl.col("Production")).alias("Consumption"),
+            pl.col("Production"),
             pl.col(Entry.TOTAL),
         ).unpivot(
             index=Id.YEAR,

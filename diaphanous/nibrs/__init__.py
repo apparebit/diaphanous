@@ -1,26 +1,31 @@
 from .data import CsamData, load, load_all
 from .model import (
-    Clearance, Column, CriminalAct, Entry, Ethnicity, Id,
-    JuvenileDisposition, Location, OffenseCode, Race, Sex, Using
+    Clearance, Column, CriminalAct, Entry, Ethnicity, Group, humanize_frame,
+    humanize_values, Id, JuvenileDisposition, Location, NIBRS_SOURCE_FILES,
+    NibrsSchema, NibrsTable, OffenseCode, Race, SchemaExtension, Sex, Using
 )
-from .util import configure, format_table
 
 __all__ = (
     "Clearance",
     "Column",
-    "configure",
     "CriminalAct",
     "CsamData",
     "Entry",
     "Ethnicity",
-    "format_table",
+    "Group",
+    "humanize_frame",
+    "humanize_values",
     "Id",
     "JuvenileDisposition",
     "load",
     "load_all",
     "Location",
+    "NIBRS_SOURCE_FILES",
+    "NibrsSchema",
+    "NibrsTable",
     "OffenseCode",
     "Race",
+    "SchemaExtension",
     "Sex",
     "Using",
 )

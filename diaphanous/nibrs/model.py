@@ -6,8 +6,8 @@ import altair as alt
 import great_tables as gt
 import polars as pl
 
-from ._const import TOTAL
-from .util import to_title
+from .._const import TOTAL
+from ..util import to_title
 
 # Files and Schemas
 
@@ -236,7 +236,7 @@ class SchemaExtension(enum.Enum):
     The primary `criminal_act_id` must be 4, i.e., exploitation of children. At
     most two `other_criminal_act_ids` are optional. If they include cultivation
     (2), distribution (3), promotion (5), or transmission (7), the offense is
-    treated as `supply`.
+    treated as `supply_side`.
     """
 
 
@@ -299,6 +299,7 @@ class Id(enum.StrEnum):
     OFFENSE = "offense_id"
     RACE = "race_id"
     SEX = "sex_code"
+    SUPPLY = "supply"
     SUSPECT_USING = "suspect_using_id"
     VICTIM = "victim_id"
     YEAR = "data_year"
@@ -321,6 +322,8 @@ class Id(enum.StrEnum):
             return Race
         if self == self.SEX:
             return Sex
+        if self == self.SUPPLY:
+            return Supply
         if self == self.SUSPECT_USING:
             return Using
 
@@ -332,7 +335,10 @@ class Id(enum.StrEnum):
             return None
 
         try:
-            return {str(v): to_title(k) for k, v in value_model.__members__.items()}
+            return {
+                str(v.value): to_title(k)
+                for k, v in value_model.__members__.items()
+            }
         except:
             return None
 
@@ -477,7 +483,7 @@ class Race(enum.IntEnum):
     UNKNOWN = 98
     NOT_SPECIFIED = 99
 
-    HISPANIC = 100  # Not in NIBRS, added to simplify folding of ethnicity
+    HISPANIC = 665  # Not in NIBRS, added to simplify folding of ethnicity
 
 
 class Sex(enum.StrEnum):
@@ -547,15 +553,20 @@ class Entry(enum.StrEnum):
     UNKNOWN = "Unknown"
 
 
-Count = enum.StrEnum("Count", {
-    s.upper() if s[0] != "🖩" else s[2:].upper(): t
-    for s in ("Child", "Adolescent", "Adult", TOTAL)
-    for t in (f"{s} Count",)
-})
+class Supply(enum.Enum):
+    CONSUMER = "false"
+    PRODUCER = "true"
 
 
-Percent = enum.StrEnum("Percent", {
-    s.upper() if s[0] != "🖩" else s[2:].upper(): t
-    for s in ("Child", "Adolescent", "Adult", TOTAL)
-    for t in (f"{s} Percent",)
-})
+# Count = enum.StrEnum("Count", {
+#     s.upper() if s[0] != "🖩" else s[2:].upper(): t
+#     for s in ("Child", "Adolescent", "Adult", TOTAL)
+#     for t in (f"{s} Count",)
+# })
+
+
+# Percent = enum.StrEnum("Percent", {
+#     s.upper() if s[0] != "🖩" else s[2:].upper(): t
+#     for s in ("Child", "Adolescent", "Adult", TOTAL)
+#     for t in (f"{s} Percent",)
+# })
