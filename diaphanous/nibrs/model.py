@@ -344,23 +344,18 @@ class Id(enum.StrEnum):
 
 
 def humanize_values(column: str) -> pl.Expr:
-    name = column.lower()
-
-    if name in ("age", "count"):
+    try:
+        ident = Id(column)
+    except:
         return pl.col(column).alias(column.title())
-    else:
-        try:
-            ident = Id(column)
-        except:
-            return pl.col(column.title())
 
-        replacements = ident.humanized_values()
-        if replacements is None:
-            return pl.col(column).alias(ident.name.title())
+    replacements = ident.humanized_values()
+    if replacements is None:
+        return pl.col(column).alias(ident.name.title())
 
-        return pl.col(column).cast(pl.String).replace(
-            replacements
-        ).alias(ident.name.title())
+    return pl.col(column).cast(pl.String).replace(
+        replacements
+    ).alias(ident.name.title())
 
 
 def humanize_frame(frame: pl.DataFrame) -> pl.DataFrame:
@@ -556,17 +551,3 @@ class Entry(enum.StrEnum):
 class Supply(enum.Enum):
     CONSUMER = "false"
     PRODUCER = "true"
-
-
-# Count = enum.StrEnum("Count", {
-#     s.upper() if s[0] != "🖩" else s[2:].upper(): t
-#     for s in ("Child", "Adolescent", "Adult", TOTAL)
-#     for t in (f"{s} Count",)
-# })
-
-
-# Percent = enum.StrEnum("Percent", {
-#     s.upper() if s[0] != "🖩" else s[2:].upper(): t
-#     for s in ("Child", "Adolescent", "Adult", TOTAL)
-#     for t in (f"{s} Percent",)
-# })

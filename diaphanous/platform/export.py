@@ -12,6 +12,7 @@ from .type import (
 
 
 def _format_row_json(row: RowType, indent: str) -> str:
+    header = cell_values = None
     for header, cell_values in row.items():
         if header != "redundant":
             break
@@ -123,7 +124,9 @@ def encode_reports_per_platform(
                         yield from emit_list(k, v, "            ")
                 yield from emit_line('        }')
             elif key in ("columns", "comments", "rows", "sources"):
-                yield from emit_list(key, value, "        ")
+                yield from emit_list(
+                    key, value, "        " # pyright: ignore[reportArgumentType]
+                )
             else:
                 raise ValueError(f'Unknown platform object property "{key}"')
 

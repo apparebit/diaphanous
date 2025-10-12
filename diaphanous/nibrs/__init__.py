@@ -2,7 +2,7 @@ from .data import CsamData, load, load_all
 from .model import (
     Clearance, Column, CriminalAct, Entry, Ethnicity, Group, humanize_frame,
     humanize_values, Id, JuvenileDisposition, Location, NIBRS_SOURCE_FILES,
-    NibrsSchema, NibrsTable, OffenseCode, Race, SchemaExtension, Sex, Using
+    NibrsSchema, NibrsTable, OffenseCode, Race, SchemaExtension, Sex, Supply, Using
 )
 
 __all__ = (
@@ -27,5 +27,6 @@ __all__ = (
     "Race",
     "SchemaExtension",
     "Sex",
+    "Supply",
     "Using",
 )

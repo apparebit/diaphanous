@@ -247,6 +247,11 @@ class Data:
                 {r: "Adolescent" for r in _ADOLESCENT_RANGES} |
                 {r: "Adult" for r in _ADULT_RANGES}
             ).alias(Id.GROUP),
+            pl.col("age_range").replace(
+                {r: 1 for r in _CHILD_RANGES} |
+                {r: 2 for r in _ADOLESCENT_RANGES} |
+                {r: 3 for r in _ADULT_RANGES}
+            ).alias("group_rank"),
             pl.col("sex", "supply"),
             pl.when(
                 pl.col("age_range").is_in(["<6", ">=60"])
@@ -275,7 +280,7 @@ class Data:
         ).select(
             pl.col(Id.YEAR),
             pl.int_ranges("age_first", "age_last").alias("age"),
-            pl.col(Id.GROUP, "sex", "supply", "count")
+            pl.col(Id.GROUP, "group_rank", "sex", "supply", "count")
         ).explode("age").sort(
             Id.YEAR, "age", "sex", "supply"
         )
