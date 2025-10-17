@@ -9,8 +9,9 @@ from .main import main
 if __name__ == "__main__":
     from pathlib import Path
     import polars as pl
-    from .bka import Data
-    from .nibrs import humanize_frame, Id, load_all
+    from .au_nz import AIC as AIC
+    from .bka import Data as BKA
+    from .nibrs import humanize_frame, Id, load_all as load_nibrs
     from .platform.data import REPORTS_PER_PLATFORM
     from .platform.export import encode_reports_per_platform
     from .platform.tabulate import tabulate
@@ -33,21 +34,30 @@ if __name__ == "__main__":
     print("▶︎ data/ocse-reports-per-platform.csv")
 
     # ----------------------------------------------------------------------------------
-    us = load_all()
-    offenders = humanize_frame(us.offender_demographics().by(
-        Id.YEAR, Id.GROUP, Id.RACE, Id.SEX, Id.SUPPLY, sorted=True
-    ))
-
-    offenders.write_csv("data/nibrs/offenders.csv")
-    print(f"▶︎ data/nibrs/offenders.csv")
+    au = AIC
+    au.write_csv("data/aic/offenders.csv")
+    print(f"▶︎ data/aic/offenders.csv")
 
     # ----------------------------------------------------------------------------------
-    de = Data.ingest()
+    de = BKA.ingest()
     suspects = humanize_frame(de.age_distribution().group_by(
-        Id.YEAR, Id.GROUP, "sex", Id.SUPPLY, maintain_order=True
+        Id.YEAR, Id.GROUP, "sex", Id.ACTIVITY, maintain_order=True
     ).agg(
         pl.col("count").sum().cast(pl.Int64)
-    ))
+    ).rename({
+        Id.GROUP: "age"
+    }))
 
     suspects.write_csv("data/bka/suspects.csv")
     print(f"▶︎ data/bka/suspects.csv")
+
+    # ----------------------------------------------------------------------------------
+    us = load_nibrs()
+    offenders = humanize_frame(us.offender_demographics().by(
+        Id.YEAR, Id.GROUP, Id.RACE, Id.SEX, Id.ACTIVITY, sorted=True
+    )).rename({
+        "Group": "Age",
+    })
+
+    offenders.write_csv("data/nibrs/offenders.csv")
+    print(f"▶︎ data/nibrs/offenders.csv")

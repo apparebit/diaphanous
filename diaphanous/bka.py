@@ -73,7 +73,7 @@ class Data:
                     ).otherwise(
                         None
                     ),
-                ).alias("supply"),
+                ).alias("activity"),
             ))
 
         all_suspects = pl.concat(suspects)
@@ -152,10 +152,10 @@ class Data:
                     ).otherwise(
                         None
                     ),
-                ).alias("supply"),
+                ).alias("activity"),
             ).select(
                 pl.col(
-                    Id.YEAR, "id", "description", "supply",
+                    Id.YEAR, "id", "description", "activity",
                     "incidents", "attempted", "solved",
                     "suspects", "male_suspects", "female_suspects",
                 )
@@ -198,9 +198,9 @@ class Data:
 
     def severity(self) -> pl.DataFrame:
         frame = self.incidents.filter(
-            pl.col("supply").is_not_null()
+            pl.col("activity").is_not_null()
         ).rename({
-            "supply": "Variant",
+            "activity": "Variant",
         }).group_by(
             Id.YEAR, "Variant"
         ).agg(
@@ -229,16 +229,16 @@ class Data:
 
     def age_distribution(self) -> pl.DataFrame:
         return self.suspects.filter(
-            pl.col("supply").is_not_null().and_(pl.col("sex").ne("X"))
+            pl.col("activity").is_not_null().and_(pl.col("sex").ne("X"))
         ).with_columns(
             pl.col("sex").replace({"M": "Male", "W": "Female"}),
         ).unpivot(
             on=_AGE_RANGES,
-            index=[Id.YEAR, "sex", "supply"],
+            index=[Id.YEAR, "sex", "activity"],
             variable_name="age_range",
             value_name="count",
         ).group_by(
-            pl.col(Id.YEAR, "age_range", "sex", "supply"),
+            pl.col(Id.YEAR, "age_range", "sex", "activity"),
         ).agg(
             pl.col("count").sum(),
         ).with_columns(
@@ -252,7 +252,7 @@ class Data:
                 {r: 2 for r in _ADOLESCENT_RANGES} |
                 {r: 3 for r in _ADULT_RANGES}
             ).alias("group_rank"),
-            pl.col("sex", "supply"),
+            pl.col("sex", "activity"),
             pl.when(
                 pl.col("age_range").is_in(["<6", ">=60"])
             ).then(
@@ -280,9 +280,9 @@ class Data:
         ).select(
             pl.col(Id.YEAR),
             pl.int_ranges("age_first", "age_last").alias("age"),
-            pl.col(Id.GROUP, "group_rank", "sex", "supply", "count")
+            pl.col(Id.GROUP, "group_rank", "sex", "activity", "count")
         ).explode("age").sort(
-            Id.YEAR, "age", "sex", "supply"
+            Id.YEAR, "age", "sex", "activity"
         )
 
 
