@@ -228,7 +228,7 @@ class SchemaExtension(enum.Enum):
         "using_ids": pl.List(pl.Int16),
         "criminal_act_id": pl.Int16,
         "other_criminal_act_ids": pl.List(pl.Int16),
-        "supply": pl.Boolean,
+        "activity": pl.Boolean,
     })
     """
     Extra offense columns.
@@ -236,7 +236,8 @@ class SchemaExtension(enum.Enum):
     The primary `criminal_act_id` must be 4, i.e., exploitation of children. At
     most two `other_criminal_act_ids` are optional. If they include cultivation
     (2), distribution (3), promotion (5), or transmission (7), the offense is
-    treated as `supply_side`.
+    treated as a producing `activity`. In absence of these flags, it is treated
+    as a consuming activity.
     """
 
 
@@ -285,6 +286,7 @@ class Ethnicity(enum.IntEnum):
 
 class Id(enum.StrEnum):
     """The NIBRS identifiers serving as foreign keys."""
+    ACTIVITY = "activity"
     AGE = "age_id"
     AGENCY = "agency_id"
     ARRESTEE = "arrestee_id"
@@ -299,7 +301,6 @@ class Id(enum.StrEnum):
     OFFENSE = "offense_id"
     RACE = "race_id"
     SEX = "sex_code"
-    SUPPLY = "supply"
     SUSPECT_USING = "suspect_using_id"
     VICTIM = "victim_id"
     YEAR = "data_year"
@@ -322,8 +323,8 @@ class Id(enum.StrEnum):
             return Race
         if self == self.SEX:
             return Sex
-        if self == self.SUPPLY:
-            return Supply
+        if self == self.ACTIVITY:
+            return Activity
         if self == self.SUSPECT_USING:
             return Using
 
@@ -502,6 +503,17 @@ class Using(enum.IntEnum):
 # Derived Data
 
 
+class Activity(enum.Enum):
+    """
+    A coarse grouping of CSAM-related offenses into production/distribution
+    versus consumption. Crime statistics in Australia and New Zealand happen to
+    make the same distinction. United States statistics are more granular.
+    Finally, Germany's statistics are granular enough to derive this variable.
+    """
+    CONSUMER = "false"
+    PRODUCER = "true"
+
+
 class Group(enum.IntEnum):
     """The age groups. The values were chosen to sort into a convenient order."""
     CHILD = 1
@@ -546,8 +558,3 @@ class Entry(enum.StrEnum):
     SIZE = "Size"
     TOTAL = TOTAL
     UNKNOWN = "Unknown"
-
-
-class Supply(enum.Enum):
-    CONSUMER = "false"
-    PRODUCER = "true"

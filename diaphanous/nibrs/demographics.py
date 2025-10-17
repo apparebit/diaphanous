@@ -162,7 +162,7 @@ class Demographics:
                 raise ValueError(f"criterion {criterion} is unsupported")
             elif criterion == Id.CLEARED_EXCEPT:
                 requires_incidents = True
-            elif criterion in (Id.LOCATION, Id.SUPPLY, Id.SUSPECT_USING):
+            elif criterion in (Id.LOCATION, Id.ACTIVITY, Id.SUSPECT_USING):
                 requires_offenses = True
             groups.append("age" if criterion is Id.AGE else criterion)
 
@@ -187,7 +187,7 @@ class Demographics:
 
     def age_distribution(self) -> pl.DataFrame:
         return self.by(
-            Id.YEAR, Id.AGE, Id.GROUP, Id.SEX, Id.SUPPLY, sorted=True
+            Id.YEAR, Id.AGE, Id.GROUP, Id.SEX, Id.ACTIVITY, sorted=True
         ).with_columns(
             pl.col(Id.GROUP).replace_strict({
                 Group.CHILD: Entry.CHILD,
@@ -198,8 +198,8 @@ class Demographics:
                 Id.SEX.humanized_values(),
                 return_dtype=pl.String
             ),
-            pl.col(Id.SUPPLY).cast(pl.String).replace(
-                Id.SUPPLY.humanized_values(),
+            pl.col(Id.ACTIVITY).cast(pl.String).replace(
+                Id.ACTIVITY.humanized_values(),
                 return_dtype=pl.String
             )
         ).rename({

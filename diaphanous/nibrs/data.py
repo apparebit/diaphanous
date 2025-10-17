@@ -120,12 +120,12 @@ def _ingest_csam_data(path: Path) -> list[pl.LazyFrame]:
                     CriminalAct.OPERATING_PROMOTING_ASSISTING_ABETTING,
                     CriminalAct.TRANSPORTING_TRANSMITTING_IMPORTING,
                 ])
-            ).list.any().alias("supply"),
+            ).list.any().alias("activity"),
         ),
         on=Id.OFFENSE,
         how="left",
     ).with_columns(
-        pl.col("supply").fill_null(False)
+        pl.col("activity").fill_null(False)
     )
 
     # Combine with offenses that involve pornography or obscene materials to
@@ -434,7 +434,7 @@ class CsamData:
         frame = self.offenses.lazy().group_by(
             Id.YEAR, maintain_order=True
         ).agg(
-            pl.col("supply").sum().alias("Production"),
+            pl.col("activity").sum().alias("Production"),
             pl.len().alias(Entry.TOTAL),
         ).select(
             pl.col(Id.YEAR).cast(pl.String),
