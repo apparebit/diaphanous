@@ -4,6 +4,7 @@ import polars as pl
 
 from .data import CsamData
 from .model import Entry, Ethnicity, Group, Id, Race, Sex
+from ..util import add_group_rank, arrange_age_distribution
 
 # _BG_PALETTE = "Greens"
 # _CHILD_ADOLESCENT_ADULT = (
@@ -201,7 +202,12 @@ class Demographics:
             pl.col(Id.ACTIVITY).cast(pl.String).replace(
                 Id.ACTIVITY.humanized_values(),
                 return_dtype=pl.String
-            )
+            ),
+            pl.col("count").cast(pl.Float64),
         ).rename({
             Id.SEX: "sex"
-        })
+        }).pipe(
+            add_group_rank
+        ).pipe(
+            arrange_age_distribution
+        )

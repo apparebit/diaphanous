@@ -2,6 +2,8 @@ from pathlib import Path
 
 import polars as pl
 
+from .util import add_age_group, arrange_age_distribution
+
 AIC = pl.DataFrame({
     "Year": ["2022/23"] * 12,
     "Sex": (["Male"] * 4) + (["Female"] * 4) + (["All"] * 4),
@@ -38,26 +40,24 @@ def au_age_distribution() -> pl.DataFrame:
     ).with_columns(
         pl.col("count").truediv(pl.col("age_last").sub(pl.col("age_first")))
     ).select(
-        pl.col("Year").alias("data_year"),
+        pl.col("Year").replace(
+            {"2022/23": 2023},
+            return_dtype=pl.Int16
+        ).alias("data_year"),
         pl.int_ranges("age_first", "age_last").alias("age"),
         pl.col("sex", "count")
     ).explode("age").sort(
         "data_year", "age", "sex"
     ).with_columns(
-        pl.when(
-            pl.col("age").lt(14)
-        ).then(
-            pl.lit("Child", dtype=pl.String),
-        ).otherwise(
-            pl.when(
-                pl.col("age").lt(18)
-            ).then(
-                pl.lit("Adolescent", dtype=pl.String),
-            ).otherwise(
-                pl.lit("Adult", dtype=pl.String)
-            )
-        ).alias("age_group")
+        pl.lit(None, dtype=pl.String).alias("activity"),
+    ).pipe(
+        add_age_group
+    ).pipe(
+        arrange_age_distribution
     )
+
+
+# ======================================================================================
 
 
 POLICEDATA = Path("data/policedata.nz/nz-up-to-2025-08.csv")
@@ -96,10 +96,10 @@ def nz_load() -> pl.DataFrame:
         pl.when(
             pl.col("age").eq("80yearsorover")
         ).then(
-            pl.lit(100)
+            pl.lit(99)
         ).otherwise(
             pl.col("age").str.extract(r"\d+-(\d+)").cast(pl.Int8)
-        ).alias("age_high"),
+        ).add(1).alias("age_high"),
         pl.col("sex").replace({"Not Stated": None}),
         pl.col("ethnicity").replace({
             "Not Stated": None,
@@ -130,13 +130,22 @@ def nz_age_distribution() -> pl.DataFrame:
     ).agg(
         pl.col("proceedings").sum().alias("count")
     ).with_columns(
-        pl.col("count").truediv(pl.col("age_high").add(1).sub(pl.col("age_low")))
+        pl.col("count").truediv(pl.col("age_high").sub(pl.col("age_low")))
     ).with_columns(
         pl.int_ranges("age_low", "age_high").alias("age"),
-    ).explode("age").sort(
-        "year", "age", "sex", "ethnicity", "activity"
+    ).explode("age").pipe(
+        add_age_group
+    ).with_columns(
+        pl.col("year").alias("data_year"),
+    ).sort(
+        "data_year", "age", "sex", "activity"
+    ).pipe(
+        arrange_age_distribution
     )
 
 if __name__ == "__main__":
+    pl.Config.set_tbl_cols(15)
+
     print(au_age_distribution())
-    print(nz_age_distribution())
+    #print(nz_age_distribution())
+    print(nz_load())

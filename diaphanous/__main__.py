@@ -9,12 +9,12 @@ from .main import main
 if __name__ == "__main__":
     from pathlib import Path
     import polars as pl
-    from .au_nz import AIC as AIC
+    from .aunz import AIC as AIC
     from .bka import Data as BKA
     from .nibrs import humanize_frame, Id, load_all as load_nibrs
     from .platform.data import REPORTS_PER_PLATFORM
     from .platform.export import encode_reports_per_platform
-    from .platform.tabulate import tabulate
+    from .tabulate import tabulate
     from .util import configure
 
     configure()

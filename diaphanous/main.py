@@ -19,7 +19,7 @@ from diaphanous import (
     fetch_populations,
 )
 
-from diaphanous.platform.tabulate import tabulate
+from diaphanous.tabulate import tabulate
 
 # ======================================================================================
 

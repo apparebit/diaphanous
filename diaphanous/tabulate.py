@@ -11,10 +11,10 @@ import altair as alt
 import great_tables as gt
 import polars as pl
 
-from ..chart import plot_age_and_sex
-from .data import REPORTS_PER_PLATFORM
+from .chart import plot_age_and_sex
+from .platform.data import REPORTS_PER_PLATFORM
 
-import diaphanous.au_nz as au_nz
+import diaphanous.aunz as aunz
 import diaphanous.bka as bka
 import diaphanous.nibrs as nibrs
 
@@ -786,15 +786,21 @@ printr()
         us = nibrs.load_all()
         de = bka.Data.ingest()
 
-        au_ages = au_nz.au_age_distribution().with_columns(
-            pl.col("data_year").replace({"2022/23": "2023"})
-        )
+        au_ages = aunz.au_age_distribution()
         de_ages = de.age_distribution()
+        nz_ages = aunz.nz_age_distribution().filter(
+            pl.col("data_year").ge(2023).and_(
+                pl.col("data_year").lt(2025)
+            )
+        )
         us_ages = us.offender_demographics().age_distribution()
+
+        print(nz_ages)
 
         fig = alt.vconcat(
             plot_age_and_sex(au_ages, "Offenders", "Australia"),
             plot_age_and_sex(de_ages, "Suspects", "Germany"),
+            plot_age_and_sex(nz_ages, "Offenders", "New Zealand"),
             plot_age_and_sex(us_ages, "Offenders", "United States"),
         ).resolve_scale(x="shared")
 

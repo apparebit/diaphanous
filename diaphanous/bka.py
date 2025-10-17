@@ -1,14 +1,14 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Literal, Self
+from typing import Self
 
 import great_tables as gt
 import polars as pl
 
 from ._const import TOTAL
 from .finish import finish_caseload, finish_severity
-from .nibrs.model import Id, Column, Entry
-from .util import format_table
+from .nibrs.model import Id, Column
+from .util import arrange_age_distribution, format_table
 
 
 _ROOT = Path(__file__).parent.parent
@@ -250,7 +250,8 @@ class Data:
             pl.col("age_range").replace(
                 {r: 1 for r in _CHILD_RANGES} |
                 {r: 2 for r in _ADOLESCENT_RANGES} |
-                {r: 3 for r in _ADULT_RANGES}
+                {r: 3 for r in _ADULT_RANGES},
+                return_dtype=pl.Int8,
             ).alias("group_rank"),
             pl.col("sex", "activity"),
             pl.when(
@@ -283,6 +284,8 @@ class Data:
             pl.col(Id.GROUP, "group_rank", "sex", "activity", "count")
         ).explode("age").sort(
             Id.YEAR, "age", "sex", "activity"
+        ).pipe(
+            arrange_age_distribution
         )
 
 

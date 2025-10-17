@@ -89,3 +89,44 @@ def format_table(frame: pl.DataFrame, title: None | str = None) -> gt.GT:
         .sub_missing(missing_text="")
         .opt_horizontal_padding(scale=2)
     )
+
+
+def add_group_rank(frame: pl.DataFrame) -> pl.DataFrame:
+    return frame.with_columns(
+        pl.col("age_group").replace({
+            "Child": 1,
+            "Adolescent": 2,
+            "Adult": 3,
+        }, return_dtype=pl.Int8).alias("group_rank")
+    )
+
+
+def add_age_group(frame: pl.DataFrame) -> pl.DataFrame:
+    return frame.with_columns(
+        pl.when(
+            pl.col("age").lt(14)
+        ).then(
+            pl.lit("Child", dtype=pl.String),
+        ).otherwise(
+            pl.when(
+                pl.col("age").lt(18)
+            ).then(
+                pl.lit("Adolescent", dtype=pl.String),
+            ).otherwise(
+                pl.lit("Adult", dtype=pl.String)
+            )
+        ).alias("age_group"),
+    ).pipe(
+        add_group_rank
+    )
+
+
+def arrange_age_distribution(frame: pl.DataFrame) -> pl.DataFrame:
+    return frame.select(
+        pl.col(
+            "data_year",
+            "age", "age_group", "group_rank",
+            "sex", "activity",
+            "count"
+        )
+    )
