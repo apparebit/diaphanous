@@ -11,7 +11,12 @@ import altair as alt
 import great_tables as gt
 import polars as pl
 
+from ..chart import plot_age_and_sex
 from .data import REPORTS_PER_PLATFORM
+
+import diaphanous.au_nz as au_nz
+import diaphanous.bka as bka
+import diaphanous.nibrs as nibrs
 
 
 _INDEX = ("source", "target", "year")
@@ -237,6 +242,8 @@ class Analyzer:
         self._data = tabulate()
         self._diffs = _distill_differences(self._data)
         self._with_icc = with_icc
+        self._figure_count = 0
+        self._secno = [0, 0]
 
     def __enter__(self) -> Self:
         self._file = open(self._path, mode="w", encoding="utf8")
@@ -330,6 +337,24 @@ class Analyzer:
 
         self.h2("A Decade of Seemingly Linear Growth")
         self.emit_regression_models()
+
+        self.h2("Crime Statistics About CSAM")
+        self.html("""
+            <p>The following countries do not seem to collect the necessary data:</p>
+            <ul>
+            <li>England and Wales
+            <li>The Phillipines
+            <li>Singapore
+            </ul>
+
+            <p>The following countries collect but do not publish the necessary data:</p>
+            <ul>
+            <li>Canada
+            </ul>
+        """)
+
+        self.emit_mosaics()
+        self.emit_age_distributions()
 
     def emit_mean_difference_plots(self) -> None:
         self._runr(self._diffs, """
@@ -593,13 +618,212 @@ dev.off()
 
         self.svg("figure/mod-nbinom.svg")
 
+    def emit_mosaics(self) -> None:
+        au = pl.read_csv("data/aic/offenders.csv")
+        frame = au.filter(
+            pl.col("Sex").is_in(["Male", "Female"])
+        ).with_columns(
+            pl.col("Age").replace({
+                "10-17": "Child/Adolescent",
+                "18-44": "Adult",
+                "45+": "Adult",
+            })
+        ).filter(
+            pl.col("Age").ne("Total")
+        ).group_by(
+            pl.col("Year", "Age", "Sex")
+        ).agg(
+            pl.col("Offenders").sum()
+        )
+
+        self.h3("Australia 2022/2023")
+        self._runr(frame, """
+library(tidyverse)
+library(vcdExtra)
+au.yearly <- read.csv(text="{CSV_DATA}") |>
+    mutate(Age = factor(Age, levels=c("Child/Adolescent", "Adult")))
+au.contab <- xtabs(Offenders ~ Age + Sex, data = au.yearly)
+print(au.contab)
+
+svg(paste0("figure/au-age-sex-2022-23.svg"))
+vcd::mosaic(
+    ~ Age + Sex,
+    data = au.contab,
+    direction = c("v", "h"),
+    shade = TRUE,
+    margins = c(2.5, 0.3, 0, 2.5),
+    main = paste0("Offenders by Age/Sex (Australia, 2022/23)")
+)
+dev.off()
+printr()
+        """)
+        self.svg("figure/au-age-sex-2022-23.svg")
+
+        self.h3("Germany, 2023-2024")
+        de = pl.read_csv("data/bka/suspects.csv")
+        frame = de.rename({
+            "Supply": "Activity",
+        })
+        self._runr(frame, """
+library(tidyverse)
+library(vcdExtra)
+de.yearly <- read.csv(text="{CSV_DATA}") |>
+    mutate(Age = factor(Age, levels=c("Child", "Adolescent", "Adult")))
+
+for (year in 2023:2024) {{
+    de.data <- de.yearly |> filter(Year == year)
+
+    de.contab <- xtabs(Count ~ Age + Sex, data = de.data)
+    print(de.contab)
+    svg(paste0("figure/de-age-sex-", year, ".svg"))
+    vcd::mosaic(
+        ~ Age + Sex,
+        data = de.contab,
+        direction = c("v", "h"),
+        shade = TRUE,
+        margins = c(2.5, 0.3, 0, 2.5),
+        main = paste0("Offenders by Age/Sex (Germany, ", year, ")")
+    )
+    dev.off()
+
+    de.contab <- xtabs(Count ~ Age + Activity, data = de.data)
+    print(de.contab)
+    svg(paste0("figure/de-age-activity-", year, ".svg"))
+    vcd::mosaic(
+        ~ Age + Activity,
+        data = de.contab,
+        direction = c("v", "h"),
+        shade = TRUE,
+        margins = c(2.5, 0.3, 0, 2.5),
+        main = paste0("Offenders by Age/Activity (Germany, ", year, ")")
+    )
+    dev.off()
+}}
+printr()
+        """)
+
+        self.svg("figure/de-age-sex-2023.svg")
+        self.svg("figure/de-age-sex-2024.svg")
+        self.hr()
+        self.svg("figure/de-age-activity-2023.svg")
+        self.svg("figure/de-age-activity-2024.svg")
+
+        self.h3("United States, 2023-2024")
+        us = pl.read_csv("data/nibrs/offenders.csv")
+        frame = us.drop_nulls(
+            ["Age", "Sex"],
+        ).rename({
+            "Supply": "Activity",
+        })
+        self._runr(frame, """
+library(tidyverse)
+library(vcdExtra)
+us.yearly <- read.csv(text="{CSV_DATA}") |>
+    mutate(
+        Age = factor(Age, levels=c("Child", "Adolescent", "Adult")),
+        Race = factor(Race, levels=c("White", "Black", "Hispanic", "Other"))
+    )
+
+for (year in 2023:2024) {{
+    us.data <- us.yearly |> filter(Year == year)
+
+    us.contab <- xtabs(Count ~ Age + Sex, data = us.data)
+    print(us.contab)
+    svg(paste0("figure/us-age-sex-", year, ".svg"))
+    vcd::mosaic(
+        ~ Age + Sex,
+        data = us.contab,
+        direction = c("v", "h"),
+        shade = TRUE,
+        margins = c(2.5, 0.3, 0, 2.5),
+        main = paste0("Offenders by Age/Sex (United States, ", year, ")")
+    )
+    dev.off()
+
+    us.contab <- xtabs(Count ~ Age + Race + Sex, data = us.data)
+    print(us.contab)
+    svg(paste0("figure/us-age-race-sex-", year, ".svg"))
+    vcd::mosaic(
+        ~ Age + Race + Sex, data = us.contab, direction = c("v", "h", "v"),
+        shade = TRUE,
+        main = paste0("Offenders by Age/Race/Sex (United States, ", year, ")"),
+        rot_labels = c(0, 0, 45, 0),
+        offset_labels = c(0, 0, -0.5, -0.5),
+        just_labels = c("center", "left", "right", "right"),
+        offset_varnames = c(0.2, 0, 0.2, 0.2),
+        margins = c(3, 0.3, 3, 4)
+    )
+    dev.off()
+
+    us.contab <- xtabs(Count ~ Age + Activity, data = us.data)
+    print(us.contab)
+    svg(paste0("figure/us-age-activity-", year, ".svg"))
+    vcd::mosaic(
+        ~ Age + Activity,
+        data = us.contab,
+        direction = c("v", "h"),
+        shade = TRUE,
+        margins = c(2.5, 0.3, 0, 2.5),
+        main = paste0("Offenders by Age/Activity (United States, ", year, ")")
+    )
+    dev.off()
+}}
+printr()
+        """)
+        self.svg("figure/us-age-sex-2023.svg")
+        self.svg("figure/us-age-sex-2024.svg")
+        self.hr()
+        self.svg("figure/us-age-race-sex-2023.svg")
+        self.svg("figure/us-age-race-sex-2024.svg")
+        self.hr()
+        self.svg("figure/us-age-activity-2023.svg")
+        self.svg("figure/us-age-activity-2024.svg")
+
+    def emit_age_distributions(self) -> None:
+        self.html("<div class=wide>\n")
+        self.h3("Age Distribution of Offenders")
+
+        us = nibrs.load_all()
+        de = bka.Data.ingest()
+
+        au_ages = au_nz.au_age_distribution().with_columns(
+            pl.col("data_year").replace({"2022/23": "2023"})
+        )
+        de_ages = de.age_distribution()
+        us_ages = us.offender_demographics().age_distribution()
+
+        fig = alt.vconcat(
+            plot_age_and_sex(au_ages, "Offenders", "Australia"),
+            plot_age_and_sex(de_ages, "Suspects", "Germany"),
+            plot_age_and_sex(us_ages, "Offenders", "United States"),
+        ).resolve_scale(x="shared")
+
+        path = "figure/age-distributions.svg"
+        fig.save(path)
+        self.svg(path)
+        self.html("</div>\n")
+
+    # ==================================================================================
+
+    def hr(self) -> None:
+        self.html("<hr>\n")
+
     def h2(self, title: str) -> None:
-        _print_heading(title)
-        self._section(title, level=2)
+        self._secno[0] += 1
+        self._secno[1] = 0
+        secno = f"{self._secno[0]}."
+
+        s = f"{secno} {title}"
+        _print_heading(s)
+        self._section(s, level=2)
 
     def h3(self, title: str) -> None:
-        _print_heading(title, weight="heavy")
-        self._section(title, level=3)
+        self._secno[1] += 1
+        secno = f"{self._secno[0]}.{self._secno[1]}"
+
+        s = f"{secno} {title}"
+        _print_heading(s, weight="heavy")
+        self._section(s, level=3)
 
     def _section(self, title: str, level: Literal[2, 3, 4] = 2) -> None:
         self.html(f"\n\n<h{level}>{title}</h{level}>\n")
@@ -634,7 +858,21 @@ dev.off()
         self._figure(buffer.getvalue(), caption)
 
     def svg(self, path: str | Path, caption: None | str = None) -> None:
-        self._figure(Path(path).read_text("utf8"), caption)
+        svg = Path(path).read_text("utf8")
+
+        # Make sure that the id attributes have, in fact, unique values by
+        # prefixing them with a figure-specific marker. Otherwise, the SVGs
+        # won't render correctly.
+        self._figure_count += 1
+        prefix = f"fig{self._figure_count}"
+        svg = (
+            svg
+            .replace('id="', f'id="{prefix}-')
+            .replace('href="#', f'href="#{prefix}-')
+            .replace('url(#', f'url(#{prefix}-')
+        )
+
+        self._figure(svg, caption)
 
     def _figure(self, html: str, caption: None | str = None) -> None:
         self._file.write("<figure>\n")
@@ -709,12 +947,29 @@ main > * {
     margin-right: auto;
 }
 
+main > .wide {
+    max-width: 150rch;
+}
+
 h2 {
     margin-top: 3rem;
+    padding: 0.5rem;
+    background-color: #e8e8e8;
 }
 
 h3 {
     margin-top: 2rem;
+    border-bottom: 0.2rem solid #000;
+}
+
+figure {
+    margin-bottom: 4em;
+}
+
+figure svg {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
 }
 
 figcaption {
