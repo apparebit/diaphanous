@@ -1,6 +1,7 @@
 # %%
 from collections.abc import Sequence
 import http
+import http.client
 import json
 from pathlib import Path
 from urllib.request import Request, urlopen
@@ -26,6 +27,7 @@ def fetch_locations() -> list[object]:
     while url is not None:
         page = fetch_json(url)
         pages.append(page)
+        assert isinstance(page, dict)
         url = page.get("nextPage")
 
     countries = []
