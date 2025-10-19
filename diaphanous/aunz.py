@@ -51,7 +51,7 @@ def au_age_distribution() -> pl.DataFrame:
     ).with_columns(
         pl.lit(None, dtype=pl.String).alias("activity"),
     ).pipe(
-        add_age_group
+        add_age_group, 10, 17
     ).pipe(
         arrange_age_distribution
     )
@@ -134,7 +134,7 @@ def nz_age_distribution() -> pl.DataFrame:
     ).with_columns(
         pl.int_ranges("age_low", "age_high").alias("age"),
     ).explode("age").pipe(
-        add_age_group
+        add_age_group, 10, 20
     ).with_columns(
         pl.col("year").alias("data_year"),
     ).sort(

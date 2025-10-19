@@ -1,3 +1,4 @@
+from argparse import ArgumentParser
 from collections.abc import Iterator, Sequence
 from io import StringIO
 import os
@@ -230,12 +231,19 @@ def _sum_if_whole_year(metric: str) -> pl.Expr:
 
 # ======================================================================================
 
+HEIGHT_ATTR = re.compile(r'height="\d+"')
+WIDTH_ATTR = re.compile(r'width="\d+"')
+XML_DECL = '<?xml version="1.0" encoding="UTF-8"?>'
+
 class Analyzer:
 
     def __init__(
         self,
         path: str | Path,
         with_icc: bool = False,
+        with_reports: bool = False,
+        with_platforms: bool = False,
+        with_crimes: bool = False,
     ) -> None:
         self._path = Path(path)
         self._file: Any = None
@@ -244,8 +252,16 @@ class Analyzer:
         self._with_icc = with_icc
         self._figure_count = 0
         self._secno = [0, 0]
+        self._with_reports = with_reports
+        self._with_platforms = with_platforms
+        self._with_crimes = with_crimes
+
+    def has_content(self) -> bool:
+        return self._with_reports or self._with_platforms or self._with_crimes
 
     def __enter__(self) -> Self:
+        if not self.has_content():
+            raise ValueError("nothing to report")
         self._file = open(self._path, mode="w", encoding="utf8")
         self._file.write(_HEAD)
         return self
@@ -256,105 +272,114 @@ class Analyzer:
         self._file = None
 
     def run(self) -> None:
-        self.h2("Platforms vs NCMEC")
+        if self._file is None:
+            raise ValueError("invoke `run()` in `with Analyzer():` block only")
 
-        self.h3("The Data")
-        self.html(f"""
-            <ul>
-            <li>{len(self._diffs.select(
-                pl.col("platform").unique()
-            ))} out of {len(self._data.select(
-                pl.col("target").unique()
-            )) - 2} surveyed platforms make necessary disclosures
-            </li><li>{len(self._diffs)} data pairs
+        if self._with_reports:
+            self.h2("A Decade of Seemingly Linear Growth")
+            self.emit_regression_models()
+
+        if self._with_platforms:
+            self.h2("Platforms vs NCMEC")
+
+            self.h3("The Data")
+            self.html(f"""
                 <ul>
-                <li>{len(self._diffs.filter(pl.col("pct_diff").abs().le(0.10)))}
-                    differ by less than 10%
-                </li><li>{len(self._diffs.filter(pl.col("pct_diff").abs().le(0.01)))}
-                    differ by less than 1%
-                </li><li>{len(self._diffs.filter(pl.col("pct_diff").sign().gt(0)))}
-                    positive differences
-                </li><li>{len(self._diffs.filter(pl.col("pct_diff").sign().eq(0)))}
-                    with no difference
-                </li><li>{len(self._diffs.filter(pl.col("pct_diff").sign().lt(0)))}
-                    negative differences
-                </li><li>{self._diffs.select(
-                        pl.col("pct_diff").mean()
-                    ).item() * 100:.2}%
-                    mean difference
-                </li><li>{self._diffs.filter(
-                        pl.col("platform").ne("Aylo").or_(
-                            pl.col("year").ne(2020)
-                        )
-                    ).select(
-                        pl.col("pct_diff").mean()
-                    ).item() * 100:.2}% mean difference, discounting one explained
-                    outlier
-                </li><li>{self._diffs.filter(
-                        pl.col("platform").ne("Aylo").or_(
-                            pl.col("year").ne(2020)
-                        ).and_(
-                            pl.col("platform").ne("Pinterest").or_(
-                                pl.col("year").ne(2024)
+                <li>{len(self._diffs.select(
+                    pl.col("platform").unique()
+                ))} out of {len(self._data.select(
+                    pl.col("target").unique()
+                )) - 2} surveyed platforms make necessary disclosures
+                </li><li>{len(self._diffs)} data pairs
+                    <ul>
+                    <li>{len(self._diffs.filter(pl.col("pct_diff").abs().le(0.10)))}
+                        differ by less than 10%
+                    </li><li>{len(self._diffs.filter(pl.col("pct_diff").abs().le(0.01)))}
+                        differ by less than 1%
+                    </li><li>{len(self._diffs.filter(pl.col("pct_diff").sign().gt(0)))}
+                        positive differences
+                    </li><li>{len(self._diffs.filter(pl.col("pct_diff").sign().eq(0)))}
+                        with no difference
+                    </li><li>{len(self._diffs.filter(pl.col("pct_diff").sign().lt(0)))}
+                        negative differences
+                    </li><li>{self._diffs.select(
+                            pl.col("pct_diff").mean()
+                        ).item() * 100:.2}%
+                        mean difference
+                    </li><li>{self._diffs.filter(
+                            pl.col("platform").ne("Aylo").or_(
+                                pl.col("year").ne(2020)
                             )
-                        )
-                    ).select(
-                        pl.col("pct_diff").mean()
-                    ).item() * 100:.2}% mean difference, discounting top two outliers
-                </li></ul></li>
-            </ul>
-        """)
+                        ).select(
+                            pl.col("pct_diff").mean()
+                        ).item() * 100:.2}% mean difference, discounting one explained
+                        outlier
+                    </li><li>{self._diffs.filter(
+                            pl.col("platform").ne("Aylo").or_(
+                                pl.col("year").ne(2020)
+                            ).and_(
+                                pl.col("platform").ne("Pinterest").or_(
+                                    pl.col("year").ne(2024)
+                                )
+                            )
+                        ).select(
+                            pl.col("pct_diff").mean()
+                        ).item() * 100:.2}% mean difference, discounting top two outliers
+                    </li></ul></li>
+                </ul>
+            """)
 
-        comparison = juxtapose(self._data)
-        self.html(
-            format_juxtaposition(comparison, with_highlights=True).as_raw_html()
-        )
-        self._see_path()
-
-        self.h3("A Histogram of Percent Differences")
-        self.chart(
-            alt.Chart(
-                self._diffs
-            ).mark_bar().encode(
-                alt.X("pct_diff:Q", bin=True),
-                alt.Y("count()"),
+            comparison = juxtapose(self._data)
+            self.html(
+                format_juxtaposition(comparison, with_highlights=True).as_raw_html()
             )
-        )
-        self._see_path()
+            self._see_path()
 
-        self.h3("Mean Difference Plots")
-        self.emit_mean_difference_plots()
+            self.h3("A Histogram of Percent Differences")
+            self.chart(
+                alt.Chart(
+                    self._diffs
+                ).mark_bar().encode(
+                    alt.X("pct_diff:Q", bin=True),
+                    alt.Y("count()"),
+                )
+            )
+            self._see_path()
 
-        if self._with_icc:
-            self.h3("Intraclass Correlation Coefficient")
-            self.emit_icc()
+            self.h3("Mean Difference Plots")
+            self.emit_mean_difference_plots()
 
-        self.h3("Sign of Differences")
-        self.emit_sign_test()
+            if self._with_icc:
+                self.h3("Intraclass Correlation Coefficient")
+                self.emit_icc()
 
-        self.h3("Reddit vs Other Platforms")
-        self.emit_reddit_vs_others()
+            self.h3("Sign of Differences")
+            self.emit_sign_test()
 
-        self.h2("A Decade of Seemingly Linear Growth")
-        self.emit_regression_models()
+            self.h3("Reddit vs Other Platforms")
+            self.emit_reddit_vs_others()
 
-        self.h2("Crime Statistics About CSAM")
-        self.html("""
-            <p>The following countries do not seem to collect the necessary data:</p>
-            <ul>
-            <li>England and Wales
-            <li>The Phillipines
-            <li>Singapore
-            </ul>
+        if self._with_crimes:
+            self.h2("Crime Statistics About CSAM")
+            self.html("""
+                <p>The following countries and organizations do not seem to collect
+                the necessary data:</p>
+                <ul>
+                <li>European Union
+                <li>Phillipines
+                <li>Singapore
+                <li>UK
+                </ul>
 
-            <p>The following countries collect but do not publish the necessary data:</p>
-            <ul>
-            <li>Canada
-            </ul>
-        """)
+                <p>The following countries apparently collect but do not publish
+                the necessary data:</p>
+                <ul>
+                <li>Canada
+                </ul>
+            """)
 
-        self.emit_mosaics()
-        self.emit_age_distributions()
+            self.emit_mosaics()
+            self.emit_age_distributions()
 
     def emit_mean_difference_plots(self) -> None:
         self._runr(self._diffs, """
@@ -619,35 +644,18 @@ dev.off()
         self.svg("figure/mod-nbinom.svg")
 
     def emit_mosaics(self) -> None:
-        au = pl.read_csv("data/aic/offenders.csv")
-        frame = au.filter(
-            pl.col("Sex").is_in(["Male", "Female"])
-        ).with_columns(
-            pl.col("Age").replace({
-                "10-17": "Child/Adolescent",
-                "18-44": "Adult",
-                "45+": "Adult",
-            })
-        ).filter(
-            pl.col("Age").ne("Total")
-        ).group_by(
-            pl.col("Year", "Age", "Sex")
-        ).agg(
-            pl.col("Offenders").sum()
-        )
-
         self.h3("Australia 2022/2023")
-        self._runr(frame, """
+        self._runr(aunz.au_age_distribution(), """
 library(tidyverse)
 library(vcdExtra)
 au.yearly <- read.csv(text="{CSV_DATA}") |>
-    mutate(Age = factor(Age, levels=c("Child/Adolescent", "Adult")))
-au.contab <- xtabs(Offenders ~ Age + Sex, data = au.yearly)
+    mutate(age_group = factor(age_group, levels=c("Juvenile", "Adult")))
+au.contab <- xtabs(count ~ age_group + sex, data = au.yearly)
 print(au.contab)
 
 svg(paste0("figure/au-age-sex-2022-23.svg"))
 vcd::mosaic(
-    ~ Age + Sex,
+    ~ age_group + sex,
     data = au.contab,
     direction = c("v", "h"),
     shade = TRUE,
@@ -657,27 +665,25 @@ vcd::mosaic(
 dev.off()
 printr()
         """)
+        self.col(2)
         self.svg("figure/au-age-sex-2022-23.svg")
+        self.end_col()
 
         self.h3("Germany, 2023-2024")
-        de = pl.read_csv("data/bka/suspects.csv")
-        frame = de.rename({
-            "Supply": "Activity",
-        })
-        self._runr(frame, """
+        self._runr(bka.age_distribution(), """
 library(tidyverse)
 library(vcdExtra)
 de.yearly <- read.csv(text="{CSV_DATA}") |>
-    mutate(Age = factor(Age, levels=c("Child", "Adolescent", "Adult")))
+    mutate(age_group = factor(age_group, levels=c("Child", "Juvenile", "Adult")))
 
 for (year in 2023:2024) {{
-    de.data <- de.yearly |> filter(Year == year)
+    de.data <- de.yearly |> filter(data_year == year)
 
-    de.contab <- xtabs(Count ~ Age + Sex, data = de.data)
+    de.contab <- xtabs(count ~ age_group + sex, data = de.data)
     print(de.contab)
     svg(paste0("figure/de-age-sex-", year, ".svg"))
     vcd::mosaic(
-        ~ Age + Sex,
+        ~ age_group + sex,
         data = de.contab,
         direction = c("v", "h"),
         shade = TRUE,
@@ -686,11 +692,11 @@ for (year in 2023:2024) {{
     )
     dev.off()
 
-    de.contab <- xtabs(Count ~ Age + Activity, data = de.data)
+    de.contab <- xtabs(count ~ age_group + activity, data = de.data)
     print(de.contab)
     svg(paste0("figure/de-age-activity-", year, ".svg"))
     vcd::mosaic(
-        ~ Age + Activity,
+        ~ age_group + activity,
         data = de.contab,
         direction = c("v", "h"),
         shade = TRUE,
@@ -701,37 +707,92 @@ for (year in 2023:2024) {{
 }}
 printr()
         """)
-
+        self.col(2)
         self.svg("figure/de-age-sex-2023.svg")
         self.svg("figure/de-age-sex-2024.svg")
+        self.end_col()
+
         self.hr()
+
+        self.col(2)
         self.svg("figure/de-age-activity-2023.svg")
         self.svg("figure/de-age-activity-2024.svg")
+        self.end_col()
+
+        self.h3("New Zealand 2022/2023")
+        frame = aunz.nz_age_distribution().drop_nulls(
+            ["age_group", "sex"]
+        )
+        self._runr(frame, """
+library(tidyverse)
+library(vcdExtra)
+nz.yearly <- read.csv(text="{CSV_DATA}") |>
+    mutate(age_group = factor(age_group, levels=c("Juvenile", "Adult")))
+
+for (year in 2023:2024) {{
+    nz.data <- nz.yearly |> filter(data_year == year)
+    nz.contab <- xtabs(count ~ age_group + sex, data = nz.data)
+    print(nz.contab)
+
+    svg(paste0("figure/nz-age-sex-", year, ".svg"))
+    vcd::mosaic(
+        ~ age_group + sex,
+        data = nz.contab,
+        direction = c("v", "h"),
+        shade = TRUE,
+        margins = c(2.5, 0.3, 0, 2.5),
+        main = paste0("Offenders by Age/Sex (New Zealand, ", year, ")")
+    )
+    dev.off()
+
+    nz.contab <- xtabs(count ~ age_group + activity, data = nz.data)
+    print(nz.contab)
+    svg(paste0("figure/nz-age-activity-", year, ".svg"))
+    vcd::mosaic(
+        ~ age_group + activity,
+        data = nz.contab,
+        direction = c("v", "h"),
+        shade = TRUE,
+        margins = c(2.5, 0.3, 0, 2.5),
+        main = paste0("Offenders by Age/Activity (New Zealand, ", year, ")")
+    )
+    dev.off()
+}}
+printr()
+        """)
+        self.col(2)
+        self.svg("figure/nz-age-sex-2023.svg")
+        self.svg("figure/nz-age-sex-2024.svg")
+        self.end_col()
+
+        self.hr()
+
+        self.col(2)
+        self.svg("figure/nz-age-activity-2023.svg")
+        self.svg("figure/nz-age-activity-2024.svg")
+        self.end_col()
 
         self.h3("United States, 2023-2024")
-        us = pl.read_csv("data/nibrs/offenders.csv")
-        frame = us.drop_nulls(
-            ["Age", "Sex"],
-        ).rename({
-            "Supply": "Activity",
-        })
+        frame = nibrs.offender_age_distribution(with_race=True).drop_nulls(
+            ["age_group", "sex"],
+        )
         self._runr(frame, """
 library(tidyverse)
 library(vcdExtra)
 us.yearly <- read.csv(text="{CSV_DATA}") |>
     mutate(
-        Age = factor(Age, levels=c("Child", "Adolescent", "Adult")),
-        Race = factor(Race, levels=c("White", "Black", "Hispanic", "Other"))
+        age_group = factor(age_group, levels=c("Child", "Juvenile", "Adult")),
+        race = factor(race, levels=c("White", "Black", "Hispanic", "Other"))
     )
 
 for (year in 2023:2024) {{
-    us.data <- us.yearly |> filter(Year == year)
+    us.data <- us.yearly |> filter(data_year == year)
 
-    us.contab <- xtabs(Count ~ Age + Sex, data = us.data)
+    us.contab <- xtabs(count ~ age_group + sex, data = us.data)
     print(us.contab)
     svg(paste0("figure/us-age-sex-", year, ".svg"))
     vcd::mosaic(
-        ~ Age + Sex,
+        ~ age_group + sex,
         data = us.contab,
         direction = c("v", "h"),
         shade = TRUE,
@@ -740,11 +801,11 @@ for (year in 2023:2024) {{
     )
     dev.off()
 
-    us.contab <- xtabs(Count ~ Age + Race + Sex, data = us.data)
+    us.contab <- xtabs(count ~ age_group + race + sex, data = us.data)
     print(us.contab)
     svg(paste0("figure/us-age-race-sex-", year, ".svg"))
     vcd::mosaic(
-        ~ Age + Race + Sex, data = us.contab, direction = c("v", "h", "v"),
+        ~ age_group + race + sex, data = us.contab, direction = c("v", "h", "v"),
         shade = TRUE,
         main = paste0("Offenders by Age/Race/Sex (United States, ", year, ")"),
         rot_labels = c(0, 0, 45, 0),
@@ -755,11 +816,11 @@ for (year in 2023:2024) {{
     )
     dev.off()
 
-    us.contab <- xtabs(Count ~ Age + Activity, data = us.data)
+    us.contab <- xtabs(count ~ age_group + activity, data = us.data)
     print(us.contab)
     svg(paste0("figure/us-age-activity-", year, ".svg"))
     vcd::mosaic(
-        ~ Age + Activity,
+        ~ age_group + activity,
         data = us.contab,
         direction = c("v", "h"),
         shade = TRUE,
@@ -770,38 +831,45 @@ for (year in 2023:2024) {{
 }}
 printr()
         """)
+        self.col(2)
         self.svg("figure/us-age-sex-2023.svg")
         self.svg("figure/us-age-sex-2024.svg")
+        self.end_col()
+
         self.hr()
+
+        self.col(2)
         self.svg("figure/us-age-race-sex-2023.svg")
         self.svg("figure/us-age-race-sex-2024.svg")
+        self.end_col()
+
         self.hr()
+
+        self.col(2)
         self.svg("figure/us-age-activity-2023.svg")
         self.svg("figure/us-age-activity-2024.svg")
+        self.end_col()
 
     def emit_age_distributions(self) -> None:
         self.html("<div class=wide>\n")
         self.h3("Age Distribution of Offenders")
 
-        us = nibrs.load_all()
-        de = bka.Data.ingest()
-
         au_ages = aunz.au_age_distribution()
-        de_ages = de.age_distribution()
+        de_ages = bka.age_distribution()
         nz_ages = aunz.nz_age_distribution().filter(
             pl.col("data_year").ge(2023).and_(
                 pl.col("data_year").lt(2025)
             )
         )
-        us_ages = us.offender_demographics().age_distribution()
-
-        print(nz_ages)
+        us_ages = nibrs.offender_age_distribution()
+        us_arrestees = nibrs.arrestee_age_distribution()
 
         fig = alt.vconcat(
             plot_age_and_sex(au_ages, "Offenders", "Australia"),
             plot_age_and_sex(de_ages, "Suspects", "Germany"),
             plot_age_and_sex(nz_ages, "Offenders", "New Zealand"),
             plot_age_and_sex(us_ages, "Offenders", "United States"),
+            plot_age_and_sex(us_arrestees, "Arrestees", "United States"),
         ).resolve_scale(x="shared")
 
         path = "figure/age-distributions.svg"
@@ -833,6 +901,15 @@ printr()
 
     def _section(self, title: str, level: Literal[2, 3, 4] = 2) -> None:
         self.html(f"\n\n<h{level}>{title}</h{level}>\n")
+
+    def col(self, num: int) -> None:
+        self.html(
+            '<div style="display: grid; grid-template-columns:'
+            f'{" 1fr" * num}; gap: 2rem;">\n'
+        )
+
+    def end_col(self) -> None:
+        self.html("</div>\n")
 
     def _runr(self, frame: pl.DataFrame, template: str) -> None:
         fragments = _runr(frame, template)
@@ -878,11 +955,20 @@ printr()
             .replace('url(#', f'url(#{prefix}-')
         )
 
+        if svg.startswith(XML_DECL):
+            svg = svg[len(XML_DECL):].strip()
+        if svg.startswith("<svg"):
+            decl, _, body = svg.partition(">")
+            decl = WIDTH_ATTR.sub("", decl)
+            decl = HEIGHT_ATTR.sub("", decl)
+            svg = f"{decl}>{body}"
+
         self._figure(svg, caption)
 
     def _figure(self, html: str, caption: None | str = None) -> None:
         self._file.write("<figure>\n")
         self._file.write(html)
+        self._file.write("\n")
         if caption is not None:
             self._file.write(f"<figcaption>{caption}</figcaption>\n")
         self._file.write("</figure>\n")
@@ -946,15 +1032,18 @@ svg {
 .vega-embed {
     display: block !important;
 }
+figure {
+    margin: 0;
+}
 
 main > * {
-    max-width: 75rch;
+    max-width: 80rch;
     margin-left: auto;
     margin-right: auto;
 }
 
 main > .wide {
-    max-width: 150rch;
+    max-width: 1085px;
 }
 
 h2 {
@@ -968,10 +1057,6 @@ h3 {
     border-bottom: 0.2rem solid #000;
 }
 
-figure {
-    margin-bottom: 4em;
-}
-
 figure svg {
     margin-left: auto;
     margin-right: auto;
@@ -982,6 +1067,11 @@ figcaption {
     text-align: right;
     font-style: italic;
     font-weight: 500;
+}
+
+hr {
+    margin-top: 3rem;
+    margin-bottom: 2rem;
 }
 /* ----------------------------------- Table ----------------------------------- */
 
@@ -1322,9 +1412,35 @@ def format_juxtaposition(frame: pl.DataFrame, with_highlights: bool = False) -> 
 
 # --------------------------------------------------------------------------------------
 
+def get_options() -> Any:
+    parser = ArgumentParser()
+    parser.add_argument(
+        "--reports",
+        action="store_true",
+        dest="with_reports",
+        help="analyze overall report counts",
+    )
+    parser.add_argument(
+        "--platforms",
+        action="store_true",
+        dest="with_platforms",
+        help="audit platforms' report counts",
+    )
+    parser.add_argument(
+        "--crimes",
+        action="store_true",
+        dest="with_crimes",
+        help="analyze crime statistics",
+    )
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
     pl.Config.set_tbl_rows(200)
     pl.Config.set_thousands_separator(",")
 
-    with Analyzer("report.html") as analyzer:
-        analyzer.run()
+    options = get_options()
+    analyzer = Analyzer("report.html", **vars(options))
+    if analyzer.has_content():
+        with analyzer:
+            analyzer.run()

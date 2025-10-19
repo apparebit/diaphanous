@@ -4,14 +4,7 @@ import polars as pl
 
 from .data import CsamData
 from .model import Entry, Ethnicity, Group, Id, Race, Sex
-from ..util import add_group_rank, arrange_age_distribution
-
-# _BG_PALETTE = "Greens"
-# _CHILD_ADOLESCENT_ADULT = (
-#     "<strong>Child</strong>: 0–13 years old;&ensp;"
-#     "<strong>Adolescent</strong>: 14–17 years old;&ensp;"
-#     "<strong>Adult</strong>: 18 years or older"
-# )
+from ..util import add_age_group, add_group_rank, arrange_age_distribution
 
 
 _AGE_ID_TO_AGE = (
@@ -24,23 +17,6 @@ _AGE_ID_TO_AGE = (
     ).cast(
         pl.Int16
     ).alias("age")
-)
-
-
-_AGE_ID_TO_GROUP = (
-    pl.when(pl.col(Id.AGE).lt(17))
-    .then(pl.lit(Group.CHILD, dtype=pl.Int16))
-    .otherwise(
-        pl.when(pl.col(Id.AGE).lt(21))
-        .then(pl.lit(Group.ADOLESCENT, dtype=pl.Int16))
-        .otherwise(
-            pl.when(pl.col(Id.AGE).le(102))
-            .then(pl.lit(Group.ADULT, dtype=pl.Int16))
-            .otherwise(pl.lit(None))
-        )
-    ).alias(
-        Id.GROUP
-    )
 )
 
 
@@ -59,10 +35,13 @@ class Demographics:
         simplify_race: bool = True,
         nullify_unknown: bool = True,
     ) -> None:
+        is_offender = source == "offenders"
+
         # Replace age_id with age and age_group
         frame = cast(pl.DataFrame, getattr(csam_data, source)).with_columns(
             _AGE_ID_TO_AGE,
-            _AGE_ID_TO_GROUP,
+        ).pipe(
+            add_age_group, 11, 17
         ).drop(Id.AGE)
 
         # Map NOT_SPECIFIED and UNKNOWN to null
@@ -106,7 +85,12 @@ class Demographics:
         self._csam_data = csam_data
         self._source = source
         self._frame = frame.select(
-            pl.col(Id.YEAR, "age", Id.GROUP, Id.SEX, Id.RACE, Id.INCIDENT, Id.OFFENDER)
+            pl.col(
+                Id.YEAR,
+                "age", Id.GROUP,
+                Id.SEX, Id.RACE, Id.INCIDENT,
+                Id.OFFENDER if is_offender else Id.ARRESTEE
+            )
         )
 
     def name(self) -> str:
@@ -186,28 +170,27 @@ class Demographics:
 
         return frame
 
-    def age_distribution(self) -> pl.DataFrame:
+    def age_distribution(self, with_race: bool = False) -> pl.DataFrame:
         return self.by(
-            Id.YEAR, Id.AGE, Id.GROUP, Id.SEX, Id.ACTIVITY, sorted=True
+            Id.YEAR, Id.AGE, Id.GROUP, Id.SEX, Id.ACTIVITY,
+            *([Id.RACE] if with_race else []),
+            sorted=True
         ).with_columns(
-            pl.col(Id.GROUP).replace_strict({
-                Group.CHILD: Entry.CHILD,
-                Group.ADOLESCENT: Entry.ADOLESCENT,
-                Group.ADULT: Entry.ADULT,
-            }, return_dtype=pl.String),
             pl.col(Id.SEX).replace(
                 Id.SEX.humanized_values(),
                 return_dtype=pl.String
             ),
-            pl.col(Id.ACTIVITY).cast(pl.String).replace(
-                Id.ACTIVITY.humanized_values(),
-                return_dtype=pl.String
+            *(
+                [pl.col(Id.RACE).replace_strict(
+                    Id.RACE.humanized_values(),
+                    return_dtype=pl.String
+                )] if with_race else []
             ),
             pl.col("count").cast(pl.Float64),
-        ).rename({
-            Id.SEX: "sex"
-        }).pipe(
+        ).rename(
+            {Id.SEX: "sex"} | ({Id.RACE.value: "race"} if with_race else {})
+        ).pipe(
             add_group_rank
         ).pipe(
-            arrange_age_distribution
+            arrange_age_distribution, **({"extra": "race"} if with_race else {})
         )

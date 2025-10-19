@@ -95,23 +95,27 @@ def add_group_rank(frame: pl.DataFrame) -> pl.DataFrame:
     return frame.with_columns(
         pl.col("age_group").replace({
             "Child": 1,
-            "Adolescent": 2,
+            "Juvenile": 2,
             "Adult": 3,
         }, return_dtype=pl.Int8).alias("group_rank")
     )
 
 
-def add_age_group(frame: pl.DataFrame) -> pl.DataFrame:
+def add_age_group(
+    frame: pl.DataFrame,
+    juvenile_min: int,
+    juvenile_max: int,
+) -> pl.DataFrame:
     return frame.with_columns(
         pl.when(
-            pl.col("age").lt(14)
+            pl.col("age").lt(juvenile_min)
         ).then(
             pl.lit("Child", dtype=pl.String),
         ).otherwise(
             pl.when(
-                pl.col("age").lt(18)
+                pl.col("age").le(juvenile_max)
             ).then(
-                pl.lit("Adolescent", dtype=pl.String),
+                pl.lit("Juvenile", dtype=pl.String),
             ).otherwise(
                 pl.lit("Adult", dtype=pl.String)
             )
@@ -121,12 +125,14 @@ def add_age_group(frame: pl.DataFrame) -> pl.DataFrame:
     )
 
 
-def arrange_age_distribution(frame: pl.DataFrame) -> pl.DataFrame:
+def arrange_age_distribution(
+    frame: pl.DataFrame, extra: None | str = None
+) -> pl.DataFrame:
     return frame.select(
         pl.col(
             "data_year",
             "age", "age_group", "group_rank",
-            "sex", "activity",
+            "sex", *([] if extra is None else [extra]), "activity",
             "count"
         )
     )

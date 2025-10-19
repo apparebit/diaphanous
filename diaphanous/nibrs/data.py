@@ -112,7 +112,11 @@ def _ingest_csam_data(path: Path) -> list[pl.LazyFrame]:
             pl.col(Id.OFFENSE)
         ).agg(
             pl.col(Id.CRIMINAL_ACT).alias("other_criminal_act_ids")
-        ).with_columns(
+        ),
+        on=Id.OFFENSE,
+        how="left",
+    ).with_columns(
+        pl.when(
             pl.col("other_criminal_act_ids").list.eval(
                 pl.element().is_in([
                     CriminalAct.CULTIVATING_MANUFACTURING_PUBLISHING,
@@ -120,12 +124,12 @@ def _ingest_csam_data(path: Path) -> list[pl.LazyFrame]:
                     CriminalAct.OPERATING_PROMOTING_ASSISTING_ABETTING,
                     CriminalAct.TRANSPORTING_TRANSMITTING_IMPORTING,
                 ])
-            ).list.any().alias("activity"),
-        ),
-        on=Id.OFFENSE,
-        how="left",
-    ).with_columns(
-        pl.col("activity").fill_null(False)
+            ).list.any()
+        ).then(
+            pl.lit("Producer", dtype=pl.String)
+        ).otherwise(
+            pl.lit("Consumer", dtype=pl.String)
+        ).alias("activity")
     )
 
     # Combine with offenses that involve pornography or obscene materials to
@@ -160,11 +164,11 @@ def _ingest_csam_data(path: Path) -> list[pl.LazyFrame]:
     other_offenses = incidents_involving_csam.select(
         pl.col(Id.INCIDENT)
     ).join(
-        offense,
+        offense.filter(
+            pl.col("offense_code").ne(OffenseCode.PORNOGRAPHY_OBSCENE_MATERIAL)
+        ),
         on=Id.INCIDENT,
         how="inner",
-    ).filter(
-        pl.col("offense_code").ne(OffenseCode.PORNOGRAPHY_OBSCENE_MATERIAL)
     )
 
     # Derive offenders involving CSAM.
@@ -434,7 +438,7 @@ class CsamData:
         frame = self.offenses.lazy().group_by(
             Id.YEAR, maintain_order=True
         ).agg(
-            pl.col("activity").sum().alias("Production"),
+            pl.col("activity").eq("Producer").sum().alias("Production"),
             pl.len().alias(Entry.TOTAL),
         ).select(
             pl.col(Id.YEAR).cast(pl.String),
@@ -584,3 +588,11 @@ def load(year: int) -> CsamData:
 def load_all() -> CsamData:
     """Load all NIBRS data involving CSAM."""
     return CsamData.merge(*(load(y) for y in range(2023, 2025)))
+
+
+def arrestee_age_distribution(with_race: bool = False) -> pl.DataFrame:
+    return load_all().arrestee_demographics().age_distribution(with_race=with_race)
+
+
+def offender_age_distribution(with_race: bool = False) -> pl.DataFrame:
+    return load_all().offender_demographics().age_distribution(with_race=with_race)

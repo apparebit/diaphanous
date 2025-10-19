@@ -228,7 +228,7 @@ class SchemaExtension(enum.Enum):
         "using_ids": pl.List(pl.Int16),
         "criminal_act_id": pl.Int16,
         "other_criminal_act_ids": pl.List(pl.Int16),
-        "activity": pl.Boolean,
+        "activity": pl.String,
     })
     """
     Extra offense columns.
@@ -517,7 +517,7 @@ class Activity(enum.Enum):
 class Group(enum.IntEnum):
     """The age groups. The values were chosen to sort into a convenient order."""
     CHILD = 1
-    ADOLESCENT = 2
+    JUVENILE = 2
     ADULT = 3
     UNKNOWN = 4
 
@@ -552,9 +552,9 @@ class Entry(enum.StrEnum):
     Sans Symbols 2](https://fonts.google.com/noto/specimen/Noto+Sans+Symbols+2)
     font.
     """
-    ADOLESCENT = "Adolescent"
     ADULT = "Adult"
     CHILD = "Child"
+    JUVENILE = "Juvenile"
     SIZE = "Size"
     TOTAL = TOTAL
     UNKNOWN = "Unknown"

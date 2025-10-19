@@ -15,30 +15,34 @@ def plot_age_and_sex(
             pl.lit("Unknown Sex")
         ).otherwise(
             pl.format("{} {}", pl.col("sex"), pl.col(Id.GROUP))
-        ).alias(Id.GROUP)
+        ).alias(Id.GROUP),
+        pl.lit("", dtype=pl.String).alias("label"),
     )
 
-    null_age = frame.group_by(
+    def fmt(n):
+        num = int(n)
+        return f"Omits {num:,} {entity[:-1] if num == 1 else entity} Without Age"
+
+    labels = frame.group_by(
         pl.col("data_year")
     ).agg(
-        pl.lit(None).alias("age_too"),
-        pl.lit("Unknown").alias("age_group"),
-        pl.lit(None).alias("group_rank"),
-        pl.lit(None).alias("sex"),
-        pl.lit(None).alias("activity"),
-        pl.col("age").is_null().sum().cast(pl.Float64).alias("count"),
-    ).rename({
-        "age_too": "age",
-    }).pipe(
-        arrange_age_distribution
+        pl.col("count").filter(pl.col("age").is_null()).sum()
+    ).select(
+        pl.col("data_year"),
+        *(
+            pl.lit(None).alias(c) for c in [
+                "age", "age_group", "group_rank", "sex", "activity", "count"
+            ]
+        ),
+        pl.col("count").map_elements(fmt).alias("label"),
     )
 
-    data = pl.concat([data, null_age])
+    data = pl.concat([data, labels])
 
     domain = [
         "Unknown Sex",
-        "Female Child", "Female Adolescent", "Female Adult",
-        "Male Child", "Male Adolescent", "Male Adult",
+        "Female Child", "Female Juvenile", "Female Adult",
+        "Male Child", "Male Juvenile", "Male Adult",
     ]
 
     range = [
@@ -49,38 +53,42 @@ def plot_age_and_sex(
 
     chart = alt.Chart(
         data,
-        title=f"{entity} by Age: {country}"
     ).mark_bar().encode(
         alt.X("age:Q").scale(domain=(0, 100)).title("Age"),
         alt.Y("sum(count):Q", sort=domain).title(f"{entity}"),
         alt.Color("age_group:N")
             .title("Sex and Age Group")
             .scale(domain=domain, range=range),
-        alt.Column("data_year:N").title("Year"),
         alt.Order("color_variant_label_sort_index:Q"),
     ).properties(
-        width=550,
-        height=250,
+        width=440,
+        height=200,
     )
 
-    # label = chart.mark_text(
-    #     x="width",
-    #     dx=-10,
-    #     dy=100,
-    #     align="right",
-    #     baseline="bottom",
-    #     text=[f"{no_age:,} Offenders", "Without Age"],
-    #     color=Palette.GRAY,
-    # )
+    label = alt.Chart(
+        data,
+    ).mark_text(
+        x="width",
+        y=20,
+        dx=-10,
+        align="right",
+        fontSize=14,
+        fontStyle="italic",
+    ).encode(
+        alt.Text("label:N", title=None)
+    )
 
-    return chart
+    return (chart + label).facet(
+        facet=alt.Facet("data_year:N", title="Year"),
+        title=f"{country}: {entity} by Age/Sex",
+    )
 
 def plot_age_and_supply(
     frame: pl.DataFrame, entity: str, country: str
 ) -> alt.Chart:
     domain = [
-        "Child Consumer", "Adolescent Consumer", "Adult Consumer",
-        "Child Producer", "Adolescent Producer", "Adult Producer",
+        "Child Consumer", "Juvenile Consumer", "Adult Consumer",
+        "Child Producer", "Juvenile Producer", "Adult Producer",
     ]
 
     range = [
@@ -109,14 +117,3 @@ def plot_age_and_supply(
         width=550,
         height=250,
     )
-
-
-if __name__ == "__main__":
-    from .aunz import au_age_distribution, nz_age_distribution
-    from .bka import Data as bka
-    from .nibrs import load_all
-
-    print(au_age_distribution())
-    print(bka.ingest().age_distribution())
-    print(nz_age_distribution())
-    print(load_all().offender_demographics().age_distribution())

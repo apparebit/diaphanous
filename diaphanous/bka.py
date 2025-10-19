@@ -14,9 +14,9 @@ from .util import arrange_age_distribution, format_table
 _ROOT = Path(__file__).parent.parent
 
 _CHILD_RANGES = ["<6", "6-8", "8-10", "10-12", "12-14"]
-_ADOLESCENT_RANGES = ["14-16", "16-18"]
+_JUVENILE_RANGES = ["14-16", "16-18"]
 _ADULT_RANGES = ["18-21", "21-23", "23-25", "25-30", "30-40", "40-50", "50-60", ">=60"]
-_AGE_RANGES = [*_CHILD_RANGES, *_ADOLESCENT_RANGES, *_ADULT_RANGES]
+_AGE_RANGES = [*_CHILD_RANGES, *_JUVENILE_RANGES, *_ADULT_RANGES]
 
 
 @dataclass(frozen=True)
@@ -41,7 +41,7 @@ class Data:
                         "total",
                         *_CHILD_RANGES,
                         "child",
-                        *_ADOLESCENT_RANGES,
+                        *_JUVENILE_RANGES,
                         "adolescent",
                         "18-21",
                         "<21",
@@ -244,12 +244,12 @@ class Data:
         ).with_columns(
             pl.col("age_range").replace(
                 {r: "Child" for r in _CHILD_RANGES} |
-                {r: "Adolescent" for r in _ADOLESCENT_RANGES} |
+                {r: "Juvenile" for r in _JUVENILE_RANGES} |
                 {r: "Adult" for r in _ADULT_RANGES}
             ).alias(Id.GROUP),
             pl.col("age_range").replace(
                 {r: 1 for r in _CHILD_RANGES} |
-                {r: 2 for r in _ADOLESCENT_RANGES} |
+                {r: 2 for r in _JUVENILE_RANGES} |
                 {r: 3 for r in _ADULT_RANGES},
                 return_dtype=pl.Int8,
             ).alias("group_rank"),
@@ -287,6 +287,10 @@ class Data:
         ).pipe(
             arrange_age_distribution
         )
+
+
+def age_distribution() -> pl.DataFrame:
+    return Data.ingest().age_distribution()
 
 
 if __name__ == "__main__":
