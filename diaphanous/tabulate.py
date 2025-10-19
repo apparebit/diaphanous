@@ -645,7 +645,13 @@ dev.off()
 
     def emit_mosaics(self) -> None:
         self.h3("Australia 2022/2023")
-        self._runr(aunz.au_age_distribution(), """
+        frame = aunz.au_age_distribution().group_by(
+            "data_year", "age_group", "sex"
+        ).agg(
+            pl.col("count").sum()
+        )
+
+        self._runr(frame, """
 library(tidyverse)
 library(vcdExtra)
 au.yearly <- read.csv(text="{CSV_DATA}") |>
@@ -670,7 +676,12 @@ printr()
         self.end_col()
 
         self.h3("Germany, 2023-2024")
-        self._runr(bka.age_distribution(), """
+        frame = bka.age_distribution().group_by(
+            pl.col("data_year", "age_group", "sex", "activity")
+        ).agg(
+            pl.col("count").sum()
+        )
+        self._runr(frame, """
 library(tidyverse)
 library(vcdExtra)
 de.yearly <- read.csv(text="{CSV_DATA}") |>
@@ -719,9 +730,13 @@ printr()
         self.svg("figure/de-age-activity-2024.svg")
         self.end_col()
 
-        self.h3("New Zealand 2022/2023")
+        self.h3("New Zealand 2023-2024")
         frame = aunz.nz_age_distribution().drop_nulls(
             ["age_group", "sex"]
+        ).group_by(
+            pl.col("data_year", "age_group", "sex", "activity")
+        ).agg(
+            pl.col("count").sum()
         )
         self._runr(frame, """
 library(tidyverse)
@@ -775,6 +790,10 @@ printr()
         self.h3("United States, 2023-2024")
         frame = nibrs.offender_age_distribution(with_race=True).drop_nulls(
             ["age_group", "sex"],
+        ).group_by(
+            pl.col("data_year", "age_group", "race", "sex", "activity")
+        ).agg(
+            pl.col("count").sum()
         )
         self._runr(frame, """
 library(tidyverse)
@@ -876,6 +895,28 @@ printr()
         fig.save(path)
         self.svg(path)
         self.html("</div>\n")
+
+        self.html("""
+        <p>For the above age distributions, a <em>child</em> is younger than the
+        age of criminal responsibility, a <em>juvenile</em> has passed the age
+        of criminal responsibility but is younger than the age of legal
+        majority, and an <em>adult</em> has passed the age of legal majority.
+        The per-country thresholds are:</p>
+
+        <dl>
+        <dt>Australia</dt>
+        <dd>Age of criminal responsibility: 10; age of legal majority: 18</dd>
+        <dt>Germany</dt>
+        <dd>Age of criminal responsibility: 14; age of legal majority: 18</dd>
+        <dt>New Zealand</dt>
+        <dd>Age of criminal responsibility: 10; age of legal majority: 20</dd>
+        <dt>United States</dt>
+        <dd>Age of criminal responsibility: 11 (federal law); age of legal
+            majority: 18</dd>
+        </dl>
+        <p>Age thresholds for criminal responsibility vary widely amongst
+        U.S. states, with 24 of them not having any minimum.</p>
+        """)
 
     # ==================================================================================
 
