@@ -17,6 +17,7 @@ from .platform.data import REPORTS_PER_PLATFORM
 
 import diaphanous.aunz as aunz
 import diaphanous.bka as bka
+import diaphanous.crimestat as crimestat
 import diaphanous.nibrs as nibrs
 
 
@@ -666,7 +667,7 @@ vcd::mosaic(
     direction = c("v", "h"),
     shade = TRUE,
     margins = c(2.5, 0.3, 0, 2.5),
-    main = paste0("Offenders by Age/Sex (Australia, 2022/23)")
+    main = paste0("Offenders by Age and Sex (Australia, 2022/23)")
 )
 dev.off()
 printr()
@@ -699,7 +700,7 @@ for (year in 2023:2024) {{
         direction = c("v", "h"),
         shade = TRUE,
         margins = c(2.5, 0.3, 0, 2.5),
-        main = paste0("Offenders by Age/Sex (Germany, ", year, ")")
+        main = paste0("Offenders by Age and Sex (Germany, ", year, ")")
     )
     dev.off()
 
@@ -712,7 +713,7 @@ for (year in 2023:2024) {{
         direction = c("v", "h"),
         shade = TRUE,
         margins = c(2.5, 0.3, 0, 2.5),
-        main = paste0("Offenders by Age/Activity (Germany, ", year, ")")
+        main = paste0("Offenders by Age and Activity (Germany, ", year, ")")
     )
     dev.off()
 }}
@@ -756,7 +757,7 @@ for (year in 2023:2024) {{
         direction = c("v", "h"),
         shade = TRUE,
         margins = c(2.5, 0.3, 0, 2.5),
-        main = paste0("Offenders by Age/Sex (New Zealand, ", year, ")")
+        main = paste0("Offenders by Age and Sex (New Zealand, ", year, ")")
     )
     dev.off()
 
@@ -769,7 +770,7 @@ for (year in 2023:2024) {{
         direction = c("v", "h"),
         shade = TRUE,
         margins = c(2.5, 0.3, 0, 2.5),
-        main = paste0("Offenders by Age/Activity (New Zealand, ", year, ")")
+        main = paste0("Offenders by Age and Activity (New Zealand, ", year, ")")
     )
     dev.off()
 }}
@@ -785,6 +786,41 @@ printr()
         self.col(2)
         self.svg("figure/nz-age-activity-2023.svg")
         self.svg("figure/nz-age-activity-2024.svg")
+        self.end_col()
+
+        self.h3("Spain, 2023-2024")
+        frame = crimestat.es_age_distribution().group_by(
+            pl.col("data_year", "age_group", "sex")
+        ).agg(
+            pl.col("count").sum()
+        )
+        self._runr(frame, """
+library(tidyverse)
+library(vcdExtra)
+es.yearly <- read.csv(text="{CSV_DATA}") |>
+    mutate(age_group = factor(age_group, levels=c("Juvenile", "Adult")))
+
+for (year in 2023:2024) {{
+    es.data <- es.yearly |> filter(data_year == year)
+    es.contab <- xtabs(count ~ age_group + sex, data = es.data)
+    print(es.contab)
+
+    svg(paste0("figure/es-age-sex-", year, ".svg"))
+    vcd::mosaic(
+        ~ age_group + sex,
+        data = es.contab,
+        direction = c("v", "h"),
+        shade = TRUE,
+        margins = c(2.5, 0.3, 0, 2.5),
+        main = paste0("Offenders by Age and Sex (Spain, ", year, ")")
+    )
+    dev.off()
+}}
+printr()
+        """)
+        self.col(2)
+        self.svg("figure/es-age-sex-2023.svg")
+        self.svg("figure/es-age-sex-2024.svg")
         self.end_col()
 
         self.h3("United States, 2023-2024")
@@ -816,7 +852,7 @@ for (year in 2023:2024) {{
         direction = c("v", "h"),
         shade = TRUE,
         margins = c(2.5, 0.3, 0, 2.5),
-        main = paste0("Offenders by Age/Sex (United States, ", year, ")")
+        main = paste0("Offenders by Age and Sex (United States, ", year, ")")
     )
     dev.off()
 
@@ -826,7 +862,7 @@ for (year in 2023:2024) {{
     vcd::mosaic(
         ~ age_group + race + sex, data = us.contab, direction = c("v", "h", "v"),
         shade = TRUE,
-        main = paste0("Offenders by Age/Race/Sex (United States, ", year, ")"),
+        main = paste0("Offenders by Age, Race, and Sex (United States, ", year, ")"),
         rot_labels = c(0, 0, 45, 0),
         offset_labels = c(0, 0, -0.5, -0.5),
         just_labels = c("center", "left", "right", "right"),
@@ -844,7 +880,7 @@ for (year in 2023:2024) {{
         direction = c("v", "h"),
         shade = TRUE,
         margins = c(2.5, 0.3, 0, 2.5),
-        main = paste0("Offenders by Age/Activity (United States, ", year, ")")
+        main = paste0("Offenders by Age and Activity (United States, ", year, ")")
     )
     dev.off()
 }}
@@ -875,6 +911,7 @@ printr()
 
         au_ages = aunz.au_age_distribution()
         de_ages = bka.age_distribution()
+        es_ages = crimestat.es_age_distribution()
         nz_ages = aunz.nz_age_distribution().filter(
             pl.col("data_year").ge(2023).and_(
                 pl.col("data_year").lt(2025)
@@ -887,6 +924,7 @@ printr()
             plot_age_and_sex(au_ages, "Offenders", "Australia"),
             plot_age_and_sex(de_ages, "Suspects", "Germany"),
             plot_age_and_sex(nz_ages, "Offenders", "New Zealand"),
+            plot_age_and_sex(es_ages, "Suspects", "Spain"),
             plot_age_and_sex(us_ages, "Offenders", "United States"),
             plot_age_and_sex(us_arrestees, "Arrestees", "United States"),
         ).resolve_scale(x="shared")
@@ -897,25 +935,62 @@ printr()
         self.html("</div>\n")
 
         self.html("""
-        <p>For the above age distributions, a <em>child</em> is younger than the
-        age of criminal responsibility, a <em>juvenile</em> has passed the age
-        of criminal responsibility but is younger than the age of legal
-        majority, and an <em>adult</em> has passed the age of legal majority.
-        The per-country thresholds are:</p>
+        <p>In the above age distributions, a <em>child</em> is younger than the
+        <a
+        href="https://en.wikipedia.org/wiki/Age_of_criminal_responsibility">age
+        of criminal responsibility</a> for each jurisdiction, a
+        <em>juvenile</em> has passed the age of criminal responsibility but is
+        younger than the <a
+        href="https://en.wikipedia.org/wiki/Age_of_majority">age of legal
+        majority</a>, and an <em>adult</em> has passed the age of legal
+        majority. The per-country thresholds are:</p>
 
-        <dl>
-        <dt>Australia</dt>
-        <dd>Age of criminal responsibility: 10; age of legal majority: 18</dd>
-        <dt>Germany</dt>
-        <dd>Age of criminal responsibility: 14; age of legal majority: 18</dd>
-        <dt>New Zealand</dt>
-        <dd>Age of criminal responsibility: 10; age of legal majority: 20</dd>
-        <dt>United States</dt>
-        <dd>Age of criminal responsibility: 11 (federal law); age of legal
-            majority: 18</dd>
-        </dl>
-        <p>Age thresholds for criminal responsibility vary widely amongst
-        U.S. states, with 24 of them not having any minimum.</p>
+        <table class=mytable>
+        <thead>
+        <tr><th scope=col></th><th scope=col>Age of Criminal</th><th scope=col></th></tr>
+        <tr><th scope=col>Country</th>
+            <th scope=col>Responsibility</th>
+            <th scope=col>Age of Majority</th></tr>
+        </thead>
+        <tbody>
+        <tr><th scope=row>Australia</th> <td>10 (Not in VIC, ACT)</td> <td>18</td></tr>
+        <tr><th scope=row>Germany</th> <td>14</td> <td>18</td></tr>
+        <tr><th scope=row>New Zealand</th> <td>10</td> <td>20</td></tr>
+        <tr><th scope=row>Spain</th> <td>14</td> <td>18</td></tr>
+        <tr><th scope=row>United States</th> <td>11 (Federal Law)</td> <td>18</td></tr>
+        </tbody>
+        </table>
+
+        <p>Age thresholds for criminal responsibility are 12 in Victoria (VIC)
+        and 14 in the Australian Capital Territory (ACT). They vary widely
+        amongst U.S. states, with 24 of them not having one.</p>
+
+        <p>The per-country data sources are:</p>
+        <ul>
+
+        <li><a href="https://www.aic.gov.au">Australian Institute of
+        Criminology</a>, notably <a
+        href="https://www.aic.gov.au/publications/sr/sr51">sr 51</a>
+
+        <li>The Bundeskriminalamt's <a
+        href="https://www.bka.de/DE/AktuelleInformationen/StatistikenLagebilder/PolizeilicheKriminalstatistik/pks_node.html">polizeiliche
+        Kriminalstatistik</a>, notably tables on suspects and incidents — good
+        luck accessing any material on that website, since most requests simply
+        time out
+
+        <li><a
+        href="https://www.police.govt.nz/about-us/publications-statistics/data-and-statistics/policedatanz">policedata.nz</a>,
+        notably <a
+        href="https://www.police.govt.nz/about-us/publications-statistics/data-and-statistics/policedatanz/proceedings-offender-demographics">proceedings
+        (offender demographics)</a>
+
+        <li>The Ministerio del Interior's <a
+        href="https://estadisticasdecriminalidad.ses.mir.es/publico/portalestadistico/en/datos.html?type=jaxi&title=Arrests%20/%20Investigated&path=/Datos3/">annual
+        series on crime</a>, arrests/investigated
+
+        <li>The FBI's <a
+        href="https://cde.ucr.cjis.gov/LATEST/webapp/#/pages/downloads#nibrs-downloads">National
+        Incident-Based Reporting System (NIBRS)</a>
         """)
 
     # ==================================================================================
@@ -1120,7 +1195,8 @@ hr {
     border-collapse: separate;
     border-spacing: 0;
     line-height: 1.2;
-    margin-bottom: 3rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
 }
 .mytable caption {
     font-size: 1.2em;

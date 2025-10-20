@@ -134,7 +134,7 @@ def nz_age_distribution() -> pl.DataFrame:
     ).with_columns(
         pl.int_ranges("age_low", "age_high").alias("age"),
     ).explode("age").pipe(
-        add_age_group, 10, 20
+        add_age_group, 10, 19
     ).with_columns(
         pl.col("year").alias("data_year"),
     ).sort(

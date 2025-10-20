@@ -21,7 +21,10 @@ def plot_age_and_sex(
 
     def fmt(n):
         num = int(n)
-        return f"Omits {num:,} {entity[:-1] if num == 1 else entity} Without Age"
+        return (
+            "" if num == 0 else
+            f"Not shown: {num:,} {entity[:-1] if num == 1 else entity} Without Age"
+        )
 
     labels = frame.group_by(
         pl.col("data_year")
@@ -53,7 +56,7 @@ def plot_age_and_sex(
 
     chart = alt.Chart(
         data,
-    ).mark_bar().encode(
+    ).mark_bar(size=4).encode(
         alt.X("age:Q").scale(domain=(0, 100)).title("Age"),
         alt.Y("sum(count):Q", sort=domain).title(f"{entity}"),
         alt.Color("age_group:N")
@@ -62,7 +65,7 @@ def plot_age_and_sex(
         alt.Order("color_variant_label_sort_index:Q"),
     ).properties(
         width=440,
-        height=200,
+        height=220,
     )
 
     label = alt.Chart(
@@ -80,7 +83,7 @@ def plot_age_and_sex(
 
     return (chart + label).facet(
         facet=alt.Facet("data_year:N", title="Year"),
-        title=f"{country}: {entity} by Age/Sex",
+        title=f"{country}: {entity} by Age and Sex",
     )
 
 def plot_age_and_supply(
