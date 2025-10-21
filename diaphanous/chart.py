@@ -3,7 +3,6 @@ import polars as pl
 
 from .color import Palette
 from .nibrs.model import Id
-from .util import arrange_age_distribution
 
 def plot_age_and_sex(
     frame: pl.DataFrame, entity: str, country: str
@@ -34,7 +33,9 @@ def plot_age_and_sex(
         pl.col("data_year"),
         *(
             pl.lit(None).alias(c) for c in [
-                "age", "age_group", "group_rank", "sex", "activity", "count"
+                "age", "age_group", "group_rank",
+                "sex", "ethnicity", "activity",
+                "count"
             ]
         ),
         pl.col("count").map_elements(fmt).alias("label"),
@@ -85,6 +86,42 @@ def plot_age_and_sex(
         facet=alt.Facet("data_year:N", title="Year"),
         title=f"{country}: {entity} by Age and Sex",
     )
+
+def plot_age_thumbs(
+    frame: pl.DataFrame, country: str
+) -> alt.Chart | alt.LayerChart | alt.FacetChart:
+    data = frame.with_columns(
+        pl.when(
+            pl.col("sex").is_null()
+        ).then(
+            pl.lit("Unknown Sex")
+        ).otherwise(
+            pl.format("{} {}", pl.col("sex"), pl.col(Id.GROUP))
+        ).alias(Id.GROUP),
+    )
+
+    domain = [
+        "Unknown Sex",
+        "Female Child", "Female Juvenile", "Female Adult",
+        "Male Child", "Male Juvenile", "Male Adult",
+    ]
+
+    range = [
+        Palette.GRAY,
+        Palette.RED, Palette.RED, Palette.GRAY,
+        Palette.BLUE, Palette.BLUE, Palette.GRAY,
+    ]
+
+    return alt.Chart(
+        data,
+    ).mark_bar().encode(
+        alt.X("age:Q", axis=alt.Axis(labels=False)).scale(domain=(0, 100)).title(None),
+        alt.Y("sum(count):Q", axis=alt.Axis(labels=False), sort=domain).title(None),
+        alt.Color("age_group:N", legend=None).scale(domain=domain, range=range),
+        alt.Order("color_variant_label_sort_index:Q"),
+        alt.Column("data_year:N", title=None, header=alt.Header(labels=False)),
+    )
+
 
 def plot_age_and_supply(
     frame: pl.DataFrame, entity: str, country: str

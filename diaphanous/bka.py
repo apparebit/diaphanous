@@ -8,7 +8,7 @@ import polars as pl
 from ._const import TOTAL
 from .finish import finish_caseload, finish_severity
 from .nibrs.model import Id, Column
-from .util import arrange_age_distribution, format_table
+from .util import add_country_entity, arrange_age_distribution, format_table
 
 
 _ROOT = Path(__file__).parent.parent
@@ -227,8 +227,8 @@ class Data:
             delim=" ", reverse=True
         )
 
-    def age_distribution(self) -> pl.DataFrame:
-        return self.suspects.filter(
+    def age_distribution(self, descriptive: bool = False) -> pl.DataFrame:
+        frame = self.suspects.filter(
             pl.col("activity").is_not_null().and_(pl.col("sex").ne("X"))
         ).with_columns(
             pl.col("sex").replace({"M": "Male", "W": "Female"}),
@@ -280,17 +280,21 @@ class Data:
             )
         ).select(
             pl.col(Id.YEAR),
-            pl.int_ranges("age_first", "age_last").alias("age"),
-            pl.col(Id.GROUP, "group_rank", "sex", "activity", "count")
+            pl.int_ranges("age_first", "age_last", dtype=pl.Int8).alias("age"),
+            pl.col(Id.GROUP, "group_rank", "sex"),
+            pl.lit(None, dtype=pl.String).alias("ethnicity"),
+            pl.col("activity", "count"),
         ).explode("age").sort(
             Id.YEAR, "age", "sex", "activity"
-        ).pipe(
-            arrange_age_distribution
         )
 
+        if descriptive:
+            frame = add_country_entity(frame, "Germany", "Suspect")
+        return arrange_age_distribution(frame)
 
-def age_distribution() -> pl.DataFrame:
-    return Data.ingest().age_distribution()
+
+def de_age_distribution(descriptive: bool = False) -> pl.DataFrame:
+    return Data.ingest().age_distribution(descriptive=descriptive)
 
 
 if __name__ == "__main__":

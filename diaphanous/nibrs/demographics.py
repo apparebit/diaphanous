@@ -3,8 +3,10 @@ from typing import cast, Literal
 import polars as pl
 
 from .data import CsamData
-from .model import Entry, Ethnicity, Group, Id, Race, Sex
-from ..util import add_age_group, add_group_rank, arrange_age_distribution
+from .model import Ethnicity, Id, Race, Sex
+from ..util import (
+    add_age_group, add_country_entity, add_group_rank, arrange_age_distribution
+)
 
 
 _AGE_ID_TO_AGE = (
@@ -170,27 +172,28 @@ class Demographics:
 
         return frame
 
-    def age_distribution(self, with_race: bool = False) -> pl.DataFrame:
-        return self.by(
-            Id.YEAR, Id.AGE, Id.GROUP, Id.SEX, Id.ACTIVITY,
-            *([Id.RACE] if with_race else []),
+    def age_distribution(self, descriptive: bool = False) -> pl.DataFrame:
+        frame = self.by(
+            Id.YEAR, Id.AGE, Id.GROUP, Id.SEX, Id.RACE, Id.ACTIVITY,
             sorted=True
         ).with_columns(
+            pl.col("age").cast(pl.Int8),
             pl.col(Id.SEX).replace(
                 Id.SEX.humanized_values(),
                 return_dtype=pl.String
             ),
-            *(
-                [pl.col(Id.RACE).replace_strict(
-                    Id.RACE.humanized_values(),
-                    return_dtype=pl.String
-                )] if with_race else []
+            pl.col(Id.RACE).replace_strict(
+                Id.RACE.humanized_values(),
+                return_dtype=pl.String
             ),
             pl.col("count").cast(pl.Float64),
         ).rename(
-            {Id.SEX: "sex"} | ({Id.RACE.value: "race"} if with_race else {})
-        ).pipe(
-            add_group_rank
-        ).pipe(
-            arrange_age_distribution, **({"extra": "race"} if with_race else {})
+            {Id.SEX: "sex", Id.RACE.value: "ethnicity"}
         )
+
+        frame = add_group_rank(frame)
+        if descriptive:
+            frame = add_country_entity(
+                frame, "United States", self._source[:-1].title()
+            )
+        return arrange_age_distribution(frame)

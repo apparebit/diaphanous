@@ -590,9 +590,9 @@ def load_all() -> CsamData:
     return CsamData.merge(*(load(y) for y in range(2023, 2025)))
 
 
-def arrestee_age_distribution(with_race: bool = False) -> pl.DataFrame:
-    return load_all().arrestee_demographics().age_distribution(with_race=with_race)
+def us_arrestees_age_distribution(descriptive: bool = False) -> pl.DataFrame:
+    return load_all().arrestee_demographics().age_distribution(descriptive=descriptive)
 
 
-def offender_age_distribution(with_race: bool = False) -> pl.DataFrame:
-    return load_all().offender_demographics().age_distribution(with_race=with_race)
+def us_offenders_age_distribution(descriptive: bool = False) -> pl.DataFrame:
+    return load_all().offender_demographics().age_distribution(descriptive=descriptive)

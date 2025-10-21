@@ -125,14 +125,27 @@ def add_age_group(
     )
 
 
-def arrange_age_distribution(
-    frame: pl.DataFrame, extra: None | str = None
-) -> pl.DataFrame:
+def add_country_entity(frame: pl.DataFrame, country: str, entity: str) -> pl.DataFrame:
+    return frame.insert_column(
+        0, pl.lit(country, dtype=pl.String).alias("country")
+    ).insert_column(
+        1, pl.lit(entity, dtype=pl.String).alias("entity")
+    )
+
+
+def arrange_age_distribution(frame: pl.DataFrame) -> pl.DataFrame:
+    prefix = []
+    if "country" in frame.columns:
+        prefix.append("country")
+    if "entity" in frame.columns:
+        prefix.append("entity")
+
     return frame.select(
         pl.col(
+            *prefix,
             "data_year",
             "age", "age_group", "group_rank",
-            "sex", *([] if extra is None else [extra]), "activity",
+            "sex", "ethnicity", "activity",
             "count"
         )
     )

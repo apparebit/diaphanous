@@ -1,6 +1,7 @@
 from argparse import ArgumentParser
 from collections.abc import Iterator, Sequence
 from io import StringIO
+import math
 import os
 from pathlib import Path
 import re
@@ -12,7 +13,7 @@ import altair as alt
 import great_tables as gt
 import polars as pl
 
-from .chart import plot_age_and_sex
+from .chart import plot_age_thumbs, plot_age_and_sex
 from .platform.data import REPORTS_PER_PLATFORM
 
 import diaphanous.aunz as aunz
@@ -677,7 +678,7 @@ printr()
         self.end_col()
 
         self.h3("Germany, 2023-2024")
-        frame = bka.age_distribution().group_by(
+        frame = bka.de_age_distribution().group_by(
             pl.col("data_year", "age_group", "sex", "activity")
         ).agg(
             pl.col("count").sum()
@@ -824,10 +825,10 @@ printr()
         self.end_col()
 
         self.h3("United States, 2023-2024")
-        frame = nibrs.offender_age_distribution(with_race=True).drop_nulls(
+        frame = nibrs.us_offenders_age_distribution().drop_nulls(
             ["age_group", "sex"],
         ).group_by(
-            pl.col("data_year", "age_group", "race", "sex", "activity")
+            pl.col("data_year", "age_group", "ethnicity", "sex", "activity")
         ).agg(
             pl.col("count").sum()
         )
@@ -837,7 +838,7 @@ library(vcdExtra)
 us.yearly <- read.csv(text="{CSV_DATA}") |>
     mutate(
         age_group = factor(age_group, levels=c("Child", "Juvenile", "Adult")),
-        race = factor(race, levels=c("White", "Black", "Hispanic", "Other"))
+        ethnicity = factor(ethnicity, levels=c("White", "Black", "Hispanic", "Other"))
     )
 
 for (year in 2023:2024) {{
@@ -856,11 +857,11 @@ for (year in 2023:2024) {{
     )
     dev.off()
 
-    us.contab <- xtabs(count ~ age_group + race + sex, data = us.data)
+    us.contab <- xtabs(count ~ age_group + ethnicity + sex, data = us.data)
     print(us.contab)
     svg(paste0("figure/us-age-race-sex-", year, ".svg"))
     vcd::mosaic(
-        ~ age_group + race + sex, data = us.contab, direction = c("v", "h", "v"),
+        ~ age_group + ethnicity + sex, data = us.contab, direction = c("v", "h", "v"),
         shade = TRUE,
         main = paste0("Offenders by Age, Race, and Sex (United States, ", year, ")"),
         rot_labels = c(0, 0, 45, 0),
@@ -910,21 +911,27 @@ printr()
         self.h3("Age Distribution of Offenders")
 
         au_ages = aunz.au_age_distribution()
-        de_ages = bka.age_distribution()
+        de_ages = bka.de_age_distribution()
         es_ages = crimestat.es_age_distribution()
-        nz_ages = aunz.nz_age_distribution().filter(
+        es_recent = es_ages.filter(
             pl.col("data_year").ge(2023).and_(
                 pl.col("data_year").lt(2025)
             )
         )
-        us_ages = nibrs.offender_age_distribution()
-        us_arrestees = nibrs.arrestee_age_distribution()
+        nz_ages = aunz.nz_age_distribution()
+        nz_recent = nz_ages.filter(
+            pl.col("data_year").ge(2023).and_(
+                pl.col("data_year").lt(2025)
+            )
+        )
+        us_ages = nibrs.us_offenders_age_distribution()
+        us_arrestees = nibrs.us_arrestees_age_distribution()
 
         fig = alt.vconcat(
             plot_age_and_sex(au_ages, "Offenders", "Australia"),
             plot_age_and_sex(de_ages, "Suspects", "Germany"),
-            plot_age_and_sex(nz_ages, "Offenders", "New Zealand"),
-            plot_age_and_sex(es_ages, "Suspects", "Spain"),
+            plot_age_and_sex(nz_recent, "Offenders", "New Zealand"),
+            plot_age_and_sex(es_recent, "Suspects", "Spain"),
             plot_age_and_sex(us_ages, "Offenders", "United States"),
             plot_age_and_sex(us_arrestees, "Arrestees", "United States"),
         ).resolve_scale(x="shared")
@@ -932,6 +939,50 @@ printr()
         path = "figure/age-distributions.svg"
         fig.save(path)
         self.svg(path)
+        self.html("</div>\n")
+
+        self.html(
+            """<p>The distributions for the last decade, where available, are
+            shown next. While NIBRS data is available for years prior to 2023,
+            it only reached 80% coverage for police agencies that year and hence
+            is not representative of the United States."""
+        )
+
+        es_decade = es_ages.filter(
+            pl.col("data_year").ge(2015).and_(pl.col("data_year").lt(2025))
+        )
+        nz_decade = nz_ages.filter(
+            pl.col("data_year").ge(2015).and_(pl.col("data_year").lt(2025))
+        )
+
+        es_max = math.ceil(es_decade.group_by(
+            "data_year", "age"
+        ).agg(
+            pl.col("count").sum()
+        ).select(
+            pl.col("count").max()
+        ).item())
+
+        nz_max = math.ceil(nz_decade.group_by(
+            "data_year", "age"
+        ).agg(
+            pl.col("count").sum()
+        ).select(
+            pl.col("count").max()
+        ).item())
+
+        self.html("<div class=extra-wide>\n")
+        more_fig = alt.vconcat(
+            plot_age_thumbs(nz_decade, "New Zealand"),
+            plot_age_thumbs(es_decade, "Spain"),
+        ).resolve_scale(x="shared")
+        more_path = "figure/more-age-distributions.svg"
+        more_fig.save(more_path)
+        self.svg(
+            more_path,
+            caption="A Decade of Offenders by Age for "
+            f"New Zealand (max={nz_max}) and Spain (max={es_max})"
+        )
         self.html("</div>\n")
 
         self.html("""
@@ -1160,6 +1211,10 @@ main > * {
 
 main > .wide {
     max-width: 1085px;
+}
+
+main > .extra-wide {
+    max-width: 1200px;
 }
 
 h2 {

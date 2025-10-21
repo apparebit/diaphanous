@@ -1,5 +1,5 @@
 from .data import (
-    arrestee_age_distribution, CsamData, load, load_all, offender_age_distribution
+    us_arrestees_age_distribution, CsamData, load, load_all, us_offenders_age_distribution
 )
 from .model import (
     Activity, Clearance, Column, CriminalAct, Entry, Ethnicity, Group, humanize_frame,
@@ -9,7 +9,7 @@ from .model import (
 
 __all__ = (
     "Activity",
-    "arrestee_age_distribution",
+    "us_arrestees_age_distribution",
     "Clearance",
     "Column",
     "CriminalAct",
@@ -27,7 +27,7 @@ __all__ = (
     "NIBRS_SOURCE_FILES",
     "NibrsSchema",
     "NibrsTable",
-    "offender_age_distribution",
+    "us_offenders_age_distribution",
     "OffenseCode",
     "Race",
     "SchemaExtension",
