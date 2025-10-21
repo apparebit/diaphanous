@@ -646,7 +646,7 @@ dev.off()
         self.svg("figure/mod-nbinom.svg")
 
     def emit_mosaics(self) -> None:
-        self.h3("Australia 2022/2023")
+        self.h3("Australia")
         frame = aunz.au_age_distribution().group_by(
             "data_year", "age_group", "sex"
         ).agg(
@@ -677,7 +677,7 @@ printr()
         self.svg("figure/au-age-sex-2022-23.svg")
         self.end_col()
 
-        self.h3("Germany, 2023-2024")
+        self.h3("Germany")
         frame = bka.de_age_distribution().group_by(
             pl.col("data_year", "age_group", "sex", "activity")
         ).agg(
@@ -732,7 +732,7 @@ printr()
         self.svg("figure/de-age-activity-2024.svg")
         self.end_col()
 
-        self.h3("New Zealand 2023-2024")
+        self.h3("New Zealand")
         frame = aunz.nz_age_distribution().drop_nulls(
             ["age_group", "sex"]
         ).group_by(
@@ -789,7 +789,7 @@ printr()
         self.svg("figure/nz-age-activity-2024.svg")
         self.end_col()
 
-        self.h3("Spain, 2023-2024")
+        self.h3("Spain")
         frame = crimestat.es_age_distribution().group_by(
             pl.col("data_year", "age_group", "sex")
         ).agg(
@@ -824,7 +824,7 @@ printr()
         self.svg("figure/es-age-sex-2024.svg")
         self.end_col()
 
-        self.h3("United States, 2023-2024")
+        self.h3("United States")
         frame = nibrs.us_offenders_age_distribution().drop_nulls(
             ["age_group", "sex"],
         ).group_by(
@@ -906,30 +906,31 @@ printr()
         self.svg("figure/us-age-activity-2024.svg")
         self.end_col()
 
+    DETAIL_YEARS = (2023, 2024)
+    THUMB_YEARS = (2019, 2024)
+
+    def filter_years(self, frame: pl.DataFrame, first: int, last: int) -> pl.DataFrame:
+        return frame.filter(
+            pl.col("data_year").ge(first).and_(pl.col("data_year").le(last))
+        )
+
     def emit_age_distributions(self) -> None:
         self.html("<div class=wide>\n")
-        self.h3("Age Distribution of Offenders")
+        self.h3("Age Distributions of Offenders")
 
         au_ages = aunz.au_age_distribution()
-        de_ages = bka.de_age_distribution()
-        es_ages = crimestat.es_age_distribution()
-        es_recent = es_ages.filter(
-            pl.col("data_year").ge(2023).and_(
-                pl.col("data_year").lt(2025)
-            )
-        )
-        nz_ages = aunz.nz_age_distribution()
-        nz_recent = nz_ages.filter(
-            pl.col("data_year").ge(2023).and_(
-                pl.col("data_year").lt(2025)
-            )
-        )
+        de_ages = bka.de_age_distribution(descriptive=True)
+        de_recent = self.filter_years(de_ages, *self.DETAIL_YEARS)
+        es_ages = crimestat.es_age_distribution(descriptive=True)
+        es_recent = self.filter_years(es_ages, *self.DETAIL_YEARS)
+        nz_ages = aunz.nz_age_distribution(descriptive=True)
+        nz_recent = self.filter_years(nz_ages, *self.DETAIL_YEARS)
         us_ages = nibrs.us_offenders_age_distribution()
         us_arrestees = nibrs.us_arrestees_age_distribution()
 
         fig = alt.vconcat(
             plot_age_and_sex(au_ages, "Offenders", "Australia"),
-            plot_age_and_sex(de_ages, "Suspects", "Germany"),
+            plot_age_and_sex(de_recent, "Suspects", "Germany"),
             plot_age_and_sex(nz_recent, "Offenders", "New Zealand"),
             plot_age_and_sex(es_recent, "Suspects", "Spain"),
             plot_age_and_sex(us_ages, "Offenders", "United States"),
@@ -948,41 +949,23 @@ printr()
             is not representative of the United States."""
         )
 
-        es_decade = es_ages.filter(
-            pl.col("data_year").ge(2015).and_(pl.col("data_year").lt(2025))
-        )
-        nz_decade = nz_ages.filter(
-            pl.col("data_year").ge(2015).and_(pl.col("data_year").lt(2025))
-        )
-
-        es_max = math.ceil(es_decade.group_by(
-            "data_year", "age"
-        ).agg(
-            pl.col("count").sum()
-        ).select(
-            pl.col("count").max()
-        ).item())
-
-        nz_max = math.ceil(nz_decade.group_by(
-            "data_year", "age"
-        ).agg(
-            pl.col("count").sum()
-        ).select(
-            pl.col("count").max()
-        ).item())
+        es_decade = self.filter_years(es_ages, *self.THUMB_YEARS)
+        nz_decade = self.filter_years(nz_ages, *self.THUMB_YEARS)
 
         self.html("<div class=extra-wide>\n")
         more_fig = alt.vconcat(
-            plot_age_thumbs(nz_decade, "New Zealand"),
+            plot_age_thumbs(de_ages, "Germany", facet_labels=False),
+            plot_age_thumbs(nz_decade, "New Zealand", facet_labels=False),
             plot_age_thumbs(es_decade, "Spain"),
-        ).resolve_scale(x="shared")
+        ).resolve_scale(
+            x="shared"
+        ).configure_axis(
+           labelFontSize=35,
+           titleFontSize=40,
+        )
         more_path = "figure/more-age-distributions.svg"
         more_fig.save(more_path)
-        self.svg(
-            more_path,
-            caption="A Decade of Offenders by Age for "
-            f"New Zealand (max={nz_max}) and Spain (max={es_max})"
-        )
+        self.svg(more_path)
         self.html("</div>\n")
 
         self.html("""

@@ -1,3 +1,5 @@
+import math
+
 import polars as pl
 import great_tables as gt
 
@@ -149,3 +151,11 @@ def arrange_age_distribution(frame: pl.DataFrame) -> pl.DataFrame:
             "count"
         )
     )
+
+
+def to_step_and_limit(num: float) -> tuple[int, int]:
+    for limit in (10, 50, 100, 500, 1_000, 5_000):
+        if num <= limit:
+            factor = limit // 10
+            return factor, math.ceil(num / factor) * factor
+    return 1_000, math.ceil(num / 1_000) * 1_000

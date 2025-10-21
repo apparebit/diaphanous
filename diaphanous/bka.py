@@ -17,7 +17,26 @@ _CHILD_RANGES = ["<6", "6-8", "8-10", "10-12", "12-14"]
 _JUVENILE_RANGES = ["14-16", "16-18"]
 _ADULT_RANGES = ["18-21", "21-23", "23-25", "25-30", "30-40", "40-50", "50-60", ">=60"]
 _AGE_RANGES = [*_CHILD_RANGES, *_JUVENILE_RANGES, *_ADULT_RANGES]
-
+_READ_OPTIONS = dict(
+    skip_rows=9,
+    column_names=[
+        "id",
+        "description",
+        "sex",
+        "total",
+        *_CHILD_RANGES,
+        "child",
+        *_JUVENILE_RANGES,
+        "adolescent",
+        "18-21",
+        "<21",
+        "21-23",
+        "23-25",
+        "21-25",
+        *_ADULT_RANGES[3:],
+        ">=21",
+    ],
+)
 
 @dataclass(frozen=True)
 class Data:
@@ -28,31 +47,24 @@ class Data:
     @classmethod
     def ingest(cls) -> Self:
         suspects = []
-        for year in range(2023, 2025):
-            suspects.append(pl.read_excel(
-                _ROOT / "data" / "bka" / f"suspects-{year}.xlsx",
-                sheet_name="BU-TV-01-T20-TV",
-                read_options=dict(
-                    skip_rows=9,
-                    column_names=[
-                        "id",
-                        "description",
-                        "sex",
-                        "total",
-                        *_CHILD_RANGES,
-                        "child",
-                        *_JUVENILE_RANGES,
-                        "adolescent",
-                        "18-21",
-                        "<21",
-                        "21-23",
-                        "23-25",
-                        "21-25",
-                        *_ADULT_RANGES[3:],
-                        ">=21",
-                    ]
-                ),
-            ).filter(
+        for year in range(2019, 2025):
+            # https://www.bka.de/SharedDocs/Downloads/DE/Publikationen/
+            # PolizeilicheKriminalstatistik/2020/Bund/Tatverdaechtige/
+            # BU-TV-01-T20-TV_xls.xlsx?__blob=publicationFile&v=4
+            try:
+                frame = pl.read_excel(
+                    _ROOT / "data" / "bka" / f"suspects-{year}.xlsx",
+                    sheet_name="T20",
+                    read_options=_READ_OPTIONS,
+                )
+            except ValueError:
+                frame = pl.read_excel(
+                    _ROOT / "data" / "bka" / f"suspects-{year}.xlsx",
+                    sheet_name="BU-TV-01-T20-TV",
+                    read_options=_READ_OPTIONS,
+                )
+
+            suspects.append(frame.filter(
                 pl.col("id").str.starts_with("1432").or_(
                     pl.col("id").str.starts_with("1435")
                 )

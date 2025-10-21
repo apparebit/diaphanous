@@ -3,6 +3,7 @@ import polars as pl
 
 from .color import Palette
 from .nibrs.model import Id
+from .util import to_step_and_limit
 
 def plot_age_and_sex(
     frame: pl.DataFrame, entity: str, country: str
@@ -25,12 +26,19 @@ def plot_age_and_sex(
             f"Not shown: {num:,} {entity[:-1] if num == 1 else entity} Without Age"
         )
 
+    columns = []
+    if "country" in frame.columns:
+        columns.append("country")
+    if "entity" in frame.columns:
+        columns.append("entity")
+    columns.append("data_year")
+
     labels = frame.group_by(
-        pl.col("data_year")
+        pl.col(*columns)
     ).agg(
         pl.col("count").filter(pl.col("age").is_null()).sum()
     ).select(
-        pl.col("data_year"),
+        pl.col(*columns),
         *(
             pl.lit(None).alias(c) for c in [
                 "age", "age_group", "group_rank",
@@ -88,7 +96,7 @@ def plot_age_and_sex(
     )
 
 def plot_age_thumbs(
-    frame: pl.DataFrame, country: str
+    frame: pl.DataFrame, country: str, facet_labels: bool = True
 ) -> alt.Chart | alt.LayerChart | alt.FacetChart:
     data = frame.with_columns(
         pl.when(
@@ -112,14 +120,52 @@ def plot_age_thumbs(
         Palette.BLUE, Palette.BLUE, Palette.GRAY,
     ]
 
+    ystep, ymax = to_step_and_limit(frame.group_by(
+        "data_year", "age"
+    ).agg(
+        pl.col("count").sum()
+    ).select(
+        pl.col("count").max()
+    ).item())
+
+    yaxis = alt.Axis(
+        labelExpr=(
+            f'datum.value==0 || datum.value=={ymax} ? format(datum.value, ",d") : ""'
+        ),
+        tickMinStep=ystep,
+        orient="right",
+    )
+
     return alt.Chart(
         data,
+        title=alt.Title(
+            country,
+            anchor="middle",
+            orient="left",
+            angle=270,
+            fontSize=40,
+            fontWeight="normal",
+            dx=0,
+        ),
     ).mark_bar().encode(
-        alt.X("age:Q", axis=alt.Axis(labels=False)).scale(domain=(0, 100)).title(None),
-        alt.Y("sum(count):Q", axis=alt.Axis(labels=False), sort=domain).title(None),
-        alt.Color("age_group:N", legend=None).scale(domain=domain, range=range),
+        alt.X("age:Q", axis=alt.Axis(labels=False))
+            .scale(domain=(0, 100))
+            .title(None),
+        alt.Y("sum(count):Q", axis=yaxis, sort=domain)
+            .scale(domain=(0, ymax))
+            .title(None),
+        alt.Color("age_group:N", legend=None)
+            .scale(domain=domain, range=range),
         alt.Order("color_variant_label_sort_index:Q"),
-        alt.Column("data_year:N", title=None, header=alt.Header(labels=False)),
+        alt.Column(
+            "data_year:N",
+            title=None,
+            header=alt.Header(
+                labelAnchor="middle",
+                labelOrient="bottom",
+                labelFontSize=40,
+            ) if facet_labels else alt.Header(labels=False),
+        ),
     )
 
 
