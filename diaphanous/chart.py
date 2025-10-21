@@ -116,7 +116,7 @@ def plot_age_thumbs(
 
     range = [
         Palette.GRAY,
-        Palette.RED, Palette.RED, Palette.GRAY,
+        Palette.RED, Palette.RED, Palette.RED,
         Palette.BLUE, Palette.BLUE, Palette.GRAY,
     ]
 
