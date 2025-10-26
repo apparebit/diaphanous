@@ -6,7 +6,7 @@ build-backend = "flit_core.buildapi"
 name = "diaphanous"
 description = "CSAM reporting by social media and NCMEC"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = "==3.13.*"
 license = {text = "Apache 2.0"}
 authors = [{name = "Robert Grimm", email = "rgrimm@alum.mit.edu"}]
 classifiers = [
@@ -23,6 +23,8 @@ classifiers = [
     "Topic :: Sociology",
 ]
 
+# brew install gdal (geopandas)
+# brew install cmake (pyarrow)
 dependencies = [
     "ipykernel",          # 6.23.1  -- required for runing notebooks, includes ipython
     "nbclient",
