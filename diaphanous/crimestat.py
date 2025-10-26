@@ -4,7 +4,9 @@ from .aunz import au_age_distribution, nz_age_distribution
 from .bka import de_age_distribution
 from .nibrs import us_arrestees_age_distribution
 from .nibrs import us_offenders_age_distribution
-from .util import add_age_group, add_country_entity, arrange_age_distribution
+from .util import (
+    add_age_group, add_country_entity, arrange_age_distribution, compute_sex_and_age_cdfs
+)
 
 def es_age_distribution(descriptive: bool = False) -> pl.DataFrame:
     frame = pl.read_csv(
@@ -52,18 +54,19 @@ def es_age_distribution(descriptive: bool = False) -> pl.DataFrame:
     return arrange_age_distribution(frame)
 
 
-def load_all_age_distributions(compact: bool = False) -> list[pl.DataFrame]:
-    au = au_age_distribution(descriptive=True)
-    de = de_age_distribution(descriptive=True)
-    es = es_age_distribution(descriptive=True)
-    nz = nz_age_distribution(descriptive=True)
-    us_arrestees = us_arrestees_age_distribution(descriptive=True)
-    us_offenders = us_offenders_age_distribution(descriptive=True)
+def load_all_age_distributions(compact: bool = False) -> dict[str, pl.DataFrame]:
+    distributions = {
+        "au": au_age_distribution(descriptive=True),
+        "de": de_age_distribution(descriptive=True),
+        "es": es_age_distribution(descriptive=True),
+        "nz": nz_age_distribution(descriptive=True),
+        "us_arrestees": us_arrestees_age_distribution(descriptive=True),
+        "us_offenders": us_offenders_age_distribution(descriptive=True),
+    }
 
-    distributions = [au, de, es, nz, us_arrestees, us_offenders]
     if compact:
-        for index in range(len(distributions)):
-            distributions[index] = distributions[index].drop_nulls(
+        for key in distributions:
+            distributions[key] = distributions[key].drop_nulls(
                 "count"
             ).filter(
                 pl.col("count").ne(0.0)
@@ -72,11 +75,24 @@ def load_all_age_distributions(compact: bool = False) -> list[pl.DataFrame]:
     return distributions
 
 
+def compute_cdf_titles(distributions: dict[str, pl.DataFrame]) -> dict[str, str]:
+    return {
+        key: dist.select(
+            pl.format("{} ({}s)", pl.col("country"), pl.col("entity"))
+        ).item(0, 0)
+        for key, dist in distributions.items()
+    }
+
+
+def compute_cdfs(distributions: dict[str, pl.DataFrame]) -> dict[str, pl.DataFrame]:
+    return {k: compute_sex_and_age_cdfs(d) for k, d in distributions.items()}
+
+
 if __name__ == "__main__":
     pl.Config.set_tbl_cols(15)
-    distributions = load_all_age_distributions(compact=True)
+    pl.Config.set_tbl_rows(100)
 
-    pl.concat(distributions).write_csv("data/age_distributions.csv")
+    # _WIDTH, _ = shutil.get_terminal_size()
 
-    for distribution in distributions:
-        print(distribution.head(5))
+    distributions = pl.concat(load_all_age_distributions(compact=True).values())
+    distributions.write_csv("data/age_distributions.csv")

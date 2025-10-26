@@ -1,3 +1,4 @@
+from collections import defaultdict
 import math
 
 import polars as pl
@@ -136,21 +137,98 @@ def add_country_entity(frame: pl.DataFrame, country: str, entity: str) -> pl.Dat
 
 
 def arrange_age_distribution(frame: pl.DataFrame) -> pl.DataFrame:
-    prefix = []
-    if "country" in frame.columns:
-        prefix.append("country")
-    if "entity" in frame.columns:
-        prefix.append("entity")
-
     return frame.select(
         pl.col(
-            *prefix,
-            "data_year",
+            *grouping_columns(frame),
             "age", "age_group", "group_rank",
             "sex", "ethnicity", "activity",
             "count"
         )
     )
+
+
+def compute_sex_and_age_cdfs(frame: pl.DataFrame) -> pl.DataFrame:
+    group = grouping_columns(frame)
+
+    return _compute_age_cdf(frame, group, "cdf").join(
+        _compute_age_cdf(frame.filter(
+            pl.col("sex").eq("Female")
+        ), group, "female_cdf"),
+        on=[*group, "age"],
+        how="inner",
+    )
+
+
+def compute_age_cdf(frame: pl.DataFrame, column: str = "cdf") -> pl.DataFrame:
+    return _compute_age_cdf(frame, grouping_columns(frame), column)
+
+
+def _compute_age_cdf(
+    frame: pl.DataFrame, group: list[str], column: str
+) -> pl.DataFrame:
+    # Drop rows with no age
+    frame = frame.drop_nulls("age")
+
+    # Create a blueprint for full range of age values
+    table = defaultdict(list)
+    for row in frame.select(*group).unique().rows():
+        for name, value in zip(group, row):
+            table[name].extend([value] * 101)
+        table["age"].extend([y for y in range(101)])
+
+    # Build CDF from counts shifted by one row: (age, cdf): (0, 0.0) -> (100, 1.0)
+    return pl.DataFrame(table).join(
+        frame.group_by(
+            *group, "age"
+        ).agg(
+            pl.col("count").sum().alias(column)
+        ),
+        on=[*group, "age"],
+        how="left",
+    ).fill_null(
+        0
+    ).sort(
+        *group, "age"
+    ).with_columns(
+        pl.col(column).shift(fill_value=0).cum_sum().over(*group)
+    ).with_columns(
+        pl.col(column).truediv(pl.col(column).max()).over(*group)
+    )
+
+
+def compute_sex_and_age_cdf_extrema(frame: pl.DataFrame) -> pl.DataFrame:
+    group = grouping_columns(frame)[:-1]
+    return _compute_cdf_extrema(frame, group, "cdf").join(
+        _compute_cdf_extrema(frame, group, "female_cdf"),
+        on=[*group, "age"],
+        how="inner",
+    )
+
+
+def _compute_cdf_extrema(
+    frame: pl.DataFrame, group: list[str], column: str
+) -> pl.DataFrame:
+    return frame.group_by(
+        *group, "age", maintain_order=True
+    ).agg(
+        pl.col(column).min().alias(f"min_{column}"),
+        pl.col(column).max().alias(f"max_{column}"),
+    )
+
+
+def grouping_columns(frame: pl.DataFrame) -> list[str]:
+    group = []
+    for candidate in ("country", "entity", "data_year"):
+        if candidate in frame.columns:
+            group.append(candidate)
+    return group
+
+
+def get_year_range(frame: pl.DataFrame) -> tuple[int, int]:
+    return frame.select(
+        pl.col("data_year").min().alias("min"),
+        pl.col("data_year").max().add(1).alias("max"),
+    ).row(0)
 
 
 def to_step_and_limit(num: float) -> tuple[int, int]:
