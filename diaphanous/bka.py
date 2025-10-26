@@ -17,6 +17,12 @@ _CHILD_RANGES = ["<6", "6-8", "8-10", "10-12", "12-14"]
 _JUVENILE_RANGES = ["14-16", "16-18"]
 _ADULT_RANGES = ["18-21", "21-23", "23-25", "25-30", "30-40", "40-50", "50-60", ">=60"]
 _AGE_RANGES = [*_CHILD_RANGES, *_JUVENILE_RANGES, *_ADULT_RANGES]
+
+_PRODUCER_IDS_V1 = ["143200", "143400", "143500", "143700"]
+_CONSUMER_IDS_V1 = ["143300", "143600"]
+_PRODUCER_IDS_V2 = ["143210", "143220", "143510", "143520"]
+_CONSUMER_IDS_V2 = ["143230", "143530"]
+
 _READ_OPTIONS = dict(
     skip_rows=9,
     column_names=[
@@ -38,6 +44,7 @@ _READ_OPTIONS = dict(
     ],
 )
 
+
 @dataclass(frozen=True)
 class Data:
 
@@ -47,7 +54,7 @@ class Data:
     @classmethod
     def ingest(cls) -> Self:
         suspects = []
-        for year in range(2019, 2025):
+        for year in range(2015, 2025):
             # https://www.bka.de/SharedDocs/Downloads/DE/Publikationen/
             # PolizeilicheKriminalstatistik/2020/Bund/Tatverdaechtige/
             # BU-TV-01-T20-TV_xls.xlsx?__blob=publicationFile&v=4
@@ -64,22 +71,36 @@ class Data:
                     read_options=_READ_OPTIONS,
                 )
 
-            suspects.append(frame.filter(
-                pl.col("id").str.starts_with("1432").or_(
+            if year == 2015:
+                frame = frame.select(pl.exclude("__UNNAMED__24"))
+                filter = pl.col("id").str.starts_with("143").and_(
+                    pl.col("id").str.starts_with("1430").not_()
+                ).and_(
+                    pl.col("id").str.starts_with("1431").not_()
+                )
+                producers = _PRODUCER_IDS_V1
+                consumers = _CONSUMER_IDS_V1
+            else:
+                filter = pl.col("id").str.starts_with("1432").or_(
                     pl.col("id").str.starts_with("1435")
                 )
+                producers = _PRODUCER_IDS_V2
+                consumers = _CONSUMER_IDS_V2
+
+            suspects.append(frame.filter(
+                filter
             ).insert_column(
                 0,
                 pl.lit(year, dtype=pl.Int16).alias(Id.YEAR)
             ).with_columns(
                 pl.col("18-21").add(pl.col(">=21")).alias("adult"),
                 pl.when(
-                    pl.col("id").is_in(["143210", "143220", "143510", "143520"])
+                    pl.col("id").is_in(producers)
                 ).then(
                     pl.lit("Producer"),
                 ).otherwise(
                     pl.when(
-                        pl.col("id").is_in(["143230", "143530"])
+                        pl.col("id").is_in(consumers)
                     ).then(
                         pl.lit("Consumer"),
                     ).otherwise(
@@ -318,6 +339,7 @@ if __name__ == "__main__":
     print(data.caseload())
     print(data.severity())
     print(data.age_distribution())
+    print(data.suspects)
 
     # print(data.suspects)
     # data.demographics().write_csv(_ROOT / "data" / "bka" / "suspects.csv")
