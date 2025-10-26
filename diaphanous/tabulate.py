@@ -13,10 +13,8 @@ import great_tables as gt
 import polars as pl
 
 from .chart import (
-    plot_age_thumbs, plot_age_and_sex, plot_cdf_band, plot_sex_and_age_cdfs,
-    plot_sex_and_age_cdf_bands
+    plot_age_thumbs, plot_age_and_sex, plot_sex_and_age_cdfs, plot_sex_and_age_cdf_bands
 )
-from .color import Palette
 from .platform.data import REPORTS_PER_PLATFORM
 
 import diaphanous.aunz as aunz

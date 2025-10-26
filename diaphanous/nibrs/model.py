@@ -1,5 +1,6 @@
 from collections.abc import Sequence
 import enum
+from pathlib import Path
 from types import MappingProxyType
 
 import polars as pl
@@ -103,6 +104,47 @@ class NibrsSchema(enum.Enum):
         "participated": pl.String,
         "nibrs_participated": pl.String,
     })
+    ARRESTEE_LEGACY = pl.Schema({
+        "arrestee_id": pl.Int64,
+        "incident_id": pl.Int64,
+        "arrestee_seq_num": pl.Int16,
+        "arrest_num": pl.Int64,
+        "arrest_date": pl.String,
+        "arrest_type_id": pl.Int16,
+        "multiple_indicator": pl.String,
+        "offense_type_id": pl.Int64,
+        "age_id": pl.Int16,
+        "age_num": pl.String,
+        "sex_code": pl.String,
+        "race_id": pl.Int16,
+        "ethnicity_id": pl.Int16,
+        "resident_code": pl.String,
+        "under_18_disposition_code": pl.String,
+        "clearance_ind": pl.String,
+        "ff_line_number": pl.Int64,
+        "age_range_low_num": pl.Int16,
+        "age_range_high_num": pl.Int16,
+    })
+    ARRESTEE_WITH_OFFENSE_TYPE = pl.Schema({
+        "data_year": pl.Int16,
+        "arrestee_id": pl.Int64,
+        "incident_id": pl.Int64,
+        "arrestee_seq_num": pl.Int16,
+        "arrest_date": pl.String,
+        "arrest_type_id": pl.Int16,
+        "multiple_indicator": pl.String,
+        "offense_type_id": pl.Int64,
+        "age_id": pl.Int16,
+        "age_num": pl.String,
+        "sex_code": pl.String,
+        "race_id": pl.Int16,
+        "ethnicity_id": pl.Int16,
+        "resident_code": pl.String,
+        "under_18_disposition_code": pl.String,
+        "clearance_ind": pl.String,
+        "age_range_low_num": pl.Int16,
+        "age_range_high_num": pl.Int16,
+    })
     ARRESTEE = pl.Schema({
         "data_year": pl.Int16,
         "arrestee_id": pl.Int64,
@@ -123,6 +165,10 @@ class NibrsSchema(enum.Enum):
         "age_range_low_num": pl.Int16,
         "age_range_high_num": pl.Int16,
     })
+    CRIMINAL_ACT_LEGACY = pl.Schema({
+        "criminal_act_id": pl.Int16,
+        "offense_id": pl.Int64,
+    })
     CRIMINAL_ACT = pl.Schema({
         "data_year": pl.Int16,
         "criminal_act_id": pl.Int16,
@@ -132,6 +178,7 @@ class NibrsSchema(enum.Enum):
         "agency_id": pl.Int64,
         "incident_id": pl.Int64,
         "nibrs_month_id": pl.Int64,
+        "incident_number": pl.String,
         "cargo_theft_flag": pl.String,
         "submission_date": pl.String,
         "incident_date": pl.String,
@@ -163,6 +210,19 @@ class NibrsSchema(enum.Enum):
         "orig_format": pl.String,
         "did": pl.Int64,
     })
+    OFFENDER_LEGACY = pl.Schema({
+        "offender_id": pl.Int64,
+        "incident_id": pl.Int64,
+        "offender_seq_num": pl.Int16,
+        "age_id": pl.Int16,
+        "age_num": pl.String,
+        "sex_code": pl.String,
+        "race_id": pl.Int16,
+        "ethnicity_id": pl.Int16,
+        "ff_line_number": pl.Int64,
+        "age_range_low_num": pl.Int16,
+        "age_range_high_num": pl.Int16,
+    })
     OFFENDER = pl.Schema({
         "data_year": pl.Int16,
         "offender_id": pl.Int64,
@@ -179,12 +239,22 @@ class NibrsSchema(enum.Enum):
     OFFENSE_LEGACY = pl.Schema({
         "offense_id": pl.Int64,
         "incident_id": pl.Int64,
-        "offense_type_id": pl.String,
+        "offense_type_id": pl.Int64,
         "attempt_complete_flag": pl.String,
         "location_id": pl.Int64,
         "num_premises_entered": pl.Int16,
         "method_entry_code": pl.String,
         "ff_line_number": pl.Int64,
+    })
+    OFFENSE_WITH_OFFENSE_TYPE = pl.Schema({
+        "data_year": pl.Int16,
+        "offense_id": pl.Int64,
+        "incident_id": pl.Int64,
+        "offense_type_id": pl.Int64,
+        "attempt_complete_flag": pl.String,
+        "location_id": pl.Int64,
+        "num_premises_entered": pl.Int16,
+        "method_entry_code": pl.String,
     })
     OFFENSE = pl.Schema({
         "data_year": pl.Int16,
@@ -196,7 +266,17 @@ class NibrsSchema(enum.Enum):
         "num_premises_entered": pl.Int16,
         "method_entry_code": pl.String,
     })
-    OFFENSE_TYPE = pl.Schema({
+    OFFENSE_TYPE_LEGACY_TERSE = pl.Schema({
+        "offense_type_id": pl.Int64,
+        "offense_code": pl.String,
+        "offense_name": pl.String,
+        "crime_against": pl.String,
+        "ct_flag": pl.String,
+        "hc_flag": pl.String,
+        "hc_code": pl.String,
+        "offense_category_name": pl.String,
+    })
+    OFFENSE_TYPE_LEGACY = pl.Schema({
         "offense_type_id": pl.Int64,
         "offense_code": pl.String,
         "offense_name": pl.String,
@@ -207,10 +287,43 @@ class NibrsSchema(enum.Enum):
         "offense_category_name": pl.String,
         "offense_group": pl.String,
     })
+    OFFENSE_TYPE = pl.Schema({
+        "offense_code": pl.String,
+        "offense_name": pl.String,
+        "crime_against": pl.String,
+        "ct_flag": pl.String,
+        "hc_flag": pl.String,
+        "hc_code": pl.String,
+        "offense_category_name": pl.String,
+        "offense_group": pl.String,
+    })
+    SUSPECT_USING_LEGACY = pl.Schema({
+        "suspect_using_id": pl.Int16,
+        "offense_id": pl.Int64,
+    })
     SUSPECT_USING = pl.Schema({
         "data_year": pl.Int16,
         "suspect_using_id": pl.Int16,
         "offense_id": pl.Int64,
+    })
+    VICTIM_LEGACY = pl.Schema({
+        "victim_id": pl.Int64,
+        "incident_id": pl.Int64,
+        "victim_seq_num": pl.Int16,
+        "victim_type_id": pl.Int16,
+        "assignment_type_id": pl.Int16,
+        "activity_type_id": pl.Int16,
+        "outside_agency_id": pl.Int64,
+        "age_id": pl.Int16,
+        "age_num": pl.String,
+        "sex_code": pl.String,
+        "race_id": pl.Int16,
+        "ethnicity_id": pl.Int16,
+        "resident_status_code": pl.String,
+        "agency_data_year": pl.Int16,
+        "ff_line_number": pl.Int64,
+        "age_range_low_num": pl.Int16,
+        "age_code_range_high": pl.Int16,
     })
     VICTIM = pl.Schema({
         "data_year": pl.Int16,
@@ -230,69 +343,141 @@ class NibrsSchema(enum.Enum):
         "age_range_low_num": pl.Int16,
         "age_code_range_high": pl.Int16,
     })
+    VICTIM_OFFENSE_LEGACY = pl.Schema({
+        "victim_id": pl.Int64,
+        "offense_id": pl.Int64,
+    })
     VICTIM_OFFENSE = pl.Schema({
         "data_year": pl.Int16,
         "victim_id": pl.Int64,
         "offense_id": pl.Int64,
     })
 
+    def csv_file(self) -> str:
+        return {
+            self.AGE: "nibrs_age.csv",
+            self.AGENCIES: "agencies.csv",
+            self.ARRESTEE_LEGACY: "nibrs_arrestee.csv",
+            self.ARRESTEE_WITH_OFFENSE_TYPE: "nibrs_arrestee.csv",
+            self.ARRESTEE: "nibrs_arrestee.csv",
+            self.CRIMINAL_ACT_LEGACY: "nibrs_criminal_act.csv",
+            self.CRIMINAL_ACT: "nibrs_criminal_act.csv",
+            self.INCIDENT_LEGACY: "nibrs_incident.csv",
+            self.INCIDENT: "nibrs_incident.csv",
+            self.OFFENDER_LEGACY: "nibrs_offender.csv",
+            self.OFFENDER: "nibrs_offender.csv",
+            self.OFFENSE_LEGACY: "nibrs_offense.csv",
+            self.OFFENSE_WITH_OFFENSE_TYPE: "nibrs_offense.csv",
+            self.OFFENSE: "nibrs_offense.csv",
+            self.OFFENSE_TYPE_LEGACY_TERSE: "nibrs_offense_type.csv",
+            self.OFFENSE_TYPE_LEGACY: "nibrs_offense_type.csv",
+            self.OFFENSE_TYPE: "nibrs_offense_type.csv",
+            self.SUSPECT_USING_LEGACY: "nibrs_suspect_using.csv",
+            self.SUSPECT_USING: "nibrs_suspect_using.csv",
+            self.VICTIM_LEGACY: "nibrs_victim.csv",
+            self.VICTIM: "nibrs_victim.csv",
+            self.VICTIM_OFFENSE_LEGACY: "nibrs_victim_offense.csv",
+            self.VICTIM_OFFENSE: "nibrs_victim_offense.csv",
+        }[self]
+
+    def columns(self) -> list[str]:
+        return self.value.names()
+
     def has_demographics(self) -> bool:
-        return self in (self.ARRESTEE, self.OFFENDER, self.VICTIM)
-
-    def requires_data_year(self, year: int) -> bool:
-        return (
-            year <= 2015
-            and self in (
-                self.ARRESTEE, self.CRIMINAL_ACT, self.INCIDENT,
-                self.OFFENDER, self.OFFENSE, self.SUSPECT_USING,
-                self.VICTIM, self.VICTIM_OFFENSE
-            )
+        return self in (
+            self.ARRESTEE, self.ARRESTEE_LEGACY,
+            self.OFFENDER, self.OFFENDER_LEGACY,
+            self.VICTIM, self.VICTIM_LEGACY
         )
 
-    def requires_offense_code(self, year: int) -> bool:
-        return (
-            year <= 2020
-            and self in (self.ARRESTEE, self.OFFENSE)
+    def requires_data_year(self) -> bool:
+        return self in (
+            self.ARRESTEE_LEGACY, self.CRIMINAL_ACT_LEGACY, self.INCIDENT_LEGACY,
+            self.OFFENDER_LEGACY, self.OFFENSE_LEGACY, self.SUSPECT_USING_LEGACY,
+            self.VICTIM_LEGACY, self.VICTIM_OFFENSE_LEGACY
         )
 
-    def columns_to_drop(self, year: int) -> None | Sequence[str]:
-        if self is self.INCIDENT and year <= 2015:
-            return ["ddocname", "ff_line_number"]
-        if self is self.OFFENSE and year <= 2015:
-            return ["ff_line_number"]
+    def requires_offense_code(self) -> bool:
+        return self in (
+            self.ARRESTEE_WITH_OFFENSE_TYPE, self.ARRESTEE_LEGACY,
+            self.OFFENSE_WITH_OFFENSE_TYPE, self.OFFENSE_LEGACY,
+        )
 
-        return None
+    def columns_to_drop(self) -> None | Sequence[str]:
+        return {
+            self.ARRESTEE_LEGACY: ["arrest_num", "ff_line_number"],
+            self.INCIDENT_LEGACY: ["ddocname", "ff_line_number", "incident_number"],
+            self.OFFENDER_LEGACY: ["ff_line_number"],
+            self.OFFENSE_LEGACY: ["ff_line_number"],
+            self.VICTIM_LEGACY: ["agency_data_year", "ff_line_number"],
+        }.get(self)
 
-    def effective_schema(self, year: int) -> pl.Schema:
+    def _actual_column_names(self, path: Path) -> list[str]:
+        with open(path / self.csv_file(), mode="r", encoding="utf8") as file:
+            # Chop off newline, split by commas, normalize to lower case...
+            actual = (c.lower() for c in file.readline()[:-1].split(","))
+            # Strip off double quotes...
+            actual = [(c[1:-1] if c[0] == '"' and c[-1] == '"' else c) for c in actual]
+        return actual
+
+    def _pick(self, year: int, columns: list[str]) -> "NibrsSchema":
         if year <= 2015:
-            if self is self.OFFENSE:
-                return self.OFFENSE_LEGACY.value
-            if self is self.INCIDENT:
-                return self.INCIDENT_LEGACY.value
+            schemas = {
+                self.ARRESTEE: (self.ARRESTEE_WITH_OFFENSE_TYPE, self.ARRESTEE_LEGACY),
+                self.CRIMINAL_ACT: (self.CRIMINAL_ACT, self.CRIMINAL_ACT_LEGACY),
+                self.INCIDENT: (self.INCIDENT, self.INCIDENT_LEGACY),
+                self.OFFENDER: (self.OFFENDER, self.OFFENDER_LEGACY),
+                self.OFFENSE: (self.OFFENSE_WITH_OFFENSE_TYPE, self.OFFENSE_LEGACY),
+                self.OFFENSE_TYPE: (
+                    self.OFFENSE_TYPE_LEGACY, self.OFFENSE_TYPE_LEGACY_TERSE
+                ),
+                self.SUSPECT_USING: (self.SUSPECT_USING, self.SUSPECT_USING_LEGACY),
+                self.VICTIM: (self.VICTIM, self.VICTIM_LEGACY),
+                self.VICTIM_OFFENSE: (self.VICTIM_OFFENSE, self.VICTIM_OFFENSE_LEGACY),
+            }.get(self)
+            if schemas is None:
+                return self
 
-        updates = {}
-        if self.requires_data_year(year):
-            updates["data_year"] = None
-        if self.requires_offense_code(year):
-            updates["offense_code"] = {"offense_type_id": pl.Int64}
-        if len(updates) == 0:
-            return self.value
-        return self._apply(**updates)
+            matching, fallback = schemas
+            matching_columns = matching.columns()
+            if matching is self.VICTIM:
+                matching_columns[-1] = "age_range_high_num"
+            return matching if columns == matching_columns else fallback
 
-    def _apply(self, **entries: None | dict[str, type[pl.DataType]]) -> pl.Schema:
-        mapping = {}
-        for k, v in self.value.items():
-            if k not in entries:
-                mapping[k] = v
-                continue
+        if year <= 2020:
+            legacy = {
+                self.ARRESTEE: self.ARRESTEE_WITH_OFFENSE_TYPE,
+                self.OFFENSE: self.OFFENSE_WITH_OFFENSE_TYPE,
+                self.OFFENSE_TYPE: self.OFFENSE_TYPE_LEGACY,
+            }.get(self)
+            if legacy is not None:
+                return legacy
 
-            replacement = entries[k]
-            if replacement is None:
-                continue
-            assert len(replacement) == 1, "entries must have one key, value pair"
-            (k2, v2), *_ = replacement.items()
-            mapping[k2] = v2
-        return pl.Schema(mapping)
+        return self
+
+    def pick(self, year: int, path: Path) -> "NibrsSchema":
+        actual_columns = self._actual_column_names(path)
+        effective_schema = self._pick(year, actual_columns)
+
+        if self is self.AGENCIES and year <= 2020:
+            expected_columns = ORIGINAL_AGENCY_COLUMNS
+        elif self is self.VICTIM and year <= 2020:
+            expected_columns = effective_schema.columns()
+            expected_columns[-1] = "age_range_high_num"
+        else:
+            expected_columns = effective_schema.value.names()
+
+        if expected_columns == actual_columns:
+            return effective_schema
+
+        expected_columns = [f"{name}\n" for name in expected_columns]
+        actual_columns = [f"{name}\n" for name in actual_columns]
+
+        from difflib import ndiff
+        diff = "    ".join(ndiff(expected_columns, actual_columns))
+        raise AssertionError(
+            f"{path}/{self.csv_file()} doesn't have expected columns:\n    {diff}"
+        )
 
 
 _AGENCY_COLUMN_MAP = {
@@ -304,14 +489,6 @@ _AGENCY_COLUMN_MAP = {
 
 ORIGINAL_AGENCY_COLUMNS = [
     _AGENCY_COLUMN_MAP.get(c, c) for c in NibrsSchema.AGENCIES.value.keys()
-]
-
-_VICTIM_COLUMN_MAP = {
-    "age_code_range_high": "age_range_high_num"
-}
-
-ORIGINAL_VICTIM_COLUMNS = [
-    _VICTIM_COLUMN_MAP.get(c, c) for c in NibrsSchema.VICTIM.value.keys()
 ]
 
 

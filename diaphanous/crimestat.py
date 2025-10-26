@@ -93,6 +93,5 @@ if __name__ == "__main__":
     pl.Config.set_tbl_rows(100)
 
     # _WIDTH, _ = shutil.get_terminal_size()
-
     distributions = pl.concat(load_all_age_distributions(compact=True).values())
     distributions.write_csv("data/age_distributions.csv")
