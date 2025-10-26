@@ -9,19 +9,6 @@ from ..util import (
 )
 
 
-_AGE_ID_TO_AGE = (
-    pl.when(pl.col(Id.AGE).le(3))
-    .then(pl.lit(0))
-    .otherwise(
-        pl.when(pl.col(Id.AGE).le(102))
-        .then(pl.col(Id.AGE) - 3)
-        .otherwise(None)
-    ).cast(
-        pl.Int16
-    ).alias("age")
-)
-
-
 class Demographics:
     """
     A wrapper for extracting demographic information from arrestees,
@@ -40,9 +27,7 @@ class Demographics:
         is_offender = source == "offenders"
 
         # Replace age_id with age and age_group
-        frame = cast(pl.DataFrame, getattr(csam_data, source)).with_columns(
-            _AGE_ID_TO_AGE,
-        ).pipe(
+        frame = cast(pl.DataFrame, getattr(csam_data, source)).pipe(
             add_age_group, 11, 17
         ).drop(Id.AGE)
 

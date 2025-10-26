@@ -9,8 +9,9 @@ import polars as pl
 
 from ..finish import finish_caseload, finish_severity
 from .model import (
-    Column, CriminalAct, Entry, Id, NIBRS_SOURCE_FILES,
-    NibrsSchema, NibrsTable, OffenseCode
+    AGE_IN_YEARS_V1, AGE_IN_YEARS_V2, Column, CriminalAct, Entry, Ethnicity, Id,
+    NIBRS_SOURCE_FILES, NibrsSchema, NibrsTable, OffenseCode, ORIGINAL_AGENCY_COLUMNS,
+    ORIGINAL_VICTIM_COLUMNS, Race, Sex
 )
 from ..util import format_table
 
@@ -37,54 +38,125 @@ def _associated_offenses(
     )
 
 
-def _ingest_csam_data(path: Path) -> list[pl.LazyFrame]:
+def _ingest_csam_data(path: Path, year: int) -> list[pl.LazyFrame]:
     """
     Ingest all incidents involving CSAM from the given directory with NIBRS
     tables.
     """
+    def check(table: NibrsTable, schema: pl.Schema) -> None:
+        with open(path / table.csv_file, mode="r", encoding="utf8") as file:
+            # Chop off newline, split by commas, normalize to lower case...
+            actual = (c.lower() for c in file.readline()[:-1].split(","))
+            # Strip off double quotes...
+            actual = ((c[1:-1] if c[0] == '"' and c[-1] == '"' else c) for c in actual)
+            # Add end-of-line
+            actual = [f"{c}\n" for c in actual]
+
+        if table is NibrsTable.AGENCIES and year <= 2020:
+            column_names = ORIGINAL_AGENCY_COLUMNS
+        elif table is NibrsTable.VICTIM and year <= 2020:
+            column_names = ORIGINAL_VICTIM_COLUMNS
+        else:
+            column_names = schema.names()
+        expected = [f"{c}\n" for c in column_names]
+
+        if actual != expected:
+            from difflib import ndiff
+            diff = "".join(ndiff(actual, expected))
+            raise AssertionError(
+                f"{table.csv_file} for {year} has unexpected columns:\n{diff}"
+            )
+
+    check(NibrsTable.AGE, NibrsSchema.AGE.value)
+    is_age_v1 = pl.read_csv(
+        path / NibrsTable.AGE.csv_file,
+        schema=NibrsSchema.AGE.value,
+    ).filter(
+        pl.col("age_id").eq(4)
+    ).get_column(
+        "age_code"
+    ).item() == "00"
+
+    if year <= 2020:
+        check(NibrsTable.OFFENSE_TYPE, NibrsSchema.OFFENSE_TYPE.value)
+        offense_type = pl.scan_csv(
+            path / NibrsTable.OFFENSE_TYPE.csv_file,
+            schema=NibrsSchema.OFFENSE_TYPE.value,
+        ).select(
+            pl.col("offense_type_id", "offense_code")
+        )
+    else:
+        offense_type = None
+
     # For future reference: At least for CA, DC, and NY, the postgres_load.sql
     # script declares NIBRS_BIAS_LIST.csv to have the windows-1251 or cp1251
     # encoding.
     # For below: At least for CA, the agencies.csv file contains an invalid
     # UTF-8 sequence (\xa0 by itself on line 60), hence the lossy encoding.
-    read = pl.scan_csv
-    agencies = read(
-        path / NibrsTable.AGENCIES.csv_file,
-        schema=NibrsSchema.AGENCIES.value,
-        encoding="utf8-lossy",
-    )
-    arrestee = read(
-        path / NibrsTable.ARRESTEE.csv_file,
-        schema=NibrsSchema.ARRESTEE.value,
-    )
-    criminal_act = read(
-        path / NibrsTable.CRIMINAL_ACT.csv_file,
-        schema=NibrsSchema.CRIMINAL_ACT.value,
-    )
-    incident = read(
-        path / NibrsTable.INCIDENT.csv_file,
-        schema=NibrsSchema.INCIDENT.value,
-    )
-    offender = read(
-        path / NibrsTable.OFFENDER.csv_file,
-        schema=NibrsSchema.OFFENDER.value,
-    )
-    offense = read(
-        path / NibrsTable.OFFENSE.csv_file,
-        schema=NibrsSchema.OFFENSE.value,
-    )
-    suspect_using = read(
-        path / NibrsTable.SUSPECT_USING.csv_file,
-        schema=NibrsSchema.SUSPECT_USING.value,
-    )
-    victim = read(
-        path / NibrsTable.VICTIM.csv_file,
-        schema=NibrsSchema.VICTIM.value,
-    )
-    victim_offense = read(
-        path / NibrsTable.VICTIM_OFFENSE.csv_file,
-        schema=NibrsSchema.VICTIM_OFFENSE.value,
-    )
+    def read(table: NibrsTable, schema: NibrsSchema) -> pl.LazyFrame:
+        effective_schema = schema.effective_schema(year)
+        check(table, effective_schema)
+        frame = pl.scan_csv(
+            path / table.csv_file,
+            schema=effective_schema,
+            encoding="utf8-lossy" if table is NibrsTable.AGENCIES else "utf8"
+        )
+
+        if (columns := schema.columns_to_drop(year)) is not None:
+            frame = frame.drop(*columns)
+
+        select_columns = False
+        if schema.requires_data_year(year):
+            frame = frame.with_columns(
+                pl.lit(year, dtype=pl.Int16).alias("data_year")
+            )
+            select_columns = True
+        if schema.requires_offense_code(year):
+            assert offense_type is not None
+            frame = frame.join(
+                offense_type,
+                on="offense_type_id",
+                how="left",
+            )
+            select_columns = True
+        if select_columns:
+            frame = frame.select(
+                schema.value.names()
+            )
+
+        if schema.has_demographics():
+            frame = frame.with_columns(
+                AGE_IN_YEARS_V1 if is_age_v1 else AGE_IN_YEARS_V2
+            )
+
+            if year <= 2020:
+                frame = frame.with_columns(
+                    pl.col(Id.ETHNICITY).replace_strict(
+                        Ethnicity.legacy_value_map(),
+                        return_dtype=pl.Int16,
+                    ),
+                    pl.col(Id.RACE).replace_strict(
+                        Race.legacy_value_map(),
+                        return_dtype=pl.Int16,
+                    ),
+                    pl.col(Id.SEX).replace({"": Sex.NOT_SPECIFIED})
+                )
+
+        return frame
+
+    if year == 2015:
+        agencies = pl.LazyFrame({}, schema=NibrsSchema.AGENCIES.value)
+    else:
+        agencies = read(NibrsTable.AGENCIES, NibrsSchema.AGENCIES)
+
+    arrestee = read(NibrsTable.ARRESTEE, NibrsSchema.ARRESTEE)
+    criminal_act = read(NibrsTable.CRIMINAL_ACT, NibrsSchema.CRIMINAL_ACT)
+    incident = read(NibrsTable.INCIDENT, NibrsSchema.INCIDENT)
+    offender = read(NibrsTable.OFFENDER, NibrsSchema.OFFENDER)
+    offense = read(NibrsTable.OFFENSE, NibrsSchema.OFFENSE)
+    suspect_using = read(NibrsTable.SUSPECT_USING, NibrsSchema.SUSPECT_USING)
+    victim = read(NibrsTable.VICTIM, NibrsSchema.VICTIM)
+    victim_offense = read(NibrsTable.VICTIM_OFFENSE, NibrsSchema.VICTIM_OFFENSE)
 
     # Drop year from auxiliary tables
     criminal_act = criminal_act.select(pl.col(Id.CRIMINAL_ACT, Id.OFFENSE))
@@ -306,6 +378,7 @@ class CsamData:
                     continue
 
                 _, _, name = entry.rpartition("/")
+                name = name.lower()
                 if name not in NIBRS_SOURCE_FILES:
                     continue
 
@@ -347,15 +420,17 @@ class CsamData:
             csv_path.mkdir(parents=True)
 
             cls.unarchive(archive_path, csv_path)
-            data.append(cls.ingest_csv(csv_path))
+            data.append(cls.ingest_csv(csv_path, int(year)))
             shutil.rmtree(csv_path)
 
         return cls.merge(*data)
 
     @classmethod
-    def ingest_csv(cls, path: Path) -> Self:
+    def ingest_csv(cls, path: Path, year: int) -> Self:
         """Ingest CSAM data from directory with NIBRS CSV files."""
-        data = cls(*pl.collect_all(_ingest_csam_data(path)))
+        data = cls(*pl.collect_all(
+            _ingest_csam_data(path, year)
+        ))
 
         assert data.incidents.select(
             (pl.col(Id.OFFENSE).list.len() == 1).all()
@@ -476,14 +551,14 @@ class CsamData:
         return self.offenses.lazy().group_by(
             Id.YEAR, maintain_order=True,
         ).agg(
-            pl.col("attempted_complete_flag").value_counts(),
+            pl.col("attempt_complete_flag").value_counts(),
         ).explode(
-            "attempted_complete_flag"
+            "attempt_complete_flag"
         ).unnest(
-            "attempted_complete_flag"
+            "attempt_complete_flag"
         ).select(
             pl.col(Id.YEAR).cast(pl.String),
-            pl.col("attempted_complete_flag").replace({
+            pl.col("attempt_complete_flag").replace({
                 "A": "Attempted", "C": "Completed", "U": "Unfounded",
             }).alias(Column.VARIANT),
             pl.col("count").alias(Column.COUNT),
@@ -587,8 +662,7 @@ def load(year: int) -> CsamData:
 
 def load_all() -> CsamData:
     """Load all NIBRS data involving CSAM."""
-    return CsamData.merge(*(load(y) for y in range(2023, 2025)))
-
+    return CsamData.merge(*(load(y) for y in range(2016, 2025)))
 
 def us_arrestees_age_distribution(descriptive: bool = False) -> pl.DataFrame:
     return load_all().arrestee_demographics().age_distribution(descriptive=descriptive)

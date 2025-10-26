@@ -1,9 +1,7 @@
-from abc import ABCMeta, abstractmethod
+from collections.abc import Sequence
 import enum
 from types import MappingProxyType
 
-import altair as alt
-import great_tables as gt
 import polars as pl
 
 from .._const import TOTAL
@@ -13,24 +11,21 @@ from ..util import to_title
 
 class NibrsTable(enum.StrEnum):
     """The names of essential NIBRS tables."""
+    AGE = "age"
     AGENCIES = "agencies"
     ARRESTEE = "arrestee"
     CRIMINAL_ACT = "criminal_act"
     INCIDENT = "incident"
     OFFENDER = "offender"
     OFFENSE = "offense"
+    OFFENSE_TYPE = "offense_type"
     SUSPECT_USING = "suspect_using"
     VICTIM = "victim"
     VICTIM_OFFENSE = "victim_offense"
 
     @property
     def csv_file(self) -> str:
-        name = self
-        if name == self.AGENCIES:
-            return f"agencies.csv"
-        if name != self.INCIDENT:
-            name = name.upper()
-        return f"NIBRS_{name}.csv"
+        return "agencies.csv" if self == self.AGENCIES else f"nibrs_{self}.csv"
 
 
 NIBRS_SOURCE_FILES = frozenset(["postgres_load.sql"]) | frozenset(
@@ -42,6 +37,11 @@ NIBRS_SOURCE_FILES = frozenset(["postgres_load.sql"]) | frozenset(
 class NibrsSchema(enum.Enum):
     """The schemata of core NIBRS tables."""
 
+    AGE = pl.Schema({
+        "age_id": pl.Int16,
+        "age_code": pl.String,
+        "age_name": pl.String,
+    })
     AGENCIES = pl.Schema({
         "yearly_agency_id": pl.Int64,
         "agency_id": pl.Int64,
@@ -84,10 +84,10 @@ class NibrsSchema(enum.Enum):
         "pe_reported_flag": pl.String,
         "male_officer": pl.Int32,
         "male_civilian": pl.Int32,
-        "male_total": pl.Int32,
+        "male_officer+male_civilian": pl.Int32,
         "female_officer": pl.Int32,
         "female_civilian": pl.Int32,
-        "female_total": pl.Int32,
+        "female_officer+female_civilian": pl.Int32,
         "officer_rate": pl.Decimal(6, 2),
         "employee_rate": pl.Decimal(6, 2),
         "nibrs_cert_date": pl.String,
@@ -128,6 +128,24 @@ class NibrsSchema(enum.Enum):
         "criminal_act_id": pl.Int16,
         "offense_id": pl.Int64,
     })
+    INCIDENT_LEGACY = pl.Schema({
+        "agency_id": pl.Int64,
+        "incident_id": pl.Int64,
+        "nibrs_month_id": pl.Int64,
+        "cargo_theft_flag": pl.String,
+        "submission_date": pl.String,
+        "incident_date": pl.String,
+        "report_date_flag": pl.String,
+        "incident_hour": pl.Int16,
+        "cleared_except_id": pl.Int16,
+        "cleared_except_date": pl.String,
+        "incident_status": pl.String,
+        "data_home": pl.String,
+        "ddocname": pl.String,
+        "orig_format": pl.String,
+        "ff_line_number": pl.Int64,
+        "did": pl.Int64,
+    })
     INCIDENT = pl.Schema({
 	    "data_year": pl.Int16,
         "agency_id": pl.Int64,
@@ -158,15 +176,36 @@ class NibrsSchema(enum.Enum):
         "age_range_low_num": pl.Int16,
         "age_range_high_num": pl.Int16,
     })
+    OFFENSE_LEGACY = pl.Schema({
+        "offense_id": pl.Int64,
+        "incident_id": pl.Int64,
+        "offense_type_id": pl.String,
+        "attempt_complete_flag": pl.String,
+        "location_id": pl.Int64,
+        "num_premises_entered": pl.Int16,
+        "method_entry_code": pl.String,
+        "ff_line_number": pl.Int64,
+    })
     OFFENSE = pl.Schema({
         "data_year": pl.Int16,
         "offense_id": pl.Int64,
         "incident_id": pl.Int64,
         "offense_code": pl.String,
-        "attempted_complete_flag": pl.String,
+        "attempt_complete_flag": pl.String,
         "location_id": pl.Int64,
         "num_premises_entered": pl.Int16,
         "method_entry_code": pl.String,
+    })
+    OFFENSE_TYPE = pl.Schema({
+        "offense_type_id": pl.Int64,
+        "offense_code": pl.String,
+        "offense_name": pl.String,
+        "crime_against": pl.String,
+        "ct_flag": pl.String,
+        "hc_flag": pl.String,
+        "hc_code": pl.String,
+        "offense_category_name": pl.String,
+        "offense_group": pl.String,
     })
     SUSPECT_USING = pl.Schema({
         "data_year": pl.Int16,
@@ -196,6 +235,84 @@ class NibrsSchema(enum.Enum):
         "victim_id": pl.Int64,
         "offense_id": pl.Int64,
     })
+
+    def has_demographics(self) -> bool:
+        return self in (self.ARRESTEE, self.OFFENDER, self.VICTIM)
+
+    def requires_data_year(self, year: int) -> bool:
+        return (
+            year <= 2015
+            and self in (
+                self.ARRESTEE, self.CRIMINAL_ACT, self.INCIDENT,
+                self.OFFENDER, self.OFFENSE, self.SUSPECT_USING,
+                self.VICTIM, self.VICTIM_OFFENSE
+            )
+        )
+
+    def requires_offense_code(self, year: int) -> bool:
+        return (
+            year <= 2020
+            and self in (self.ARRESTEE, self.OFFENSE)
+        )
+
+    def columns_to_drop(self, year: int) -> None | Sequence[str]:
+        if self is self.INCIDENT and year <= 2015:
+            return ["ddocname", "ff_line_number"]
+        if self is self.OFFENSE and year <= 2015:
+            return ["ff_line_number"]
+
+        return None
+
+    def effective_schema(self, year: int) -> pl.Schema:
+        if year <= 2015:
+            if self is self.OFFENSE:
+                return self.OFFENSE_LEGACY.value
+            if self is self.INCIDENT:
+                return self.INCIDENT_LEGACY.value
+
+        updates = {}
+        if self.requires_data_year(year):
+            updates["data_year"] = None
+        if self.requires_offense_code(year):
+            updates["offense_code"] = {"offense_type_id": pl.Int64}
+        if len(updates) == 0:
+            return self.value
+        return self._apply(**updates)
+
+    def _apply(self, **entries: None | dict[str, type[pl.DataType]]) -> pl.Schema:
+        mapping = {}
+        for k, v in self.value.items():
+            if k not in entries:
+                mapping[k] = v
+                continue
+
+            replacement = entries[k]
+            if replacement is None:
+                continue
+            assert len(replacement) == 1, "entries must have one key, value pair"
+            (k2, v2), *_ = replacement.items()
+            mapping[k2] = v2
+        return pl.Schema(mapping)
+
+
+_AGENCY_COLUMN_MAP = {
+    "female_officer+female_civilian": "ped.female_civilian+ped.female_officer",
+    "male_officer+male_civilian": "ped.male_officer+ped.male_civilian",
+    "officer_rate": "0",
+    "employee_rate": "0"
+}
+
+ORIGINAL_AGENCY_COLUMNS = [
+    _AGENCY_COLUMN_MAP.get(c, c) for c in NibrsSchema.AGENCIES.value.keys()
+]
+
+_VICTIM_COLUMN_MAP = {
+    "age_code_range_high": "age_range_high_num"
+}
+
+ORIGINAL_VICTIM_COLUMNS = [
+    _VICTIM_COLUMN_MAP.get(c, c) for c in NibrsSchema.VICTIM.value.keys()
+]
 
 
 class SchemaExtension(enum.Enum):
@@ -244,6 +361,43 @@ class SchemaExtension(enum.Enum):
 # ======================================================================================
 # NIBRS Data
 
+AGE_IN_YEARS_V1 = pl.when(
+    pl.col("age_id").is_in([1, 2, 3])
+).then(
+    pl.lit(0, dtype=pl.Int16)
+).otherwise(
+    pl.when(
+        pl.col("age_id").eq(5)
+    ).then(
+        pl.col("age_num").cast(pl.Int16)
+    ).otherwise(
+        pl.when(
+            pl.col("age_id").eq(6)
+        ).then(
+            pl.lit(99, dtype=pl.Int16)
+        ).otherwise(
+            pl.lit(None, dtype=pl.Int16)
+        )
+    )
+).alias("age")
+
+
+AGE_IN_YEARS_V2 = pl.when(
+    pl.col("age_id").is_in([1, 2, 3])
+).then(
+    pl.lit(0, dtype=pl.Int16)
+).otherwise(
+    pl.when(
+        pl.col("age_id").ge(4).and_(
+            pl.col("age_id").le(102)
+        )
+    ).then(
+        pl.col("age_id").sub(3)
+    ).otherwise(
+        pl.lit(None, dtype=pl.Int16)
+    )
+).alias("age")
+
 
 class Clearance(enum.IntEnum):
     """The numeric identifiers of exceptional clearances."""
@@ -283,11 +437,21 @@ class Ethnicity(enum.IntEnum):
     UNKNOWN = 40
     NOT_SPECIFIED = 50
 
+    @classmethod
+    def legacy_value_map(cls) -> "dict[int, None | Ethnicity]":
+        return {
+            1: cls.HISPANIC,
+            2: cls.NOT_HISPANIC,
+            3: cls.UNKNOWN,
+            4: cls.MULTIPLE,
+        }
+
 
 class Id(enum.StrEnum):
     """The NIBRS identifiers serving as foreign keys."""
     ACTIVITY = "activity"
     AGE = "age_id"
+    AGE_VALUE = "age_num"
     AGENCY = "agency_id"
     ARRESTEE = "arrestee_id"
     CLEARED_EXCEPT = "cleared_except_id"
@@ -480,6 +644,24 @@ class Race(enum.IntEnum):
     NOT_SPECIFIED = 99
 
     HISPANIC = 665  # Not in NIBRS, added to simplify folding of ethnicity
+
+    @classmethod
+    def legacy_value_map(cls) -> "dict[int, Race]":
+        return {
+            0: cls.UNKNOWN,
+            1: cls.WHITE,
+            2: cls.BLACK,
+            3: cls.AMERICAN_INDIAN,
+            4: cls.ASIAN,
+            5: cls.ASIAN,
+            6: cls.ASIAN,
+            7: cls.ASIAN,
+            8: cls.HAWAIIAN,
+            9: cls.OTHER,
+            98: cls.MULTIPLE,
+            99: cls.NOT_SPECIFIED,
+        }
+
 
 
 class Sex(enum.StrEnum):
