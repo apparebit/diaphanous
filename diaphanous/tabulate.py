@@ -1,7 +1,6 @@
 from argparse import ArgumentParser
 from collections.abc import Iterator, Sequence
 from io import StringIO
-import math
 import os
 from pathlib import Path
 import re
@@ -13,7 +12,11 @@ import altair as alt
 import great_tables as gt
 import polars as pl
 
-from .chart import plot_age_thumbs, plot_age_and_sex
+from .chart import (
+    plot_age_thumbs, plot_age_and_sex, plot_cdf_band, plot_sex_and_age_cdfs,
+    plot_sex_and_age_cdf_bands
+)
+from .color import Palette
 from .platform.data import REPORTS_PER_PLATFORM
 
 import diaphanous.aunz as aunz
@@ -364,19 +367,18 @@ class Analyzer:
         if self._with_crimes:
             self.h2("Crime Statistics About CSAM")
             self.html("""
-                <p>The following countries and organizations do not seem to collect
-                the necessary data:</p>
-                <ul>
-                <li>European Union
-                <li>Phillipines
-                <li>Singapore
-                <li>UK
-                </ul>
-
-                <p>The following countries apparently collect but do not publish
-                the necessary data:</p>
+                <p>The following countries (and supranational organization) do
+                not appear to publish police statistics that are granular enough
+                to relate specific offense to offender age and sex.</p>
                 <ul>
                 <li>Canada
+                <li>Czech Republic
+                <li>European Union
+                <li>France
+                <li>Phillipines
+                <li>Poland
+                <li>Singapore
+                <li>United Kingdom
                 </ul>
             """)
 
@@ -907,34 +909,32 @@ printr()
         self.end_col()
 
     DETAIL_YEARS = (2023, 2024)
-    THUMB_YEARS = (2019, 2024)
+    THUMB_YEARS = (2015, 2024)
 
-    def filter_years(self, frame: pl.DataFrame, first: int, last: int) -> pl.DataFrame:
-        return frame.filter(
-            pl.col("data_year").ge(first).and_(pl.col("data_year").le(last))
-        )
+    def filter_years(
+        self, distributions: dict[str, pl.DataFrame], first: int, last: int
+    ) -> dict[str, pl.DataFrame]:
+        filtered = {}
+        for key in distributions:
+            filtered[key] = distributions[key].filter(
+                pl.col("data_year").ge(first).and_(pl.col("data_year").le(last))
+            )
+        return filtered
 
     def emit_age_distributions(self) -> None:
         self.html("<div class=wide>\n")
         self.h3("Age Distributions of Offenders")
 
-        au_ages = aunz.au_age_distribution()
-        de_ages = bka.de_age_distribution(descriptive=True)
-        de_recent = self.filter_years(de_ages, *self.DETAIL_YEARS)
-        es_ages = crimestat.es_age_distribution(descriptive=True)
-        es_recent = self.filter_years(es_ages, *self.DETAIL_YEARS)
-        nz_ages = aunz.nz_age_distribution(descriptive=True)
-        nz_recent = self.filter_years(nz_ages, *self.DETAIL_YEARS)
-        us_ages = nibrs.us_offenders_age_distribution()
-        us_arrestees = nibrs.us_arrestees_age_distribution()
+        distributions = crimestat.load_all_age_distributions()
+        detail = self.filter_years(distributions, *self.DETAIL_YEARS)
 
         fig = alt.vconcat(
-            plot_age_and_sex(au_ages, "Offenders", "Australia"),
-            plot_age_and_sex(de_recent, "Suspects", "Germany"),
-            plot_age_and_sex(nz_recent, "Offenders", "New Zealand"),
-            plot_age_and_sex(es_recent, "Suspects", "Spain"),
-            plot_age_and_sex(us_ages, "Offenders", "United States"),
-            plot_age_and_sex(us_arrestees, "Arrestees", "United States"),
+            plot_age_and_sex(detail["au"], "Offenders", "Australia"),
+            plot_age_and_sex(detail["de"], "Suspects", "Germany"),
+            plot_age_and_sex(detail["nz"], "Offenders", "New Zealand"),
+            plot_age_and_sex(detail["es"], "Suspects", "Spain"),
+            plot_age_and_sex(detail["us_offenders"], "Offenders", "United States"),
+            plot_age_and_sex(detail["us_arrestees"], "Arrestees", "United States"),
         ).resolve_scale(x="shared")
 
         path = "figure/age-distributions.svg"
@@ -944,19 +944,18 @@ printr()
 
         self.html(
             """<p>The distributions for the last decade, where available, are
-            shown next. While NIBRS data is available for years prior to 2023,
-            it only reached 80% coverage for police agencies that year and hence
-            is not representative of the United States."""
+            shown next. The United States' NIBRS data only captures a fraction
+            of all law enforcement agencies."""
         )
 
-        es_decade = self.filter_years(es_ages, *self.THUMB_YEARS)
-        nz_decade = self.filter_years(nz_ages, *self.THUMB_YEARS)
+        thumb = self.filter_years(distributions, *self.THUMB_YEARS)
 
         self.html("<div class=extra-wide>\n")
         more_fig = alt.vconcat(
-            plot_age_thumbs(de_ages, "Germany", facet_labels=False),
-            plot_age_thumbs(nz_decade, "New Zealand", facet_labels=False),
-            plot_age_thumbs(es_decade, "Spain"),
+            plot_age_thumbs(thumb["de"], "Germany", facet_labels=False),
+            plot_age_thumbs(thumb["nz"], "New Zealand", facet_labels=False),
+            plot_age_thumbs(thumb["es"], "Spain", facet_labels=False),
+            plot_age_thumbs(thumb["us_offenders"], "United States"),
         ).resolve_scale(
             x="shared"
         ).configure_axis(
@@ -967,6 +966,30 @@ printr()
         more_fig.save(more_path)
         self.svg(more_path)
         self.html("</div>\n")
+
+        titles = crimestat.compute_cdf_titles(distributions)
+        cdf = crimestat.compute_cdfs(distributions)
+        cdf_fig = alt.vconcat(
+            *(
+                plot_sex_and_age_cdfs(
+                    cdf,
+                    title=title,
+                    rule=20 if title.startswith("New Zealand") else 18,
+                )
+                for title, cdf in zip(titles.values(), cdf.values())
+            )
+        )
+        cdf_fig.save("figure/cdf.svg")
+        self.svg("figure/cdf.svg")
+
+        bands = alt.vconcat(
+            plot_sex_and_age_cdf_bands(cdf["de"], "Germany", rule=18),
+            plot_sex_and_age_cdf_bands(cdf["nz"], "New Zealand", rule=20),
+            plot_sex_and_age_cdf_bands(cdf["es"], "Spain", rule=18),
+            plot_sex_and_age_cdf_bands(cdf["us_offenders"], "United States", rule=18),
+        )
+        bands.save("figure/bands.svg")
+        self.svg("figure/bands.svg")
 
         self.html("""
         <p>In the above age distributions, a <em>child</em> is younger than the

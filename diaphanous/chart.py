@@ -1,9 +1,11 @@
+from collections.abc import Iterable
+
 import altair as alt
 import polars as pl
 
 from .color import Palette
 from .nibrs.model import Id
-from .util import to_step_and_limit
+from .util import compute_sex_and_age_cdf_extrema, get_year_range, to_step_and_limit
 
 def plot_age_and_sex(
     frame: pl.DataFrame, entity: str, country: str
@@ -106,6 +108,14 @@ def plot_age_thumbs(
         ).otherwise(
             pl.format("{} {}", pl.col("sex"), pl.col(Id.GROUP))
         ).alias(Id.GROUP),
+        pl.col("count")
+            .sum()
+            .over("data_year")
+            .round()
+            .cast(pl.Int64)
+            .cast(pl.String)
+            .str.replace(r"(\d+)(\d\d\d)$", "${1},${2}")
+            .alias("total"),
     )
 
     domain = [
@@ -120,7 +130,9 @@ def plot_age_thumbs(
         Palette.BLUE, Palette.BLUE, Palette.GRAY,
     ]
 
-    ystep, ymax = to_step_and_limit(frame.group_by(
+    ystep, ymax = to_step_and_limit(frame.drop_nulls(
+        "age"
+    ).group_by(
         "data_year", "age"
     ).agg(
         pl.col("count").sum()
@@ -136,8 +148,42 @@ def plot_age_thumbs(
         orient="right",
     )
 
-    return alt.Chart(
+    base = alt.Chart(
         data,
+    )
+
+    return alt.layer(
+        base.mark_bar().encode(
+            alt.X("age:Q", axis=alt.Axis(labels=False))
+                .scale(domain=(0, 100))
+                .title(None),
+            alt.Y("sum(count):Q", axis=yaxis, sort=domain)
+                .scale(domain=(0, ymax))
+                .title(None),
+            alt.Color("age_group:N", legend=None)
+                .scale(domain=domain, range=range),
+            alt.Order("color_variant_label_sort_index:Q"),
+        ),
+        base.mark_text(
+            x="width",
+            y=25,
+            dx=-30,
+            align="right",
+            fontSize=30,
+            fontStyle="italic",
+        ).encode(
+            alt.Text("total:N")
+        ),
+    ).facet(
+        column=alt.Column(
+            "data_year:N",
+            title=None,
+            header=alt.Header(
+                labelAnchor="middle",
+                labelOrient="bottom",
+                labelFontSize=40,
+            ) if facet_labels else alt.Header(labels=False),
+        ),
         title=alt.Title(
             country,
             anchor="middle",
@@ -147,25 +193,97 @@ def plot_age_thumbs(
             fontWeight="normal",
             dx=0,
         ),
-    ).mark_bar().encode(
-        alt.X("age:Q", axis=alt.Axis(labels=False))
-            .scale(domain=(0, 100))
-            .title(None),
-        alt.Y("sum(count):Q", axis=yaxis, sort=domain)
-            .scale(domain=(0, ymax))
-            .title(None),
-        alt.Color("age_group:N", legend=None)
-            .scale(domain=domain, range=range),
-        alt.Order("color_variant_label_sort_index:Q"),
-        alt.Column(
-            "data_year:N",
-            title=None,
-            header=alt.Header(
-                labelAnchor="middle",
-                labelOrient="bottom",
-                labelFontSize=40,
-            ) if facet_labels else alt.Header(labels=False),
+    )
+
+def plot_sex_and_age_cdfs(
+    frame: pl.DataFrame, title: None | str = None, rule: None | int = None
+) -> alt.LayerChart:
+    layers = [
+        plot_cdf(frame, column="cdf", title=title, colors=f"{Palette.BLUE}80"),
+        plot_cdf(frame, column="female_cdf", title=title, colors=f"{Palette.RED}80"),
+    ]
+
+    if rule is not None:
+        layers.append(alt.Chart().mark_rule(
+            color=Palette.GRAY,
+            strokeWidth=3,
+            strokeDash=(4, 2),
+        ).encode(
+            alt.XDatum(rule)
+        ))
+
+    return alt.layer(*layers).resolve_scale(
+        color="independent"
+    )
+
+
+def plot_cdf(
+    frame: pl.DataFrame,
+    column: str = "cdf",
+    title: None | str = None,
+    colors: None | str | Iterable[str] = None,
+) -> alt.Chart:
+    year_min, year_max = get_year_range(frame)
+    if colors is None:
+        colors = [f"{Palette.BLUE}80"] * (year_max - year_min)
+    elif isinstance(colors, str):
+        colors = [colors] * (year_max - year_min)
+    assert isinstance(colors, list)
+
+    return (
+        alt.Chart(frame) if title is None else alt.Chart(frame, title=title)
+    ).mark_line().encode(
+        alt.X("age:Q").scale(domain=(0, 100)).title("Age"),
+        alt.Y(f"{column}:Q").scale(domain=(0, 1)).title("CDF"),
+        alt.Color("data_year:N", legend=None).scale(
+            domain=[y for y in range(year_min, year_max)], range=colors
         ),
+    ).properties(
+        width=500,
+        height=300,
+    )
+
+
+def plot_sex_and_age_cdf_bands(
+    frame: pl.DataFrame,
+    title: None | str = None,
+    color_all: str = Palette.BLUE,
+    color_female: str = Palette.RED,
+    rule: None | int = None,
+) -> alt.LayerChart:
+    extrema = compute_sex_and_age_cdf_extrema(frame)
+    layers = [
+        plot_cdf_band(extrema, "cdf", title=title, color=f"{color_all}80"),
+        plot_cdf_band(extrema, "female_cdf", title=title, color=f"{color_female}80"),
+    ]
+
+    if rule is not None:
+        layers.append(alt.Chart().mark_rule(
+            color=Palette.GRAY,
+            strokeWidth=3,
+            strokeDash=(4, 2),
+        ).encode(
+            alt.XDatum(rule)
+        ))
+
+    return alt.layer(*layers)
+
+
+def plot_cdf_band(
+    frame: pl.DataFrame,
+    column: str = "cdf",
+    title: None | str = None,
+    color: None | str = None,
+) -> alt.Chart:
+    return (
+        alt.Chart(frame) if title is None else alt.Chart(frame, title=title)
+    ).mark_area(color=color or f"{Palette.BLUE}80").encode(
+        alt.X("age:Q").scale(domain=(0, 100)).title("Age"),
+        alt.Y(f"min_{column}:Q").scale(domain=(0, 1)).title("CDF"),
+        alt.Y2(f"max_{column}:Q"),
+    ).properties(
+        width=500,
+        height=300,
     )
 
 
