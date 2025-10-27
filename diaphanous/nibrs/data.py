@@ -13,7 +13,10 @@ from .model import (
     NIBRS_SOURCE_FILES, NibrsSchema, NibrsTable, OffenseCode, ORIGINAL_AGENCY_COLUMNS,
     Race, Sex
 )
-from ..util import format_table
+from ..util import (
+    add_age_group, add_country_entity, add_group_rank, arrange_age_distribution,
+    format_table
+)
 
 if TYPE_CHECKING:
     from .demographics import Demographics
@@ -37,41 +40,48 @@ def _associated_offenses(
         pl.col(Id.OFFENSE).alias(label)
     )
 
+@dataclasses.dataclass
+class _Reader:
 
-def _ingest_csam_data(path: Path, year: int) -> list[pl.LazyFrame]:
-    """
-    Ingest all incidents involving CSAM from the given directory with NIBRS
-    tables.
-    """
-    is_legacy_age = pl.read_csv(
-        path / NibrsTable.AGE.csv_file,
-        schema=NibrsSchema.AGE.pick(year, path).value,
-    ).filter(
-        pl.col("age_id").eq(4)
-    ).get_column(
-        "age_code"
-    ).item() == "00"
+    path: Path
+    year: int
+    is_legacy_age: bool
+    offense_type: None | pl.LazyFrame
 
-    if year <= 2020:
-        effective_schema = NibrsSchema.OFFENSE_TYPE.pick(year, path)
-        offense_type = pl.scan_csv(
-            path / NibrsTable.OFFENSE_TYPE.csv_file,
-            schema=effective_schema.value,
-        ).select(
-            pl.col("offense_type_id", "offense_code")
-        )
-    else:
-        offense_type = None
+    def __init__(self, path: Path, year: int) -> None:
+        self.path = path
+        self.year = year
 
-    # For future reference: At least for CA, DC, and NY, the postgres_load.sql
-    # script declares NIBRS_BIAS_LIST.csv to have the windows-1251 or cp1251
-    # encoding.
-    # For below: At least for CA, the agencies.csv file contains an invalid
-    # UTF-8 sequence (\xa0 by itself on line 60), hence the lossy encoding.
-    def read(schema: NibrsSchema) -> pl.LazyFrame:
-        effective_schema = schema.pick(year, path)
+        self.is_legacy_age = pl.read_csv(
+            path / NibrsTable.AGE.csv_file,
+            schema=NibrsSchema.AGE.pick(year, path).value,
+        ).filter(
+            pl.col("age_id").eq(4)
+        ).get_column(
+            "age_code"
+        ).item() == "00"
+
+        if year <= 2020:
+            effective_schema = NibrsSchema.OFFENSE_TYPE.pick(year, path)
+            self.offense_type = pl.scan_csv(
+                path / NibrsTable.OFFENSE_TYPE.csv_file,
+                schema=effective_schema.value,
+            ).select(
+                pl.col("offense_type_id", "offense_code")
+            )
+        else:
+            self.offense_type = None
+
+    def read(self, schema: NibrsSchema) -> pl.LazyFrame:
+        effective_schema = schema.pick(self.year, self.path)
+
+        # For future reference: At least for CA, DC, and NY, the postgres_load.sql
+        # script declares NIBRS_BIAS_LIST.csv to have the windows-1251 or cp1251
+        # encoding.
+        # For below: At least for CA, the agencies.csv file contains an invalid
+        # UTF-8 sequence (\xa0 by itself on line 60), hence the lossy encoding.
         frame = pl.scan_csv(
-            path / schema.csv_file(),
+            self.path / schema.csv_file(),
             schema=effective_schema.value,
             encoding="utf8-lossy" if schema is NibrsSchema.AGENCIES else "utf8"
         )
@@ -82,13 +92,13 @@ def _ingest_csam_data(path: Path, year: int) -> list[pl.LazyFrame]:
         select_columns = False
         if effective_schema.requires_data_year():
             frame = frame.with_columns(
-                pl.lit(year, dtype=pl.Int16).alias("data_year")
+                pl.lit(self.year, dtype=pl.Int16).alias("data_year")
             )
             select_columns = True
         if effective_schema.requires_offense_code():
-            assert offense_type is not None
+            assert self.offense_type is not None
             frame = frame.join(
-                offense_type,
+                self.offense_type,
                 on="offense_type_id",
                 how="left",
             )
@@ -100,10 +110,10 @@ def _ingest_csam_data(path: Path, year: int) -> list[pl.LazyFrame]:
 
         if schema.has_demographics():
             frame = frame.with_columns(
-                AGE_IN_YEARS_V1 if is_legacy_age else AGE_IN_YEARS_V2
+                AGE_IN_YEARS_V1 if self.is_legacy_age else AGE_IN_YEARS_V2
             )
 
-            if year <= 2020:
+            if self.year <= 2020:
                 frame = frame.with_columns(
                     pl.col(Id.ETHNICITY).replace_strict(
                         Ethnicity.legacy_value_map(),
@@ -118,19 +128,27 @@ def _ingest_csam_data(path: Path, year: int) -> list[pl.LazyFrame]:
 
         return frame
 
+
+def _ingest_csam_data(path: Path, year: int) -> list[pl.LazyFrame]:
+    """
+    Ingest all incidents involving CSAM from the given directory with NIBRS
+    tables.
+    """
+    reader = _Reader(path, year)
+
     if year == 2015:
         agencies = pl.LazyFrame({}, schema=NibrsSchema.AGENCIES.value)
     else:
-        agencies = read(NibrsSchema.AGENCIES)
+        agencies = reader.read(NibrsSchema.AGENCIES)
 
-    arrestee = read(NibrsSchema.ARRESTEE)
-    criminal_act = read(NibrsSchema.CRIMINAL_ACT)
-    incident = read(NibrsSchema.INCIDENT)
-    offender = read(NibrsSchema.OFFENDER)
-    offense = read(NibrsSchema.OFFENSE)
-    suspect_using = read(NibrsSchema.SUSPECT_USING)
-    victim = read(NibrsSchema.VICTIM)
-    victim_offense = read(NibrsSchema.VICTIM_OFFENSE)
+    arrestee = reader.read(NibrsSchema.ARRESTEE)
+    criminal_act = reader.read(NibrsSchema.CRIMINAL_ACT)
+    incident = reader.read(NibrsSchema.INCIDENT)
+    offender = reader.read(NibrsSchema.OFFENDER)
+    offense = reader.read(NibrsSchema.OFFENSE)
+    suspect_using = reader.read(NibrsSchema.SUSPECT_USING)
+    victim = reader.read(NibrsSchema.VICTIM)
+    victim_offense = reader.read(NibrsSchema.VICTIM_OFFENSE)
 
     # Drop year from auxiliary tables
     criminal_act = criminal_act.select(pl.col(Id.CRIMINAL_ACT, Id.OFFENSE))
@@ -315,6 +333,117 @@ def _ingest_csam_data(path: Path, year: int) -> list[pl.LazyFrame]:
     ]
 
 
+def _ingest_porn_data(path: Path, year: int) -> pl.DataFrame:
+    reader = _Reader(path, year)
+
+    incident = reader.read(NibrsSchema.INCIDENT)
+    offender = reader.read(NibrsSchema.OFFENDER)
+    offense = reader.read(NibrsSchema.OFFENSE)
+
+    offenses_involving_porn = offense.filter(
+        pl.col("offense_code").eq(OffenseCode.PORNOGRAPHY_OBSCENE_MATERIAL)
+    )
+
+    incidents_involving_porn = offenses_involving_porn.select(
+        pl.col(Id.INCIDENT).unique()
+    ).join(
+        incident,
+        on=Id.INCIDENT,
+        how="inner",
+    )
+
+    offenders_involving_porn = incidents_involving_porn.select(
+        pl.col(Id.INCIDENT)
+    ).join(
+        offender,
+        on=Id.INCIDENT,
+        how="inner",
+    )
+
+    return offenders_involving_porn.collect()
+
+
+def prepare(
+    frame: pl.DataFrame,
+    /,
+    fold_ethnicity: bool = True,
+    simplify_race: bool = True,
+    nullify_unknown: bool = True,
+) -> pl.DataFrame:
+    frame = add_age_group(frame, 11, 17).drop(Id.AGE)
+
+    # Map NOT_SPECIFIED and UNKNOWN to null
+    if nullify_unknown:
+        frame = frame.with_columns(
+            pl.col(Id.ETHNICITY).replace({
+                Ethnicity.NOT_SPECIFIED: None,
+                Ethnicity.UNKNOWN: None,
+            }),
+            pl.col(Id.RACE).replace({
+                Race.NOT_SPECIFIED: None,
+                Race.UNKNOWN: None,
+            }),
+            pl.col(Id.SEX).replace({
+                Sex.NOT_SPECIFIED: None,
+                Sex.UNKNOWN: None,
+            }),
+        )
+
+    if simplify_race:
+        frame = frame.with_columns(
+            pl.col(Id.RACE).replace({
+                Race.AMERICAN_INDIAN: Race.OTHER.value,
+                Race.ASIAN: Race.OTHER.value,
+                Race.HAWAIIAN: Race.OTHER.value,
+                Race.MULTIPLE: Race.OTHER.value,
+            })
+        )
+
+    if fold_ethnicity:
+        frame = frame.with_columns(
+            pl.when(
+                pl.col(Id.ETHNICITY).eq(Ethnicity.HISPANIC)
+            ).then(
+                pl.lit(Race.HISPANIC.value, dtype=pl.Int16)
+            ).otherwise(
+                pl.col(Id.RACE)
+            ).alias(Id.RACE)
+        )
+
+    is_offender = Id.OFFENDER in frame.columns
+    return frame.select(
+        pl.col(
+            Id.YEAR,
+            "age", Id.GROUP,
+            Id.SEX, Id.RACE, Id.INCIDENT,
+            Id.OFFENDER if is_offender else Id.ARRESTEE
+        )
+    )
+
+
+def finish(frame: pl.DataFrame, /, entity: None | str = None) -> pl.DataFrame:
+    frame = frame.with_columns(
+        pl.col("age").cast(pl.Int8),
+        pl.col(Id.SEX).replace(
+            Id.SEX.humanized_values(),
+            return_dtype=pl.String
+        ),
+        pl.col(Id.RACE).replace_strict(
+            Id.RACE.humanized_values(),
+            return_dtype=pl.String
+        ),
+        pl.col("count").cast(pl.Float64),
+    ).rename(
+        {Id.SEX: "sex", Id.RACE.value: "ethnicity"}
+    )
+
+    frame = add_group_rank(frame)
+    if entity is not None:
+        frame = add_country_entity(frame, "United States", entity)
+    return arrange_age_distribution(frame)
+
+
+
 @dataclasses.dataclass(frozen=True, slots=True)
 class CsamData:
     """
@@ -340,12 +469,19 @@ class CsamData:
     victims: pl.DataFrame
 
     @classmethod
-    def unarchive(cls, archive: Path, staging: Path) -> list[str]:
+    def unarchive(cls, archive: Path) -> Path:
         """
         Unarchive needed source files into the staging directory from the
         NIBRS archive.
         """
-        files = []
+        staging = cls.make_staging()
+        state = archive.name[:2]
+        year = archive.name[3:7]
+        csv_path = staging / year / state
+        if csv_path.exists():
+            shutil.rmtree(csv_path)
+        csv_path.mkdir(parents=True)
+
         with zipfile.ZipFile(archive) as handle:
             for entry in handle.namelist():
                 if entry.endswith("/"):
@@ -359,12 +495,20 @@ class CsamData:
                 # Explicitly copying the file data ensures that the materialized
                 # file is not nested in arbitrary directories.
                 with handle.open(entry, mode="r") as source:
-                    with open(staging / name, mode="wb") as sink:
+                    with open(csv_path / name, mode="wb") as sink:
                         shutil.copyfileobj(source, sink)
 
-                files.append(name)
+        return csv_path
 
-        return files
+    @classmethod
+    def make_staging(cls) -> Path:
+        path = Path.cwd() / ".nibrs.tmp"
+        path.mkdir(exist_ok=True)
+        return path
+
+    @classmethod
+    def list_zip(cls, path: Path) -> list[Path]:
+        return sorted(path.glob("??-????.zip"))
 
     @classmethod
     def ingest_zip(cls, path: Path, progress: Callable[[Path], None]) -> Self:
@@ -379,22 +523,13 @@ class CsamData:
         the nested subdirectory again, otherwise leaving it in place for
         inspection.
         """
-        staging = Path.cwd() / ".nibrs.tmp"
-        staging.mkdir(exist_ok=True)
         data = []
 
-        for archive_path in sorted(path.glob(f"??-????.zip")):
+        for archive_path in cls.list_zip(path):
             progress(archive_path)
 
-            state = archive_path.name[:2]
-            year = archive_path.name[3:7]
-            csv_path = staging / year / state
-            if csv_path.exists():
-                shutil.rmtree(csv_path)
-            csv_path.mkdir(parents=True)
-
-            cls.unarchive(archive_path, csv_path)
-            data.append(cls.ingest_csv(csv_path, int(year)))
+            csv_path = cls.unarchive(archive_path)
+            data.append(cls.ingest_csv(csv_path, int(csv_path.parent.name)))
             shutil.rmtree(csv_path)
 
         return cls.merge(*data)
@@ -616,17 +751,21 @@ class CsamData:
             getattr(self, field.name).write_parquet(path / f"{field.name}.parquet")
 
 
+ROOT = Path(__file__).parent.parent.parent
+ARCHIVES = ROOT / "data" / "nibrs"
+INGESTED = ROOT / "data" / "nibrs" / "ingested"
+
+
 def load(year: int) -> CsamData:
     """Load NIBRS data involving CSAM for the given year."""
     def trace(path: Path) -> None:
         print(str(path))
 
-    root = Path(__file__).parent.parent.parent
-    archives = root / "data" / "nibrs" / f"{year}"
-    ingested = root / "data" / "nibrs" / "ingested" / archives.name
+    archive = ARCHIVES / f"{year}"
+    ingested = INGESTED / archive.name
 
     if not ingested.exists():
-        data = CsamData.ingest_zip(archives, trace)
+        data = CsamData.ingest_zip(archive, trace)
         data.save(ingested)
     else:
         data = CsamData.load(ingested)
@@ -645,3 +784,40 @@ def us_arrestees_age_distribution(descriptive: bool = False) -> pl.DataFrame:
 
 def us_offenders_age_distribution(descriptive: bool = False) -> pl.DataFrame:
     return load_all().offender_demographics().age_distribution(descriptive=descriptive)
+
+
+def load_porn() -> pl.DataFrame:
+    def trace(path: Path) -> None:
+        print(str(path))
+
+    ingested = ARCHIVES / "porn.parquet"
+
+    if not ingested.exists():
+        data = []
+        for year in range(2015, 2025):
+            for archive in CsamData.list_zip(ARCHIVES / f"{year}"):
+                trace(archive)
+                csv_path = CsamData.unarchive(archive)
+                data.append(_ingest_porn_data(csv_path, int(csv_path.parent.name)))
+                shutil.rmtree(csv_path)
+
+        frame = pl.concat(data)
+        frame.write_parquet(ingested)
+    else:
+        frame = pl.read_parquet(ingested)
+
+    return frame
+
+
+def us_porn_offenders_age_distribution(descriptive: bool = False) -> pl.DataFrame:
+    frame = load_porn()
+    frame = prepare(frame).group_by(
+        Id.YEAR, "age", Id.GROUP, Id.SEX, Id.RACE, maintain_order=False
+    ).agg(
+        pl.len().alias("count"),
+        pl.lit(None, dtype=pl.String).alias(Id.ACTIVITY),
+    ).sort(
+        Id.YEAR, "age", Id.GROUP, Id.SEX, Id.RACE
+    )
+
+    return finish(frame, entity="Porn Offender" if descriptive else None)

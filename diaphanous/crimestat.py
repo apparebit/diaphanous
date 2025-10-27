@@ -2,8 +2,10 @@ import polars as pl
 
 from .aunz import au_age_distribution, nz_age_distribution
 from .bka import de_age_distribution
-from .nibrs import us_arrestees_age_distribution
-from .nibrs import us_offenders_age_distribution
+from .nibrs import (
+    us_arrestees_age_distribution, us_offenders_age_distribution,
+    us_porn_offenders_age_distribution
+)
 from .util import (
     add_age_group, add_country_entity, arrange_age_distribution, compute_sex_and_age_cdfs
 )
@@ -62,6 +64,7 @@ def load_all_age_distributions(compact: bool = False) -> dict[str, pl.DataFrame]
         "nz": nz_age_distribution(descriptive=True),
         "us_arrestees": us_arrestees_age_distribution(descriptive=True),
         "us_offenders": us_offenders_age_distribution(descriptive=True),
+        "us_porn_offenders": us_porn_offenders_age_distribution(descriptive=True),
     }
 
     if compact:

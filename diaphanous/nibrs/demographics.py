@@ -2,11 +2,8 @@ from typing import cast, Literal
 
 import polars as pl
 
-from .data import CsamData
-from .model import Ethnicity, Id, Race, Sex
-from ..util import (
-    add_age_group, add_country_entity, add_group_rank, arrange_age_distribution
-)
+from .data import CsamData, finish, prepare
+from .model import Id
 
 
 class Demographics:
@@ -24,60 +21,13 @@ class Demographics:
         simplify_race: bool = True,
         nullify_unknown: bool = True,
     ) -> None:
-        is_offender = source == "offenders"
-
-        # Replace age_id with age and age_group
-        frame = cast(pl.DataFrame, getattr(csam_data, source)).pipe(
-            add_age_group, 11, 17
-        ).drop(Id.AGE)
-
-        # Map NOT_SPECIFIED and UNKNOWN to null
-        if nullify_unknown:
-            frame = frame.with_columns(
-                pl.col(Id.ETHNICITY).replace({
-                    Ethnicity.NOT_SPECIFIED: None,
-                    Ethnicity.UNKNOWN: None,
-                }),
-                pl.col(Id.RACE).replace({
-                    Race.NOT_SPECIFIED: None,
-                    Race.UNKNOWN: None,
-                }),
-                pl.col(Id.SEX).replace({
-                    Sex.NOT_SPECIFIED: None,
-                    Sex.UNKNOWN: None,
-                }),
-            )
-
-        if simplify_race:
-            frame = frame.with_columns(
-                pl.col(Id.RACE).replace({
-                    Race.AMERICAN_INDIAN: Race.OTHER.value,
-                    Race.ASIAN: Race.OTHER.value,
-                    Race.HAWAIIAN: Race.OTHER.value,
-                    Race.MULTIPLE: Race.OTHER.value,
-                })
-            )
-
-        if fold_ethnicity:
-            frame = frame.with_columns(
-                pl.when(
-                    pl.col(Id.ETHNICITY).eq(Ethnicity.HISPANIC)
-                ).then(
-                    pl.lit(Race.HISPANIC.value, dtype=pl.Int16)
-                ).otherwise(
-                    pl.col(Id.RACE)
-                ).alias(Id.RACE)
-            )
-
         self._csam_data = csam_data
         self._source = source
-        self._frame = frame.select(
-            pl.col(
-                Id.YEAR,
-                "age", Id.GROUP,
-                Id.SEX, Id.RACE, Id.INCIDENT,
-                Id.OFFENDER if is_offender else Id.ARRESTEE
-            )
+        self._frame = prepare(
+            cast(pl.DataFrame, getattr(csam_data, source)),
+            fold_ethnicity=fold_ethnicity,
+            simplify_race=simplify_race,
+            nullify_unknown=nullify_unknown,
         )
 
     def name(self) -> str:
@@ -161,24 +111,6 @@ class Demographics:
         frame = self.by(
             Id.YEAR, Id.AGE, Id.GROUP, Id.SEX, Id.RACE, Id.ACTIVITY,
             sorted=True
-        ).with_columns(
-            pl.col("age").cast(pl.Int8),
-            pl.col(Id.SEX).replace(
-                Id.SEX.humanized_values(),
-                return_dtype=pl.String
-            ),
-            pl.col(Id.RACE).replace_strict(
-                Id.RACE.humanized_values(),
-                return_dtype=pl.String
-            ),
-            pl.col("count").cast(pl.Float64),
-        ).rename(
-            {Id.SEX: "sex", Id.RACE.value: "ethnicity"}
         )
 
-        frame = add_group_rank(frame)
-        if descriptive:
-            frame = add_country_entity(
-                frame, "United States", self._source[:-1].title()
-            )
-        return arrange_age_distribution(frame)
+        return finish(frame, entity=self._source[:-1].title() if descriptive else None)
