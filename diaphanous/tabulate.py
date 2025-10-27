@@ -962,7 +962,7 @@ printr()
            labelFontSize=35,
            titleFontSize=40,
         )
-        more_path = "figure/age_thumbs.svg"
+        more_path = "figure/age-distribution-thumbs.svg"
         more_fig.save(more_path)
         self.svg(more_path)
         self.html("</div>\n")
