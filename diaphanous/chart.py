@@ -131,8 +131,11 @@ def plot_age_thumbs(
     ).with_columns(
         pl.format("N={}", pl.col("total")).alias("total"),
         pl.col("count")
-            .filter(pl.col("sex").eq("Female").and_(pl.col("age").lt(pl.col("age_of_majority"))))
-            .sum()
+            .filter(
+                pl.col("sex").eq("Female").and_(
+                    pl.col("age").lt(pl.col("age_of_majority"))
+                )
+            ).sum()
             .over("data_year")
             .alias("fem_juv"),
     ).with_columns(
@@ -161,7 +164,7 @@ def plot_age_thumbs(
         Palette.BLUE, Palette.BLUE, Palette.GRAY,
     ]
 
-    ystep, ymax = to_step_and_limit(frame.drop_nulls(
+    actual_max = frame.drop_nulls(
         "age"
     ).group_by(
         "data_year", "age"
@@ -169,7 +172,9 @@ def plot_age_thumbs(
         pl.col("count").sum()
     ).select(
         pl.col("count").max()
-    ).item())
+    ).item()
+    ystep, ymax = to_step_and_limit(actual_max)
+    # print(f">>> {actual_max} {ystep} {ymax}")
 
     yaxis = alt.Axis(
         labelExpr=(

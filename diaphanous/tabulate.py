@@ -955,7 +955,8 @@ printr()
             plot_age_thumbs(thumb["de"], "Germany", facet_labels=False),
             plot_age_thumbs(thumb["nz"], "New Zealand", facet_labels=False),
             plot_age_thumbs(thumb["es"], "Spain", facet_labels=False),
-            plot_age_thumbs(thumb["us_offenders"], "United States"),
+            plot_age_thumbs(thumb["us_offenders"], "US Offenders"),
+            plot_age_thumbs(thumb["us_arrestees"], "US Arrestees")
         ).resolve_scale(
             x="shared"
         ).configure_axis(

@@ -232,7 +232,7 @@ def get_year_range(frame: pl.DataFrame) -> tuple[int, int]:
 
 
 def to_step_and_limit(num: float) -> tuple[int, int]:
-    for limit in (10, 50, 100, 500, 1_000, 5_000):
+    for limit in (10, 50, 100, 200, 500, 1_000, 5_000):
         if num <= limit:
             factor = limit // 10
             return factor, math.ceil(num / factor) * factor
