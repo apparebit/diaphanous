@@ -933,7 +933,9 @@ printr()
             plot_age_and_sex(detail["es"], "Suspects", "Spain"),
             plot_age_and_sex(detail["us_offenders"], "Offenders", "United States"),
             plot_age_and_sex(detail["us_arrestees"], "Arrestees", "United States"),
-        ).resolve_scale(x="shared")
+        ).resolve_scale(x="shared").configure_legend(
+            orient="top",
+        )
 
         path = "figure/age-distributions.svg"
         fig.save(path)
@@ -960,7 +962,7 @@ printr()
            labelFontSize=35,
            titleFontSize=40,
         )
-        more_path = "figure/more-age-distributions.svg"
+        more_path = "figure/age_thumbs.svg"
         more_fig.save(more_path)
         self.svg(more_path)
         self.html("</div>\n")
@@ -1204,7 +1206,7 @@ svg {
     display: block !important;
 }
 figure {
-    margin: 0;
+    margin: 2rem 0;
 }
 
 main > * {

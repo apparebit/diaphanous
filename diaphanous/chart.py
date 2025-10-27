@@ -116,6 +116,37 @@ def plot_age_thumbs(
             .cast(pl.String)
             .str.replace(r"(\d+)(\d\d\d)$", "${1},${2}")
             .alias("total"),
+        pl.col("count")
+            .filter(pl.col("sex").eq("Female"))
+            .sum()
+            .over("data_year")
+            .alias("fem"),
+        pl.when(
+            pl.col("country").eq("New Zealand"),
+        ).then(
+            pl.lit(20, dtype=pl.Int16),
+        ).otherwise(
+            pl.lit(18, dtype=pl.Int16),
+        ).alias("age_of_majority"),
+    ).with_columns(
+        pl.format("N={}", pl.col("total")).alias("total"),
+        pl.col("count")
+            .filter(pl.col("sex").eq("Female").and_(pl.col("age").lt(pl.col("age_of_majority"))))
+            .sum()
+            .over("data_year")
+            .alias("fem_juv"),
+    ).with_columns(
+        pl.col("fem_juv").truediv(pl.col("fem")).mul(100).round(1).alias("fem_pct"),
+    ).with_columns(
+        pl.when(
+            pl.col("fem_pct").is_nan()
+        ).then(
+            pl.lit("fm=—", dtype=pl.String)
+        ).otherwise(
+            pl.col("fem_pct").map_elements(
+                lambda el: f"fm={el:.1f}%"
+            )
+        ).alias("fem_fmt")
     )
 
     domain = [
@@ -167,13 +198,25 @@ def plot_age_thumbs(
         base.mark_text(
             x="width",
             y=25,
-            dx=-30,
+            dx=-20,
             align="right",
             fontSize=30,
             fontStyle="italic",
+            fontWeight="lighter",
         ).encode(
             alt.Text("total:N")
         ),
+        base.mark_text(
+            x="width",
+            y=60,
+            dx=-20,
+            align="right",
+            fontSize=30,
+            fontStyle="italic",
+            fontWeight="lighter",
+        ).encode(
+            alt.Text("fem_fmt:N")
+        )
     ).facet(
         column=alt.Column(
             "data_year:N",
