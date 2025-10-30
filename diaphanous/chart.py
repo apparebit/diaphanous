@@ -5,12 +5,68 @@ import polars as pl
 
 from .color import Palette
 from .nibrs.model import Id
-from .util import compute_sex_and_age_cdf_extrema, get_year_range, to_step_and_limit
+from .util import compute_sex_and_age_cdf_extrema, get_year_range, to_axis_range
+
+def _trace(frame: pl.DataFrame) -> pl.DataFrame:
+    pl.Config.set_tbl_cols(20)
+    pl.Config.set_tbl_rows(200)
+    print(frame.select(
+        pl.exclude("country", "entity", "activity")
+    ))
+    return frame
+
+def _prep_sex_by_age(frame: pl.DataFrame) -> pl.DataFrame:
+    return frame.group_by(
+        "country", "entity", "data_year", "age", "age_group", "sex"
+    ).agg(
+        pl.col("count").sum(),
+    ).with_columns(
+        pl.col("count").filter(
+            pl.col("sex").eq("Female")
+        ).sum().add(
+            pl.col("count").filter(
+                pl.col("sex").is_null()
+            ).sum().truediv(2)
+        ).mul(-1).over("data_year", "age").alias("minimum"),
+
+        pl.col("count").filter(
+            pl.col("sex").eq("Male")
+        ).sum().add(
+            pl.col("count").filter(
+                pl.col("sex").is_null()
+            ).sum().truediv(2)
+        ).over("data_year", "age").alias("maximum"),
+
+        pl.when(
+            pl.col("sex").eq("Female")
+        ).then(
+            pl.lit(-1)
+        ).otherwise(
+            pl.when(
+                pl.col("sex").is_null()
+            ).then(
+                pl.lit(0)
+            ).otherwise(
+                pl.lit(1)
+            )
+        ).cast(pl.Int8).alias("sex_order"),
+    ).sort(
+        "data_year", "age", "sex_order"
+    ).with_columns(
+        pl.col("count").cum_sum().add(
+            pl.col("minimum")
+        ).over(
+            "data_year", "age", order_by="sex_order"
+        ).alias("range_stop")
+    ).with_columns(
+        pl.col("range_stop").sub(pl.col("count")).alias("range_start")
+    )
+
 
 def plot_age_and_sex(
     frame: pl.DataFrame, entity: str, country: str
 ) -> alt.Chart | alt.LayerChart | alt.FacetChart:
-    data = frame.with_columns(
+    data = _prep_sex_by_age(frame).with_columns(
         pl.when(
             pl.col("sex").is_null()
         ).then(
@@ -19,6 +75,12 @@ def plot_age_and_sex(
             pl.format("{} {}", pl.col("sex"), pl.col(Id.GROUP))
         ).alias(Id.GROUP),
         pl.lit("", dtype=pl.String).alias("label"),
+    ).select(
+        "country", "entity",
+        "data_year",
+        "age", "age_group",
+        "range_start", "range_stop", "count",
+        "label",
     )
 
     def fmt(n):
@@ -43,9 +105,9 @@ def plot_age_and_sex(
         pl.col(*columns),
         *(
             pl.lit(None).alias(c) for c in [
-                "age", "age_group", "group_rank",
-                "sex", "ethnicity", "activity",
-                "count"
+
+                "age", "age_group",
+                "range_start", "range_stop", "count",
             ]
         ),
         pl.col("count").map_elements(fmt).alias("label"),
@@ -54,29 +116,38 @@ def plot_age_and_sex(
     data = pl.concat([data, labels])
 
     domain = [
-        "Unknown Sex",
         "Female Child", "Female Juvenile", "Female Adult",
+        "Unknown Sex",
         "Male Child", "Male Juvenile", "Male Adult",
     ]
 
     range = [
-        "#555",
         Palette.ORANGE, Palette.RED, Palette.PINK,
+        "#555",
         Palette.LIGHT_BLUE, Palette.BLUE, Palette.PURPLE,
     ]
 
-    chart = alt.Chart(
-        data,
-    ).mark_bar(size=4).encode(
+    right_side = alt.Axis(
+        labelExpr = 'format(datum.value < 0 ? -datum.value : datum.value, ",d")',
+        orient="right",
+    )
+
+    base = alt.Chart(data)
+
+    chart = base.mark_bar(size=4).encode(
         alt.X("age:Q").scale(domain=(0, 100)).title("Age"),
-        alt.Y("sum(count):Q", sort=domain).title(f"{entity}"),
+        alt.Y("range_start:Q", axis=right_side).title(None),
+        alt.Y2("range_stop:Q"),
         alt.Color("age_group:N")
             .title("Sex and Age Group")
             .scale(domain=domain, range=range),
-        alt.Order("color_variant_label_sort_index:Q"),
     ).properties(
         width=440,
         height=220,
+    )
+
+    rule = base.mark_rule().encode(
+        alt.YDatum(0)
     )
 
     label = alt.Chart(
@@ -92,15 +163,24 @@ def plot_age_and_sex(
         alt.Text("label:N", title=None)
     )
 
-    return (chart + label).facet(
+    return alt.layer(chart, rule, label).facet(
         facet=alt.Facet("data_year:N", title="Year"),
-        title=f"{country}: {entity} by Age and Sex",
+        title=alt.Title(
+            f"{country}: {entity}",
+            anchor="middle",
+            orient="left",
+            angle=270,
+            fontSize=15,
+            subtitle="Women (down) and Men (up)",
+            subtitleFontSize=14,
+        ),
     )
 
 def plot_age_thumbs(
-    frame: pl.DataFrame, country: str, facet_labels: bool = True
+    frame: pl.DataFrame, country: str, facet_labels: bool = False
 ) -> alt.Chart | alt.LayerChart | alt.FacetChart:
-    data = frame.with_columns(
+    data = _prep_sex_by_age(frame).with_columns(
+        # Form group label by combining sex and age group
         pl.when(
             pl.col("sex").is_null()
         ).then(
@@ -108,6 +188,7 @@ def plot_age_thumbs(
         ).otherwise(
             pl.format("{} {}", pl.col("sex"), pl.col(Id.GROUP))
         ).alias(Id.GROUP),
+        # Format the total with thousands separator
         pl.col("count")
             .sum()
             .over("data_year")
@@ -115,12 +196,14 @@ def plot_age_thumbs(
             .cast(pl.Int64)
             .cast(pl.String)
             .str.replace(r"(\d+)(\d\d\d)$", "${1},${2}")
-            .alias("total"),
+            .alias("population"),
+        # Determine the number of female offenders/arrestees
         pl.col("count")
-            .filter(pl.col("sex").eq("Female"))
+            .filter(pl.col("age").is_not_null().and_(pl.col("sex").eq("Female")))
             .sum()
             .over("data_year")
-            .alias("fem"),
+            .alias("female_population"),
+        # Determine the age of majority
         pl.when(
             pl.col("country").eq("New Zealand"),
         ).then(
@@ -129,56 +212,70 @@ def plot_age_thumbs(
             pl.lit(18, dtype=pl.Int16),
         ).alias("age_of_majority"),
     ).with_columns(
-        pl.format("N={}", pl.col("total")).alias("total"),
+        # Format the "N=<n>" label
+        pl.format("N={}", pl.col("population")).alias("N_annotation"),
+        # Compute the number of female offenders below the age of majority
         pl.col("count")
             .filter(
-                pl.col("sex").eq("Female").and_(
-                    pl.col("age").lt(pl.col("age_of_majority"))
+                pl.col("age").lt(pl.col("age_of_majority")).and_(
+                    pl.col("sex").eq("Female")
                 )
             ).sum()
             .over("data_year")
-            .alias("fem_juv"),
+            .alias("female_minors"),
     ).with_columns(
-        pl.col("fem_juv").truediv(pl.col("fem")).mul(100).round(1).alias("fem_pct"),
+        # Determine the percentage fraction of minor female offenders
+        pl.col("female_minors")
+            .truediv(pl.col("female_population"))
+            .mul(100)
+            .round(1)
+            .alias("female_minors"),
     ).with_columns(
+        # Format the "fm=<p>%"" label
         pl.when(
-            pl.col("fem_pct").is_nan()
+            pl.col("female_minors").is_nan()
         ).then(
             pl.lit("fm=—", dtype=pl.String)
         ).otherwise(
-            pl.col("fem_pct").map_elements(
+            pl.col("female_minors").map_elements(
                 lambda el: f"fm={el:.1f}%"
             )
-        ).alias("fem_fmt")
+        ).alias("fm_annotation")
     )
 
     domain = [
-        "Unknown Sex",
         "Female Child", "Female Juvenile", "Female Adult",
+        "Unknown Sex",
         "Male Child", "Male Juvenile", "Male Adult",
     ]
 
     range = [
+        Palette.RED, Palette.RED, Palette.GRAY,
         Palette.GRAY,
-        Palette.RED, Palette.RED, Palette.RED,
         Palette.BLUE, Palette.BLUE, Palette.GRAY,
     ]
 
-    actual_max = frame.drop_nulls(
-        "age"
-    ).group_by(
-        "data_year", "age"
-    ).agg(
-        pl.col("count").sum()
+    actual_min, actual_max = data.filter(
+        pl.col("age").is_not_null()
     ).select(
-        pl.col("count").max()
-    ).item()
-    ystep, ymax = to_step_and_limit(actual_max)
-    # print(f">>> {actual_max} {ystep} {ymax}")
+        pl.col("minimum").min(),
+        pl.col("maximum").max()
+    ).row(0)
+
+    ymin, ystep, ymax = to_axis_range(actual_min, actual_max)
+    #print(f">>>>> {actual_min}| from {ymin:,} by {ystep:,} to {ymax:,} | {actual_max}")
+
+    data = data.select(
+        "data_year",
+        "age", "age_group",
+        "range_start", "range_stop",
+        "N_annotation", "fm_annotation",
+    )
 
     yaxis = alt.Axis(
         labelExpr=(
-            f'datum.value==0 || datum.value=={ymax} ? format(datum.value, ",d") : ""'
+            f'datum.value=={ymin} || datum.value==0 || datum.value=={ymax} ? '
+            'format(datum.value < 0 ? -datum.value : datum.value, ",d") : ""'
         ),
         tickMinStep=ystep,
         orient="right",
@@ -190,15 +287,16 @@ def plot_age_thumbs(
 
     return alt.layer(
         base.mark_bar().encode(
-            alt.X("age:Q", axis=alt.Axis(labels=False))
+            alt.X("age:Q", axis=alt.Axis(labels=False, tickWidth=0))
                 .scale(domain=(0, 100))
                 .title(None),
-            alt.Y("sum(count):Q", axis=yaxis, sort=domain)
-                .scale(domain=(0, ymax))
+            alt.Y("range_start:Q", axis=yaxis)
+                .scale(domain=(ymin, ymax))
+                .title(None),
+            alt.Y2("range_stop:Q")
                 .title(None),
             alt.Color("age_group:N", legend=None)
                 .scale(domain=domain, range=range),
-            alt.Order("color_variant_label_sort_index:Q"),
         ),
         base.mark_text(
             x="width",
@@ -209,7 +307,7 @@ def plot_age_thumbs(
             fontStyle="italic",
             fontWeight="lighter",
         ).encode(
-            alt.Text("total:N")
+            alt.Text("N_annotation:N")
         ),
         base.mark_text(
             x="width",
@@ -220,7 +318,10 @@ def plot_age_thumbs(
             fontStyle="italic",
             fontWeight="lighter",
         ).encode(
-            alt.Text("fem_fmt:N")
+            alt.Text("fm_annotation:N")
+        ),
+        base.mark_rule().encode(
+            alt.YDatum(0)
         )
     ).facet(
         column=alt.Column(
@@ -242,6 +343,7 @@ def plot_age_thumbs(
             dx=0,
         ),
     )
+
 
 def plot_sex_and_age_cdfs(
     frame: pl.DataFrame, title: None | str = None, rule: None | int = None

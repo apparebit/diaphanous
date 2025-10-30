@@ -94,7 +94,7 @@ def format_table(frame: pl.DataFrame, title: None | str = None) -> gt.GT:
     )
 
 
-def add_group_rank(frame: pl.DataFrame) -> pl.DataFrame:
+def add_group_rank[F: (pl.DataFrame, pl. LazyFrame)](frame: F) -> F:
     return frame.with_columns(
         pl.col("age_group").replace({
             "Child": 1,
@@ -104,11 +104,11 @@ def add_group_rank(frame: pl.DataFrame) -> pl.DataFrame:
     )
 
 
-def add_age_group(
-    frame: pl.DataFrame,
+def add_age_group[F: (pl.DataFrame, pl. LazyFrame)](
+    frame: F,
     juvenile_min: int,
     juvenile_max: int,
-) -> pl.DataFrame:
+) -> F:
     return frame.with_columns(
         pl.when(
             pl.col("age").lt(juvenile_min)
@@ -231,9 +231,23 @@ def get_year_range(frame: pl.DataFrame) -> tuple[int, int]:
     ).row(0)
 
 
-def to_step_and_limit(num: float) -> tuple[int, int]:
+def to_axis_range(min: float, max: float) -> tuple[int, int, int]:
+    assert min <= 0, "minimum must be non-positive"
+    min_sign = -1 if min < 0 else 0
+    min_magnitude = abs(min)
+    diff = max - min
+
     for limit in (10, 50, 100, 200, 500, 1_000, 5_000):
-        if num <= limit:
+        if diff <= limit:
             factor = limit // 10
-            return factor, math.ceil(num / factor) * factor
-    return 1_000, math.ceil(num / 1_000) * 1_000
+            return (
+                min_sign * math.ceil(min_magnitude / factor) * factor,
+                factor,
+                math.ceil(max / factor) * factor,
+            )
+
+    return (
+        min_sign * math.ceil(min_magnitude / 1_000) * 1_000,
+        1_000,
+        math.ceil(max / 1_000) * 1_000
+    )
