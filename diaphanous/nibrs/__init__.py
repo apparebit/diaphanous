@@ -1,6 +1,5 @@
 from .data import (
-    us_arrestees_age_distribution, CsamData, load, load_all, load_porn,
-    us_offenders_age_distribution, us_porn_offenders_age_distribution
+    compute_porn_age_distribution, CsamData, load, load_all_csam, load_all_porn
 )
 from .model import (
     Activity, Clearance, Column, CriminalAct, Entry, Ethnicity, Group, humanize_frame,
@@ -10,9 +9,9 @@ from .model import (
 
 __all__ = (
     "Activity",
-    "us_arrestees_age_distribution",
     "Clearance",
     "Column",
+    "compute_porn_age_distribution",
     "CriminalAct",
     "CsamData",
     "Entry",
@@ -23,8 +22,8 @@ __all__ = (
     "Id",
     "JuvenileDisposition",
     "load",
-    "load_all",
-    "load_porn",
+    "load_all_csam",
+    "load_all_porn",
     "Location",
     "NIBRS_SOURCE_FILES",
     "NibrsSchema",
@@ -33,7 +32,5 @@ __all__ = (
     "Race",
     "SchemaExtension",
     "Sex",
-    "us_offenders_age_distribution",
-    "us_porn_offenders_age_distribution",
     "Using",
 )

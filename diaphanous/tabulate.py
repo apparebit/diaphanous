@@ -373,6 +373,7 @@ class Analyzer:
                 <li>Czech Republic
                 <li>European Union
                 <li>France
+                <li>India
                 <li>Phillipines
                 <li>Poland
                 <li>Singapore
@@ -825,7 +826,8 @@ printr()
         self.end_col()
 
         self.h3("United States")
-        frame = nibrs.us_offenders_age_distribution().drop_nulls(
+        frame = nibrs.load_all_csam().offender_demographics().age_distribution()
+        frame = frame.drop_nulls(
             ["age_group", "sex"],
         ).group_by(
             pl.col("data_year", "age_group", "ethnicity", "sex", "activity")
@@ -921,7 +923,7 @@ printr()
 
     def emit_age_distributions(self) -> None:
         self.html("<div class=wide>\n")
-        self.h3("Age Distributions of Offenders")
+        self.h3("Age Distribution of Offenders: The Last Two Years")
 
         distributions = crimestat.load_all_age_distributions()
         detail = self.filter_years(distributions, *self.DETAIL_YEARS)
@@ -933,41 +935,50 @@ printr()
             plot_age_and_sex(detail["es"], "Suspects", "Spain"),
             plot_age_and_sex(detail["us_offenders"], "Offenders", "United States"),
             plot_age_and_sex(detail["us_arrestees"], "Arrestees", "United States"),
-        ).resolve_scale(x="shared").configure_legend(
-            orient="top",
-        )
+            plot_age_and_sex(detail["us_porn_offenders"], "Porn Offenders", "United States"),
+            plot_age_and_sex(detail["us_porn_arrestees"], "Porn Arrestees", "United States"),
+        ).resolve_scale(x="shared")
 
         path = "figure/age-distributions.svg"
         fig.save(path)
         self.svg(path)
         self.html("</div>\n")
 
+        self.h3("Age Distribution of Offenders: The Last Decade")
         self.html(
-            """<p>The distributions for the last decade, where available, are
-            shown next. The United States' NIBRS data only captures a fraction
-            of all law enforcement agencies."""
+            """
+            <p>US statisticstics are <em>not</em> representative, with NIBRS
+            reaching 80% coverage of law enforcement agencies as well as
+            population only in 2023.</p>
+            """
         )
 
         thumb = self.filter_years(distributions, *self.THUMB_YEARS)
 
         self.html("<div class=extra-wide>\n")
         more_fig = alt.vconcat(
-            plot_age_thumbs(thumb["de"], "Germany", facet_labels=False),
-            plot_age_thumbs(thumb["nz"], "New Zealand", facet_labels=False),
-            plot_age_thumbs(thumb["es"], "Spain", facet_labels=False),
+            plot_age_thumbs(thumb["de"], "Germany"),
+            plot_age_thumbs(thumb["nz"], "New Zealand"),
+            plot_age_thumbs(thumb["es"], "Spain"),
             plot_age_thumbs(thumb["us_offenders"], "US Offenders"),
-            plot_age_thumbs(thumb["us_arrestees"], "US Arrestees")
+            plot_age_thumbs(thumb["us_arrestees"], "US Arrestees"),
+            plot_age_thumbs(thumb["us_porn_offenders"], "US Porn Off'ers"),
+            plot_age_thumbs(
+                thumb["us_porn_arrestees"], "US Porn Arr'ers", facet_labels=True
+            ),
         ).resolve_scale(
             x="shared"
         ).configure_axis(
            labelFontSize=35,
            titleFontSize=40,
         )
+
         more_path = "figure/age-distribution-thumbs.svg"
         more_fig.save(more_path)
         self.svg(more_path)
         self.html("</div>\n")
 
+        self.h3("Age Distribution of Offenders: Yearly CDFs")
         titles = crimestat.compute_cdf_titles(distributions)
         cdf = crimestat.compute_cdfs(distributions)
         cdf_fig = alt.vconcat(
@@ -983,6 +994,7 @@ printr()
         cdf_fig.save("figure/cdf.svg")
         self.svg("figure/cdf.svg")
 
+        self.h3("Age Distribution of Offenders: CDF Bands")
         bands = alt.vconcat(
             plot_sex_and_age_cdf_bands(cdf["de"], "Germany", rule=18),
             plot_sex_and_age_cdf_bands(cdf["nz"], "New Zealand", rule=20),
@@ -992,6 +1004,7 @@ printr()
         bands.save("figure/bands.svg")
         self.svg("figure/bands.svg")
 
+        self.h3("Age Distribution of Offenders: Notes")
         self.html("""
         <p>In the above age distributions, a <em>child</em> is younger than the
         <a

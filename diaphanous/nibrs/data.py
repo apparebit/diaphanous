@@ -333,9 +333,10 @@ def _ingest_csam_data(path: Path, year: int) -> list[pl.LazyFrame]:
     ]
 
 
-def _ingest_porn_data(path: Path, year: int) -> pl.DataFrame:
+def _ingest_porn_data(path: Path, year: int) -> tuple[pl.LazyFrame, pl.LazyFrame]:
     reader = _Reader(path, year)
 
+    arrestee = reader.read(NibrsSchema.ARRESTEE)
     incident = reader.read(NibrsSchema.INCIDENT)
     offender = reader.read(NibrsSchema.OFFENDER)
     offense = reader.read(NibrsSchema.OFFENSE)
@@ -360,7 +361,15 @@ def _ingest_porn_data(path: Path, year: int) -> pl.DataFrame:
         how="inner",
     )
 
-    return offenders_involving_porn.collect()
+    arrestees_involving_porn = incidents_involving_porn.select(
+        pl.col(Id.INCIDENT)
+    ).join(
+        arrestee,
+        on=Id.INCIDENT,
+        how="inner"
+    )
+
+    return arrestees_involving_porn, offenders_involving_porn
 
 
 def prepare(
@@ -773,44 +782,44 @@ def load(year: int) -> CsamData:
     return data
 
 
-def load_all() -> CsamData:
+def load_all_csam() -> CsamData:
     """Load all NIBRS data involving CSAM."""
     return CsamData.merge(*(load(y) for y in range(2015, 2025)))
 
 
-def us_arrestees_age_distribution(descriptive: bool = False) -> pl.DataFrame:
-    return load_all().arrestee_demographics().age_distribution(descriptive=descriptive)
-
-
-def us_offenders_age_distribution(descriptive: bool = False) -> pl.DataFrame:
-    return load_all().offender_demographics().age_distribution(descriptive=descriptive)
-
-
-def load_porn() -> pl.DataFrame:
+def load_all_porn() -> tuple[pl.DataFrame, pl.DataFrame]:
     def trace(path: Path) -> None:
         print(str(path))
 
-    ingested = ARCHIVES / "porn.parquet"
+    ingested_arrestees = ARCHIVES / "porn-arrestees.parquet"
+    ingested_offenders = ARCHIVES / "porn-offenders.parquet"
 
-    if not ingested.exists():
+    if not ingested_arrestees.exists() or not ingested_offenders.exists():
         data = []
         for year in range(2015, 2025):
             for archive in CsamData.list_zip(ARCHIVES / f"{year}"):
                 trace(archive)
                 csv_path = CsamData.unarchive(archive)
-                data.append(_ingest_porn_data(csv_path, int(csv_path.parent.name)))
+                data.append(
+                    pl.collect_all(
+                        _ingest_porn_data(csv_path, int(csv_path.parent.name))
+                    )
+                )
                 shutil.rmtree(csv_path)
 
-        frame = pl.concat(data)
-        frame.write_parquet(ingested)
+        arrestees, offenders = [pl.concat(frames) for frames in zip(*data)]
+        arrestees.write_parquet(ingested_arrestees)
+        offenders.write_parquet(ingested_offenders)
     else:
-        frame = pl.read_parquet(ingested)
+        arrestees = pl.read_parquet(ingested_arrestees)
+        offenders = pl.read_parquet(ingested_offenders)
 
-    return frame
+    return arrestees, offenders
 
 
-def us_porn_offenders_age_distribution(descriptive: bool = False) -> pl.DataFrame:
-    frame = load_porn()
+def compute_porn_age_distribution(
+    frame: pl.DataFrame, entity: None | str = None
+) -> pl.DataFrame:
     frame = prepare(frame).group_by(
         Id.YEAR, "age", Id.GROUP, Id.SEX, Id.RACE, maintain_order=False
     ).agg(
@@ -819,5 +828,4 @@ def us_porn_offenders_age_distribution(descriptive: bool = False) -> pl.DataFram
     ).sort(
         Id.YEAR, "age", Id.GROUP, Id.SEX, Id.RACE
     )
-
-    return finish(frame, entity="Porn Offender" if descriptive else None)
+    return finish(frame, entity=entity)

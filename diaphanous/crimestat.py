@@ -2,10 +2,7 @@ import polars as pl
 
 from .aunz import au_age_distribution, nz_age_distribution
 from .bka import de_age_distribution
-from .nibrs import (
-    us_arrestees_age_distribution, us_offenders_age_distribution,
-    us_porn_offenders_age_distribution
-)
+from .nibrs import compute_porn_age_distribution, load_all_csam, load_all_porn
 from .util import (
     add_age_group, add_country_entity, arrange_age_distribution, compute_sex_and_age_cdfs
 )
@@ -57,14 +54,22 @@ def es_age_distribution(descriptive: bool = False) -> pl.DataFrame:
 
 
 def load_all_age_distributions(compact: bool = False) -> dict[str, pl.DataFrame]:
+    csam = load_all_csam()
+    csam_arrestees = csam.arrestee_demographics().age_distribution(descriptive=True)
+    csam_offenders = csam.offender_demographics().age_distribution(descriptive=True)
+    porn = load_all_porn()
+    porn_arrestees = compute_porn_age_distribution(porn[0], entity="US Porn Arr'ees")
+    porn_offenders = compute_porn_age_distribution(porn[1], entity="US Porn Off'ers")
+
     distributions = {
         "au": au_age_distribution(descriptive=True),
         "de": de_age_distribution(descriptive=True),
         "es": es_age_distribution(descriptive=True),
         "nz": nz_age_distribution(descriptive=True),
-        "us_arrestees": us_arrestees_age_distribution(descriptive=True),
-        "us_offenders": us_offenders_age_distribution(descriptive=True),
-        "us_porn_offenders": us_porn_offenders_age_distribution(descriptive=True),
+        "us_arrestees": csam_arrestees,
+        "us_offenders": csam_offenders,
+        "us_porn_arrestees": porn_arrestees,
+        "us_porn_offenders": porn_offenders,
     }
 
     if compact:
