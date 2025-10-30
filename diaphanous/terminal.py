@@ -57,7 +57,7 @@ _CF = _ColumnFormat
 def _format_column(column: pd.Series, na: str) -> tuple[_ColumnFormat, pd.Series]:
     if pd.api.types.is_bool_dtype(column.dtype):
         return _CF.BOOLEAN, column.apply(lambda v: 'true' if v else 'false')
-    elif pd.api.types.is_period_dtype(column.dtype):
+    elif isinstance(column.dtype, pd.Period):
         return _CF.PERIOD, column.apply(_format_period)
     elif pd.api.types.is_integer_dtype(column.dtype):
         return _CF.INTEGER, column.apply(lambda v: na if pd.isna(v) else f'{v:,d}')
@@ -123,8 +123,8 @@ def _highlight_outliers_sgr(percentages: pd.Series, data: pd.DataFrame) -> pd.Da
         if codes is None:
             continue
 
-        data.at[row, 'reports'] = sgr(codes[0]) + data.at[row, 'reports']
-        data.at[row, 'NCMEC'] = data.at[row, 'NCMEC'] + sgr(codes[1])
+        data.at[row, 'reports'] = f"{sgr(codes[0])}{data.at[row, 'reports']}"
+        data.at[row, 'NCMEC'] = f"{data.at[row, 'NCMEC']}{sgr(codes[1])}"
 
     return data
 
@@ -221,11 +221,16 @@ def format_text(
         return formatted
 
     body = df.apply(do_format_column)
-    widths = body.apply(lambda column: column.str.len().max()).combine(widths, max)
+    widths = body.apply(
+        lambda column: column.str.len().max()
+    ).combine(widths, max) # type: ignore
 
     # Text-wrap each title to its column width.
     titles = pd.Series(
-        (textwrap.wrap(title, width) for title, width in zip(titles, widths)),
+        [
+            textwrap.wrap(title, width) # type: ignore
+            for title, width in zip(titles, widths)
+        ],
         index=titles.index,
     )
     # Normalize number of lines for each title by prepending empty lines.
@@ -243,9 +248,9 @@ def format_text(
     def pad_column(column: pd.Series) -> pd.Series:
         name: str = cast(str, column.name)
         if _ColumnFormat.STRING == column_formats[name]:
-            return column.str.ljust(widths[name])
+            return column.str.ljust(widths[name]) # type: ignore
         else:
-            return column.str.rjust(widths[name])
+            return column.str.rjust(widths[name]) # type: ignore
 
     body = body.apply(pad_column)
 
@@ -284,7 +289,7 @@ def format_text(
     )
 
     # Et voilà!
-    return text, table_width
+    return text, table_width # type: ignore
 
 
 def format_table(

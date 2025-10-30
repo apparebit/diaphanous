@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
-from collections.abc import Iterator, Sequence
+from collections.abc import Iterable
 from collections import defaultdict
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from graphlib import TopologicalSorter
 from pathlib import Path
 import sys
@@ -51,13 +51,13 @@ class Flow:
 class Graph:
 
     nodes: frozenset[str]
-    flows: tuple[Flow]
-    stages: tuple[tuple[str]]
+    flows: tuple[Flow, ...]
+    stages: tuple[tuple[str], ...]
     sources: frozenset[str]
     sinks: frozenset[str]
 
     @classmethod
-    def _parse_lines(cls, lines: Iterator[str]) -> tuple[set[str], list[Flow]]:
+    def _parse_lines(cls, lines: Iterable[str]) -> tuple[set[str], list[Flow]]:
         nodes = set()
         flows = []
 
@@ -74,7 +74,7 @@ class Graph:
         return nodes, flows
 
     @classmethod
-    def _sort_into_stages(cls, flows: Iterator[Flow]) -> list[tuple[str]]:
+    def _sort_into_stages(cls, flows: Iterable[Flow]) -> list[tuple[str]]:
         graph = defaultdict(set)
         for flow in flows:
             predecessors = graph[flow.target]
@@ -127,7 +127,7 @@ class Graph:
         return not_sources
 
     @classmethod
-    def of(cls, lines: Iterator[str]) -> Self:
+    def of(cls, lines: Iterable[str]) -> Self:
         nodes, flows = cls._parse_lines(lines)
         stages = cls._sort_into_stages(flows)
         sources = frozenset(stages[0])
