@@ -13,7 +13,7 @@ import great_tables as gt
 import polars as pl
 
 from .chart import (
-    plot_age_thumbs, plot_age_and_sex, plot_sex_and_age_cdfs,
+    plot_age_sex_mosaics, plot_age_thumbs, plot_age_and_sex, plot_sex_and_age_cdfs,
     plot_sex_and_age_cdf_bands, plot_thumb_rule
 )
 from .platform.data import REPORTS_PER_PLATFORM
@@ -957,12 +957,12 @@ printr()
         thumb_data = self.filter_years(distributions, *self.THUMB_YEARS)
 
         self.html("<div class=extra-wide>\n")
-        more_fig = alt.vconcat(
-            plot_thumb_rule(10),
+        pyramid_fig = alt.vconcat(
+            plot_thumb_rule(width="pyramid"),
             plot_age_thumbs(thumb_data["de"], "Germany", "CSAM", "Suspect"),
             plot_age_thumbs(thumb_data["nz"], "New Zealand", "CSAM", "Offender"),
             plot_age_thumbs(thumb_data["es"], "Spain", "CSAM", "Suspect"),
-            plot_thumb_rule(7),
+            plot_thumb_rule(width="pyramid", stroke="thin"),
             plot_age_thumbs(
                 thumb_data["us_offenders"], "United States", "CSAM", "Offender"),
             plot_age_thumbs(
@@ -997,9 +997,57 @@ printr()
             )
         )
 
-        more_path = "figure/age-distribution-thumbs.svg"
-        more_fig.save(more_path)
-        self.svg(more_path)
+        pyramid_path = "figure/age-distribution-thumbs.svg"
+        pyramid_fig.save(pyramid_path)
+        self.svg(pyramid_path)
+        self.html("</div>\n")
+
+        self.html("<div class=extra-wide>\n")
+        mosaic_data = {
+            k: crimestat.summarize_age_distributions(v) for k, v in thumb_data.items()
+        }
+        mosaic_fig = alt.vconcat(
+            plot_thumb_rule(width="mosaic"),
+            plot_age_sex_mosaics(mosaic_data["de"], "Germany", "CSAM", "Suspect"),
+            plot_age_sex_mosaics(mosaic_data["nz"], "New Zealand", "CSAM", "Offender"),
+            plot_age_sex_mosaics(mosaic_data["es"], "Spain", "CSAM", "Suspect"),
+            plot_thumb_rule(width="mosaic", stroke="thin"),
+            plot_age_sex_mosaics(
+                mosaic_data["us_offenders"], "United States", "CSAM", "Offender"),
+            plot_age_sex_mosaics(
+                mosaic_data["us_arrestees"], "United States", "CSAM", "Arrestee"),
+            plot_age_sex_mosaics(
+                mosaic_data["us_porn_offenders"], "United States", "Porn", "Offender"),
+            plot_age_sex_mosaics(
+                mosaic_data["us_porn_arrestees"], "United States", "Porn", "Arrestee",
+                facet_labels=True
+            ),
+            spacing=15,
+        ).resolve_scale(
+            x="shared",
+        ).configure_axis(
+           labelFontSize=35,
+           titleFontSize=40,
+        ).properties(
+            title=alt.Title(
+                "Offenders, Suspects, and Arrestees by Age Group, Sex, and Country",
+                fontSize=45,
+                fontWeight="bold",
+                anchor="start",
+                frame="group",
+                dx=20,
+                dy=-10,
+                subtitle=(
+                    "With Female Minors Highlighted in Red and Male Minors "
+                    "Highlighted in Blue"
+                ),
+                subtitleFontSize=40,
+            )
+        )
+
+        mosaic_path = "figure/age-sex-mosaics.svg"
+        mosaic_fig.save(mosaic_path)
+        self.svg(mosaic_path)
         self.html("</div>\n")
 
         self.h3("Age Distribution of Offenders: Yearly CDFs")
