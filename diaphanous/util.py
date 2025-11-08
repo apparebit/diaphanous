@@ -1,5 +1,6 @@
 from collections import defaultdict
 import math
+from typing import Literal
 
 import polars as pl
 import great_tables as gt
@@ -128,11 +129,18 @@ def add_age_group[F: (pl.DataFrame, pl. LazyFrame)](
     )
 
 
-def add_country_entity(frame: pl.DataFrame, country: str, entity: str) -> pl.DataFrame:
+def add_country_material_role(
+    frame: pl.DataFrame,
+    country: str,
+    material: Literal["Porn", "CSAM"],
+    role: Literal["Suspect", "Offender", "Arrestee"],
+) -> pl.DataFrame:
     return frame.insert_column(
         0, pl.lit(country, dtype=pl.String).alias("country")
     ).insert_column(
-        1, pl.lit(entity, dtype=pl.String).alias("entity")
+        1, pl.lit(material, dtype=pl.String).alias("material")
+    ).insert_column(
+        2, pl.lit(role, dtype=pl.String).alias("role")
     )
 
 
@@ -218,7 +226,7 @@ def _compute_cdf_extrema(
 
 def grouping_columns(frame: pl.DataFrame) -> list[str]:
     group = []
-    for candidate in ("country", "entity", "data_year"):
+    for candidate in ("country", "material", "role", "data_year"):
         if candidate in frame.columns:
             group.append(candidate)
     return group

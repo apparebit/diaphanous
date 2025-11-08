@@ -1,23 +1,26 @@
 from collections.abc import Iterable
+from typing import Literal
 
 import altair as alt
 import polars as pl
 
 from .color import Palette
 from .nibrs.model import Id
-from .util import compute_sex_and_age_cdf_extrema, get_year_range, to_axis_range
+from .util import (
+    compute_sex_and_age_cdf_extrema, get_year_range, grouping_columns, to_axis_range
+)
 
 def _trace(frame: pl.DataFrame) -> pl.DataFrame:
     pl.Config.set_tbl_cols(20)
     pl.Config.set_tbl_rows(200)
     print(frame.select(
-        pl.exclude("country", "entity", "activity")
+        pl.exclude("country", "material", "role", "activity")
     ))
     return frame
 
 def _prep_sex_by_age(frame: pl.DataFrame) -> pl.DataFrame:
     return frame.group_by(
-        "country", "entity", "data_year", "age", "age_group", "sex"
+        "country", "material", "role", "data_year", "age", "age_group", "sex"
     ).agg(
         pl.col("count").sum(),
     ).with_columns(
@@ -64,7 +67,7 @@ def _prep_sex_by_age(frame: pl.DataFrame) -> pl.DataFrame:
 
 
 def plot_age_and_sex(
-    frame: pl.DataFrame, entity: str, country: str
+    frame: pl.DataFrame, country: str, material: str, role: str
 ) -> alt.Chart | alt.LayerChart | alt.FacetChart:
     data = _prep_sex_by_age(frame).with_columns(
         pl.when(
@@ -76,7 +79,7 @@ def plot_age_and_sex(
         ).alias(Id.GROUP),
         pl.lit("", dtype=pl.String).alias("label"),
     ).select(
-        "country", "entity",
+        "country", "material", "role",
         "data_year",
         "age", "age_group",
         "range_start", "range_stop", "count",
@@ -87,16 +90,10 @@ def plot_age_and_sex(
         num = int(n)
         return (
             "" if num == 0 else
-            f"Not shown: {num:,} {entity[:-1] if num == 1 else entity} Without Age"
+            f"Not shown: {num:,} {role}{"" if num == 1 else "s"} Without Age"
         )
 
-    columns = []
-    if "country" in frame.columns:
-        columns.append("country")
-    if "entity" in frame.columns:
-        columns.append("entity")
-    columns.append("data_year")
-
+    columns = grouping_columns(frame)
     labels = frame.group_by(
         pl.col(*columns)
     ).agg(
@@ -166,7 +163,7 @@ def plot_age_and_sex(
     return alt.layer(chart, rule, label).facet(
         facet=alt.Facet("data_year:N", title="Year"),
         title=alt.Title(
-            f"{country}: {entity}",
+            f"{country}: {material} {role}s",
             anchor="middle",
             orient="left",
             angle=270,
@@ -177,7 +174,11 @@ def plot_age_and_sex(
     )
 
 def plot_age_thumbs(
-    frame: pl.DataFrame, country: str, facet_labels: bool = False
+    frame: pl.DataFrame,
+    country: str,
+    material: Literal["Porn", "CSAM"],
+    role: Literal["Suspect", "Offender", "Arrestee"],
+    facet_labels: bool = False
 ) -> alt.Chart | alt.LayerChart | alt.FacetChart:
     data = _prep_sex_by_age(frame).with_columns(
         # Form group label by combining sex and age group
@@ -250,9 +251,9 @@ def plot_age_thumbs(
     ]
 
     range = [
-        Palette.RED, Palette.RED, Palette.GRAY,
-        Palette.GRAY,
-        Palette.BLUE, Palette.BLUE, Palette.GRAY,
+        Palette.RED, Palette.RED, "#aaaeb6",
+        "#aaaeb6",
+        Palette.BLUE, Palette.BLUE, "#aaaeb6",
     ]
 
     actual_min, actual_max = data.filter(
@@ -281,13 +282,11 @@ def plot_age_thumbs(
         orient="right",
     )
 
-    base = alt.Chart(
-        data,
-    )
+    base = alt.Chart(data)
 
     return alt.layer(
         base.mark_bar().encode(
-            alt.X("age:Q", axis=alt.Axis(labels=False, tickWidth=0))
+            alt.X("age:Q", axis=None) # alt.Axis(labels=False, tickWidth=0))
                 .scale(domain=(0, 100))
                 .title(None),
             alt.Y("range_start:Q", axis=yaxis)
@@ -320,7 +319,7 @@ def plot_age_thumbs(
         ).encode(
             alt.Text("fm_annotation:N")
         ),
-        base.mark_rule().encode(
+        base.mark_rule(strokeWidth=1.5).encode(
             alt.YDatum(0)
         )
     ).facet(
@@ -341,7 +340,21 @@ def plot_age_thumbs(
             fontSize=40,
             fontWeight="normal",
             dx=0,
+            subtitle=f"{material} {role}s",
+            subtitleFontSize=35,
         ),
+    )
+
+
+def plot_thumb_rule(width: int) -> alt.Chart:
+    """Create a horizontal rule as a chart for separating rows of thumbs."""
+    return alt.Chart().mark_rule(
+        strokeWidth=width
+    ).encode(
+        alt.YDatum(0).axis(None)
+    ).properties(
+        width=3_230,
+        height=5,
     )
 
 
@@ -438,7 +451,7 @@ def plot_cdf_band(
 
 
 def plot_age_and_supply(
-    frame: pl.DataFrame, entity: str, country: str
+    frame: pl.DataFrame, country: str, material: str, role: str
 ) -> alt.Chart:
     domain = [
         "Child Consumer", "Juvenile Consumer", "Adult Consumer",
@@ -458,10 +471,10 @@ def plot_age_and_supply(
 
     return alt.Chart(
         frame,
-        title=f"{entity} by Age: {country}"
+        title=f"{material} {role}s by Age: {country}"
     ).mark_bar().encode(
         alt.X("age:Q").scale(domain=(0, 100)).title("Age"),
-        alt.Y("sum(count):Q", sort=domain).title(f"{entity}"),
+        alt.Y("sum(count):Q", sort=domain).title(f"{material} {role}s"),
         alt.Color("age_group:N")
             .title("Sex and Age Group")
             .scale(domain=domain, range=range),

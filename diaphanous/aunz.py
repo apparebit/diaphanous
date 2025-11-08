@@ -2,7 +2,7 @@ from pathlib import Path
 
 import polars as pl
 
-from .util import add_age_group, add_country_entity, arrange_age_distribution
+from .util import add_age_group, add_country_material_role, arrange_age_distribution
 
 AIC = pl.DataFrame({
     "year": ["2022/23"] * 12,
@@ -11,7 +11,7 @@ AIC = pl.DataFrame({
     "count": [287, 611, None, 1_216, 202, 25, None, 235, 489, 637, 319, 1452],
 })
 
-def au_age_distribution(descriptive: bool = False) -> pl.DataFrame:
+def au_age_distribution() -> pl.DataFrame:
     frame = AIC.filter(
         pl.col("age").ne("Total")
     ).pivot(
@@ -54,8 +54,7 @@ def au_age_distribution(descriptive: bool = False) -> pl.DataFrame:
     )
 
     frame = add_age_group(frame, 10, 17)
-    if descriptive:
-        frame = add_country_entity(frame, "Australia", "Offender")
+    frame = add_country_material_role(frame, "Australia", "CSAM", "Offender")
     return arrange_age_distribution(frame)
 
 
@@ -126,7 +125,7 @@ def nz_load() -> pl.DataFrame:
     )
 
 
-def nz_age_distribution(descriptive: bool = False) -> pl.DataFrame:
+def nz_age_distribution() -> pl.DataFrame:
     frame = nz_load().group_by(
         pl.col("year", "age_low", "age_high", "sex", "ethnicity", "activity")
     ).agg(
@@ -142,6 +141,5 @@ def nz_age_distribution(descriptive: bool = False) -> pl.DataFrame:
     )
 
     frame = add_age_group(frame, 10, 19)
-    if descriptive:
-        frame = add_country_entity(frame, "New Zealand", "Offender")
+    frame = add_country_material_role(frame, "New Zealand", "CSAM", "Offender")
     return arrange_age_distribution(frame)

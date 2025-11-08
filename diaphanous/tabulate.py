@@ -13,7 +13,8 @@ import great_tables as gt
 import polars as pl
 
 from .chart import (
-    plot_age_thumbs, plot_age_and_sex, plot_sex_and_age_cdfs, plot_sex_and_age_cdf_bands
+    plot_age_thumbs, plot_age_and_sex, plot_sex_and_age_cdfs,
+    plot_sex_and_age_cdf_bands, plot_thumb_rule
 )
 from .platform.data import REPORTS_PER_PLATFORM
 
@@ -929,14 +930,14 @@ printr()
         detail = self.filter_years(distributions, *self.DETAIL_YEARS)
 
         fig = alt.vconcat(
-            plot_age_and_sex(detail["au"], "Offenders", "Australia"),
-            plot_age_and_sex(detail["de"], "Suspects", "Germany"),
-            plot_age_and_sex(detail["nz"], "Offenders", "New Zealand"),
-            plot_age_and_sex(detail["es"], "Suspects", "Spain"),
-            plot_age_and_sex(detail["us_offenders"], "Offenders", "United States"),
-            plot_age_and_sex(detail["us_arrestees"], "Arrestees", "United States"),
-            plot_age_and_sex(detail["us_porn_offenders"], "Porn Offenders", "United States"),
-            plot_age_and_sex(detail["us_porn_arrestees"], "Porn Arrestees", "United States"),
+            plot_age_and_sex(detail["au"], "Australia", "CSAM", "Offender"),
+            plot_age_and_sex(detail["de"], "Germany", "CSAM", "Suspect"),
+            plot_age_and_sex(detail["nz"], "New Zealand", "CSAM", "Offenders"),
+            plot_age_and_sex(detail["es"], "Spain", "CSAM", "Suspect"),
+            plot_age_and_sex(detail["us_offenders"], "United States", "CSAM", "Offender"),
+            plot_age_and_sex(detail["us_arrestees"], "United States", "CSAM", "Arrestee"),
+            plot_age_and_sex(detail["us_porn_offenders"], "United States", "Porn", "Offender"),
+            plot_age_and_sex(detail["us_porn_arrestees"], "United States", "Porn", "Arrestee"),
         ).resolve_scale(x="shared")
 
         path = "figure/age-distributions.svg"
@@ -953,24 +954,47 @@ printr()
             """
         )
 
-        thumb = self.filter_years(distributions, *self.THUMB_YEARS)
+        thumb_data = self.filter_years(distributions, *self.THUMB_YEARS)
 
         self.html("<div class=extra-wide>\n")
         more_fig = alt.vconcat(
-            plot_age_thumbs(thumb["de"], "Germany"),
-            plot_age_thumbs(thumb["nz"], "New Zealand"),
-            plot_age_thumbs(thumb["es"], "Spain"),
-            plot_age_thumbs(thumb["us_offenders"], "US Offenders"),
-            plot_age_thumbs(thumb["us_arrestees"], "US Arrestees"),
-            plot_age_thumbs(thumb["us_porn_offenders"], "US Porn Off'ers"),
+            plot_thumb_rule(10),
+            plot_age_thumbs(thumb_data["de"], "Germany", "CSAM", "Suspect"),
+            plot_age_thumbs(thumb_data["nz"], "New Zealand", "CSAM", "Offender"),
+            plot_age_thumbs(thumb_data["es"], "Spain", "CSAM", "Suspect"),
+            plot_thumb_rule(7),
             plot_age_thumbs(
-                thumb["us_porn_arrestees"], "US Porn Arr'ers", facet_labels=True
+                thumb_data["us_offenders"], "United States", "CSAM", "Offender"),
+            plot_age_thumbs(
+                thumb_data["us_arrestees"], "United States", "CSAM", "Arrestee"),
+            plot_age_thumbs(
+                thumb_data["us_porn_offenders"], "United States", "Porn", "Offender"),
+            plot_age_thumbs(
+                thumb_data["us_porn_arrestees"], "United States", "Porn", "Arrestee",
+                facet_labels=True
             ),
+            spacing=15,
         ).resolve_scale(
             x="shared"
         ).configure_axis(
            labelFontSize=35,
            titleFontSize=40,
+        ).properties(
+            title=alt.Title(
+                "Offenders, Suspects, and Arrestees by Age (0→100), "
+                "Sex (Female↧, Male↥), Year (2015⇒2024), and Country (⇕)",
+                fontSize=45,
+                fontWeight="bold",
+                anchor="start",
+                frame="group",
+                dx=20,
+                dy=-10,
+                subtitle=(
+                    "With Female Minors Highlighted in Red and Male Minors "
+                    "Highlighted in Blue"
+                ),
+                subtitleFontSize=40,
+            )
         )
 
         more_path = "figure/age-distribution-thumbs.svg"

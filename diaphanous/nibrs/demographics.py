@@ -107,10 +107,14 @@ class Demographics:
 
         return frame
 
-    def age_distribution(self, descriptive: bool = False) -> pl.DataFrame:
+    def age_distribution(self) -> pl.DataFrame:
         frame = self.by(
             Id.YEAR, Id.AGE, Id.GROUP, Id.SEX, Id.RACE, Id.ACTIVITY,
             sorted=True
         )
-
-        return finish(frame, entity=self._source[:-1].title() if descriptive else None)
+        frame = finish(
+            frame,
+            "CSAM",
+            "Offender" if self._source == "offenders" else "Arrestee",
+        )
+        return frame

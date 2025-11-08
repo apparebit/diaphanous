@@ -1,7 +1,7 @@
 import dataclasses
 from pathlib import Path
 import shutil
-from typing import Callable, Self, TYPE_CHECKING
+from typing import Callable, Literal, Self, TYPE_CHECKING
 import zipfile
 
 import great_tables as gt
@@ -14,7 +14,7 @@ from .model import (
     Race, Sex
 )
 from ..util import (
-    add_age_group, add_country_entity, add_group_rank, arrange_age_distribution,
+    add_age_group, add_country_material_role, add_group_rank, arrange_age_distribution,
     format_table
 )
 
@@ -430,7 +430,11 @@ def prepare(
     )
 
 
-def finish(frame: pl.DataFrame, /, entity: None | str = None) -> pl.DataFrame:
+def finish(
+    frame: pl.DataFrame,
+    material: Literal["Porn", "CSAM"],
+    role: Literal["Suspect", "Offender", "Arrestee"],
+) -> pl.DataFrame:
     frame = frame.with_columns(
         pl.col("age").cast(pl.Int8),
         pl.col(Id.SEX).replace(
@@ -447,8 +451,7 @@ def finish(frame: pl.DataFrame, /, entity: None | str = None) -> pl.DataFrame:
     )
 
     frame = add_group_rank(frame)
-    if entity is not None:
-        frame = add_country_entity(frame, "United States", entity)
+    frame = add_country_material_role(frame, "United States", material, role)
     return arrange_age_distribution(frame)
 
 
@@ -817,8 +820,9 @@ def load_all_porn() -> tuple[pl.DataFrame, pl.DataFrame]:
     return arrestees, offenders
 
 
-def compute_porn_age_distribution(
-    frame: pl.DataFrame, entity: None | str = None
+def compute_us_porn_age_distribution(
+    frame: pl.DataFrame,
+    role: Literal["Offender", "Arrestee"],
 ) -> pl.DataFrame:
     frame = prepare(frame).group_by(
         Id.YEAR, "age", Id.GROUP, Id.SEX, Id.RACE, maintain_order=False
@@ -828,4 +832,4 @@ def compute_porn_age_distribution(
     ).sort(
         Id.YEAR, "age", Id.GROUP, Id.SEX, Id.RACE
     )
-    return finish(frame, entity=entity)
+    return finish(frame, "Porn", role)
