@@ -114,12 +114,14 @@ def add_age_group[F: (pl.DataFrame, pl. LazyFrame)](
         pl.when(
             pl.col("age").lt(juvenile_min)
         ).then(
-            pl.lit("Child", dtype=pl.String),
+            pl.lit("Child", dtype=pl.String)
         ).when(
             pl.col("age").le(juvenile_max)
         ).then(
-            pl.lit("Juvenile", dtype=pl.String),
-        ).otherwise(
+            pl.lit("Juvenile", dtype=pl.String)
+        ).when(
+            pl.col("age").gt(juvenile_max)
+        ).then(
             pl.lit("Adult", dtype=pl.String)
         ).alias("age_group"),
     ).pipe(
