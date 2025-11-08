@@ -191,7 +191,15 @@ def _ingest_csam_data(path: Path, year: int) -> list[pl.LazyFrame]:
             ).list.any()
         ).then(
             pl.lit("Producer", dtype=pl.String)
-        ).otherwise(
+        ).when(
+            pl.col("other_criminal_act_ids").list.eval(
+                pl.element().is_in([
+                    CriminalAct.BUYING_RECEIVING,
+                    CriminalAct.POSSESSING_CONCEALING,
+                    CriminalAct.USING_CONSUMING,
+                ])
+            ).list.any()
+        ).then(
             pl.lit("Consumer", dtype=pl.String)
         ).alias("activity")
     )
