@@ -98,14 +98,10 @@ class Data:
                     pl.col("id").is_in(producers)
                 ).then(
                     pl.lit("Producer"),
-                ).otherwise(
-                    pl.when(
-                        pl.col("id").is_in(consumers)
-                    ).then(
-                        pl.lit("Consumer"),
-                    ).otherwise(
-                        None
-                    ),
+                ).when(
+                    pl.col("id").is_in(consumers)
+                ).then(
+                    pl.lit("Consumer"),
                 ).alias("activity"),
             ))
 
@@ -177,14 +173,10 @@ class Data:
                     pl.col("id").is_in(["143210", "143220", "143510", "143520"])
                 ).then(
                     pl.lit("Production"),
-                ).otherwise(
-                    pl.when(
-                        pl.col("id").is_in(["143230", "143530"])
-                    ).then(
-                        pl.lit("Consumption"),
-                    ).otherwise(
-                        None
-                    ),
+                ).when(
+                    pl.col("id").is_in(["143230", "143530"])
+                ).then(
+                    pl.lit("Consumption"),
                 ).alias("activity"),
             ).select(
                 pl.col(

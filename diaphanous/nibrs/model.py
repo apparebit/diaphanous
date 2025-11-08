@@ -542,20 +542,14 @@ AGE_IN_YEARS_V1 = pl.when(
     pl.col("age_id").is_in([1, 2, 3])
 ).then(
     pl.lit(0, dtype=pl.Int16)
-).otherwise(
-    pl.when(
-        pl.col("age_id").eq(5)
-    ).then(
-        pl.col("age_num").cast(pl.Int16)
-    ).otherwise(
-        pl.when(
-            pl.col("age_id").eq(6)
-        ).then(
-            pl.lit(99, dtype=pl.Int16)
-        ).otherwise(
-            pl.lit(None, dtype=pl.Int16)
-        )
-    )
+).when(
+    pl.col("age_id").eq(5)
+).then(
+    pl.col("age_num").cast(pl.Int16)
+).when(
+    pl.col("age_id").eq(6)
+).then(
+    pl.lit(99, dtype=pl.Int16)
 ).alias("age")
 
 
@@ -563,16 +557,12 @@ AGE_IN_YEARS_V2 = pl.when(
     pl.col("age_id").is_in([1, 2, 3])
 ).then(
     pl.lit(0, dtype=pl.Int16)
-).otherwise(
-    pl.when(
-        pl.col("age_id").ge(4).and_(
-            pl.col("age_id").le(102)
-        )
-    ).then(
-        pl.col("age_id").sub(3)
-    ).otherwise(
-        pl.lit(None, dtype=pl.Int16)
+).when(
+    pl.col("age_id").ge(4).and_(
+        pl.col("age_id").le(102)
     )
+).then(
+    pl.col("age_id").sub(3)
 ).alias("age")
 
 

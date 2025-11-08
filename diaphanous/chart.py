@@ -44,14 +44,12 @@ def _prep_sex_by_age(frame: pl.DataFrame) -> pl.DataFrame:
             pl.col("sex").eq("Female")
         ).then(
             pl.lit(-1)
+        ).when(
+            pl.col("sex").is_null()
+        ).then(
+            pl.lit(0)
         ).otherwise(
-            pl.when(
-                pl.col("sex").is_null()
-            ).then(
-                pl.lit(0)
-            ).otherwise(
-                pl.lit(1)
-            )
+            pl.lit(1)
         ).cast(pl.Int8).alias("sex_order"),
     ).sort(
         "data_year", "age", "sex_order"

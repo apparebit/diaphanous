@@ -115,14 +115,12 @@ def add_age_group[F: (pl.DataFrame, pl. LazyFrame)](
             pl.col("age").lt(juvenile_min)
         ).then(
             pl.lit("Child", dtype=pl.String),
+        ).when(
+            pl.col("age").le(juvenile_max)
+        ).then(
+            pl.lit("Juvenile", dtype=pl.String),
         ).otherwise(
-            pl.when(
-                pl.col("age").le(juvenile_max)
-            ).then(
-                pl.lit("Juvenile", dtype=pl.String),
-            ).otherwise(
-                pl.lit("Adult", dtype=pl.String)
-            )
+            pl.lit("Adult", dtype=pl.String)
         ).alias("age_group"),
     ).pipe(
         add_group_rank
