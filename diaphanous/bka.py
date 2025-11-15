@@ -8,28 +8,29 @@ import polars as pl
 from ._const import TOTAL
 from .finish import finish_caseload, finish_severity
 from .nibrs.model import Id, Column
-from .util import add_country_material_role, arrange_age_distribution, format_table
+from .util import (
+    add_country_material_role, add_age_group, arrange_age_distribution, format_table
+)
 
 
 _ROOT = Path(__file__).parent.parent
 
+_DEFAULT_COLUMNS = ["id", "description", "sex", "total"]
 _CHILD_RANGES = ["<6", "6-8", "8-10", "10-12", "12-14"]
 _JUVENILE_RANGES = ["14-16", "16-18"]
 _ADULT_RANGES = ["18-21", "21-23", "23-25", "25-30", "30-40", "40-50", "50-60", ">=60"]
-_AGE_RANGES = [*_CHILD_RANGES, *_JUVENILE_RANGES, *_ADULT_RANGES]
+_OLD_ADULT_RANGES = ["60-65", "65-70", "70-75", "75-80", ">=80"]
+_AGE_RANGES = [*_CHILD_RANGES, *_JUVENILE_RANGES, *_ADULT_RANGES, *_OLD_ADULT_RANGES]
 
 _PRODUCER_IDS_V1 = ["143200", "143400", "143500", "143700"]
 _CONSUMER_IDS_V1 = ["143300", "143600"]
 _PRODUCER_IDS_V2 = ["143210", "143220", "143510", "143520"]
 _CONSUMER_IDS_V2 = ["143230", "143530"]
 
-_READ_OPTIONS = dict(
+_READ_OPTIONS_SUSPECTS = dict(
     skip_rows=9,
     column_names=[
-        "id",
-        "description",
-        "sex",
-        "total",
+        *_DEFAULT_COLUMNS,
         *_CHILD_RANGES,
         "child",
         *_JUVENILE_RANGES,
@@ -42,6 +43,18 @@ _READ_OPTIONS = dict(
         *_ADULT_RANGES[3:],
         ">=21",
     ],
+)
+
+_COLUMN_NAMES_OLD_SUSPECTS = [
+    *_DEFAULT_COLUMNS,
+    ">=21",
+    ">=60",
+    *_OLD_ADULT_RANGES,
+]
+
+_READ_OPTIONS_OLD_SUSPECTS = dict(
+    skip_rows=9,
+    column_names=_COLUMN_NAMES_OLD_SUSPECTS,
 )
 
 
@@ -62,13 +75,13 @@ class Data:
                 frame = pl.read_excel(
                     _ROOT / "data" / "bka" / f"suspects-{year}.xlsx",
                     sheet_name="T20",
-                    read_options=_READ_OPTIONS,
+                    read_options=_READ_OPTIONS_SUSPECTS,
                 )
             except ValueError:
                 frame = pl.read_excel(
                     _ROOT / "data" / "bka" / f"suspects-{year}.xlsx",
                     sheet_name="BU-TV-01-T20-TV",
-                    read_options=_READ_OPTIONS,
+                    read_options=_READ_OPTIONS_SUSPECTS,
                 )
 
             if year == 2015:
@@ -124,6 +137,73 @@ class Data:
                 pl.col("child").add(pl.col("adolescent")).add(pl.col("18-21"))
             ).all()
         ).item()
+
+        suspects = []
+        for year in range(2019, 2025):
+            if year == 2019:
+                frame = pl.read_csv(
+                    _ROOT / "data" / "bka" / "old-suspects-2019.csv",
+                    encoding="latin_1",
+                    has_header=False,
+                    skip_lines=5,
+                    separator=";",
+                    new_columns=_COLUMN_NAMES_OLD_SUSPECTS,
+                    schema_overrides={
+                        "column_1": pl.String,
+                        "column_8": pl.String,
+                        "column_9": pl.String,
+                        "column_10": pl.String,
+                        "column_11": pl.String,
+                    }
+                ).with_columns(
+                    pl.col(
+                        "total", ">=21", ">=60",
+                        "60-65", "65-70", "70-75", "75-80", ">=80"
+                    ).str.replace_all(",", "").cast(pl.Int64)
+                )
+            else:
+                frame = pl.read_excel(
+                    _ROOT / "data" / "bka" / f"old-suspects-{year}.xlsx",
+                    sheet_name="T20-TV_AK60",
+                    read_options=_READ_OPTIONS_OLD_SUSPECTS,
+                )
+
+            suspects.append(frame.filter(
+                pl.col("id").str.starts_with("1432").or_(
+                    pl.col("id").str.starts_with("1435")
+                )
+            ).insert_column(
+                0,
+                pl.lit(year, dtype=pl.Int16).alias(Id.YEAR)
+            ).drop(
+                "description",
+            ))
+
+        all_suspects = all_suspects.join(
+            pl.concat(suspects),
+            on=["data_year", "id", "sex"],
+            how="left",
+        )
+
+        test_frame = all_suspects.drop_nulls([
+            "total_right", ">=21_right", ">=60_right"
+        ])
+
+        assert test_frame.select(
+            pl.col("total").eq(pl.col("total_right")).all()
+        ).item()
+
+        assert test_frame.select(
+            pl.col(">=21").eq(pl.col(">=21_right")).all()
+        ).item()
+
+        assert test_frame.select(
+            pl.col(">=60").eq(pl.col(">=60_right")).all()
+        ).item()
+
+        all_suspects = all_suspects.drop(
+            "total_right", ">=21_right", ">=60_right"
+        )
 
         incidents = []
         for year in range(2023, 2025):
@@ -257,44 +337,41 @@ class Data:
             pl.col("activity").is_not_null().and_(pl.col("sex").ne("X"))
         ).with_columns(
             pl.col("sex").replace({"M": "Male", "W": "Female"}),
+            pl.col(">=80").is_null().alias("requires_sixty_plus"),
         ).unpivot(
             on=_AGE_RANGES,
-            index=[Id.YEAR, "sex", "activity"],
+            index=[Id.YEAR, "sex", "activity", "requires_sixty_plus"],
             variable_name="age_range",
             value_name="count",
+        ).drop_nulls(
+            "age_range"
+        ).filter(
+            pl.col("requires_sixty_plus").or_(
+                pl.col("age_range").ne(">=60")
+            )
         ).group_by(
             pl.col(Id.YEAR, "age_range", "sex", "activity"),
         ).agg(
             pl.col("count").sum(),
         ).with_columns(
-            pl.col("age_range").replace(
-                {r: "Child" for r in _CHILD_RANGES} |
-                {r: "Juvenile" for r in _JUVENILE_RANGES} |
-                {r: "Adult" for r in _ADULT_RANGES}
-            ).alias(Id.GROUP),
-            pl.col("age_range").replace(
-                {r: 1 for r in _CHILD_RANGES} |
-                {r: 2 for r in _JUVENILE_RANGES} |
-                {r: 3 for r in _ADULT_RANGES},
-                return_dtype=pl.Int8,
-            ).alias("group_rank"),
-            pl.col("sex", "activity"),
             pl.when(
-                pl.col("age_range").is_in(["<6", ">=60"])
+                pl.col("age_range").is_in(["<6", ">=60", ">=80"])
             ).then(
                 pl.col("age_range").replace({
                     "<6": 0,
                     ">=60": 60,
+                    ">=80": 80,
                 })
             ).otherwise(
                 pl.col("age_range").str.extract(r"(\d+)-")
             ).cast(pl.Int8).alias("age_first"),
             pl.when(
-                pl.col("age_range").is_in(["<6", ">=60"])
+                pl.col("age_range").is_in(["<6", ">=60", ">=80"])
             ).then(
                 pl.col("age_range").replace({
                     "<6": 6,
                     ">=60": 100,
+                    ">=80": 100,
                 })
             ).otherwise(
                 pl.col("age_range").str.extract(r"-(\d+)")
@@ -306,13 +383,14 @@ class Data:
         ).select(
             pl.col(Id.YEAR),
             pl.int_ranges("age_first", "age_last", dtype=pl.Int8).alias("age"),
-            pl.col(Id.GROUP, "group_rank", "sex"),
+            pl.col("sex"),
             pl.lit(None, dtype=pl.String).alias("ethnicity"),
             pl.col("activity", "count"),
         ).explode("age").sort(
             Id.YEAR, "age", "sex", "activity"
         )
 
+        frame = add_age_group(frame, 14, 17)
         frame = add_country_material_role(frame, "Germany", "CSAM", "Suspect")
         return arrange_age_distribution(frame)
 
