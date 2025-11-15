@@ -110,7 +110,7 @@ def add_age_group[F: (pl.DataFrame, pl. LazyFrame)](
     juvenile_min: int,
     juvenile_max: int,
 ) -> F:
-    return frame.with_columns(
+    frame = frame.with_columns(
         pl.when(
             pl.col("age").lt(juvenile_min)
         ).then(
@@ -124,9 +124,8 @@ def add_age_group[F: (pl.DataFrame, pl. LazyFrame)](
         ).then(
             pl.lit("Adult", dtype=pl.String)
         ).alias("age_group"),
-    ).pipe(
-        add_group_rank
     )
+    return add_group_rank(frame)
 
 
 def add_country_material_role(
@@ -152,6 +151,42 @@ def arrange_age_distribution(frame: pl.DataFrame) -> pl.DataFrame:
             "sex", "ethnicity", "activity",
             "count"
         )
+    )
+
+
+def simplify_age_distribution(frame: pl.DataFrame) -> pl.DataFrame:
+    return frame.filter(
+        pl.col("country").ne("Australia")
+    ).select(
+        pl.format(
+            "{} {} {}s", pl.col("country"), pl.col("material"), pl.col("role")
+        ).alias("metric"),
+        pl.col("data_year"),
+        pl.when(
+            pl.col("age_group").is_in(["Child", "Juvenile"])
+        ).then(
+            pl.lit("Minor", dtype=pl.String)
+        ).otherwise(
+            pl.col("age_group")
+        ).alias("age_group"),
+        pl.when(
+            pl.col("age_group").is_in(["Child", "Juvenile"])
+        ).then(
+            pl.lit(1, dtype=pl.Int8)
+        ).when(
+            pl.col("age_group").eq("Adult")
+        ).then(
+            pl.lit(2, dtype=pl.Int8)
+        ).alias("group_rank"),
+        pl.col("sex", "activity", "count")
+    ).group_by(
+        "metric", "data_year", "age_group", "group_rank", "sex", "activity",
+    ).agg(
+        pl.col("count").sum().round(0).cast(pl.Int64)
+    ).sort(
+        "metric", "data_year", "group_rank", "sex", "activity"
+    ).select(
+        pl.exclude("group_rank")
     )
 
 

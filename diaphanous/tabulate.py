@@ -17,6 +17,7 @@ from .chart import (
     plot_sex_and_age_cdf_bands, plot_thumb_rule
 )
 from .platform.data import REPORTS_PER_PLATFORM
+from .util import simplify_age_distribution
 
 import diaphanous.aunz as aunz
 import diaphanous.bka as bka
@@ -235,8 +236,8 @@ def _sum_if_whole_year(metric: str) -> pl.Expr:
 
 # ======================================================================================
 
-HEIGHT_ATTR = re.compile(r'height="\d+"')
-WIDTH_ATTR = re.compile(r'width="\d+"')
+HEIGHT_ATTR = re.compile(r'height="\d+[a-z]*"')
+WIDTH_ATTR = re.compile(r'width="\d+[a-z]*"')
 XML_DECL = '<?xml version="1.0" encoding="UTF-8"?>'
 
 class Analyzer:
@@ -255,7 +256,7 @@ class Analyzer:
         self._diffs = _distill_differences(self._data)
         self._with_icc = with_icc
         self._figure_count = 0
-        self._secno = [0, 0]
+        self._secno = [0, 0, 0]
         self._with_reports = with_reports
         self._with_platforms = with_platforms
         self._with_crimes = with_crimes
@@ -367,19 +368,49 @@ class Analyzer:
             self.h2("Crime Statistics About CSAM")
             self.html("""
                 <p>The following countries (and supranational organization) do
-                not appear to publish police statistics that are granular enough
-                to relate specific offense to offender age and sex.</p>
+                not appear to publish crime statistics that are sufficiently
+                granular to relate particular offenses to age and sex of
+                offenders:</p>
                 <ul>
+                <li>Brazil
                 <li>Canada
                 <li>Czech Republic
                 <li>European Union
                 <li>France
                 <li>India
+                <li>Mexico
                 <li>Phillipines
                 <li>Poland
                 <li>Singapore
+                <li>Thailand
                 <li>United Kingdom
                 </ul>
+
+                <p>Meanwhile the following countries do publish the data
+                necessary for building the contingency tables relating offenses
+                involving CSAM with offender age and sex:</p>
+                <ul>
+                <li>Finland
+                <li>Germany
+                <li>New Zealand
+                <li>Spain
+                <li>United States
+                </ul>
+
+                <p>Beyond offense, offender age, and offender sex, all but Spain
+                capture additional information:</p>
+
+                <ul>
+                <li>Finland: coarse nationality of offenders
+                <li>Germany: producers v consumers
+                <li>New Zealand: ethnicity, producers v consumers
+                <li>United States: ethnicity, producers v consumers
+                </ul>
+
+                <p>In fact, the United States' National Incident-Based Reporting
+                System (NIBRS) goes well beyond the above listed information
+                because it is the only country publishing case data instead of
+                frequency data.</p>
             """)
 
             self.emit_mosaics()
@@ -827,7 +858,7 @@ printr()
         self.end_col()
 
         self.h3("United States")
-        frame = nibrs.load_all_csam().offender_demographics().age_distribution()
+        frame = nibrs.load_all_us_csam().offender_demographics().age_distribution()
         frame = frame.drop_nulls(
             ["age_group", "sex"],
         ).group_by(
@@ -931,6 +962,7 @@ printr()
 
         fig = alt.vconcat(
             plot_age_and_sex(detail["au"], "Australia", "CSAM", "Offender"),
+            plot_age_and_sex(detail["fi"], "Finland", "CSAM", "Suspect"),
             plot_age_and_sex(detail["de"], "Germany", "CSAM", "Suspect"),
             plot_age_and_sex(detail["nz"], "New Zealand", "CSAM", "Offenders"),
             plot_age_and_sex(detail["es"], "Spain", "CSAM", "Suspect"),
@@ -959,6 +991,7 @@ printr()
         self.html("<div class=extra-wide>\n")
         pyramid_fig = alt.vconcat(
             plot_thumb_rule(width="pyramid"),
+            plot_age_thumbs(thumb_data["fi"], "Finland", "CSAM", "Suspect"),
             plot_age_thumbs(thumb_data["de"], "Germany", "CSAM", "Suspect"),
             plot_age_thumbs(thumb_data["nz"], "New Zealand", "CSAM", "Offender"),
             plot_age_thumbs(thumb_data["es"], "Spain", "CSAM", "Suspect"),
@@ -1002,12 +1035,70 @@ printr()
         self.svg(pyramid_path)
         self.html("</div>\n")
 
+        self.h3("Independence of Age Group and Sex")
+        frame = simplify_age_distribution(pl.concat(thumb_data.values()))
+        self._runr(frame, """
+library(tidyverse)
+library(vcdExtra)
+data <- read.csv(text="{CSV_DATA}") |>
+    mutate(
+        age_group = factor(age_group, levels=c("Minor", "Adult")),
+        activity = factor(activity, levels=c("Consumer", "Producer")),
+        sex = factor(sex, levels=c("Male", "Female"))
+    )
+
+metrics <- c(
+    "Finland CSAM Suspects",
+    "Germany CSAM Suspects",
+    "New Zealand CSAM Offenders",
+    "United States CSAM Offenders",
+    "United States CSAM Arrestees",
+    "United States Porn Offenders",
+    "United States Porn Arrestees"
+)
+
+for (current_metric in metrics) {{
+    printr(paste0("<h4>", current_metric, "</h4>\n<ol class=years role=list>"))
+
+    for (year in 2015:2024) {{
+        dt <- data |> filter(
+            metric == current_metric & data_year == year
+        )
+        contab <- xtabs(count ~ age_group + sex, data = dt)
+        r <- chisq.test(contab)
+
+        if (is.nan(r$p.value)) {{
+            pval <- "NaN"
+        }} else {{
+            leading_zeroes <- -floor(log10(r$p.value)) - 1
+            if (leading_zeroes <= 10) {{
+                pval <- formatC(r$p.value, digits = leading_zeroes + 3, format="f")
+            }} else {{
+                pval <- formatC(r$p.value, digits = 3, format="e")
+            }}
+        }}
+
+        printr(paste0(
+            "<li value=", year, ">",
+            "χ² = ", sprintf("%.2f", r$statistic), ", ",
+            "df = ", r$parameter, ", ",
+            "p-value = ", pval,
+            " <span style='font-size: 0.7em;'>(", r$method, ")</span>",
+            "</li>"
+        ))
+    }}
+
+    printr(paste0("</ol>\n"))
+}}
+        """, is_html=True)
+
         self.html("<div class=extra-wide>\n")
         mosaic_data = {
             k: crimestat.summarize_age_distributions(v) for k, v in thumb_data.items()
         }
         mosaic_fig = alt.vconcat(
             plot_thumb_rule(width="mosaic"),
+            plot_age_sex_mosaics(mosaic_data["fi"], "Finland", "CSAM", "Suspect"),
             plot_age_sex_mosaics(mosaic_data["de"], "Germany", "CSAM", "Suspect"),
             plot_age_sex_mosaics(mosaic_data["nz"], "New Zealand", "CSAM", "Offender"),
             plot_age_sex_mosaics(mosaic_data["es"], "Spain", "CSAM", "Suspect"),
@@ -1068,10 +1159,14 @@ printr()
 
         self.h3("Age Distribution of Offenders: CDF Bands")
         bands = alt.vconcat(
+            plot_sex_and_age_cdf_bands(cdf["fi"], "Finland", rule=18),
             plot_sex_and_age_cdf_bands(cdf["de"], "Germany", rule=18),
             plot_sex_and_age_cdf_bands(cdf["nz"], "New Zealand", rule=20),
             plot_sex_and_age_cdf_bands(cdf["es"], "Spain", rule=18),
             plot_sex_and_age_cdf_bands(cdf["us_offenders"], "United States", rule=18),
+            plot_sex_and_age_cdf_bands(cdf["us_arrestees"], "United States", rule=18),
+            plot_sex_and_age_cdf_bands(cdf["us_porn_offenders"], "United States", rule=18),
+            plot_sex_and_age_cdf_bands(cdf["us_porn_arrestees"], "United States", rule=18),
         )
         bands.save("figure/bands.svg")
         self.svg("figure/bands.svg")
@@ -1097,6 +1192,7 @@ printr()
         </thead>
         <tbody>
         <tr><th scope=row>Australia</th> <td>10 (Not in VIC, ACT)</td> <td>18</td></tr>
+        <tr><th scope=row>Finland</th> <td>15</td> <td>18</td></tr>
         <tr><th scope=row>Germany</th> <td>14</td> <td>18</td></tr>
         <tr><th scope=row>New Zealand</th> <td>10</td> <td>20</td></tr>
         <tr><th scope=row>Spain</th> <td>14</td> <td>18</td></tr>
@@ -1118,8 +1214,14 @@ printr()
         <li>The Bundeskriminalamt's <a
         href="https://www.bka.de/DE/AktuelleInformationen/StatistikenLagebilder/PolizeilicheKriminalstatistik/pks_node.html">polizeiliche
         Kriminalstatistik</a>, notably tables on suspects and incidents — good
-        luck accessing any material on that website, since most requests simply
-        time out
+        luck accessing any material on that website from outside of Germany,
+        since most requests simply time out
+
+        <li>Statistics Finland's <a
+        href="https://pxdata.stat.fi/PxWeb/pxweb/en/StatFin/StatFin__rpk/statfin_rpk_pxt_13kr.px/">StatFin
+        table 13kr</a with the "Persons suspected of solved offences by the
+        International Classification of Crime for Statistical Purposes (ICCS),
+        year of solving, age, sex and nationality, 2006-2024."
 
         <li><a
         href="https://www.police.govt.nz/about-us/publications-statistics/data-and-statistics/policedatanz">policedata.nz</a>,
@@ -1144,6 +1246,7 @@ printr()
     def h2(self, title: str) -> None:
         self._secno[0] += 1
         self._secno[1] = 0
+        self._secno[2] = 0
         secno = f"{self._secno[0]}."
 
         s = f"{secno} {title}"
@@ -1152,11 +1255,20 @@ printr()
 
     def h3(self, title: str) -> None:
         self._secno[1] += 1
+        self._secno[2] = 0
         secno = f"{self._secno[0]}.{self._secno[1]}"
 
         s = f"{secno} {title}"
         _print_heading(s, weight="heavy")
         self._section(s, level=3)
+
+    def h4(self, title: str) -> None:
+        self._secno[2] += 1
+        secno = f"{self._secno[0]}.{self._secno[1]}.{self._secno[2]}"
+
+        s = f"{secno} {title}"
+        _print_heading(s, weight="light")
+        self._section(s, level=4)
 
     def _section(self, title: str, level: Literal[2, 3, 4] = 2) -> None:
         self.html(f"\n\n<h{level}>{title}</h{level}>\n")
@@ -1170,7 +1282,7 @@ printr()
     def end_col(self) -> None:
         self.html("</div>\n")
 
-    def _runr(self, frame: pl.DataFrame, template: str) -> None:
+    def _runr(self, frame: pl.DataFrame, template: str, is_html: bool = False) -> None:
         fragments = _runr(frame, template)
 
         skip_hr = not _IS_DEBUG
@@ -1186,7 +1298,10 @@ printr()
             print(fragment)
             printed = True
 
-            self.html(f"<pre><code>\n{fragment}\n</code></pre>\n")
+            if is_html:
+                self.html(fragment)
+            else:
+                self.html(f"<pre><code>\n{fragment}\n</code></pre>\n")
 
         if not printed:
             self._see_path()
@@ -1320,6 +1435,10 @@ h3 {
     border-bottom: 0.2rem solid #000;
 }
 
+h4 {
+    margin-top: 2rem;
+}
+
 figure svg {
     margin-left: auto;
     margin-right: auto;
@@ -1336,6 +1455,19 @@ hr {
     margin-top: 3rem;
     margin-bottom: 2rem;
 }
+
+.years {
+    padding-left: 0;
+}
+
+.years li {
+    list-style: none;
+}
+
+.years li::before {
+    content: counter(list-item) ": "
+}
+
 /* ----------------------------------- Table ----------------------------------- */
 
 .mytable {
@@ -1421,6 +1553,8 @@ printr <- function(value = NULL) {{
 
     if (is.null(value)) {{
         lines <- c()
+    }} else if (is.character(value)) {{
+        lines <- strsplit(value, "\n")
     }} else {{
         lines <- capture.output(print(value))
         lines <- gsub("\t", "    ", lines)
