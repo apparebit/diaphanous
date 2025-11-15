@@ -1,5 +1,5 @@
 from .data import (
-    compute_us_porn_age_distribution, CsamData, load, load_all_csam, load_all_porn
+    compute_us_porn_age_distribution, CsamData, load, load_all_us_csam, load_all_us_porn
 )
 from .model import (
     Activity, Clearance, Column, CriminalAct, Entry, Ethnicity, Group, humanize_frame,
@@ -22,8 +22,8 @@ __all__ = (
     "Id",
     "JuvenileDisposition",
     "load",
-    "load_all_csam",
-    "load_all_porn",
+    "load_all_us_csam",
+    "load_all_us_porn",
     "Location",
     "NIBRS_SOURCE_FILES",
     "NibrsSchema",

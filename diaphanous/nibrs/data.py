@@ -10,8 +10,7 @@ import polars as pl
 from ..finish import finish_caseload, finish_severity
 from .model import (
     AGE_IN_YEARS_V1, AGE_IN_YEARS_V2, Column, CriminalAct, Entry, Ethnicity, Id,
-    NIBRS_SOURCE_FILES, NibrsSchema, NibrsTable, OffenseCode, ORIGINAL_AGENCY_COLUMNS,
-    Race, Sex
+    NIBRS_SOURCE_FILES, NibrsSchema, NibrsTable, OffenseCode, Race, Sex
 )
 from ..util import (
     add_age_group, add_country_material_role, add_group_rank, arrange_age_distribution,
@@ -39,6 +38,7 @@ def _associated_offenses(
     ).agg(
         pl.col(Id.OFFENSE).alias(label)
     )
+
 
 @dataclasses.dataclass
 class _Reader:
@@ -129,6 +129,33 @@ class _Reader:
         return frame
 
 
+def _add_activity(frame: pl.LazyFrame, criminal_act_column: str) -> pl.LazyFrame:
+    return frame.with_columns(
+        pl.when(
+            pl.col(criminal_act_column).list.eval(
+                pl.element().is_in([
+                    CriminalAct.CULTIVATING_MANUFACTURING_PUBLISHING,
+                    CriminalAct.DISTRIBUTING_SELLING,
+                    CriminalAct.OPERATING_PROMOTING_ASSISTING_ABETTING,
+                    CriminalAct.TRANSPORTING_TRANSMITTING_IMPORTING,
+                ])
+            ).list.any()
+        ).then(
+            pl.lit("Producer", dtype=pl.String)
+        ).when(
+            pl.col(criminal_act_column).list.eval(
+                pl.element().is_in([
+                    CriminalAct.BUYING_RECEIVING,
+                    CriminalAct.POSSESSING_CONCEALING,
+                    CriminalAct.USING_CONSUMING,
+                ])
+            ).list.any()
+        ).then(
+            pl.lit("Consumer", dtype=pl.String)
+        ).alias("activity")
+    )
+
+
 def _ingest_csam_data(path: Path, year: int) -> list[pl.LazyFrame]:
     """
     Ingest all incidents involving CSAM from the given directory with NIBRS
@@ -163,7 +190,7 @@ def _ingest_csam_data(path: Path, year: int) -> list[pl.LazyFrame]:
 
     # Combine with criminal act IDs other than exploiting children for the same
     # offense ID ...
-    offenses_exploiting_children = exploiting_children.join(
+    offenses_exploiting_children = _add_activity(exploiting_children.join(
         exploiting_children.select(
             pl.col(Id.OFFENSE)
         ).join(
@@ -179,30 +206,7 @@ def _ingest_csam_data(path: Path, year: int) -> list[pl.LazyFrame]:
         ),
         on=Id.OFFENSE,
         how="left",
-    ).with_columns(
-        pl.when(
-            pl.col("other_criminal_act_ids").list.eval(
-                pl.element().is_in([
-                    CriminalAct.CULTIVATING_MANUFACTURING_PUBLISHING,
-                    CriminalAct.DISTRIBUTING_SELLING,
-                    CriminalAct.OPERATING_PROMOTING_ASSISTING_ABETTING,
-                    CriminalAct.TRANSPORTING_TRANSMITTING_IMPORTING,
-                ])
-            ).list.any()
-        ).then(
-            pl.lit("Producer", dtype=pl.String)
-        ).when(
-            pl.col("other_criminal_act_ids").list.eval(
-                pl.element().is_in([
-                    CriminalAct.BUYING_RECEIVING,
-                    CriminalAct.POSSESSING_CONCEALING,
-                    CriminalAct.USING_CONSUMING,
-                ])
-            ).list.any()
-        ).then(
-            pl.lit("Consumer", dtype=pl.String)
-        ).alias("activity")
-    )
+    ), "other_criminal_act_ids")
 
     # Combine with offenses that involve pornography or obscene materials to
     # arrive at table of offenses involving CSAM. Then enrich with using column.
@@ -345,12 +349,25 @@ def _ingest_porn_data(path: Path, year: int) -> tuple[pl.LazyFrame, pl.LazyFrame
     reader = _Reader(path, year)
 
     arrestee = reader.read(NibrsSchema.ARRESTEE)
+    criminal_act = reader.read(NibrsSchema.CRIMINAL_ACT)
     incident = reader.read(NibrsSchema.INCIDENT)
     offender = reader.read(NibrsSchema.OFFENDER)
     offense = reader.read(NibrsSchema.OFFENSE)
 
+    criminal_act = _add_activity(criminal_act.group_by(
+        Id.OFFENSE
+    ).agg(
+        Id.CRIMINAL_ACT
+    ), Id.CRIMINAL_ACT).select(
+        Id.OFFENSE, Id.ACTIVITY
+    )
+
     offenses_involving_porn = offense.filter(
         pl.col("offense_code").eq(OffenseCode.PORNOGRAPHY_OBSCENE_MATERIAL)
+    ).join(
+        criminal_act,
+        on=Id.OFFENSE,
+        how="left",
     )
 
     incidents_involving_porn = offenses_involving_porn.select(
@@ -359,10 +376,14 @@ def _ingest_porn_data(path: Path, year: int) -> tuple[pl.LazyFrame, pl.LazyFrame
         incident,
         on=Id.INCIDENT,
         how="inner",
+    ).join(
+        offenses_involving_porn.select(Id.INCIDENT, Id.ACTIVITY),
+        on=Id.INCIDENT,
+        how="left",
     )
 
     offenders_involving_porn = incidents_involving_porn.select(
-        pl.col(Id.INCIDENT)
+        Id.INCIDENT, Id.ACTIVITY
     ).join(
         offender,
         on=Id.INCIDENT,
@@ -370,7 +391,7 @@ def _ingest_porn_data(path: Path, year: int) -> tuple[pl.LazyFrame, pl.LazyFrame
     )
 
     arrestees_involving_porn = incidents_involving_porn.select(
-        pl.col(Id.INCIDENT)
+        Id.INCIDENT, Id.ACTIVITY
     ).join(
         arrestee,
         on=Id.INCIDENT,
@@ -427,15 +448,21 @@ def prepare(
             ).alias(Id.RACE)
         )
 
-    is_offender = Id.OFFENDER in frame.columns
-    return frame.select(
-        pl.col(
-            Id.YEAR,
-            "age", Id.GROUP,
-            Id.SEX, Id.RACE, Id.INCIDENT,
-            Id.OFFENDER if is_offender else Id.ARRESTEE
-        )
-    )
+    selection = [
+        Id.YEAR,
+        "age", Id.GROUP,
+        Id.SEX, Id.RACE,
+    ]
+
+    if Id.ACTIVITY in frame.columns:
+        selection.append(Id.ACTIVITY)
+    selection.append(Id.INCIDENT)
+    if Id.OFFENDER in frame.columns:
+        selection.append(Id.OFFENDER)
+    if Id.ARRESTEE in frame.columns:
+        selection.append(Id.ARRESTEE)
+
+    return frame.select(pl.col(*selection))
 
 
 def finish(
@@ -461,7 +488,6 @@ def finish(
     frame = add_group_rank(frame)
     frame = add_country_material_role(frame, "United States", material, role)
     return arrange_age_distribution(frame)
-
 
 
 @dataclasses.dataclass(frozen=True, slots=True)
@@ -561,14 +587,14 @@ class CsamData:
             _ingest_csam_data(path, year)
         ))
 
+        # Since the instance hasn't been visible outside of this method yet,
+        # we can safely update the incidents.
         assert data.incidents.select(
             (pl.col(Id.OFFENSE).list.len() == 1).all()
         ).item(), (
             "each incident is associated with exactly one offense"
         )
 
-        # Since the instance hasn't been visible outside of this method yet,
-        # we can safely update the incidents.
         object.__setattr__(
             data,
             "incidents",
@@ -790,15 +816,33 @@ def load(year: int) -> CsamData:
     else:
         data = CsamData.load(ingested)
 
+    assert data.arrestees.select(
+        pl.col(Id.ARRESTEE).n_unique()
+    ).item() == data.arrestees.height, (
+        "each arrestee appears exactly once"
+    )
+
+    assert data.offenders.select(
+        pl.col(Id.OFFENDER).n_unique()
+    ).item() == data.offenders.height, (
+        "each offender appears exactly once"
+    )
+
+    assert data.victims.select(
+        pl.col(Id.VICTIM).n_unique()
+    ).item() == data.victims.height, (
+        "each victim appears exactly once"
+    )
+
     return data
 
 
-def load_all_csam() -> CsamData:
+def load_all_us_csam() -> CsamData:
     """Load all NIBRS data involving CSAM."""
     return CsamData.merge(*(load(y) for y in range(2015, 2025)))
 
 
-def load_all_porn() -> tuple[pl.DataFrame, pl.DataFrame]:
+def load_all_us_porn() -> tuple[pl.DataFrame, pl.DataFrame]:
     def trace(path: Path) -> None:
         print(str(path))
 
@@ -833,11 +877,11 @@ def compute_us_porn_age_distribution(
     role: Literal["Offender", "Arrestee"],
 ) -> pl.DataFrame:
     frame = prepare(frame).group_by(
-        Id.YEAR, "age", Id.GROUP, Id.SEX, Id.RACE, maintain_order=False
+        Id.YEAR, "age", Id.GROUP, Id.SEX, Id.RACE, Id.ACTIVITY,
+        maintain_order=False
     ).agg(
         pl.len().alias("count"),
-        pl.lit(None, dtype=pl.String).alias(Id.ACTIVITY),
     ).sort(
-        Id.YEAR, "age", Id.GROUP, Id.SEX, Id.RACE
+        Id.YEAR, "age", Id.GROUP, Id.SEX, Id.RACE, Id.ACTIVITY
     )
     return finish(frame, "Porn", role)

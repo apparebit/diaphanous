@@ -465,7 +465,7 @@ class NibrsSchema(enum.Enum):
             expected_columns = effective_schema.columns()
             expected_columns[-1] = "age_range_high_num"
         else:
-            expected_columns = effective_schema.value.names()
+            expected_columns = effective_schema.columns()
 
         if expected_columns == actual_columns:
             return effective_schema
@@ -526,6 +526,8 @@ class SchemaExtension(enum.Enum):
     })
     """
     Extra offense columns.
+
+
 
     The primary `criminal_act_id` must be 4, i.e., exploitation of children. At
     most two `other_criminal_act_ids` are optional. If they include cultivation
