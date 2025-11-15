@@ -117,9 +117,9 @@ def plot_age_and_sex(
     ]
 
     range = [
-        Palette.ORANGE, Palette.RED, Palette.PINK,
-        "#555",
-        Palette.LIGHT_BLUE, Palette.BLUE, Palette.PURPLE,
+        Palette.PINK, Palette.RED, Palette.LIGHT_GRAY,
+        Palette.BLACK,
+        Palette.LIGHT_BLUE, Palette.BLUE, Palette.LIGHT_GRAY,
     ]
 
     right_side = alt.Axis(
@@ -179,7 +179,6 @@ def plot_age_thumbs(
     facet_labels: bool = False
 ) -> alt.Chart | alt.LayerChart | alt.FacetChart:
     data = _prep_sex_by_age(frame).with_columns(
-        # Form group label by combining sex and age group
         pl.when(
             pl.col("sex").is_null()
         ).then(
@@ -187,59 +186,34 @@ def plot_age_thumbs(
         ).otherwise(
             pl.format("{} {}", pl.col("sex"), pl.col(Id.GROUP))
         ).alias(Id.GROUP),
-        # Format the total with thousands separator
-        pl.col("count")
-            .sum()
-            .over("data_year")
-            .round()
-            .cast(pl.Int64)
+
+        pl.col("count").filter(
+            pl.col("age").is_not_null()
+        ).sum().over("data_year").round().cast(pl.Int64).alias("with_age"),
+        pl.col("count").sum().over("data_year").round().cast(pl.Int64).alias("total"),
+    ).with_columns(
+        pl.col("with_age")
             .cast(pl.String)
             .str.replace(r"(\d+)(\d\d\d)$", "${1},${2}")
-            .alias("population"),
-        # Determine the number of female offenders/arrestees
-        pl.col("count")
-            .filter(pl.col("age").is_not_null().and_(pl.col("sex").eq("Female")))
-            .sum()
-            .over("data_year")
-            .alias("female_population"),
-        # Determine the age of majority
+            .alias("anno1"),
         pl.when(
-            pl.col("country").eq("New Zealand"),
+            pl.col("total").eq(pl.col("with_age"))
         ).then(
-            pl.lit(20, dtype=pl.Int16),
+            pl.lit(None)
         ).otherwise(
-            pl.lit(18, dtype=pl.Int16),
-        ).alias("age_of_majority"),
+            pl.col("total")
+                .cast(pl.String)
+                .str.replace(r"(\d+)(\d\d\d)$", "${1},${2}")
+        ).alias("anno2")
     ).with_columns(
-        # Format the "N=<n>" label
-        pl.format("N={}", pl.col("population")).alias("N_annotation"),
-        # Compute the number of female offenders below the age of majority
-        pl.col("count")
-            .filter(
-                pl.col("age").lt(pl.col("age_of_majority")).and_(
-                    pl.col("sex").eq("Female")
-                )
-            ).sum()
-            .over("data_year")
-            .alias("female_minors"),
-    ).with_columns(
-        # Determine the percentage fraction of minor female offenders
-        pl.col("female_minors")
-            .truediv(pl.col("female_population"))
-            .mul(100)
-            .round(1)
-            .alias("female_minors"),
-    ).with_columns(
-        # Format the "fm=<p>%"" label
+        pl.format("N={}", pl.col("anno1")).alias("anno1"),
         pl.when(
-            pl.col("female_minors").is_nan()
+            pl.col("anno2").is_not_null()
         ).then(
-            pl.lit("fm=—", dtype=pl.String)
+            pl.format("of {}", pl.col("anno2"))
         ).otherwise(
-            pl.col("female_minors").map_elements(
-                lambda el: f"fm={el:.1f}%"
-            )
-        ).alias("fm_annotation")
+            pl.lit("")
+        ).alias("anno2")
     )
 
     domain = [
@@ -249,9 +223,9 @@ def plot_age_thumbs(
     ]
 
     range = [
-        Palette.RED, Palette.RED, "#aaaeb6",
-        "#1f2228",
-        Palette.BLUE, Palette.BLUE, "#aaaeb6",
+        Palette.RED, Palette.RED, Palette.LIGHT_GRAY,
+        Palette.BLACK,
+        Palette.BLUE, Palette.BLUE, Palette.LIGHT_GRAY,
     ]
 
     actual_min, actual_max = data.filter(
@@ -268,7 +242,7 @@ def plot_age_thumbs(
         "data_year",
         "age", "age_group",
         "range_start", "range_stop",
-        "N_annotation", "fm_annotation",
+        "anno1", "anno2",
     )
 
     yaxis = alt.Axis(
@@ -304,7 +278,7 @@ def plot_age_thumbs(
             fontStyle="italic",
             fontWeight="lighter",
         ).encode(
-            alt.Text("N_annotation:N")
+            alt.Text("anno1:N")
         ),
         base.mark_text(
             x="width",
@@ -315,7 +289,7 @@ def plot_age_thumbs(
             fontStyle="italic",
             fontWeight="lighter",
         ).encode(
-            alt.Text("fm_annotation:N")
+            alt.Text("anno2:N")
         ),
         base.mark_rule(strokeWidth=1.5).encode(
             alt.YDatum(0)
