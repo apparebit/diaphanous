@@ -2,14 +2,14 @@ import polars as pl
 
 from .aunz import au_age_distribution, nz_age_distribution
 from .bka import de_age_distribution
-from .nibrs import compute_us_porn_age_distribution, load_all_csam, load_all_porn
+from .nibrs import compute_us_porn_age_distribution, load_all_us_csam, load_all_us_porn
 from .util import (
     add_age_group, add_country_material_role, arrange_age_distribution,
     compute_sex_and_age_cdfs
 )
 
 def es_age_distribution() -> pl.DataFrame:
-    frame = pl.read_csv(
+    frame = pl.scan_csv(
         "data/spain.csv", separator=";"
     ).rename({
         "Age group": "age",
@@ -48,16 +48,93 @@ def es_age_distribution() -> pl.DataFrame:
         pl.lit(None, dtype=pl.String).alias("activity"),
     )
 
-    frame = add_age_group(frame, 14, 17)
+    frame = add_age_group(frame, 14, 17).collect()
     frame = add_country_material_role(frame, "Spain", "CSAM", "Suspect")
     return arrange_age_distribution(frame)
 
 
+def fi_age_distribution() -> pl.DataFrame:
+    frame = pl.scan_csv(
+        "data/finland.csv",
+    ).select(
+        pl.exclude(
+            "ICCS offence category",
+            "Number of offence headings for suspects of solved offences",
+        )
+    ).rename({
+        "Year": "data_year",
+        "Suspect's sex": "sex",
+        "Suspect's age": "age",
+        "Persons suspected of solved offences": "count",
+    }).filter(
+        pl.col("sex").ne("Total").and_(
+            pl.col("age").is_in(["Total", "18 -"]).not_()
+        )
+    ).select(
+        pl.col("data_year").cast(pl.Int16),
+        pl.col("sex").replace({
+            "Males": "Male",
+            "Females": "Female",
+            "Unknown": None,
+        }),
+        pl.col("age").replace({
+            "Unknown": None,
+        }),
+        pl.col("count"),
+    )
+
+    frame = pl.concat([
+        frame.filter(
+            pl.col("age").ne("0 - 17")
+        ),
+        frame.filter(
+            pl.col("age").eq("0 - 17")
+        ).select(
+            "data_year", "sex", "count",
+        ).join(
+            frame.filter(
+                pl.col("age").eq("0 - 14")
+            ).select(
+                "data_year", "sex", "count",
+            ),
+            on=["data_year", "sex"],
+            how="inner",
+        ).select(
+            pl.col("data_year", "sex"),
+            pl.lit("15 - 17").alias("age"),
+            pl.col("count").sub(pl.col("count_right")),
+        ),
+    ]).with_columns(
+        pl.col("age").str.extract(r"^(\d+) -").cast(pl.Int8).alias("age_first"),
+        pl.when(
+            pl.col("age").eq("50 -")
+        ).then(
+            pl.lit(99)
+        ).otherwise(
+            pl.col("age").str.extract(r"- (\d+)")
+        ).cast(pl.Int8).add(1).alias("age_last"),
+    ).with_columns(
+        pl.col("count").truediv(
+            pl.col("age_last").sub(pl.col("age_first"))
+        ),
+        pl.int_ranges("age_first", "age_last", dtype=pl.Int8).alias("age"),
+    ).explode("age").sort(
+        "data_year", "age", "sex"
+    ).with_columns(
+        pl.lit(None, dtype=pl.String).alias("ethnicity"),
+        pl.lit(None, dtype=pl.String).alias("activity"),
+    )
+
+    frame = add_age_group(frame, 15, 17).collect()
+    frame = add_country_material_role(frame, "Finland", "CSAM", "Suspect")
+    return arrange_age_distribution(frame)
+
+
 def load_all_age_distributions(compact: bool = False) -> dict[str, pl.DataFrame]:
-    csam = load_all_csam()
+    csam = load_all_us_csam()
     csam_arrestees = csam.arrestee_demographics().age_distribution()
     csam_offenders = csam.offender_demographics().age_distribution()
-    porn = load_all_porn()
+    porn = load_all_us_porn()
     porn_arrestees = compute_us_porn_age_distribution(porn[0], "Arrestee")
     porn_offenders = compute_us_porn_age_distribution(porn[1], "Offender")
 
@@ -65,6 +142,7 @@ def load_all_age_distributions(compact: bool = False) -> dict[str, pl.DataFrame]
         "au": au_age_distribution(),
         "de": de_age_distribution(),
         "es": es_age_distribution(),
+        "fi": fi_age_distribution(),
         "nz": nz_age_distribution(),
         "us_arrestees": csam_arrestees,
         "us_offenders": csam_offenders,
@@ -99,6 +177,22 @@ def compute_cdf_titles(distributions: dict[str, pl.DataFrame]) -> dict[str, str]
 
 def compute_cdfs(distributions: dict[str, pl.DataFrame]) -> dict[str, pl.DataFrame]:
     return {k: compute_sex_and_age_cdfs(d) for k, d in distributions.items()}
+
+
+def compute_totals(distributions: pl.DataFrame) -> pl.DataFrame:
+    return distributions.group_by(
+        "country", "material", "role", "data_year",
+        maintain_order=True
+    ).agg(
+        pl.col("count").sum().round(0).cast(pl.Int64)
+    ).select(
+        pl.format("{} {} {}s", "country", "material", "role").alias("metric"),
+        "data_year", "count"
+    ).pivot(
+        on="data_year",
+        index="metric",
+        values="count",
+    )
 
 
 def summarize_age_distributions(frame: pl.DataFrame) -> pl.DataFrame:
@@ -221,7 +315,14 @@ if __name__ == "__main__":
 
     # _WIDTH, _ = shutil.get_terminal_size()
     distributions = load_all_age_distributions(compact=True)
-    pl.concat(distributions.values()).write_csv("data/age-distributions.csv")
+    frame = pl.concat(distributions.values())
+    frame.write_csv("data/age-distributions.csv")
 
-    summaries = {k: summarize_age_distributions(v) for k, v in distributions.items()}
-    print(pl.concat(summaries.values()))
+    frame = frame.filter(
+        pl.col("country").ne("Australia").and_(
+            pl.col("data_year").ge(2015)
+        ).and_(
+            pl.col("data_year").lt(2025)
+        )
+    )
+    print(compute_totals(frame))
