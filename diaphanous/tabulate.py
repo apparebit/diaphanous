@@ -383,6 +383,7 @@ class Analyzer:
                 <li>Poland
                 <li>Singapore
                 <li>Thailand
+                <li>United Arab Emirates
                 <li>United Kingdom
                 </ul>
 
@@ -392,6 +393,7 @@ class Analyzer:
                 <ul>
                 <li>Finland
                 <li>Germany
+                <li>Italy
                 <li>New Zealand
                 <li>Spain
                 <li>United States
@@ -403,6 +405,7 @@ class Analyzer:
                 <ul>
                 <li>Finland: coarse nationality of offenders
                 <li>Germany: producers v consumers
+                <li>Italy: Italians vs foreigners
                 <li>New Zealand: ethnicity, producers v consumers
                 <li>United States: ethnicity, producers v consumers
                 </ul>
@@ -964,6 +967,7 @@ printr()
             plot_sex_by_age_detailed(data["au"], "Australia", "CSAM", "Offender"),
             plot_sex_by_age_detailed(data["fi"], "Finland", "CSAM", "Suspect"),
             plot_sex_by_age_detailed(data["de"], "Germany", "CSAM", "Suspect"),
+            plot_sex_by_age_detailed(data["it"], "Italy", "CSAM", "Offender"),
             plot_sex_by_age_detailed(data["nz"], "New Zealand", "CSAM", "Offenders"),
             plot_sex_by_age_detailed(data["es"], "Spain", "CSAM", "Suspect"),
             plot_sex_by_age_detailed(
@@ -997,6 +1001,7 @@ printr()
             plot_hrule(width="pyramid"),
             plot_sex_by_age(data["fi"], "Finland", "CSAM", "Suspect"),
             plot_sex_by_age(data["de"], "Germany", "CSAM", "Suspect"),
+            plot_sex_by_age(data["it"], "Italy", "CSAM", "Offender"),
             plot_sex_by_age(data["nz"], "New Zealand", "CSAM", "Offender"),
             plot_sex_by_age(data["es"], "Spain", "CSAM", "Suspect"),
             plot_hrule(width="pyramid", stroke="thin"),
@@ -1106,6 +1111,7 @@ for (current_metric in metrics) {{
             plot_hrule(width="mosaic"),
             plot_age_sex_mosaics(mosaic_data["fi"], "Finland", "CSAM", "Suspect"),
             plot_age_sex_mosaics(mosaic_data["de"], "Germany", "CSAM", "Suspect"),
+            plot_age_sex_mosaics(mosaic_data["it"], "Italy", "CSAM", "Offender"),
             plot_age_sex_mosaics(mosaic_data["nz"], "New Zealand", "CSAM", "Offender"),
             plot_age_sex_mosaics(mosaic_data["es"], "Spain", "CSAM", "Suspect"),
             plot_hrule(width="mosaic", stroke="thin"),
@@ -1167,6 +1173,7 @@ for (current_metric in metrics) {{
         bands = alt.vconcat(
             plot_sex_and_age_cdf_bands(cdf["fi"], "Finland", rule=18),
             plot_sex_and_age_cdf_bands(cdf["de"], "Germany", rule=18),
+            plot_sex_and_age_cdf_bands(cdf["it"], "Italy", rule=18),
             plot_sex_and_age_cdf_bands(cdf["nz"], "New Zealand", rule=20),
             plot_sex_and_age_cdf_bands(cdf["es"], "Spain", rule=18),
             plot_sex_and_age_cdf_bands(cdf["us_offenders"], "United States", rule=18),
@@ -1228,6 +1235,11 @@ for (current_metric in metrics) {{
         table 13kr</a with the "Persons suspected of solved offences by the
         International Classification of Crime for Statistical Purposes (ICCS),
         year of solving, age, sex and nationality, 2006-2024."
+
+        <li>Istat's table on <a
+        href="https://esploradati.istat.it/databrowser/#/en/dw/categories/IT1,Z0840JUS,1.0/JUS_CRIMINAL/DCCV_AUTVITTPS/IT1,73_230_DF_DCCV_AUTVITTPS_1,1.0">alleged
+        offenders reported by the police forces to the judicial authority</a>
+        organized by gender, age, and citizenship.
 
         <li><a
         href="https://www.police.govt.nz/about-us/publications-statistics/data-and-statistics/policedatanz">policedata.nz</a>,

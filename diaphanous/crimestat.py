@@ -130,6 +130,74 @@ def fi_age_distribution() -> pl.DataFrame:
     return arrange_age_distribution(frame)
 
 
+def it_age_distribution() -> pl.DataFrame:
+    frame = pl.read_csv(
+        "data/italy.csv"
+    ).select(
+        "AGE", "Sex (DESC)", "CITIZENSHIP", "TIME_PERIOD", "Observation",
+    ).filter(
+        pl.col("CITIZENSHIP").ne("TOTAL")
+    ).rename({
+        "AGE": "age",
+        "Sex (DESC)": "sex",
+        "CITIZENSHIP": "ethnicity",
+        "TIME_PERIOD": "data_year",
+        "Observation": "count",
+    }).with_columns(
+        pl.col("data_year").cast(pl.Int16),
+        pl.when(
+            pl.col("age").eq("Y_UN13")
+        ).then(
+            pl.lit(0)
+        ).when(
+            pl.col("age").eq("Y_GE65")
+        ).then(
+            pl.lit(65)
+        ).otherwise(
+            pl.col("age").str.extract(r"^Y(\d+)-")
+        ).cast(pl.Int8).alias("age_first"),
+        pl.when(
+            pl.col("age").eq("Y_UN13")
+        ).then(
+            pl.lit(13)
+        ).when(
+            pl.col("age").eq("Y_GE65")
+        ).then(
+            pl.lit(99)
+        ).otherwise(
+            pl.col("age").str.extract(r"-(\d+)$")
+        ).cast(pl.Int8).add(1).alias("age_last"),
+        pl.col("sex").replace({"Females": "Female", "Males": "Male"}),
+        pl.col("ethnicity").replace({"ITL": "Italian", "FRG": "Foreign"}),
+    ).with_columns(
+        pl.col("count").truediv(
+            pl.col("age_last").sub(pl.col("age_first"))
+        ),
+        pl.int_ranges("age_first", "age_last", dtype=pl.Int8).alias("age"),
+    ).explode("age").sort(
+        "data_year", "age", "sex", "ethnicity"
+    ).with_columns(
+        pl.lit(None, dtype=pl.String).alias("activity"),
+    )
+
+    # Add empty row for 2024 to force creation of a frame for that year
+    frame = pl.concat([frame, pl.DataFrame().with_columns(
+        pl.lit(None, dtype=pl.Int8).alias("age"),
+        pl.lit(None, dtype=pl.String).alias("sex"),
+        pl.lit(None, dtype=pl.String).alias("ethnicity"),
+        pl.lit(2024, dtype=pl.Int16).alias("data_year"),
+        pl.lit(None, dtype=pl.Float64).alias("count"),
+        pl.lit(None, dtype=pl.Int8).alias("age_first"),
+        pl.lit(None, dtype=pl.Int8).alias("age_last"),
+        pl.lit(None, dtype=pl.String).alias("activity"),
+    )])
+
+    frame = add_age_group(frame, 14, 17)
+    frame = add_country_material_role(frame, "Italy", "CSAM", "Offender")
+    frame = arrange_age_distribution(frame)
+    return frame
+
+
 def load_all_age_distributions(compact: bool = False) -> dict[str, pl.DataFrame]:
     csam = load_all_us_csam()
     csam_arrestees = csam.arrestee_demographics().age_distribution()
@@ -143,6 +211,7 @@ def load_all_age_distributions(compact: bool = False) -> dict[str, pl.DataFrame]
         "de": de_age_distribution(),
         "es": es_age_distribution(),
         "fi": fi_age_distribution(),
+        "it": it_age_distribution(),
         "nz": nz_age_distribution(),
         "us_arrestees": csam_arrestees,
         "us_offenders": csam_offenders,
