@@ -161,7 +161,7 @@ def simplify_age_distribution(frame: pl.DataFrame) -> pl.DataFrame:
         pl.format(
             "{} {} {}s", pl.col("country"), pl.col("material"), pl.col("role")
         ).alias("metric"),
-        pl.col("data_year"),
+        pl.col("country", "material", "role", "data_year"),
         pl.when(
             pl.col("age_group").is_in(["Child", "Juvenile"])
         ).then(
@@ -180,7 +180,9 @@ def simplify_age_distribution(frame: pl.DataFrame) -> pl.DataFrame:
         ).alias("group_rank"),
         pl.col("sex", "activity", "count")
     ).group_by(
-        "metric", "data_year", "age_group", "group_rank", "sex", "activity",
+        "metric", "country", "material", "role",
+        "data_year",
+        "age_group", "group_rank", "sex", "activity",
     ).agg(
         pl.col("count").sum().round(0).cast(pl.Int64)
     ).sort(

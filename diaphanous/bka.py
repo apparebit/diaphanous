@@ -343,8 +343,6 @@ class Data:
             index=[Id.YEAR, "sex", "activity", "requires_sixty_plus"],
             variable_name="age_range",
             value_name="count",
-        ).drop_nulls(
-            "age_range"
         ).filter(
             pl.col("requires_sixty_plus").or_(
                 pl.col("age_range").ne(">=60")

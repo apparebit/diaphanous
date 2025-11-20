@@ -13,8 +13,8 @@ import great_tables as gt
 import polars as pl
 
 from .chart import (
-    plot_age_sex_mosaics, plot_age_thumbs, plot_age_and_sex, plot_sex_and_age_cdfs,
-    plot_sex_and_age_cdf_bands, plot_thumb_rule
+    plot_age_sex_mosaics, plot_sex_by_age, plot_sex_by_age_detailed, plot_sex_and_age_cdfs,
+    plot_sex_and_age_cdf_bands, plot_hrule
 )
 from .platform.data import REPORTS_PER_PLATFORM
 from .util import simplify_age_distribution
@@ -958,18 +958,22 @@ printr()
         self.h3("Age Distribution of Offenders: The Last Two Years")
 
         distributions = crimestat.load_all_age_distributions()
-        detail = self.filter_years(distributions, *self.DETAIL_YEARS)
+        data = self.filter_years(distributions, *self.DETAIL_YEARS)
 
         fig = alt.vconcat(
-            plot_age_and_sex(detail["au"], "Australia", "CSAM", "Offender"),
-            plot_age_and_sex(detail["fi"], "Finland", "CSAM", "Suspect"),
-            plot_age_and_sex(detail["de"], "Germany", "CSAM", "Suspect"),
-            plot_age_and_sex(detail["nz"], "New Zealand", "CSAM", "Offenders"),
-            plot_age_and_sex(detail["es"], "Spain", "CSAM", "Suspect"),
-            plot_age_and_sex(detail["us_offenders"], "United States", "CSAM", "Offender"),
-            plot_age_and_sex(detail["us_arrestees"], "United States", "CSAM", "Arrestee"),
-            plot_age_and_sex(detail["us_porn_offenders"], "United States", "Porn", "Offender"),
-            plot_age_and_sex(detail["us_porn_arrestees"], "United States", "Porn", "Arrestee"),
+            plot_sex_by_age_detailed(data["au"], "Australia", "CSAM", "Offender"),
+            plot_sex_by_age_detailed(data["fi"], "Finland", "CSAM", "Suspect"),
+            plot_sex_by_age_detailed(data["de"], "Germany", "CSAM", "Suspect"),
+            plot_sex_by_age_detailed(data["nz"], "New Zealand", "CSAM", "Offenders"),
+            plot_sex_by_age_detailed(data["es"], "Spain", "CSAM", "Suspect"),
+            plot_sex_by_age_detailed(
+                data["us_offenders"], "United States", "CSAM", "Offender"),
+            plot_sex_by_age_detailed(
+                data["us_arrestees"], "United States", "CSAM", "Arrestee"),
+            plot_sex_by_age_detailed(
+                data["us_porn_offenders"], "United States", "Porn", "Offender"),
+            plot_sex_by_age_detailed(
+                data["us_porn_arrestees"], "United States", "Porn", "Arrestee"),
         ).resolve_scale(x="shared")
 
         path = "figure/age-distributions.svg"
@@ -986,24 +990,24 @@ printr()
             """
         )
 
-        thumb_data = self.filter_years(distributions, *self.THUMB_YEARS)
+        data = self.filter_years(distributions, *self.THUMB_YEARS)
 
         self.html("<div class=extra-wide>\n")
-        pyramid_fig = alt.vconcat(
-            plot_thumb_rule(width="pyramid"),
-            plot_age_thumbs(thumb_data["fi"], "Finland", "CSAM", "Suspect"),
-            plot_age_thumbs(thumb_data["de"], "Germany", "CSAM", "Suspect"),
-            plot_age_thumbs(thumb_data["nz"], "New Zealand", "CSAM", "Offender"),
-            plot_age_thumbs(thumb_data["es"], "Spain", "CSAM", "Suspect"),
-            plot_thumb_rule(width="pyramid", stroke="thin"),
-            plot_age_thumbs(
-                thumb_data["us_offenders"], "United States", "CSAM", "Offender"),
-            plot_age_thumbs(
-                thumb_data["us_arrestees"], "United States", "CSAM", "Arrestee"),
-            plot_age_thumbs(
-                thumb_data["us_porn_offenders"], "United States", "Porn", "Offender"),
-            plot_age_thumbs(
-                thumb_data["us_porn_arrestees"], "United States", "Porn", "Arrestee",
+        fig = alt.vconcat(
+            plot_hrule(width="pyramid"),
+            plot_sex_by_age(data["fi"], "Finland", "CSAM", "Suspect"),
+            plot_sex_by_age(data["de"], "Germany", "CSAM", "Suspect"),
+            plot_sex_by_age(data["nz"], "New Zealand", "CSAM", "Offender"),
+            plot_sex_by_age(data["es"], "Spain", "CSAM", "Suspect"),
+            plot_hrule(width="pyramid", stroke="thin"),
+            plot_sex_by_age(
+                data["us_offenders"], "United States", "CSAM", "Offender"),
+            plot_sex_by_age(
+                data["us_arrestees"], "United States", "CSAM", "Arrestee"),
+            plot_sex_by_age(
+                data["us_porn_offenders"], "United States", "Porn", "Offender"),
+            plot_sex_by_age(
+                data["us_porn_arrestees"], "United States", "Porn", "Arrestee",
                 facet_labels=True
             ),
             spacing=15,
@@ -1014,8 +1018,8 @@ printr()
            titleFontSize=40,
         ).properties(
             title=alt.Title(
-                "Offenders, Suspects, and Arrestees by Age (0→100), "
-                "Sex (Female↧, Male↥), Year (2015⇒2024), and Country (⇕)",
+                "Responsible People by Age (0→100), Sex (Female↓, Male↑), "
+                "Year (2015⇒2024), and Country (⇓)",
                 fontSize=45,
                 fontWeight="bold",
                 anchor="start",
@@ -1023,20 +1027,22 @@ printr()
                 dx=20,
                 dy=-10,
                 subtitle=(
-                    "With Female Minors Highlighted in Red and Male Minors "
-                    "Highlighted in Blue"
+                    "With Female Minors in Red, Male Minors in Blue, and "
+                    "People w/o Sex in Black"
                 ),
                 subtitleFontSize=40,
             )
         )
 
-        pyramid_path = "figure/age-distribution-thumbs.svg"
-        pyramid_fig.save(pyramid_path)
-        self.svg(pyramid_path)
+        path = "figure/age-distribution-thumbs.svg"
+        fig.save(path)
+        self.svg(path)
         self.html("</div>\n")
 
         self.h3("Independence of Age Group and Sex")
-        frame = simplify_age_distribution(pl.concat(thumb_data.values()))
+        frame = simplify_age_distribution(pl.concat(data.values())).select(
+            pl.exclude("country", "material", "role")
+        )
         self._runr(frame, """
 library(tidyverse)
 library(vcdExtra)
@@ -1094,15 +1100,15 @@ for (current_metric in metrics) {{
 
         self.html("<div class=extra-wide>\n")
         mosaic_data = {
-            k: crimestat.summarize_age_distributions(v) for k, v in thumb_data.items()
+            k: crimestat.summarize_age_distributions(v) for k, v in data.items()
         }
         mosaic_fig = alt.vconcat(
-            plot_thumb_rule(width="mosaic"),
+            plot_hrule(width="mosaic"),
             plot_age_sex_mosaics(mosaic_data["fi"], "Finland", "CSAM", "Suspect"),
             plot_age_sex_mosaics(mosaic_data["de"], "Germany", "CSAM", "Suspect"),
             plot_age_sex_mosaics(mosaic_data["nz"], "New Zealand", "CSAM", "Offender"),
             plot_age_sex_mosaics(mosaic_data["es"], "Spain", "CSAM", "Suspect"),
-            plot_thumb_rule(width="mosaic", stroke="thin"),
+            plot_hrule(width="mosaic", stroke="thin"),
             plot_age_sex_mosaics(
                 mosaic_data["us_offenders"], "United States", "CSAM", "Offender"),
             plot_age_sex_mosaics(

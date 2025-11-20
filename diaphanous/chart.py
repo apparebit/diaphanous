@@ -64,7 +64,7 @@ def _prep_sex_by_age(frame: pl.DataFrame) -> pl.DataFrame:
     )
 
 
-def plot_age_and_sex(
+def plot_sex_by_age_detailed(
     frame: pl.DataFrame, country: str, material: str, role: str
 ) -> alt.Chart | alt.LayerChart | alt.FacetChart:
     data = _prep_sex_by_age(frame).with_columns(
@@ -171,7 +171,7 @@ def plot_age_and_sex(
         ),
     )
 
-def plot_age_thumbs(
+def plot_sex_by_age(
     frame: pl.DataFrame,
     country: str,
     material: Literal["Porn", "CSAM"],
@@ -190,30 +190,38 @@ def plot_age_thumbs(
         pl.col("count").filter(
             pl.col("age").is_not_null()
         ).sum().over("data_year").round().cast(pl.Int64).alias("with_age"),
-        pl.col("count").sum().over("data_year").round().cast(pl.Int64).alias("total"),
+        pl.col("count").filter(
+            pl.col("age").is_null()
+        ).sum().over("data_year").round().cast(pl.Int64).alias("without_age"),
     ).with_columns(
         pl.col("with_age")
             .cast(pl.String)
             .str.replace(r"(\d+)(\d\d\d)$", "${1},${2}")
-            .alias("anno1"),
+            .alias("total_shown"),
         pl.when(
-            pl.col("total").eq(pl.col("with_age"))
+            pl.col("without_age").eq(0)
         ).then(
             pl.lit(None)
         ).otherwise(
-            pl.col("total")
+            pl.col("without_age")
                 .cast(pl.String)
                 .str.replace(r"(\d+)(\d\d\d)$", "${1},${2}")
-        ).alias("anno2")
+        ).alias("not_shown")
     ).with_columns(
-        pl.format("N={}", pl.col("anno1")).alias("anno1"),
         pl.when(
-            pl.col("anno2").is_not_null()
+            pl.col("with_age").gt(0)
         ).then(
-            pl.format("of {}", pl.col("anno2"))
+            pl.format("N={}", pl.col("total_shown"))
+        ).otherwise(
+            pl.lit("N/A", dtype=pl.String)
+        ).alias("total_shown"),
+        pl.when(
+            pl.col("not_shown").is_not_null()
+        ).then(
+            pl.format("{} w/o Age", pl.col("not_shown"))
         ).otherwise(
             pl.lit("")
-        ).alias("anno2")
+        ).alias("not_shown")
     )
 
     domain = [
@@ -242,7 +250,7 @@ def plot_age_thumbs(
         "data_year",
         "age", "age_group",
         "range_start", "range_stop",
-        "anno1", "anno2",
+        "total_shown", "not_shown",
     )
 
     yaxis = alt.Axis(
@@ -278,7 +286,7 @@ def plot_age_thumbs(
             fontStyle="italic",
             fontWeight="lighter",
         ).encode(
-            alt.Text("anno1:N")
+            alt.Text("total_shown:N")
         ),
         base.mark_text(
             x="width",
@@ -289,7 +297,7 @@ def plot_age_thumbs(
             fontStyle="italic",
             fontWeight="lighter",
         ).encode(
-            alt.Text("anno2:N")
+            alt.Text("not_shown:N")
         ),
         base.mark_rule(strokeWidth=1.5).encode(
             alt.YDatum(0)
@@ -318,7 +326,7 @@ def plot_age_thumbs(
     )
 
 
-def plot_thumb_rule(
+def plot_hrule(
     stroke: Literal["thin", "regular"] | float = "regular",
     width: Literal["pyramid", "mosaic"] | int = "pyramid",
 ) -> alt.Chart:

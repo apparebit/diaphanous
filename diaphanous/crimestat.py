@@ -111,7 +111,7 @@ def fi_age_distribution() -> pl.DataFrame:
         ).then(
             pl.lit(99)
         ).otherwise(
-            pl.col("age").str.extract(r"- (\d+)")
+            pl.col("age").str.extract(r"- (\d+)$")
         ).cast(pl.Int8).add(1).alias("age_last"),
     ).with_columns(
         pl.col("count").truediv(
@@ -317,12 +317,3 @@ if __name__ == "__main__":
     distributions = load_all_age_distributions(compact=True)
     frame = pl.concat(distributions.values())
     frame.write_csv("data/age-distributions.csv")
-
-    frame = frame.filter(
-        pl.col("country").ne("Australia").and_(
-            pl.col("data_year").ge(2015)
-        ).and_(
-            pl.col("data_year").lt(2025)
-        )
-    )
-    print(compute_totals(frame))
