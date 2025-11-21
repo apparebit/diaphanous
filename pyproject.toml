@@ -28,6 +28,7 @@ classifiers = [
 dependencies = [
     "ipykernel",          # 6.23.1  -- required for runing notebooks, includes ipython
     "nbclient",
+    "numpy",              #.        -- pandas &n scipy need it; it helps use scipy.stats
     "pandas",             # 2.0.1   -- dataframes
     "geopandas",          # 0.13.0  -- geographical data (effectively unused currently)
     "jinja2",             # 3.1.2   -- required for styling Pandas
@@ -43,6 +44,7 @@ dependencies = [
     "vl-convert-python",  #         -- save to SVG from Altair
     "great_tables",       #         -- better tables
     "selenium",           #         -- save to PDF from great_tables
+    "scipy",              #         -- χ² and Monte-Carlo p-values
 ]
 
 dynamic = ["version"]
