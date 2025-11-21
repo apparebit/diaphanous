@@ -13,11 +13,12 @@ import great_tables as gt
 import polars as pl
 
 from .chart import (
-    plot_age_sex_mosaics, plot_sex_by_age, plot_sex_by_age_detailed, plot_sex_and_age_cdfs,
-    plot_sex_and_age_cdf_bands, plot_hrule
+    plot_sex_by_age, plot_sex_by_age_detailed, plot_cdf_grid, plot_hrule
 )
+from .color import Palette
+from .mosaic import make_mosaic_frame, plot_mosaic_grid, test_chi2_independence
 from .platform.data import REPORTS_PER_PLATFORM
-from .util import simplify_age_distribution
+from .util import compute_age_cdfs
 
 import diaphanous.aunz as aunz
 import diaphanous.bka as bka
@@ -971,9 +972,9 @@ printr()
             plot_sex_by_age_detailed(data["nz"], "New Zealand", "CSAM", "Offenders"),
             plot_sex_by_age_detailed(data["es"], "Spain", "CSAM", "Suspect"),
             plot_sex_by_age_detailed(
-                data["us_offenders"], "United States", "CSAM", "Offender"),
+                data["us_csam_offenders"], "United States", "CSAM", "Offender"),
             plot_sex_by_age_detailed(
-                data["us_arrestees"], "United States", "CSAM", "Arrestee"),
+                data["us_csam_arrestees"], "United States", "CSAM", "Arrestee"),
             plot_sex_by_age_detailed(
                 data["us_porn_offenders"], "United States", "Porn", "Offender"),
             plot_sex_by_age_detailed(
@@ -985,7 +986,7 @@ printr()
         self.svg(path)
         self.html("</div>\n")
 
-        self.h3("Age Distribution of Offenders: The Last Decade")
+        self.h3("Age Distribution of Perpetrators: The Last Decade")
         self.html(
             """
             <p>US statisticstics are <em>not</em> representative, with NIBRS
@@ -1006,9 +1007,9 @@ printr()
             plot_sex_by_age(data["es"], "Spain", "CSAM", "Suspect"),
             plot_hrule(width="pyramid", stroke="thin"),
             plot_sex_by_age(
-                data["us_offenders"], "United States", "CSAM", "Offender"),
+                data["us_csam_offenders"], "United States", "CSAM", "Offender"),
             plot_sex_by_age(
-                data["us_arrestees"], "United States", "CSAM", "Arrestee"),
+                data["us_csam_arrestees"], "United States", "CSAM", "Arrestee"),
             plot_sex_by_age(
                 data["us_porn_offenders"], "United States", "Porn", "Offender"),
             plot_sex_by_age(
@@ -1023,7 +1024,7 @@ printr()
            titleFontSize=40,
         ).properties(
             title=alt.Title(
-                "Responsible People by Age (0→100), Sex (Female↓, Male↑), "
+                "Perpetrators by Age (0→100), Sex (Female↓, Male↑), "
                 "Year (2015⇒2024), and Country (⇓)",
                 fontSize=45,
                 fontWeight="bold",
@@ -1039,152 +1040,53 @@ printr()
             )
         )
 
-        path = "figure/age-distribution-thumbs.svg"
+        path = "figure/age-sex-pyramid-grid.svg"
+        fig.save(path)
+        self.svg(path)
+
+        frame = make_mosaic_frame(
+            pl.concat(data.values()),
+            x_axis="age_group",
+            y_axis="sex",
+            index={"age_group": ["Minor", None, "Adult"]},
+            highlights={
+                "Minor": {
+                    "Male": Palette.BLUE,
+                    "Female": Palette.RED,
+                }
+            },
+            use_minor=True,
+            include_null=True,
+            show_counts=True,
+        )
+
+        frame = test_chi2_independence(frame, "age_group", "sex")
+
+        fig = plot_mosaic_grid(
+            frame.filter(
+                pl.col("country").ne("Australia")
+            ),
+            x_label="Age Group",
+            y_label="Sex",
+            subtitle=(
+                "Male and female minors are shown in blue and red (respectively), "
+                "people with unknown age or sex in light gray, and those with unknown "
+                "age and sex in white."
+            ),
+        )
+        path = "figure/age-sex-mosaic-grid.svg"
+        fig.save(path)
+        self.svg(path)
+
+        cdfs = compute_age_cdfs(pl.concat(data.values()))
+        fig = plot_cdf_grid(cdfs)
+        path = "figure/age-sex-cdf-grid.svg"
         fig.save(path)
         self.svg(path)
         self.html("</div>\n")
 
-        self.h3("Independence of Age Group and Sex")
-        frame = simplify_age_distribution(pl.concat(data.values())).select(
-            pl.exclude("country", "material", "role")
-        )
-        self._runr(frame, """
-library(tidyverse)
-library(vcdExtra)
-data <- read.csv(text="{CSV_DATA}") |>
-    mutate(
-        age_group = factor(age_group, levels=c("Minor", "Adult")),
-        activity = factor(activity, levels=c("Consumer", "Producer")),
-        sex = factor(sex, levels=c("Male", "Female"))
-    )
 
-metrics <- c(
-    "Finland CSAM Suspects",
-    "Germany CSAM Suspects",
-    "New Zealand CSAM Offenders",
-    "United States CSAM Offenders",
-    "United States CSAM Arrestees",
-    "United States Porn Offenders",
-    "United States Porn Arrestees"
-)
-
-for (current_metric in metrics) {{
-    printr(paste0("<h4>", current_metric, "</h4>\n<ol class=years role=list>"))
-
-    for (year in 2015:2024) {{
-        dt <- data |> filter(
-            metric == current_metric & data_year == year
-        )
-        contab <- xtabs(count ~ age_group + sex, data = dt)
-        r <- chisq.test(contab)
-
-        if (is.nan(r$p.value)) {{
-            pval <- "NaN"
-        }} else {{
-            leading_zeroes <- -floor(log10(r$p.value)) - 1
-            if (leading_zeroes <= 10) {{
-                pval <- formatC(r$p.value, digits = leading_zeroes + 3, format="f")
-            }} else {{
-                pval <- formatC(r$p.value, digits = 3, format="e")
-            }}
-        }}
-
-        printr(paste0(
-            "<li value=", year, ">",
-            "χ² = ", sprintf("%.2f", r$statistic), ", ",
-            "df = ", r$parameter, ", ",
-            "p-value = ", pval,
-            " <span style='font-size: 0.7em;'>(", r$method, ")</span>",
-            "</li>"
-        ))
-    }}
-
-    printr(paste0("</ol>\n"))
-}}
-        """, is_html=True)
-
-        self.html("<div class=extra-wide>\n")
-        mosaic_data = {
-            k: crimestat.summarize_age_distributions(v) for k, v in data.items()
-        }
-        mosaic_fig = alt.vconcat(
-            plot_hrule(width="mosaic"),
-            plot_age_sex_mosaics(mosaic_data["fi"], "Finland", "CSAM", "Suspect"),
-            plot_age_sex_mosaics(mosaic_data["de"], "Germany", "CSAM", "Suspect"),
-            plot_age_sex_mosaics(mosaic_data["it"], "Italy", "CSAM", "Offender"),
-            plot_age_sex_mosaics(mosaic_data["nz"], "New Zealand", "CSAM", "Offender"),
-            plot_age_sex_mosaics(mosaic_data["es"], "Spain", "CSAM", "Suspect"),
-            plot_hrule(width="mosaic", stroke="thin"),
-            plot_age_sex_mosaics(
-                mosaic_data["us_offenders"], "United States", "CSAM", "Offender"),
-            plot_age_sex_mosaics(
-                mosaic_data["us_arrestees"], "United States", "CSAM", "Arrestee"),
-            plot_age_sex_mosaics(
-                mosaic_data["us_porn_offenders"], "United States", "Porn", "Offender"),
-            plot_age_sex_mosaics(
-                mosaic_data["us_porn_arrestees"], "United States", "Porn", "Arrestee",
-                facet_labels=True
-            ),
-            spacing=15,
-        ).resolve_scale(
-            x="shared",
-        ).configure_axis(
-           labelFontSize=35,
-           titleFontSize=40,
-        ).properties(
-            title=alt.Title(
-                "Offenders, Suspects, and Arrestees by Age Group, Sex, and Country",
-                fontSize=45,
-                fontWeight="bold",
-                anchor="start",
-                frame="group",
-                dx=20,
-                dy=-10,
-                subtitle=(
-                    "With Female Minors Highlighted in Red and Male Minors "
-                    "Highlighted in Blue"
-                ),
-                subtitleFontSize=40,
-            )
-        )
-
-        mosaic_path = "figure/age-sex-mosaics.svg"
-        mosaic_fig.save(mosaic_path)
-        self.svg(mosaic_path)
-        self.html("</div>\n")
-
-        self.h3("Age Distribution of Offenders: Yearly CDFs")
-        titles = crimestat.compute_cdf_titles(distributions)
-        cdf = crimestat.compute_cdfs(distributions)
-        cdf_fig = alt.vconcat(
-            *(
-                plot_sex_and_age_cdfs(
-                    cdf,
-                    title=title,
-                    rule=20 if title.startswith("New Zealand") else 18,
-                )
-                for title, cdf in zip(titles.values(), cdf.values())
-            )
-        )
-        cdf_fig.save("figure/cdf.svg")
-        self.svg("figure/cdf.svg")
-
-        self.h3("Age Distribution of Offenders: CDF Bands")
-        bands = alt.vconcat(
-            plot_sex_and_age_cdf_bands(cdf["fi"], "Finland", rule=18),
-            plot_sex_and_age_cdf_bands(cdf["de"], "Germany", rule=18),
-            plot_sex_and_age_cdf_bands(cdf["it"], "Italy", rule=18),
-            plot_sex_and_age_cdf_bands(cdf["nz"], "New Zealand", rule=20),
-            plot_sex_and_age_cdf_bands(cdf["es"], "Spain", rule=18),
-            plot_sex_and_age_cdf_bands(cdf["us_offenders"], "United States", rule=18),
-            plot_sex_and_age_cdf_bands(cdf["us_arrestees"], "United States", rule=18),
-            plot_sex_and_age_cdf_bands(cdf["us_porn_offenders"], "United States", rule=18),
-            plot_sex_and_age_cdf_bands(cdf["us_porn_arrestees"], "United States", rule=18),
-        )
-        bands.save("figure/bands.svg")
-        self.svg("figure/bands.svg")
-
-        self.h3("Age Distribution of Offenders: Notes")
+        self.h3("Notes")
         self.html("""
         <p>In the above age distributions, a <em>child</em> is younger than the
         <a
@@ -1852,6 +1754,7 @@ def get_options() -> Any:
 
 
 if __name__ == "__main__":
+    pl.Config.set_tbl_cols(20)
     pl.Config.set_tbl_rows(200)
     pl.Config.set_thousands_separator(",")
 

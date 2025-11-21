@@ -1,4 +1,4 @@
-from collections.abc import Iterable
+from collections.abc import Sequence
 from typing import Literal
 
 import altair as alt
@@ -7,16 +7,9 @@ import polars as pl
 from .color import Palette
 from .nibrs.model import Id
 from .util import (
-    compute_sex_and_age_cdf_extrema, get_year_range, grouping_columns, to_axis_range
+    compute_age_sex_cdf_extrema, get_year_range, grouping_columns, to_axis_range
 )
 
-def _trace(frame: pl.DataFrame) -> pl.DataFrame:
-    pl.Config.set_tbl_cols(20)
-    pl.Config.set_tbl_rows(200)
-    print(frame.select(
-        pl.exclude("country", "material", "role", "activity")
-    ))
-    return frame
 
 def _prep_sex_by_age(frame: pl.DataFrame) -> pl.DataFrame:
     return frame.group_by(
@@ -170,6 +163,7 @@ def plot_sex_by_age_detailed(
             subtitleFontSize=14,
         ),
     )
+
 
 def plot_sex_by_age(
     frame: pl.DataFrame,
@@ -326,6 +320,57 @@ def plot_sex_by_age(
     )
 
 
+def plot_cdf_grid(
+    frame: pl.DataFrame,
+    cell_width: float = 500,
+    cell_height: float = 350,
+    column_count: int = 5,
+    gap: float = 20,
+) -> alt.VConcatChart:
+    group_iter = frame.group_by("country", "material", "role", maintain_order=True)
+    grid = []
+
+    for index, (labels, group) in enumerate(group_iter):
+        if index % column_count == 0:
+            grid.append([])
+            grid.append([])
+
+        country = labels[0]
+        material_role = f"{labels[1]} {labels[2]}s"
+
+        grid[-2].append(_plot_age_sex_cdfs(group, country, material_role).properties(
+            width=cell_width,
+            height=cell_height,
+        ))
+        grid[-1].append(_plot_age_sex_cdf_bands(group, country).properties(
+            width=cell_width,
+            height=cell_height,
+        ))
+
+    return alt.vconcat(
+        alt.Chart().mark_rule(strokeWidth=7.5).encode(
+            alt.YDatum(0).axis(None)
+        ).properties(
+            width=column_count * cell_width + (column_count - 1) * gap,
+            height=5,
+        ),
+        *(alt.hconcat(*row) for row in grid),
+    ).resolve_scale(
+        x="shared",
+    ).properties(
+        title=alt.Title(
+            "Cumulative Distributions of Male/Female Perpetrators "
+            "by Age, Year, and Country",
+            fontSize=40,
+            fontWeight="bold",
+            anchor="start",
+            frame="group",
+            dx=0,
+            dy=-10,
+        )
+    )
+
+
 def plot_hrule(
     stroke: Literal["thin", "regular"] | float = "regular",
     width: Literal["pyramid", "mosaic"] | int = "pyramid",
@@ -351,261 +396,71 @@ def plot_hrule(
     )
 
 
-_GAP = 3.0
-
-def plot_age_sex_mosaics(
-    frame: pl.DataFrame,
-    country: str,
-    material: Literal["Porn", "CSAM"],
-    role: Literal["Suspect", "Offender", "Arrestee"],
-    facet_labels: bool = False
-) -> alt.FacetChart:
-    frame = frame.group_by(
-        "country", "material", "role", "data_year", maintain_order=True
-    ).agg(
-        pl.lit(0.0, dtype=pl.Float64).alias("0%"),
-        pl.lit(100.0 + _GAP, dtype=pl.Float64).alias("100%"),
-        pl.col("minors_pct").first().alias("minors_end"),
-        pl.col("minors_pct").first().add(_GAP).alias("minors_start"),
-        pl.col("female_minors_pct").first(),
-        pl.col("female_adults_pct").first(),
-        pl.col("male_minors_pct").first().neg().add(100.0 + _GAP),
-        pl.col("male_adults_pct").first().neg().add(100.0 + _GAP),
-
-        pl.col("minors_pct").first().add(_GAP).add(
-            pl.col("minors_pct").first().neg().add(100).truediv(2)
-        ).alias("male_adults_x"),
-        pl.col("male_adults_pct").truediv(2).neg().add(100.0 + _GAP)
-            .alias("male_adults_y"),
-        pl.col("male_adults_pct").map_elements(
-            lambda v: [f"{v:.1f}% of", "Adults"],
-            return_dtype=pl.List(pl.String),
-        ).alias("male_adults_text"),
-
-        pl.col("minors_pct").first().truediv(2).alias("female_minors_x"),
-        pl.col("female_minors_pct").first().truediv(2).alias("female_minors_y"),
-        pl.when(
-            pl.col("minors_pct").first().mul(pl.col("female_minors_pct").first())
-            .ge(800)
-        ).then(
-            pl.col("female_minors_pct").first().map_elements(
-                lambda v: f"{v:.1f}%", return_dtype=pl.String
-            )
-        ).otherwise(
-            pl.lit("", dtype=pl.String)
-        ).alias("female_minors_text"),
-        pl.when(
-            pl.col("minors_pct").first().mul(pl.col("female_minors_pct").first())
-            .lt(800)
-        ).then(
-            pl.col("female_minors_pct").first().map_elements(
-                lambda v: f"{v:.1f}%", return_dtype=pl.String
-            )
-        ).otherwise(
-            pl.lit("", dtype=pl.String)
-        ).alias("female_minors_alt_text"),
-
-        pl.col("minors_pct").map_elements(
-            lambda v: f"Minors={v:.1f}%",
-            return_dtype=pl.String,
-        ).alias("marginal_minors_text"),
-    ).select(
-        pl.col("country", "material", "role", "data_year"),
-        pl.concat_list("0%", "minors_start", "0%", "minors_start").alias("x1"),
-        pl.concat_list("minors_end", "100%", "minors_end", "100%").alias("x2"),
-        pl.concat_list(
-            "0%", "0%", "male_minors_pct", "male_adults_pct"
-        ).alias("y1"),
-        pl.concat_list(
-            "female_minors_pct", "female_adults_pct", "100%", "100%"
-        ).alias("y2"),
-        pl.lit([
-            "female_minors", "female_adults", "male_minors", "male_adults"
-        ], dtype=pl.List(pl.String)).alias("category"),
-        pl.col(
-            "male_adults_x", "male_adults_y", "male_adults_text",
-            "female_minors_x", "female_minors_y", "female_minors_text",
-            "female_minors_alt_text",
-            "marginal_minors_text"
-        ),
-    ).explode(
-        "x1", "x2", "y1", "y2", "category"
-    )
-
-    base = alt.Chart(frame)
+def _plot_age_sex_cdfs(
+    frame: pl.DataFrame, country: str, material_role: str
+) -> alt.LayerChart:
     return alt.layer(
-        base.mark_rect(
-            stroke="black",
-            strokeWidth=2,
-        ).encode(
-            alt.X("x1:Q", axis=None).scale(domain=(0, 100 + _GAP)),
-            alt.X2("x2:Q"),
-            alt.Y("y1:Q", axis=None).scale(domain=(0, 100 + _GAP)).title(None),
-            alt.Y2("y2:Q"),
-            alt.Color("category:N", legend=None).scale(
-                domain=["male_minors", "male_adults", "female_minors", "female_adults"],
-                range=[
-                    f"{Palette.BLUE}a0",
-                    "#aaaeb6a0",
-                    f"{Palette.RED}a0",
-                    "#aaaeb6a0"
-                ],
-            )
-        ),
-        base.mark_text(
-            align="center",
-            baseline="middle",
-            fontSize=25,
-            fontStyle="italic",
-        ).encode(
-            alt.X("male_adults_x:Q"),
-            alt.Y("male_adults_y:Q"),
-            alt.Text("male_adults_text:N"),
-        ),
-        base.mark_text(
-            align="center",
-            baseline="middle",
-            fontSize=25,
-            fontStyle="italic",
-        ).encode(
-            alt.X("female_minors_x:Q"),
-            alt.Y("female_minors_y:Q"),
-            alt.Text("female_minors_text:N"),
-        ),
-        base.mark_text(
-            x=0,
-            y=310,
-            align="left",
-            baseline="top",
-            fontSize=25,
-            fontStyle="italic",
-            color="#b22817",
-        ).encode(
-            alt.Text("female_minors_alt_text:N"),
-        ),
-        base.mark_text(
-            x=0,
-            y=10,
-            align="left",
-            baseline="bottom",
-            fontSize=30,
-            fontStyle="italic",
-        ).encode(
-            alt.Text("marginal_minors_text:N"),
-        ),
-    ).facet(
-        column=alt.Column(
-            "data_year:N",
-            title=None,
-            header=alt.Header(
-                labelAnchor="middle",
-                labelOrient="bottom",
-                labelFontSize=40,
-            ) if facet_labels else alt.Header(labels=False),
+        _plot_cdf(frame, column="male_cdf", colors=f"{Palette.BLUE}80"),
+        _plot_cdf(frame, column="female_cdf", colors=f"{Palette.RED}80"),
+        alt.Chart().mark_rule(color=Palette.BLACK, strokeWidth=4).encode(
+            alt.XDatum(20 if country == "New Zealand" else 18)
         ),
         title=alt.Title(
             country,
+            subtitle=material_role,
             anchor="middle",
-            orient="left",
-            angle=270,
-            fontSize=40,
+            orient="top",
+            fontSize=30,
             fontWeight="normal",
-            dx=0,
-            subtitle=f"{material} {role}s",
-            subtitleFontSize=35,
-        ),
+            subtitleFontSize=25,
+        )
+    ).resolve_scale(
+        color="independent",
     )
 
 
-def plot_sex_and_age_cdfs(
-    frame: pl.DataFrame, title: None | str = None, rule: None | int = None
-) -> alt.LayerChart:
-    layers = [
-        plot_cdf(frame, column="cdf", title=title, colors=f"{Palette.BLUE}80"),
-        plot_cdf(frame, column="female_cdf", title=title, colors=f"{Palette.RED}80"),
-    ]
-
-    if rule is not None:
-        layers.append(alt.Chart().mark_rule(
-            color=Palette.GRAY,
-            strokeWidth=3,
-            strokeDash=(4, 2),
-        ).encode(
-            alt.XDatum(rule)
-        ))
-
-    return alt.layer(*layers).resolve_scale(
-        color="independent"
-    )
-
-
-def plot_cdf(
+def _plot_cdf(
     frame: pl.DataFrame,
-    column: str = "cdf",
-    title: None | str = None,
-    colors: None | str | Iterable[str] = None,
+    column: str,
+    colors: str | Sequence[str],
 ) -> alt.Chart:
     year_min, year_max = get_year_range(frame)
-    if colors is None:
-        colors = [f"{Palette.BLUE}80"] * (year_max - year_min)
-    elif isinstance(colors, str):
+    if isinstance(colors, str):
         colors = [colors] * (year_max - year_min)
-    assert isinstance(colors, list)
 
-    return (
-        alt.Chart(frame) if title is None else alt.Chart(frame, title=title)
-    ).mark_line().encode(
-        alt.X("age:Q").scale(domain=(0, 100)).title("Age"),
-        alt.Y(f"{column}:Q").scale(domain=(0, 1)).title("CDF"),
+    return alt.Chart(frame).mark_line().encode(
+        alt.X("age:Q", axis=alt.Axis(labels=False)).title(None),
+        alt.Y(f"{column}:Q", axis=alt.Axis(labels=False)).title(None),
         alt.Color("data_year:N", legend=None).scale(
             domain=[y for y in range(year_min, year_max)], range=colors
         ),
-    ).properties(
-        width=500,
-        height=300,
     )
 
 
-def plot_sex_and_age_cdf_bands(
-    frame: pl.DataFrame,
-    title: None | str = None,
-    color_all: str = Palette.BLUE,
-    color_female: str = Palette.RED,
-    rule: None | int = None,
+def _plot_age_sex_cdf_bands(
+    frame: pl.DataFrame, country: str
 ) -> alt.LayerChart:
-    extrema = compute_sex_and_age_cdf_extrema(frame)
-    layers = [
-        plot_cdf_band(extrema, "cdf", title=title, color=f"{color_all}80"),
-        plot_cdf_band(extrema, "female_cdf", title=title, color=f"{color_female}80"),
-    ]
-
-    if rule is not None:
-        layers.append(alt.Chart().mark_rule(
-            color=Palette.GRAY,
-            strokeWidth=3,
-            strokeDash=(4, 2),
-        ).encode(
-            alt.XDatum(rule)
-        ))
-
-    return alt.layer(*layers)
+    extrema = compute_age_sex_cdf_extrema(frame)
+    return alt.layer(
+        _plot_cdf_band(extrema, "male_cdf", color=f"{Palette.BLUE}80"),
+        _plot_cdf_band(extrema, "female_cdf", color=f"{Palette.RED}80"),
+        alt.Chart().mark_rule(color=Palette.BLACK, strokeWidth=4).encode(
+            alt.XDatum(20 if country == "New Zealand" else 18)
+        ),
+    )
 
 
-def plot_cdf_band(
+def _plot_cdf_band(
     frame: pl.DataFrame,
-    column: str = "cdf",
-    title: None | str = None,
-    color: None | str = None,
+    column: str,
+    color: str,
 ) -> alt.Chart:
-    return (
-        alt.Chart(frame) if title is None else alt.Chart(frame, title=title)
-    ).mark_area(color=color or f"{Palette.BLUE}80").encode(
-        alt.X("age:Q").scale(domain=(0, 100)).title("Age"),
-        alt.Y(f"min_{column}:Q").scale(domain=(0, 1)).title("CDF"),
+    return alt.Chart(frame).mark_area(
+        color=color,
+    ).encode(
+        alt.X("age:Q", axis=alt.Axis(labels=False)).title(None),
+        alt.Y(f"min_{column}:Q", axis=alt.Axis(labels=False)).title(None),
         alt.Y2(f"max_{column}:Q"),
-    ).properties(
-        width=500,
-        height=300,
     )
 
 

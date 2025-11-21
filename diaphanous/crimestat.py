@@ -5,7 +5,6 @@ from .bka import de_age_distribution
 from .nibrs import compute_us_porn_age_distribution, load_all_us_csam, load_all_us_porn
 from .util import (
     add_age_group, add_country_material_role, arrange_age_distribution,
-    compute_sex_and_age_cdfs
 )
 
 def es_age_distribution() -> pl.DataFrame:
@@ -200,11 +199,11 @@ def it_age_distribution() -> pl.DataFrame:
 
 def load_all_age_distributions(compact: bool = False) -> dict[str, pl.DataFrame]:
     csam = load_all_us_csam()
-    csam_arrestees = csam.arrestee_demographics().age_distribution()
     csam_offenders = csam.offender_demographics().age_distribution()
+    csam_arrestees = csam.arrestee_demographics().age_distribution()
     porn = load_all_us_porn()
-    porn_arrestees = compute_us_porn_age_distribution(porn[0], "Arrestee")
     porn_offenders = compute_us_porn_age_distribution(porn[1], "Offender")
+    porn_arrestees = compute_us_porn_age_distribution(porn[0], "Arrestee")
 
     distributions = {
         "au": au_age_distribution(),
@@ -213,10 +212,10 @@ def load_all_age_distributions(compact: bool = False) -> dict[str, pl.DataFrame]
         "fi": fi_age_distribution(),
         "it": it_age_distribution(),
         "nz": nz_age_distribution(),
-        "us_arrestees": csam_arrestees,
-        "us_offenders": csam_offenders,
-        "us_porn_arrestees": porn_arrestees,
+        "us_csam_offenders": csam_offenders,
+        "us_csam_arrestees": csam_arrestees,
         "us_porn_offenders": porn_offenders,
+        "us_porn_arrestees": porn_arrestees,
     }
 
     if compact:
@@ -230,25 +229,7 @@ def load_all_age_distributions(compact: bool = False) -> dict[str, pl.DataFrame]
     return distributions
 
 
-def compute_cdf_titles(distributions: dict[str, pl.DataFrame]) -> dict[str, str]:
-    return {
-        key: dist.select(
-            pl.format(
-                "{}: {} {}s",
-                pl.col("country"),
-                pl.col("material"),
-                pl.col("role"),
-            )
-        ).item(0, 0)
-        for key, dist in distributions.items()
-    }
-
-
-def compute_cdfs(distributions: dict[str, pl.DataFrame]) -> dict[str, pl.DataFrame]:
-    return {k: compute_sex_and_age_cdfs(d) for k, d in distributions.items()}
-
-
-def compute_totals(distributions: pl.DataFrame) -> pl.DataFrame:
+def summarize_totals(distributions: pl.DataFrame) -> pl.DataFrame:
     return distributions.group_by(
         "country", "material", "role", "data_year",
         maintain_order=True
@@ -264,114 +245,52 @@ def compute_totals(distributions: pl.DataFrame) -> pl.DataFrame:
     )
 
 
-def summarize_age_distributions(frame: pl.DataFrame) -> pl.DataFrame:
-    # Spreading integer counts over age ranges may result in fractional counts,
-    # while also incurring floating point error. Adding them together again in
-    # this function may incur further floating point error, with the result that
-    # some integer casts result in numbers that are too small by one. Rounding
-    # ensures that the sums are correct.
-    frame = frame.group_by(
-        pl.col("country", "material", "role", "data_year"), maintain_order=True,
-    ).agg(
-        pl.col("count").sum().round(0).cast(pl.Int64).alias("total"),
-
-        pl.col("count").filter(
+def summarize_age_and_sex(
+    frame: pl.DataFrame,
+    year_range: tuple[int, int] = (2020, 2025),
+) -> pl.DataFrame:
+    return frame.filter(
+        pl.col("country").ne("Australia").and_(
+            pl.col("data_year").is_between(*year_range, closed="left")
+        ).and_(
             pl.col("age_group").is_not_null()
-        ).sum().round(0).cast(pl.Int64).alias("with_age"),
-
-        pl.col("count").filter(
-            pl.col("age").is_not_null()
-        ).sum().round(0).cast(pl.Int64).alias("with_age_too"),
-
-        pl.col("count").filter(
-            pl.col("age_group").is_in(["Child", "Juvenile"])
-        ).sum().round(0).cast(pl.Int64).alias("minors"),
-
-        pl.col("count").filter(
-            pl.col("age_group").eq("Adult")
-        ).sum().round(0).cast(pl.Int64).alias("adults"),
-
-        pl.col("count").filter(
-            pl.col("age").is_not_null().and_(
-                pl.col("sex").eq("Female")
-            )
-        ).sum().round(0).cast(pl.Int64).alias("aged_women"),
-
-        pl.col("count").filter(
-            pl.col("age").is_not_null().and_(
-                pl.col("sex").eq("Male")
-            )
-        ).sum().round(0).cast(pl.Int64).alias("aged_men"),
-
-        pl.col("count").filter(
-            pl.col("age_group").is_in(["Child", "Juvenile"]).and_(
-                pl.col("sex").eq("Female")
-            )
-        ).sum().round(0).cast(pl.Int64).alias("female_minors"),
-
-        pl.col("count").filter(
-            pl.col("age_group").eq("Adult").and_(
-                pl.col("sex").eq("Female")
-            )
-        ).sum().round(0).cast(pl.Int64).alias("female_adults"),
-
-        pl.col("count").filter(
-            pl.col("age_group").is_in(["Child", "Juvenile"]).and_(
-                pl.col("sex").eq("Male")
-            )
-        ).sum().round(0).cast(pl.Int64).alias("male_minors"),
-
-        pl.col("count").filter(
-            pl.col("age_group").eq("Adult").and_(
-                pl.col("sex").eq("Male")
-            )
-        ).sum().round(0).cast(pl.Int64).alias("male_adults"),
-    )
-
-    assert frame.select(
-        pl.col("minors").add(pl.col("adults")).eq(pl.col("with_age")).all()
-    ).item()
-
-    assert frame.select(
-        pl.col("with_age").eq(pl.col("with_age_too")).all()
-    ).item()
-
-    assert frame.select(
-        pl.col("aged_women").add(pl.col("aged_men")).le(pl.col("with_age")).all()
-    ).item()
-
-    assert frame.select(
-        pl.col("female_minors").add(pl.col("male_minors")).le(pl.col("minors")).all()
-    ).item()
-
-    assert frame.select(
-        pl.col("female_adults").add(pl.col("male_adults")).le(pl.col("adults")).all()
-    ).item()
-
-    return frame.with_columns(
-        pl.col("with_age").truediv(pl.col("total")).mul(100)
-            .alias("with_age_pct"),
-        pl.col("minors").truediv(pl.col("with_age")).mul(100)
-            .alias("minors_pct"),
-        pl.col("male_minors").truediv(pl.col("minors")).mul(100)
-            .alias("male_minors_pct"),
-        pl.col("female_minors").truediv(pl.col("minors")).mul(100)
-            .alias("female_minors_pct"),
-        pl.col("male_adults").truediv(pl.col("adults")).mul(100)
-            .alias("male_adults_pct"),
-        pl.col("female_adults").truediv(pl.col("adults")).mul(100)
-            .alias("female_adults_pct"),
+        ).and_(
+            pl.col("sex").is_not_null()
+        )
     ).select(
-        "country", "material", "role",
-        "data_year",
-        "total",
-        "with_age_pct", "minors_pct",
-        "male_minors_pct", "female_minors_pct",
-        "male_adults_pct", "female_adults_pct",
-    ).fill_nan(
-        0
+        pl.format(
+            "{} {} {}s",
+            pl.col("country"),
+            pl.col("material"),
+            pl.col("role")
+        ).alias("metric"),
+        pl.col("data_year"),
+        pl.col("age_group").replace({
+            "Child": "Minor",
+            "Juvenile": "Minor",
+        }),
+        pl.col("sex", "count"),
+    ).group_by(
+        "metric", "data_year", "age_group", "sex"
+    ).agg(
+        pl.col("count").sum().round().cast(pl.Int64)
+    ).group_by(
+        "metric", "sex"
+    ).agg(
+        *(
+            pl.col("count").filter(
+                pl.col("data_year").eq(year).and_(
+                    pl.col("age_group").eq(group)
+                )
+            ).first().alias(f"{year} {group.lower()}")
+            for year in range(*year_range) for group in ("Minor", "Adult")
+        )
+    ).with_columns(
+        pl.col("sex").replace({"Male": 1, "Female": -1}).alias("order")
     ).sort(
-        "country", "material", "role", "data_year"
+        "metric", "order"
+    ).drop(
+        "order"
     )
 
 
@@ -386,3 +305,7 @@ if __name__ == "__main__":
     distributions = load_all_age_distributions(compact=True)
     frame = pl.concat(distributions.values())
     frame.write_csv("data/age-distributions.csv")
+
+    age_dist = pl.concat(load_all_age_distributions().values())
+    print(summarize_age_and_sex(age_dist, (2015, 2019)))
+    print(summarize_age_and_sex(age_dist, (2020, 2025)))

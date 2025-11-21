@@ -154,96 +154,95 @@ def arrange_age_distribution(frame: pl.DataFrame) -> pl.DataFrame:
     )
 
 
-def simplify_age_distribution(frame: pl.DataFrame) -> pl.DataFrame:
-    return frame.filter(
-        pl.col("country").ne("Australia")
-    ).select(
-        pl.format(
-            "{} {} {}s", pl.col("country"), pl.col("material"), pl.col("role")
-        ).alias("metric"),
-        pl.col("country", "material", "role", "data_year"),
-        pl.when(
-            pl.col("age_group").is_in(["Child", "Juvenile"])
-        ).then(
-            pl.lit("Minor", dtype=pl.String)
-        ).otherwise(
-            pl.col("age_group")
-        ).alias("age_group"),
-        pl.when(
-            pl.col("age_group").is_in(["Child", "Juvenile"])
-        ).then(
-            pl.lit(1, dtype=pl.Int8)
-        ).when(
-            pl.col("age_group").eq("Adult")
-        ).then(
-            pl.lit(2, dtype=pl.Int8)
-        ).alias("group_rank"),
-        pl.col("sex", "activity", "count")
+def regularize_age_distribution(frame: pl.DataFrame, *variables: str) -> pl.DataFrame:
+    # Preserving the index columns means retaining them in the template or the
+    # frame. While retaining them in the template results in redundant rows that
+    # must be removed again, retaining them in the frame results in cells with
+    # null values, which would have to be refilled. Removing redundant rows
+    # seems easier.
+    index = [
+        c for c in ("country", "material", "role", "metric") if c in frame.columns
+    ]
+
+    # Compute lists with unique variable values.
+    template = frame.select(
+        pl.col(*index),
+        pl.col(*variables).unique().implode(),
+    )
+
+    # Explode each list into a column. Index columns cause redundant rows.
+    for variable in variables:
+        template = template.explode(variable)
+
+    # Remove redundant rows again before joining.
+    return template.unique().join(
+        frame.drop(*index),
+        on=list(variables),
+        how="left",
+        nulls_equal=True,
+    ).with_columns(
+        pl.col("count").fill_null(0)
     ).group_by(
-        "metric", "country", "material", "role",
-        "data_year",
-        "age_group", "group_rank", "sex", "activity",
+        *index, *variables
     ).agg(
-        pl.col("count").sum().round(0).cast(pl.Int64)
-    ).sort(
-        "metric", "data_year", "group_rank", "sex", "activity"
-    ).select(
-        pl.exclude("group_rank")
+        pl.col("count").sum()
     )
 
 
-def compute_sex_and_age_cdfs(frame: pl.DataFrame) -> pl.DataFrame:
+def compute_age_cdfs(frame: pl.DataFrame) -> pl.DataFrame:
+    frame = frame.drop_nulls(["age", "sex"])
     group = grouping_columns(frame)
 
-    return _compute_age_cdf(frame, group, "cdf").join(
-        _compute_age_cdf(frame.filter(
-            pl.col("sex").eq("Female")
-        ), group, "female_cdf"),
-        on=[*group, "age"],
-        how="inner",
+    males = _compute_age_cdf(
+        frame.filter(pl.col("sex").eq("Male")), group, "male_cdf"
+    )
+    females = _compute_age_cdf(
+        frame.filter(pl.col("sex").eq("Female")), group, "female_cdf"
     )
 
-
-def compute_age_cdf(frame: pl.DataFrame, column: str = "cdf") -> pl.DataFrame:
-    return _compute_age_cdf(frame, grouping_columns(frame), column)
+    return males.join(
+        females,
+        on=[*group, "age"],
+        how="inner",
+        maintain_order="left",
+    )
 
 
 def _compute_age_cdf(
-    frame: pl.DataFrame, group: list[str], column: str
+    frame: pl.DataFrame, index_columns: list[str], cdf_column: str
 ) -> pl.DataFrame:
-    # Drop rows with no age
-    frame = frame.drop_nulls("age")
-
     # Create a blueprint for full range of age values
     table = defaultdict(list)
-    for row in frame.select(*group).unique().rows():
-        for name, value in zip(group, row):
+    for row in frame.select(*index_columns).unique().rows():
+        for name, value in zip(index_columns, row):
             table[name].extend([value] * 101)
         table["age"].extend([y for y in range(101)])
 
     # Build CDF from counts shifted by one row: (age, cdf): (0, 0.0) -> (100, 1.0)
     return pl.DataFrame(table).join(
         frame.group_by(
-            *group, "age"
+            *index_columns, "age",
+            maintain_order=True,
         ).agg(
-            pl.col("count").sum().alias(column)
+            pl.col("count").sum().alias(cdf_column)
         ),
-        on=[*group, "age"],
+        on=[*index_columns, "age"],
         how="left",
+        maintain_order="left",
     ).fill_null(
         0
     ).sort(
-        *group, "age"
+        *index_columns, "age"
     ).with_columns(
-        pl.col(column).shift(fill_value=0).cum_sum().over(*group)
+        pl.col(cdf_column).shift(fill_value=0).cum_sum().over(*index_columns)
     ).with_columns(
-        pl.col(column).truediv(pl.col(column).max()).over(*group)
+        pl.col(cdf_column).truediv(pl.col(cdf_column).max()).over(*index_columns)
     )
 
 
-def compute_sex_and_age_cdf_extrema(frame: pl.DataFrame) -> pl.DataFrame:
+def compute_age_sex_cdf_extrema(frame: pl.DataFrame) -> pl.DataFrame:
     group = grouping_columns(frame)[:-1]
-    return _compute_cdf_extrema(frame, group, "cdf").join(
+    return _compute_cdf_extrema(frame, group, "male_cdf").join(
         _compute_cdf_extrema(frame, group, "female_cdf"),
         on=[*group, "age"],
         how="inner",
@@ -263,7 +262,7 @@ def _compute_cdf_extrema(
 
 def grouping_columns(frame: pl.DataFrame) -> list[str]:
     group = []
-    for candidate in ("country", "material", "role", "data_year"):
+    for candidate in ("country", "material", "role", "metric", "data_year"):
         if candidate in frame.columns:
             group.append(candidate)
     return group
@@ -296,3 +295,16 @@ def to_axis_range(min: float, max: float) -> tuple[int, int, int]:
         1_000,
         math.ceil(max / 1_000) * 1_000
     )
+
+
+def rate_pvalue(pvalue: float) -> str:
+    if pvalue <= 0.0001:
+        return "★★★★"
+    elif pvalue <= 0.001:
+        return "★★★"
+    elif pvalue <= 0.01:
+        return "★★"
+    elif pvalue <= 0.05:
+        return "★"
+    else:
+        return "p > 0.05"
