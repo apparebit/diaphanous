@@ -4,7 +4,7 @@ from .aunz import au_age_distribution, nz_age_distribution
 from .bka import de_age_distribution
 from .nibrs import compute_us_porn_age_distribution, load_all_us_csam, load_all_us_porn
 from .util import (
-    add_age_group, add_country_material_role, arrange_age_distribution,
+    add_age_group, add_country_material_role, add_empty_year, arrange_age_distribution,
 )
 
 def es_age_distribution() -> pl.DataFrame:
@@ -177,20 +177,11 @@ def it_age_distribution() -> pl.DataFrame:
         "data_year", "age", "sex", "ethnicity"
     ).with_columns(
         pl.lit(None, dtype=pl.String).alias("activity"),
+    ).select(
+        "data_year", "age", "sex", "ethnicity", "activity", "count"
     )
 
-    # Add empty row for 2024 to force creation of a frame for that year
-    frame = pl.concat([frame, pl.DataFrame().with_columns(
-        pl.lit(None, dtype=pl.Int8).alias("age"),
-        pl.lit(None, dtype=pl.String).alias("sex"),
-        pl.lit(None, dtype=pl.String).alias("ethnicity"),
-        pl.lit(2024, dtype=pl.Int16).alias("data_year"),
-        pl.lit(None, dtype=pl.Float64).alias("count"),
-        pl.lit(None, dtype=pl.Int8).alias("age_first"),
-        pl.lit(None, dtype=pl.Int8).alias("age_last"),
-        pl.lit(None, dtype=pl.String).alias("activity"),
-    )])
-
+    frame = add_empty_year(frame, 2024)
     frame = add_age_group(frame, 14, 17)
     frame = add_country_material_role(frame, "Italy", "CSAM", "Offender")
     frame = arrange_age_distribution(frame)

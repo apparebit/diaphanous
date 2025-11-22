@@ -29,3 +29,32 @@ class Palette(enum.StrEnum):
         return _COLORS[index % len(_COLORS)]
 
 _COLORS = [c for c in Palette.__members__.values() if c is not Palette.GRAY]
+
+
+class Scale(enum.Enum):
+    RED = (
+        "#ffb950",
+        "#ffad33",
+        "#ff931f",
+        "#ff7e33",
+        "#fa5e1f",
+        "#ec3f13",
+        "#b81702",
+        "#a50104",
+        "#8e0103",
+        "#7a0103",
+    )
+
+    BLUE = (
+        #"#caf0f8",
+        "#ade8f4",
+        "#90e0ef",
+        "#48cae4",
+        "#00b4d8",
+        "#0096c7",
+        "#0077b6",
+        "#015ba0",
+        "#023e8a",
+        "#032174",
+        "#03045e",
+    )

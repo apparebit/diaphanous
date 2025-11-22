@@ -4,7 +4,7 @@ from typing import Literal
 import altair as alt
 import polars as pl
 
-from .color import Palette
+from .color import Palette, Scale
 from .nibrs.model import Id
 from .util import (
     compute_age_sex_cdf_extrema, get_year_range, grouping_columns, to_axis_range
@@ -165,13 +165,59 @@ def plot_sex_by_age_detailed(
     )
 
 
+def plot_sex_by_age_grid(frame: pl.DataFrame) -> alt.VConcatChart:
+    group_iter = frame.group_by("country", "material", "role", maintain_order=True)
+    rows = []
+
+    for labels, group in group_iter:
+        country, material, role = labels
+        with_label = (
+            country == "United States" and material == "Porn" and role == "Arrestee"
+        )
+        rows.append(
+            plot_sex_by_age(group, country, material, role, facet_labels=with_label)
+        )
+
+    return alt.vconcat(
+        alt.Chart().mark_rule(strokeWidth=7.5).encode(
+            alt.YDatum(0).axis(None)
+        ).properties(
+            width=300 * 10 + 26 * 9,
+            height=5,
+        ),
+        *rows,
+        spacing=15
+    ).resolve_scale(
+        x="shared"
+    ).configure_axis(
+        labelFontSize=35,
+        titleFontSize=40,
+    ).properties(
+        title=alt.Title(
+            "Perpetrators by Age (0→100), Sex (Female↓, Male↑), "
+            "Year (2015⇒2024), and Country",
+            fontSize=45,
+            fontWeight="bold",
+            anchor="start",
+            frame="group",
+            dx=0,
+            dy=-10,
+            subtitle=(
+                "With Female Minors in Red, Male Minors in Blue, and "
+                "People w/o Sex in Black"
+            ),
+            subtitleFontSize=40,
+        )
+    )
+
+
 def plot_sex_by_age(
     frame: pl.DataFrame,
     country: str,
     material: Literal["Porn", "CSAM"],
     role: Literal["Suspect", "Offender", "Arrestee"],
-    facet_labels: bool = False
-) -> alt.Chart | alt.LayerChart | alt.FacetChart:
+    facet_labels: bool = False,
+) -> alt.FacetChart:
     data = _prep_sex_by_age(frame).with_columns(
         pl.when(
             pl.col("sex").is_null()
@@ -212,7 +258,7 @@ def plot_sex_by_age(
         pl.when(
             pl.col("not_shown").is_not_null()
         ).then(
-            pl.format("{} w/o Age", pl.col("not_shown"))
+            pl.format("+{} w/o age", pl.col("not_shown"))
         ).otherwise(
             pl.lit("")
         ).alias("not_shown")
@@ -273,22 +319,22 @@ def plot_sex_by_age(
         ),
         base.mark_text(
             x="width",
-            y=25,
-            dx=-20,
+            y=24,
+            dx=-5,
             align="right",
-            fontSize=30,
-            fontStyle="italic",
+            fontSize=28,
+            #fontStyle="italic",
             fontWeight="lighter",
         ).encode(
             alt.Text("total_shown:N")
         ),
         base.mark_text(
             x="width",
-            y=60,
-            dx=-20,
+            y=58,
+            dx=-5,
             align="right",
-            fontSize=30,
-            fontStyle="italic",
+            fontSize=28,
+            #fontStyle="italic",
             fontWeight="lighter",
         ).encode(
             alt.Text("not_shown:N")
@@ -320,57 +366,6 @@ def plot_sex_by_age(
     )
 
 
-def plot_cdf_grid(
-    frame: pl.DataFrame,
-    cell_width: float = 500,
-    cell_height: float = 350,
-    column_count: int = 5,
-    gap: float = 20,
-) -> alt.VConcatChart:
-    group_iter = frame.group_by("country", "material", "role", maintain_order=True)
-    grid = []
-
-    for index, (labels, group) in enumerate(group_iter):
-        if index % column_count == 0:
-            grid.append([])
-            grid.append([])
-
-        country = labels[0]
-        material_role = f"{labels[1]} {labels[2]}s"
-
-        grid[-2].append(_plot_age_sex_cdfs(group, country, material_role).properties(
-            width=cell_width,
-            height=cell_height,
-        ))
-        grid[-1].append(_plot_age_sex_cdf_bands(group, country).properties(
-            width=cell_width,
-            height=cell_height,
-        ))
-
-    return alt.vconcat(
-        alt.Chart().mark_rule(strokeWidth=7.5).encode(
-            alt.YDatum(0).axis(None)
-        ).properties(
-            width=column_count * cell_width + (column_count - 1) * gap,
-            height=5,
-        ),
-        *(alt.hconcat(*row) for row in grid),
-    ).resolve_scale(
-        x="shared",
-    ).properties(
-        title=alt.Title(
-            "Cumulative Distributions of Male/Female Perpetrators "
-            "by Age, Year, and Country",
-            fontSize=40,
-            fontWeight="bold",
-            anchor="start",
-            frame="group",
-            dx=0,
-            dy=-10,
-        )
-    )
-
-
 def plot_hrule(
     stroke: Literal["thin", "regular"] | float = "regular",
     width: Literal["pyramid", "mosaic"] | int = "pyramid",
@@ -396,24 +391,87 @@ def plot_hrule(
     )
 
 
+def plot_cdf_grid(
+    frame: pl.DataFrame,
+    cell_width: float = 500,
+    cell_height: float = 350,
+    cell_small_height: float = 250,
+    column_count: int = 5,
+    gap: float = 20,
+    small_gap: float = 5,
+) -> alt.VConcatChart:
+    group_iter = frame.group_by("country", "material", "role", maintain_order=True)
+    grid = []
+
+    for index, (labels, group) in enumerate(group_iter):
+        if index % column_count == 0:
+            if 0 < index:
+                grid.append(alt.Chart().mark_rule(strokeWidth=0, strokeOpacity=0).encode(
+                    alt.XDatum(0).axis(None)
+                ).properties(
+                    width=0.1,
+                    height=gap,
+                ))
+            grid.append([])
+            grid.append([])
+
+        country = labels[0]
+        material_role = f"{labels[1]} {labels[2]}s"
+
+        grid[-2].append(_plot_age_sex_cdfs(group, country, material_role).properties(
+            width=cell_width,
+            height=cell_height,
+        ))
+        grid[-1].append(_plot_age_sex_bands(group, country, material_role).properties(
+            width=cell_width,
+            height=cell_small_height,
+        ))
+
+    rows = [
+        (alt.hconcat(*row, spacing=gap) if isinstance(row, list) else row)
+        for row in grid
+    ]
+
+    return alt.vconcat(
+        alt.Chart().mark_rule(strokeWidth=7.5).encode(
+            alt.YDatum(0).axis(None)
+        ).properties(
+            width=column_count * cell_width + (column_count - 1) * gap,
+            height=5,
+        ),
+        *rows,
+        spacing=small_gap
+    ).resolve_scale(
+        x="shared",
+    ).properties(
+        title=alt.Title(
+            "Yearly Cumulative Distributions for Male/Female Perpetrators "
+            "by Age and Country",
+            fontSize=40,
+            fontWeight="bold",
+            anchor="start",
+            frame="group",
+            dx=0,
+            dy=-10,
+        )
+    )
+
+
 def _plot_age_sex_cdfs(
     frame: pl.DataFrame, country: str, material_role: str
 ) -> alt.LayerChart:
+    male_colors = Scale.BLUE.value
+    female_colors = Scale.RED.value
+    if country == "Australia":
+        male_colors = male_colors[7]
+        female_colors = female_colors[7]
+
     return alt.layer(
-        _plot_cdf(frame, column="male_cdf", colors=f"{Palette.BLUE}80"),
-        _plot_cdf(frame, column="female_cdf", colors=f"{Palette.RED}80"),
+        _plot_cdf(frame, column="male_cdf", colors=male_colors),
+        _plot_cdf(frame, column="female_cdf", colors=female_colors),
         alt.Chart().mark_rule(color=Palette.BLACK, strokeWidth=4).encode(
             alt.XDatum(20 if country == "New Zealand" else 18)
         ),
-        title=alt.Title(
-            country,
-            subtitle=material_role,
-            anchor="middle",
-            orient="top",
-            fontSize=30,
-            fontWeight="normal",
-            subtitleFontSize=25,
-        )
     ).resolve_scale(
         color="independent",
     )
@@ -437,16 +495,25 @@ def _plot_cdf(
     )
 
 
-def _plot_age_sex_cdf_bands(
-    frame: pl.DataFrame, country: str
+def _plot_age_sex_bands(
+    frame: pl.DataFrame, country: str, material_role: str
 ) -> alt.LayerChart:
     extrema = compute_age_sex_cdf_extrema(frame)
     return alt.layer(
-        _plot_cdf_band(extrema, "male_cdf", color=f"{Palette.BLUE}80"),
-        _plot_cdf_band(extrema, "female_cdf", color=f"{Palette.RED}80"),
+        _plot_cdf_band(extrema, "male_cdf", color=f"{Scale.BLUE.value[6]}80"),
+        _plot_cdf_band(extrema, "female_cdf", color=f"{Scale.RED.value[4]}80"),
         alt.Chart().mark_rule(color=Palette.BLACK, strokeWidth=4).encode(
             alt.XDatum(20 if country == "New Zealand" else 18)
         ),
+        title=alt.Title(
+            country,
+            subtitle=material_role,
+            anchor="middle",
+            orient="bottom",
+            fontSize=30,
+            fontWeight="normal",
+            subtitleFontSize=25,
+        )
     )
 
 

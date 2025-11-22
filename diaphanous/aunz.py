@@ -2,7 +2,10 @@ from pathlib import Path
 
 import polars as pl
 
-from .util import add_age_group, add_country_material_role, arrange_age_distribution
+from .util import (
+    add_age_group, add_country_material_role, make_empty_year, arrange_age_distribution
+)
+
 
 AIC = pl.DataFrame({
     "year": ["2022/23"] * 12,
@@ -51,7 +54,13 @@ def au_age_distribution() -> pl.DataFrame:
     ).with_columns(
         pl.lit(None, dtype=pl.String).alias("ethnicity"),
         pl.lit(None, dtype=pl.String).alias("activity"),
+    ).select(
+        "data_year", "age", "sex", "ethnicity", "activity", "count"
     )
+
+    frame = pl.concat([*(
+        make_empty_year(y) for y in range(2014, 2024)
+    ), frame, make_empty_year(2024)])
 
     frame = add_age_group(frame, 10, 17)
     frame = add_country_material_role(frame, "Australia", "CSAM", "Offender")

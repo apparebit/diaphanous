@@ -95,7 +95,25 @@ def format_table(frame: pl.DataFrame, title: None | str = None) -> gt.GT:
     )
 
 
-def add_group_rank[F: (pl.DataFrame, pl. LazyFrame)](frame: F) -> F:
+def make_empty_year(year: int) -> pl.DataFrame:
+    """Create a new data frame for the given year without providing an actual
+    age distribution."""
+    return pl.DataFrame().with_columns(
+        pl.lit(year, dtype=pl.Int16).alias("data_year"),
+        pl.lit(None, dtype=pl.Int8).alias("age"),
+        pl.lit(None, dtype=pl.String).alias("sex"),
+        pl.lit(None, dtype=pl.String).alias("ethnicity"),
+        pl.lit(None, dtype=pl.String).alias("activity"),
+        pl.lit(None, dtype=pl.Float64).alias("count"),
+    )
+
+
+def add_empty_year(frame: pl.DataFrame, year: int) -> pl.DataFrame:
+    """Append a data frame for an empty year."""
+    return pl.concat([frame, make_empty_year(year)])
+
+
+def add_group_rank[F: (pl.DataFrame, pl.LazyFrame)](frame: F) -> F:
     return frame.with_columns(
         pl.col("age_group").replace({
             "Child": 1,

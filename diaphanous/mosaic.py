@@ -564,7 +564,7 @@ def plot_mosaic_grid(
         alt.Chart().mark_rule(strokeWidth=10).encode(
             alt.YDatum(0).axis(None)
         ).properties(
-            width=column_count * cell_width + (column_count - 1) * column_gap,
+            width=column_count * cell_width + (column_count - 1) * max(column_gap, 26),
             height=5,
         ),
         *rows,

@@ -13,7 +13,7 @@ import great_tables as gt
 import polars as pl
 
 from .chart import (
-    plot_sex_by_age, plot_sex_by_age_detailed, plot_cdf_grid, plot_hrule
+    plot_sex_by_age_grid, plot_sex_by_age_detailed, plot_cdf_grid, plot_hrule
 )
 from .color import Palette
 from .mosaic import make_mosaic_frame, plot_mosaic_grid, test_chi2_independence
@@ -987,59 +987,10 @@ printr()
         self.html("</div>\n")
 
         self.h3("Age Distribution of Perpetrators: The Last Decade")
-        self.html(
-            """
-            <p>US statisticstics are <em>not</em> representative, with NIBRS
-            reaching 80% coverage of law enforcement agencies as well as
-            population only in 2023.</p>
-            """
-        )
-
         data = self.filter_years(distributions, *self.THUMB_YEARS)
 
         self.html("<div class=extra-wide>\n")
-        fig = alt.vconcat(
-            plot_hrule(width="pyramid"),
-            plot_sex_by_age(data["fi"], "Finland", "CSAM", "Suspect"),
-            plot_sex_by_age(data["de"], "Germany", "CSAM", "Suspect"),
-            plot_sex_by_age(data["it"], "Italy", "CSAM", "Offender"),
-            plot_sex_by_age(data["nz"], "New Zealand", "CSAM", "Offender"),
-            plot_sex_by_age(data["es"], "Spain", "CSAM", "Suspect"),
-            plot_hrule(width="pyramid", stroke="thin"),
-            plot_sex_by_age(
-                data["us_csam_offenders"], "United States", "CSAM", "Offender"),
-            plot_sex_by_age(
-                data["us_csam_arrestees"], "United States", "CSAM", "Arrestee"),
-            plot_sex_by_age(
-                data["us_porn_offenders"], "United States", "Porn", "Offender"),
-            plot_sex_by_age(
-                data["us_porn_arrestees"], "United States", "Porn", "Arrestee",
-                facet_labels=True
-            ),
-            spacing=15,
-        ).resolve_scale(
-            x="shared"
-        ).configure_axis(
-           labelFontSize=35,
-           titleFontSize=40,
-        ).properties(
-            title=alt.Title(
-                "Perpetrators by Age (0→100), Sex (Female↓, Male↑), "
-                "Year (2015⇒2024), and Country (⇓)",
-                fontSize=45,
-                fontWeight="bold",
-                anchor="start",
-                frame="group",
-                dx=20,
-                dy=-10,
-                subtitle=(
-                    "With Female Minors in Red, Male Minors in Blue, and "
-                    "People w/o Sex in Black"
-                ),
-                subtitleFontSize=40,
-            )
-        )
-
+        fig = plot_sex_by_age_grid(pl.concat(data.values()))
         path = "figure/age-sex-pyramid-grid.svg"
         fig.save(path)
         self.svg(path)
@@ -1156,6 +1107,14 @@ printr()
         <li>The FBI's <a
         href="https://cde.ucr.cjis.gov/LATEST/webapp/#/pages/downloads#nibrs-downloads">National
         Incident-Based Reporting System (NIBRS)</a>
+
+        </ul>
+
+        <p>US statisticstics are <em>not</em> representative of the entire
+        country, with NIBRS' coverage of the US population growing from 35.6% in
+        2014 to 86.4% in 2024 according to the FBI's <a
+        href="https://cde.ucr.cjis.gov/LATEST/webapp/#/pages/explorer/crime/crime-trend">Crime
+        Data Explorer</a>.
         """)
 
     # ==================================================================================
