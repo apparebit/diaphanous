@@ -9,9 +9,7 @@ from .main import main
 if __name__ == "__main__":
     from pathlib import Path
     import polars as pl
-    from .aunz import AIC as AIC
-    from .bka import Data as BKA
-    from .nibrs import humanize_frame, Id, load_all as load_nibrs
+    from .crimestat import load_all_age_distributions
     from .platform.data import REPORTS_PER_PLATFORM
     from .platform.export import encode_reports_per_platform
     from .tabulate import tabulate
@@ -34,30 +32,7 @@ if __name__ == "__main__":
     print("▶︎ data/ocse-reports-per-platform.csv")
 
     # ----------------------------------------------------------------------------------
-    au = AIC
-    au.write_csv("data/aic/offenders.csv")
-    print(f"▶︎ data/aic/offenders.csv")
-
-    # ----------------------------------------------------------------------------------
-    de = BKA.ingest()
-    suspects = humanize_frame(de.age_distribution().group_by(
-        Id.YEAR, Id.GROUP, "sex", Id.ACTIVITY, maintain_order=True
-    ).agg(
-        pl.col("count").sum().cast(pl.Int64)
-    ).rename({
-        Id.GROUP: "age"
-    }))
-
-    suspects.write_csv("data/bka/suspects.csv")
-    print(f"▶︎ data/bka/suspects.csv")
-
-    # ----------------------------------------------------------------------------------
-    us = load_nibrs()
-    offenders = humanize_frame(us.offender_demographics().by(
-        Id.YEAR, Id.GROUP, Id.RACE, Id.SEX, Id.ACTIVITY, sorted=True
-    )).rename({
-        "Group": "Age",
-    })
-
-    offenders.write_csv("data/nibrs/offenders.csv")
-    print(f"▶︎ data/nibrs/offenders.csv")
+    compact = load_all_age_distributions(compact=True)
+    frame = pl.concat(compact.values())
+    frame.write_csv("data/age-distributions.csv")
+    print("▶︎ data/age-distributions.csv")
