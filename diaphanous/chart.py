@@ -7,13 +7,16 @@ import polars as pl
 from .color import Palette, Scale
 from .nibrs.model import Id
 from .util import (
-    compute_age_sex_cdf_extrema, get_year_range, grouping_columns, hrule, to_axis_range
+    compute_age_sex_cdf_extrema, get_year_range, hrule, to_axis_range
 )
 
 
 def _prep_sex_by_age(frame: pl.DataFrame) -> pl.DataFrame:
     return frame.group_by(
-        "country", "material", "role", "data_year", "age", "age_group", "sex"
+        "country", "material", "role",
+        "data_year",
+        "age", "age_group", "sex", "sex_order",
+        maintain_order=True,
     ).agg(
         pl.col("count").sum(),
     ).with_columns(
@@ -32,20 +35,6 @@ def _prep_sex_by_age(frame: pl.DataFrame) -> pl.DataFrame:
                 pl.col("sex").is_null()
             ).sum().truediv(2)
         ).over("data_year", "age").alias("maximum"),
-
-        pl.when(
-            pl.col("sex").eq("Female")
-        ).then(
-            pl.lit(-1)
-        ).when(
-            pl.col("sex").is_null()
-        ).then(
-            pl.lit(0)
-        ).otherwise(
-            pl.lit(1)
-        ).cast(pl.Int8).alias("sex_order"),
-    ).sort(
-        "data_year", "age", "sex_order"
     ).with_columns(
         pl.col("count").cum_sum().add(
             pl.col("minimum")
@@ -84,13 +73,12 @@ def plot_sex_by_age_detailed(
             f"Not shown: {num:,} {role}{"" if num == 1 else "s"} Without Age"
         )
 
-    columns = grouping_columns(frame)
     labels = frame.group_by(
-        pl.col(*columns)
+        "country", "material", "role", "data_year", maintain_order=True
     ).agg(
         pl.col("count").filter(pl.col("age").is_null()).sum()
     ).select(
-        pl.col(*columns),
+        "country", "material", "role", "data_year",
         *(
             pl.lit(None).alias(c) for c in [
 

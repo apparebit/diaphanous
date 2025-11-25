@@ -1,6 +1,6 @@
 from collections import defaultdict
 import math
-from typing import Literal
+from typing import Literal, overload
 
 import altair as alt
 import numpy as np
@@ -97,10 +97,15 @@ def format_table(frame: pl.DataFrame, title: None | str = None) -> gt.GT:
     )
 
 
-def make_empty_year(year: int) -> pl.DataFrame:
+@overload
+def make_empty_year(year: int, lazy: Literal[False]) -> pl.DataFrame: ...
+@overload
+def make_empty_year(year: int, lazy: Literal[True]) -> pl.LazyFrame: ...
+
+def make_empty_year(year: int, lazy: bool = False) -> pl.DataFrame | pl.LazyFrame:
     """Create a new data frame for the given year without providing an actual
     age distribution."""
-    return pl.DataFrame().with_columns(
+    return (pl.LazyFrame() if lazy else pl.DataFrame()).with_columns(
         pl.lit(year, dtype=pl.Int16).alias("data_year"),
         pl.lit(None, dtype=pl.Int8).alias("age"),
         pl.lit(None, dtype=pl.String).alias("sex"),
@@ -110,19 +115,40 @@ def make_empty_year(year: int) -> pl.DataFrame:
     )
 
 
-def add_empty_year(frame: pl.DataFrame, year: int) -> pl.DataFrame:
+def make_empty_year_eagerly(year: int) -> pl.DataFrame:
+    return make_empty_year(year, lazy=False)
+
+
+def make_empty_year_lazily(year: int) -> pl.LazyFrame:
+    return make_empty_year(year, lazy=True)
+
+
+def add_empty_year[F: (pl.DataFrame, pl.LazyFrame)](frame: F, year: int) -> F:
     """Append a data frame for an empty year."""
-    return pl.concat([frame, make_empty_year(year)])
+    if isinstance(frame, pl.LazyFrame):
+        return pl.concat([frame, make_empty_year_lazily(year)])
+    else:
+        return pl.concat([frame, make_empty_year_eagerly(year)])
 
 
-def add_group_rank[F: (pl.DataFrame, pl.LazyFrame)](frame: F) -> F:
-    return frame.with_columns(
-        pl.col("age_group").replace({
-            "Child": 1,
-            "Juvenile": 2,
-            "Adult": 3,
-        }, return_dtype=pl.Int8).alias("group_rank")
+def finish_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](
+    frame: F,
+    country: str,
+    material: Literal["CSAM", "Porn"],
+    role: Literal["Offender", "Arrestee"],
+    juvenile_min: int,
+    juvenile_max: int,
+) -> F:
+    frame = add_age_group(frame, juvenile_min, juvenile_max)
+    frame = _add_country_material_role(frame, country, material, role)
+    frame = frame.with_columns(
+        pl.col("sex").replace({
+            "Female": -1,
+            None: 0,
+            "Male": 1,
+        }).alias("sex_order"),
     )
+    return _arrange_age_distribution(frame)
 
 
 def add_age_group[F: (pl.DataFrame, pl. LazyFrame)](
@@ -130,7 +156,7 @@ def add_age_group[F: (pl.DataFrame, pl. LazyFrame)](
     juvenile_min: int,
     juvenile_max: int,
 ) -> F:
-    frame = frame.with_columns(
+    return frame.with_columns(
         pl.when(
             pl.col("age").lt(juvenile_min)
         ).then(
@@ -144,50 +170,109 @@ def add_age_group[F: (pl.DataFrame, pl. LazyFrame)](
         ).then(
             pl.lit("Adult", dtype=pl.String)
         ).alias("age_group"),
+    ).with_columns(
+        pl.col("age_group").replace({
+            "Child": 1,
+            "Juvenile": 2,
+            "Adult": 3,
+        }, return_dtype=pl.Int8).alias("age_group_order")
     )
-    return add_group_rank(frame)
 
 
-def add_country_material_role(
-    frame: pl.DataFrame,
+COUNTRIES = [
+    "Australia",
+    "Finland",
+    "Germany",
+    "Italy",
+    "New Zealand",
+    "Spain",
+    "United States",
+]
+
+
+METRICS = [
+    "Australia CSAM Offenders",
+    "Finland CSAM Offenders",
+    "Germany CSAM Offenders",
+    "Italy CSAM Offenders",
+    "New Zealand CSAM Offenders",
+    "Spain CSAM Offenders",
+    "United States CSAM Offenders",
+    "United States CSAM Arrestees",
+    "United States Porn Offenders",
+    "United States Porn Arrestees",
+]
+
+_METRIC_ORDER = {metric: index + 1 for index, metric in enumerate(METRICS)}
+
+
+AGE_DISTRIBUTION_COLUMNS = {
+    "country": pl.Enum(COUNTRIES),
+    "material": pl.Enum(["CSAM", "Porn"]),
+    "role": pl.Enum(["Offender", "Arrestee"]),
+    "metric": pl.Enum(METRICS),
+    "metric_order": pl.Int8,
+    "data_year": pl.Int16,
+    "age": pl.Int8,
+    "age_group": pl.Enum(["Child", "Juvenile", "Adult", "Minor"]),
+    "age_group_order": pl.Int8,
+    "sex": pl.Enum(["Female", "Male"]),
+    "sex_order": pl.Int8,
+    "ethnicity": pl.String,
+    "activity": pl.Enum(["Consumer", "Producer"]),
+    "count": pl.Float64,
+}
+
+
+def _add_country_material_role[F: (pl.DataFrame, pl.LazyFrame)](
+    frame: F,
     country: str,
     material: Literal["Porn", "CSAM"],
-    role: Literal["Suspect", "Offender", "Arrestee"],
-) -> pl.DataFrame:
-    return frame.insert_column(
-        0, pl.lit(country, dtype=pl.String).alias("country")
-    ).insert_column(
-        1, pl.lit(material, dtype=pl.String).alias("material")
-    ).insert_column(
-        2, pl.lit(role, dtype=pl.String).alias("role")
+    role: Literal["Offender", "Arrestee"],
+) -> F:
+    metric = f"{country} {material} {role}s"
+    return frame.with_columns(
+        pl.lit(country, dtype=pl.String).alias("country"),
+        pl.lit(material, dtype=pl.Enum(["CSAM", "Porn"])).alias("material"),
+        pl.lit(role, dtype=pl.Enum(["Offender", "Arrestee"])).alias("role"),
+        pl.lit(metric, dtype=pl.Enum(METRICS)).alias("metric"),
+    ).with_columns(
+        pl.col("metric").replace(_METRIC_ORDER).alias("metric_order"),
     )
 
 
-def arrange_age_distribution(frame: pl.DataFrame) -> pl.DataFrame:
+def _arrange_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](frame: F) -> F:
     return frame.select(
         pl.col(
-            *grouping_columns(frame),
-            "age", "age_group", "group_rank",
-            "sex", "ethnicity", "activity",
+            "country", "material", "role", "metric", "metric_order",
+            "data_year",
+            "age", "age_group", "age_group_order",
+            "sex", "sex_order",
+            "ethnicity", "activity",
             "count"
         )
+    ).sort(
+        "metric_order", "data_year", "age", "sex_order", "ethnicity", "activity"
+    ).with_columns(
+        pl.col("country").cast(pl.Enum(COUNTRIES)),
+        pl.col("material").cast(pl.Enum(["CSAM", "Porn"])),
+        pl.col("role").cast(pl.Enum(["Offender", "Arrestee"])),
+        pl.col("metric").cast(pl.Enum(METRICS)),
+        pl.col("metric_order").cast(pl.Int8),
+        pl.col("data_year").cast(pl.Int16),
+        pl.col("age").cast(pl.Int8),
     )
 
 
+_INDEX_COLUMNS = ("country", "material", "role", "metric", "data_year")
+
 def regularize_age_distribution(frame: pl.DataFrame, *variables: str) -> pl.DataFrame:
-    # Preserving the index columns means retaining them in the template or the
-    # frame. While retaining them in the template results in redundant rows that
-    # must be removed again, retaining them in the frame results in cells with
-    # null values, which would have to be refilled. Removing redundant rows
-    # seems easier.
-    index = [
-        c for c in ("country", "material", "role", "metric") if c in frame.columns
-    ]
+    index = [c for c in _INDEX_COLUMNS if c in frame.columns]
 
     # Compute lists with unique variable values.
     template = frame.select(
         pl.col(*index),
-        pl.col(*variables).unique().implode(),
+        pl.col(*variables).unique(maintain_order=True).implode(),
     )
 
     # Explode each list into a column. Index columns cause redundant rows.
@@ -195,15 +280,13 @@ def regularize_age_distribution(frame: pl.DataFrame, *variables: str) -> pl.Data
         template = template.explode(variable)
 
     # Remove redundant rows again before joining.
-    return template.unique().join(
-        frame.drop(*index),
-        on=list(variables),
+    return template.unique(maintain_order=True).join(
+        frame,
+        on=[*index, *variables],
         how="left",
-        nulls_equal=True,
-    ).with_columns(
-        pl.col("count").fill_null(0)
+        maintain_order="left",
     ).group_by(
-        *index, *variables
+        *index, *variables, maintain_order=True,
     ).agg(
         pl.col("count").sum()
     )
@@ -211,7 +294,7 @@ def regularize_age_distribution(frame: pl.DataFrame, *variables: str) -> pl.Data
 
 def compute_age_cdfs(frame: pl.DataFrame) -> pl.DataFrame:
     frame = frame.drop_nulls(["age", "sex"])
-    group = grouping_columns(frame)
+    group = _grouping_columns(frame)
 
     males = _compute_age_cdf(
         frame.filter(pl.col("sex").eq("Male")), group, "male_cdf"
@@ -233,13 +316,20 @@ def _compute_age_cdf(
 ) -> pl.DataFrame:
     # Create a blueprint for full range of age values
     table = defaultdict(list)
-    for row in frame.select(*index_columns).unique().rows():
+    for row in frame.select(*index_columns).unique(maintain_order=True).rows():
         for name, value in zip(index_columns, row):
             table[name].extend([value] * 101)
         table["age"].extend([y for y in range(101)])
 
     # Build CDF from counts shifted by one row: (age, cdf): (0, 0.0) -> (100, 1.0)
-    return pl.DataFrame(table).join(
+    return pl.DataFrame(table, schema={
+        "country": pl.Enum(COUNTRIES),
+        "material": pl.Enum(["CSAM", "Porn"]),
+        "role": pl.Enum(["Offender", "Arrestee"]),
+        "metric": pl.Enum(METRICS),
+        "data_year": pl.Int16,
+        "age": pl.Int8,
+    }).join(
         frame.group_by(
             *index_columns, "age",
             maintain_order=True,
@@ -261,7 +351,7 @@ def _compute_age_cdf(
 
 
 def compute_age_sex_cdf_extrema(frame: pl.DataFrame) -> pl.DataFrame:
-    group = grouping_columns(frame)[:-1]
+    group = _grouping_columns(frame)[:-1]
     return _compute_cdf_extrema(frame, group, "male_cdf").join(
         _compute_cdf_extrema(frame, group, "female_cdf"),
         on=[*group, "age"],
@@ -280,7 +370,7 @@ def _compute_cdf_extrema(
     )
 
 
-def grouping_columns(frame: pl.DataFrame) -> list[str]:
+def _grouping_columns(frame: pl.DataFrame) -> list[str]:
     group = []
     for candidate in ("country", "material", "role", "metric", "data_year"):
         if candidate in frame.columns:

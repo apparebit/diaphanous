@@ -8,9 +8,7 @@ import polars as pl
 from ._const import TOTAL
 from .finish import finish_caseload, finish_severity
 from .nibrs.model import Id, Column
-from .util import (
-    add_country_material_role, add_age_group, arrange_age_distribution, format_table
-)
+from .util import finish_age_distribution, format_table
 
 
 _ROOT = Path(__file__).parent.parent
@@ -332,8 +330,8 @@ class Data:
             delim=" ", reverse=True
         )
 
-    def age_distribution(self) -> pl.DataFrame:
-        frame = self.suspects.filter(
+    def age_distribution(self) -> pl.LazyFrame:
+        frame = self.suspects.lazy().filter(
             pl.col("activity").is_not_null().and_(pl.col("sex").ne("X"))
         ).with_columns(
             pl.col("sex").replace({"M": "Male", "W": "Female"}),
@@ -388,12 +386,10 @@ class Data:
             Id.YEAR, "age", "sex", "activity"
         )
 
-        frame = add_age_group(frame, 14, 17)
-        frame = add_country_material_role(frame, "Germany", "CSAM", "Suspect")
-        return arrange_age_distribution(frame)
+        return finish_age_distribution(frame, "Germany", "CSAM", "Offender", 14, 17)
 
 
-def de_age_distribution() -> pl.DataFrame:
+def de_age_distribution() -> pl.LazyFrame:
     return Data.ingest().age_distribution()
 
 

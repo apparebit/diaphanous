@@ -178,7 +178,6 @@ def make_mosaic_frame(
                 "Juvenile": "Minor",
             })
         )
-
     if not include_null:
         frame = frame.drop_nulls(
             [x_axis, y_axis]
@@ -193,15 +192,14 @@ def make_mosaic_frame(
     # Compute frequency form for two axes. Also, since row order determines
     # rectangle order in the mosaic, ensure correct order.
     contingencies = frame.group_by(
-        "country", "material", "role", "data_year", x_axis, y_axis,
+        "country", "material", "role", "metric", "metric_order",
+        "data_year",
+        x_axis, y_axis,
+        maintain_order=True
     ).agg(
         pl.col("count").sum().round().cast(pl.Int64),
     ).with_columns(
         # We achieve custom sort orders by mapping values to integers.
-        pl.col("role").replace({
-            "Arrestee": 2,
-            "Offender": 1,
-        }).alias("role_order"),
         pl.col(x_axis).replace({
             value: key for key, value in enumerate(index[x_axis])
         }).alias("x_order"),
@@ -209,14 +207,7 @@ def make_mosaic_frame(
             value: key for key, value in enumerate(index[y_axis])
         }).alias("y_order"),
     ).sort(
-        "country", "material", "role_order", "data_year", "x_order", "y_order"
-    ).with_columns(
-        pl.format(
-            "{} {} {}s",
-            pl.col("country"),
-            pl.col("material"),
-            pl.col("role"),
-        ).alias("metric"),
+        "metric_order", "data_year", "x_order", "y_order"
     )
 
     # contingencies = regularize_age_distribution(
@@ -230,8 +221,7 @@ def make_mosaic_frame(
     # Compute x coordinates using x_axis' marginal frequencies: Normalize
     # counts, add in gaps, normalize again.
     xs = contingencies.group_by(
-        "metric", "data_year", x_axis,
-        maintain_order=True
+        "metric", "data_year", x_axis, maintain_order=True
     ).agg(
         pl.col("country", "material", "role").first(),
         pl.col("count").sum(),

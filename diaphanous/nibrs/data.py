@@ -12,10 +12,7 @@ from .model import (
     AGE_IN_YEARS_V1, AGE_IN_YEARS_V2, Column, CriminalAct, Entry, Ethnicity, Id,
     NIBRS_SOURCE_FILES, NibrsSchema, NibrsTable, OffenseCode, Race, Sex
 )
-from ..util import (
-    add_age_group, add_country_material_role, add_group_rank, arrange_age_distribution,
-    format_table
-)
+from ..util import finish_age_distribution, format_table
 
 if TYPE_CHECKING:
     from .demographics import Demographics
@@ -95,6 +92,7 @@ class _Reader:
                 pl.lit(self.year, dtype=pl.Int16).alias("data_year")
             )
             select_columns = True
+
         if effective_schema.requires_offense_code():
             assert self.offense_type is not None
             frame = frame.join(
@@ -103,6 +101,7 @@ class _Reader:
                 how="left",
             )
             select_columns = True
+
         if select_columns:
             frame = frame.select(
                 schema.columns()
@@ -408,8 +407,6 @@ def prepare(
     simplify_race: bool = True,
     nullify_unknown: bool = True,
 ) -> pl.DataFrame:
-    frame = add_age_group(frame, 11, 17).drop(Id.AGE)
-
     # Map NOT_SPECIFIED and UNKNOWN to null
     if nullify_unknown:
         frame = frame.with_columns(
@@ -448,11 +445,7 @@ def prepare(
             ).alias(Id.RACE)
         )
 
-    selection = [
-        Id.YEAR,
-        "age", Id.GROUP,
-        Id.SEX, Id.RACE,
-    ]
+    selection = [Id.YEAR, "age", Id.SEX, Id.RACE]
 
     if Id.ACTIVITY in frame.columns:
         selection.append(Id.ACTIVITY)
@@ -468,7 +461,7 @@ def prepare(
 def finish(
     frame: pl.DataFrame,
     material: Literal["Porn", "CSAM"],
-    role: Literal["Suspect", "Offender", "Arrestee"],
+    role: Literal["Offender", "Arrestee"],
 ) -> pl.DataFrame:
     frame = frame.with_columns(
         pl.col("age").cast(pl.Int8),
@@ -485,9 +478,7 @@ def finish(
         {Id.SEX: "sex", Id.RACE.value: "ethnicity"}
     )
 
-    frame = add_group_rank(frame)
-    frame = add_country_material_role(frame, "United States", material, role)
-    return arrange_age_distribution(frame)
+    return finish_age_distribution(frame, "United States", material, role, 11, 17)
 
 
 @dataclasses.dataclass(frozen=True, slots=True)
@@ -872,16 +863,14 @@ def load_all_us_porn() -> tuple[pl.DataFrame, pl.DataFrame]:
     return arrestees, offenders
 
 
-def compute_us_porn_age_distribution(
+def compute_us_age_distribution(
     frame: pl.DataFrame,
+    material: Literal["CSAM", "Porn"],
     role: Literal["Offender", "Arrestee"],
 ) -> pl.DataFrame:
     frame = prepare(frame).group_by(
-        Id.YEAR, "age", Id.GROUP, Id.SEX, Id.RACE, Id.ACTIVITY,
-        maintain_order=False
+        Id.YEAR, "age", Id.SEX, Id.RACE, Id.ACTIVITY,
     ).agg(
         pl.len().alias("count"),
-    ).sort(
-        Id.YEAR, "age", Id.GROUP, Id.SEX, Id.RACE, Id.ACTIVITY
     )
-    return finish(frame, "Porn", role)
+    return finish(frame, material, role)

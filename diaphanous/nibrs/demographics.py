@@ -69,7 +69,7 @@ class Demographics:
     ) -> pl.DataFrame:
         """
         Tabulate this demographic by the combination of the given criteria.
-        Valid identifiers are `AGE`, `CLEARED_EXCEPT`, `ETHNICITY`, `GROUP`,
+        Valid identifiers are `AGE`, `CLEARED_EXCEPT`, `ETHNICITY`,
         `LOCATION`, `RACE`, `SEX`, `SUPPLY`, `SUSPECT_USING`, and `YEAR`. In
         fact, you probably want to always use `YEAR` as the first argument.
         """
@@ -108,10 +108,7 @@ class Demographics:
         return frame
 
     def age_distribution(self) -> pl.DataFrame:
-        frame = self.by(
-            Id.YEAR, Id.AGE, Id.GROUP, Id.SEX, Id.RACE, Id.ACTIVITY,
-            sorted=True
-        )
+        frame = self.by(Id.YEAR, Id.AGE, Id.SEX, Id.RACE, Id.ACTIVITY)
         frame = finish(
             frame,
             "CSAM",

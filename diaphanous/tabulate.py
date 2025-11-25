@@ -13,7 +13,7 @@ import great_tables as gt
 import polars as pl
 
 from .chart import (
-    plot_sex_by_age_grid, plot_sex_by_age_detailed, plot_cdf_grid, plot_hrule
+    plot_sex_by_age_grid, plot_sex_by_age_detailed, plot_cdf_grid
 )
 from .color import Palette
 from .mosaic import make_mosaic_frame, plot_mosaic_grid, test_chi2_independence
@@ -684,8 +684,8 @@ dev.off()
 
     def emit_mosaics(self) -> None:
         self.h3("Australia")
-        frame = aunz.au_age_distribution().group_by(
-            "data_year", "age_group", "sex"
+        frame = aunz.au_age_distribution().collect().group_by(
+            "data_year", "age_group", "sex", maintain_order=True,
         ).agg(
             pl.col("count").sum()
         )
@@ -715,8 +715,8 @@ printr()
         self.end_col()
 
         self.h3("Germany")
-        frame = bka.de_age_distribution().group_by(
-            pl.col("data_year", "age_group", "sex", "activity")
+        frame = bka.de_age_distribution().collect().group_by(
+            "data_year", "age_group", "sex", "activity", maintain_order=True
         ).agg(
             pl.col("count").sum()
         )
@@ -770,7 +770,7 @@ printr()
         self.end_col()
 
         self.h3("New Zealand")
-        frame = aunz.nz_age_distribution().drop_nulls(
+        frame = aunz.nz_age_distribution().collect().drop_nulls(
             ["age_group", "sex"]
         ).group_by(
             pl.col("data_year", "age_group", "sex", "activity")
@@ -827,7 +827,7 @@ printr()
         self.end_col()
 
         self.h3("Spain")
-        frame = crimestat.es_age_distribution().group_by(
+        frame = crimestat.es_age_distribution().collect().group_by(
             pl.col("data_year", "age_group", "sex")
         ).agg(
             pl.col("count").sum()
@@ -987,16 +987,16 @@ printr()
         self.html("</div>\n")
 
         self.h3("Age Distribution of Perpetrators: The Last Decade")
-        data = self.filter_years(distributions, *self.THUMB_YEARS)
+        data = pl.concat(self.filter_years(distributions, *self.THUMB_YEARS).values())
 
         self.html("<div class=extra-wide>\n")
-        fig = plot_sex_by_age_grid(pl.concat(data.values()))
+        fig = plot_sex_by_age_grid(data)
         path = "figure/age-sex-pyramid-grid.svg"
         fig.save(path)
         self.svg(path)
 
         frame = make_mosaic_frame(
-            pl.concat(data.values()),
+            data,
             x_axis="age_group",
             y_axis="sex",
             index={"age_group": ["Minor", None, "Adult"]},
@@ -1010,8 +1010,6 @@ printr()
             include_null=True,
             show_counts=True,
         )
-
-        frame = test_chi2_independence(frame, "age_group", "sex")
 
         fig = plot_mosaic_grid(
             frame.filter(

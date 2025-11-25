@@ -1,5 +1,5 @@
 from .data import (
-    compute_us_porn_age_distribution, CsamData, load, load_all_us_csam, load_all_us_porn
+    compute_us_age_distribution, CsamData, load, load_all_us_csam, load_all_us_porn
 )
 from .model import (
     Activity, Clearance, Column, CriminalAct, Entry, Ethnicity, Group, humanize_frame,
@@ -11,7 +11,7 @@ __all__ = (
     "Activity",
     "Clearance",
     "Column",
-    "compute_us_porn_age_distribution",
+    "compute_us_age_distribution",
     "CriminalAct",
     "CsamData",
     "Entry",

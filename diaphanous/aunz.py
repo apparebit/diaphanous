@@ -2,9 +2,7 @@ from pathlib import Path
 
 import polars as pl
 
-from .util import (
-    add_age_group, add_country_material_role, make_empty_year, arrange_age_distribution
-)
+from .util import finish_age_distribution, make_empty_year_lazily
 
 
 AIC = pl.DataFrame({
@@ -14,14 +12,14 @@ AIC = pl.DataFrame({
     "count": [287, 611, None, 1_216, 202, 25, None, 235, 489, 637, 319, 1452],
 })
 
-def au_age_distribution() -> pl.DataFrame:
+def au_age_distribution() -> pl.LazyFrame:
     frame = AIC.filter(
         pl.col("age").ne("Total")
     ).pivot(
         on="sex",
         index=["year", "age"],
         values="count",
-    ).with_columns(
+    ).lazy().with_columns(
         pl.col("All").sub(pl.col("Male")).sub(pl.col("Female"))
     ).unpivot(
         on=["Male", "Female", "All"],
@@ -59,12 +57,10 @@ def au_age_distribution() -> pl.DataFrame:
     )
 
     frame = pl.concat([*(
-        make_empty_year(y) for y in range(2014, 2024)
-    ), frame, make_empty_year(2024)])
+        make_empty_year_lazily(y) for y in range(2014, 2024)
+    ), frame, make_empty_year_lazily(2024)])
 
-    frame = add_age_group(frame, 10, 17)
-    frame = add_country_material_role(frame, "Australia", "CSAM", "Offender")
-    return arrange_age_distribution(frame)
+    return finish_age_distribution(frame, "Australia", "CSAM", "Offender", 10, 17)
 
 
 # ======================================================================================
@@ -72,9 +68,10 @@ def au_age_distribution() -> pl.DataFrame:
 
 POLICEDATA = Path("data/policedata.nz/nz-up-to-2025-08.csv")
 
-def nz_load() -> pl.DataFrame:
-    # UTF-16? That's just plain nuts
-    return pl.read_csv(POLICEDATA, encoding="utf16", separator="\t").select(
+def nz_load() -> pl.LazyFrame:
+    # UTF-16? That's just plain nuts. Also, Pola.rs does not support lazily
+    # reading CSV with that encoding.
+    return pl.read_csv(POLICEDATA, encoding="utf16", separator="\t").lazy().select(
         pl.col("Year Month").alias("year_month"),
         pl.col("Proceedings").alias("proceedings"),
         pl.col("SEX").alias("sex"),
@@ -134,7 +131,7 @@ def nz_load() -> pl.DataFrame:
     )
 
 
-def nz_age_distribution() -> pl.DataFrame:
+def nz_age_distribution() -> pl.LazyFrame:
     frame = nz_load().group_by(
         pl.col("year", "age_low", "age_high", "sex", "ethnicity", "activity")
     ).agg(
@@ -145,10 +142,6 @@ def nz_age_distribution() -> pl.DataFrame:
         pl.int_ranges("age_low", "age_high", dtype=pl.Int8).alias("age"),
     ).explode("age").with_columns(
         pl.col("year").alias("data_year"),
-    ).sort(
-        "data_year", "age", "sex", "ethnicity", "activity"
     )
 
-    frame = add_age_group(frame, 10, 19)
-    frame = add_country_material_role(frame, "New Zealand", "CSAM", "Offender")
-    return arrange_age_distribution(frame)
+    return finish_age_distribution(frame, "New Zealand", "CSAM", "Offender", 10, 19)
