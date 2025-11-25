@@ -6,7 +6,7 @@ from polars.expr.whenthen import ChainedThen, Then
 from scipy import stats
 
 from .color import Palette
-from .util import rate_pvalue, regularize_age_distribution
+from .util import hrule, rate_pvalue, regularize_age_distribution, to_contingency_table
 
 
 def _sort_values(values: Sequence[None | str]) -> Sequence[None | str]:
@@ -556,17 +556,8 @@ def plot_mosaic_grid(
         rows.append(row)
 
     # Combine rows into grid
-    column_count = frame.select(
-        pl.col("data_year").n_unique()
-    ).item()
-
     grid = alt.vconcat(
-        alt.Chart().mark_rule(strokeWidth=10).encode(
-            alt.YDatum(0).axis(None)
-        ).properties(
-            width=column_count * cell_width + (column_count - 1) * max(column_gap, 26),
-            height=5,
-        ),
+        hrule(10),
         *rows,
         spacing=row_gap,
     ).resolve_scale(

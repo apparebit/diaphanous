@@ -7,7 +7,7 @@ import polars as pl
 from .color import Palette, Scale
 from .nibrs.model import Id
 from .util import (
-    compute_age_sex_cdf_extrema, get_year_range, grouping_columns, to_axis_range
+    compute_age_sex_cdf_extrema, get_year_range, grouping_columns, hrule, to_axis_range
 )
 
 
@@ -179,12 +179,7 @@ def plot_sex_by_age_grid(frame: pl.DataFrame) -> alt.VConcatChart:
         )
 
     return alt.vconcat(
-        alt.Chart().mark_rule(strokeWidth=7.5).encode(
-            alt.YDatum(0).axis(None)
-        ).properties(
-            width=300 * 10 + 26 * 9,
-            height=5,
-        ),
+        hrule(7.5),
         *rows,
         spacing=15
     ).resolve_scale(
@@ -366,31 +361,6 @@ def plot_sex_by_age(
     )
 
 
-def plot_hrule(
-    stroke: Literal["thin", "regular"] | float = "regular",
-    width: Literal["pyramid", "mosaic"] | int = "pyramid",
-) -> alt.Chart:
-    """Create a horizontal rule as a chart for separating rows of thumbs."""
-    if stroke == "thin":
-        stroke = 7.5
-    elif stroke == "regular":
-        stroke = 10
-
-    if width == "pyramid":
-        width = 3_235
-    elif width == "mosaic":
-        width = 3_200
-
-    return alt.Chart().mark_rule(
-        strokeWidth=stroke,
-    ).encode(
-        alt.YDatum(0).axis(None)
-    ).properties(
-        width=width,
-        height=5,
-    )
-
-
 def plot_cdf_grid(
     frame: pl.DataFrame,
     cell_width: float = 500,
@@ -406,12 +376,7 @@ def plot_cdf_grid(
     for index, (labels, group) in enumerate(group_iter):
         if index % column_count == 0:
             if 0 < index:
-                grid.append(alt.Chart().mark_rule(strokeWidth=0, strokeOpacity=0).encode(
-                    alt.XDatum(0).axis(None)
-                ).properties(
-                    width=0.1,
-                    height=gap,
-                ))
+                grid.append(hrule(gap - small_gap, color="#ffffff"))
             grid.append([])
             grid.append([])
 
@@ -433,12 +398,7 @@ def plot_cdf_grid(
     ]
 
     return alt.vconcat(
-        alt.Chart().mark_rule(strokeWidth=7.5).encode(
-            alt.YDatum(0).axis(None)
-        ).properties(
-            width=column_count * cell_width + (column_count - 1) * gap,
-            height=5,
-        ),
+        hrule(7.5),
         *rows,
         spacing=small_gap
     ).resolve_scale(
@@ -469,7 +429,11 @@ def _plot_age_sex_cdfs(
     return alt.layer(
         _plot_cdf(frame, column="male_cdf", colors=male_colors),
         _plot_cdf(frame, column="female_cdf", colors=female_colors),
-        alt.Chart().mark_rule(color=Palette.BLACK, strokeWidth=4).encode(
+        alt.Chart().mark_rule(
+            color=Palette.BLACK,
+            strokeWidth=4,
+            strokeDash=(4, 2),
+        ).encode(
             alt.XDatum(20 if country == "New Zealand" else 18)
         ),
     ).resolve_scale(
@@ -502,7 +466,11 @@ def _plot_age_sex_bands(
     return alt.layer(
         _plot_cdf_band(extrema, "male_cdf", color=f"{Scale.BLUE.value[6]}80"),
         _plot_cdf_band(extrema, "female_cdf", color=f"{Scale.RED.value[4]}80"),
-        alt.Chart().mark_rule(color=Palette.BLACK, strokeWidth=4).encode(
+        alt.Chart().mark_rule(
+            color=Palette.BLACK,
+            strokeWidth=4,
+            strokeDash=(4, 2),
+        ).encode(
             alt.XDatum(20 if country == "New Zealand" else 18)
         ),
         title=alt.Title(

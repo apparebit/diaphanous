@@ -2,6 +2,8 @@ from collections import defaultdict
 import math
 from typing import Literal
 
+import altair as alt
+import numpy as np
 import polars as pl
 import great_tables as gt
 
@@ -326,3 +328,25 @@ def rate_pvalue(pvalue: float) -> str:
         return "★"
     else:
         return "p > 0.05"
+
+
+def hrule(
+    height: float,
+    width: None | float | Literal["container"] = None,
+    color: str = "#000000",
+) -> alt.Chart:
+    """Create a horizontal bar suitable as spacer."""
+    if width is None:
+        width = "container"
+
+    return alt.Chart(
+        view=alt.ViewConfig(strokeWidth=0)
+    ).mark_rule(
+        color=color,
+        strokeWidth=height,
+    ).encode(
+        alt.YDatum(0).axis(None)
+    ).properties(
+        width=width,
+        height=height,
+    )
