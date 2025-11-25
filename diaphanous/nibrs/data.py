@@ -10,12 +10,62 @@ import polars as pl
 from ..finish import finish_caseload, finish_severity
 from .model import (
     AGE_IN_YEARS_V1, AGE_IN_YEARS_V2, Column, CriminalAct, Entry, Ethnicity, Id,
-    NIBRS_SOURCE_FILES, NibrsSchema, NibrsTable, OffenseCode, Race, Sex
+    NIBRS_SOURCE_FILES, NibrsSchema, NibrsTable, OffenseCode, Race, Sex, Table
 )
 from ..util import finish_age_distribution, format_table
 
 if TYPE_CHECKING:
     from .demographics import Demographics
+
+
+@dataclasses.dataclass
+class _Reader2:
+
+    path: Path
+    year: int
+    is_legacy_age: bool
+    offense_type: None | pl.LazyFrame
+
+    def __init__(self, path: Path, year: int) -> None:
+        self.path = path
+        self.year = year
+
+        schema = Table.AGE.fit_schema(year, path)
+        self.is_legacy_age = pl.read_csv(
+            path / Table.AGE.csv_file,
+            schema=pl.Schema(schema.instance)
+        ).filter(
+            pl.col("age_id").eq(4)
+        ).get_column(
+            "age_code"
+        ).item() == "00"
+
+        if year <= 2020:
+            schema = Table.OFFENSE_TYPE.fit_schema(year, path)
+            self.offense_type = pl.scan_csv(
+                path / NibrsTable.OFFENSE_TYPE.csv_file,
+                schema=pl.Schema(schema.instance),
+            ).select(
+                pl.col("offense_type_id", "offense_code")
+            )
+        else:
+            self.offense_type = None
+
+    def read(self, table: Table) -> pl.LazyFrame:
+        schema = table.fit_schema(self.year, self.path)
+
+        # For future reference: At least for CA, DC, and NY, the postgres_load.sql
+        # script declares NIBRS_BIAS_LIST.csv to have the windows-1251 or cp1251
+        # encoding.
+        # For below: At least for CA, the agencies.csv file contains an invalid
+        # UTF-8 sequence (\xa0 by itself on line 60), hence the lossy encoding.
+        frame = pl.scan_csv(
+            self.path / table.csv_file,
+            schema=pl.Schema(schema.instance),
+            encoding="utf8-lossy" if table is Table.AGENCIES else "utf8"
+        )
+
+        return schema.normalize(frame, self.offense_type, self.is_legacy_age)
 
 
 def _associated_offenses(

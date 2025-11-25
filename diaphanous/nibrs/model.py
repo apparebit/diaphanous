@@ -1,5 +1,6 @@
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 import enum
+import functools
 from pathlib import Path
 from types import MappingProxyType
 
@@ -9,6 +10,488 @@ from .._const import TOTAL
 from ..util import to_title
 
 # Files and Schemas
+
+type ColumnType = pl.Int16 | pl.Int64 | pl.String
+
+
+class Table(enum.StrEnum):
+    """Key NIBRS tables."""
+    AGE = "age"
+    AGENCIES = "agencies"
+    ARRESTEE = "arrestee"
+    CRIMINAL_ACT = "criminal_act"
+    INCIDENT = "incident"
+    OFFENDER = "offender"
+    OFFENSE = "offense"
+    OFFENSE_TYPE = "offense_type"
+    SUSPECT_USING = "suspect_using"
+    VICTIM = "victim"
+    VICTIM_OFFENSE = "victim_offense"
+
+    @property
+    def csv_file(self) -> str:
+        """Get the CSV file name for this table."""
+        return "agencies.csv" if self == self.AGENCIES else f"nibrs_{self}.csv"
+
+    @property
+    def has_demographics(self) -> bool:
+        """
+        Determine whether the table contains demographic information. If that is
+        the case, the table includes `age_id` and `age_num` columns that may use
+        one of two encodings, depending on the `Table.AGE` table. Also, if this
+        property is set, pre-2021 versions of this table use a distinct encoding
+        for their `ethnicity_id`, `race_id`, and `sex_code` columns.
+        """
+        return self in (self.ARRESTEE, self.OFFENDER, self.VICTIM)
+
+    @property
+    def maybe_no_data_year_until_2015(self) -> bool:
+        """
+        Determine whether pre-2016 versions of this table lack the `data_year:
+        pl.Int16` column. Tables for different states in years up to and
+        including 2015 may or may not include the `data_year` column. If they do
+        not, they must include any optional columns identified by the
+        `optional_columns_until_2015` property.
+        """
+        return self not in (
+            self.ARRESTEE, self.CRIMINAL_ACT, self.INCIDENT,
+            self.OFFENDER, self.OFFENSE, self.SUSPECT_USING,
+            self.VICTIM, self.VICTIM_OFFENSE
+        )
+
+    @property
+    def maybe_no_offense_group_until_2015(self) -> bool:
+        """
+        Determine whether pre-2016 versions of this table may omit the
+        `offense_group` column. If this property is set, it applies to all
+        tables in years up to and including 2015.
+        """
+        return self is self.OFFENSE_TYPE
+
+    @property
+    def optional_columns_until_2015(
+        self
+    ) -> Mapping[str, tuple[ColumnType, None | str]]:
+        """
+        Determine the names, types, and predecessors of pre-2016 columns. If the
+        predecessor is `None`, the column is the first column. Note that the
+        predecessor may be another legacy column. Tables for different states
+        may or may not include these columns, at least for 2015. If a table does
+        include these columns and the `no_data_year_until_215` property is set,
+        that table does not have the `data_year` column.
+        """
+        return {
+            self.ARRESTEE: {
+                "arrest_num": (pl.Int64, "arrestee_seq_num"),
+                "ff_line_number": (pl.Int64, "clearance_ind"),
+            },
+            self.INCIDENT: {
+                "ddocname": (pl.String, "data_home"),
+                "ff_line_number": (pl.Int64, "orig_format"),
+                "incident_number": (pl.String, "nibrs_month_id"),
+            },
+            self.OFFENDER: {
+                "ff_line_number": (pl.Int64, "ethnicity_id"),
+            },
+            self.OFFENSE: {
+                "ff_line_number": (pl.Int64, "method_entry_code"),
+            },
+            self.VICTIM: {
+                "agency_data_year": (pl.Int16, "resident_status_code"),
+                "ff_line_number": (pl.Int64, "agency_data_year"),
+            },
+        }.get(self, {})
+
+    @property
+    def columns_until_2020(self) -> Mapping[str, tuple[ColumnType, None | str]]:
+        """
+        Determine the names, types, and predecessors of pre-2021 columns. If the
+        predecessor is `None`, the column is the first column. Note that the
+        predecessor may be another legacy column. This applies to all state
+        tables for years up to and including 2020.
+        """
+        return {
+            self.OFFENSE_TYPE: {
+                "offense_type_id": (pl.Int64, None),
+            },
+        }.get(self, {}) # type: ignore
+
+    @property
+    def has_offense_type_until_2020(self) -> bool:
+        """
+        Determine whether pre-2021 versions of this table have an
+        `offense_type_id: pl.Int64` column instead of `offense_code: pl.String`.
+        The `offense_type_id` column is in the same position as the
+        `offense_code` column for all tables with this property.
+        """
+        return self in (self.ARRESTEE, self.OFFENSE)
+
+    @property
+    def column_names_until_2020(self) -> Mapping[str, str]:
+        """
+        Access a mapping from current column names to pre-2021 column names. The
+        mapping applies to all tables of years up to and including 2020.
+        """
+        return {
+            self.AGENCIES: {
+                "female_officer+female_civilian":
+                    "ped.female_civilian+ped.female_officer",
+                "male_officer+male_civilian":
+                    "ped.male_officer+ped.male_civilian",
+                "officer_rate": "0",
+                "employee_rate": "0",
+            },
+            self.VICTIM: {
+                "age_code_range_high": "age_range_high_num"
+            }
+        }.get(self, {})
+
+    @property
+    def column_names_after_2020(self) -> Mapping[str, str]:
+        """
+        Access a mapping from pre-2021 column names to current column names. The
+        mapping applies to all tables for years up to and including 2020. This
+        property raises an error for the `AGENCIES` table, which duplicates the
+        same dummy name "0".
+        """
+        if self is self.AGENCIES:
+            raise ValueError("unable to map names due to conflicting columns")
+        elif self is self.VICTIM:
+            return {
+                "age_range_high_num": "age_code_range_high"
+            }
+        else:
+            return {}
+
+    @property
+    def latest_schema(self) -> dict[str, ColumnType]:
+        """Get the column names and types for the latest version of this table."""
+        schema = {
+            self.AGE: {
+                "age_id": pl.Int16,
+                "age_code": pl.String,
+                "age_name": pl.String,
+            },
+            self.AGENCIES: {
+                "yearly_agency_id": pl.Int64,
+                "agency_id": pl.Int64,
+                "data_year": pl.Int32,
+                "ori": pl.String,
+                "legacy_ori": pl.String,
+                "covered_by_legacy_ori": pl.String,
+                "direct_contributor_flag": pl.String,
+                "dormant_flag": pl.String,
+                "dormant_year": pl.Int32,
+                "reporting_type": pl.String,
+                "ucr_agency_name": pl.String,
+                "ncic_agency_name": pl.String,
+                "pub_agency_name": pl.String,
+                "pub_agency_unit": pl.String,
+                "agency_status": pl.String,
+                "state_id": pl.Int32,
+                "state_name": pl.String,
+                "state_abbr": pl.String,
+                "state_postal_abbr": pl.String,
+                "division_code": pl.Int32,
+                "division_name": pl.String,
+                "region_code": pl.Int32,
+                "region_name": pl.String,
+                "region_desc": pl.String,
+                "agency_type_name": pl.String,
+                "population": pl.Int32,
+                "submitting_agency_id": pl.Int32,
+                "sai": pl.String,
+                "submitting_agency_name": pl.String,
+                "suburban_area_flag": pl.String,
+                "population_group_id": pl.Int32,
+                "population_group_code": pl.String,
+                "population_group_desc": pl.String,
+                "parent_pop_group_code": pl.Int32,
+                "parent_pop_group_desc": pl.String,
+                "mip_flag": pl.String,
+                "pop_sort_order": pl.Int32,
+                "summary_rape_def": pl.String,
+                "pe_reported_flag": pl.String,
+                "male_officer": pl.Int32,
+                "male_civilian": pl.Int32,
+                "male_officer+male_civilian": pl.Int32,
+                "female_officer": pl.Int32,
+                "female_civilian": pl.Int32,
+                "female_officer+female_civilian": pl.Int32,
+                "officer_rate": pl.Decimal(6, 2),
+                "employee_rate": pl.Decimal(6, 2),
+                "nibrs_cert_date": pl.String,
+                "nibrs_start_date": pl.String,
+                "nibrs_leoka_start_date": pl.String,
+                "nibrs_ct_start_date": pl.String,
+                "nibrs_multi_bias_start_date": pl.String,
+                "nibrs_off_eth_start_date": pl.String,
+                "covered_flag": pl.String,
+                "county_name": pl.String,
+                "msa_name": pl.String,
+                "publishable_flag": pl.String,
+                "participated": pl.String,
+                "nibrs_participated": pl.String,
+            },
+            self.ARRESTEE: {
+                "data_year": pl.Int16,
+                "arrestee_id": pl.Int64,
+                "incident_id": pl.Int64,
+                "arrestee_seq_num": pl.Int16,
+                "arrest_date": pl.String,
+                "arrest_type_id": pl.Int16,
+                "multiple_indicator": pl.String,
+                "offense_code": pl.String,
+                "age_id": pl.Int16,
+                "age_num": pl.String,
+                "sex_code": pl.String,
+                "race_id": pl.Int16,
+                "ethnicity_id": pl.Int16,
+                "resident_code": pl.String,
+                "under_18_disposition_code": pl.String,
+                "clearance_ind": pl.String,
+                "age_range_low_num": pl.Int16,
+                "age_range_high_num": pl.Int16,
+            },
+            self.CRIMINAL_ACT: {
+                "data_year": pl.Int16,
+                "criminal_act_id": pl.Int16,
+                "offense_id": pl.Int64,
+            },
+            self.INCIDENT: {
+                "data_year": pl.Int16,
+                "agency_id": pl.Int64,
+                "incident_id": pl.Int64,
+                "nibrs_month_id": pl.Int64,
+                "cargo_theft_flag": pl.String,
+                "submission_date": pl.String,
+                "incident_date": pl.String,
+                "report_date_flag": pl.String,
+                "incident_hour": pl.Int16,
+                "cleared_except_id": pl.Int16,
+                "cleared_except_date": pl.String,
+                "incident_status": pl.String,
+                "data_home": pl.String,
+                "orig_format": pl.String,
+                "did": pl.Int64,
+            },
+            self.OFFENDER: {
+                "data_year": pl.Int16,
+                "offender_id": pl.Int64,
+                "incident_id": pl.Int64,
+                "offender_seq_num": pl.Int16,
+                "age_id": pl.Int16,
+                "age_num": pl.String,
+                "sex_code": pl.String,
+                "race_id": pl.Int16,
+                "ethnicity_id": pl.Int16,
+                "age_range_low_num": pl.Int16,
+                "age_range_high_num": pl.Int16,
+            },
+            self.OFFENSE: {
+                "data_year": pl.Int16,
+                "offense_id": pl.Int64,
+                "incident_id": pl.Int64,
+                "offense_code": pl.String,
+                "attempt_complete_flag": pl.String,
+                "location_id": pl.Int64,
+                "num_premises_entered": pl.Int16,
+                "method_entry_code": pl.String,
+            },
+            self.OFFENSE_TYPE: {
+                "offense_code": pl.String,
+                "offense_name": pl.String,
+                "crime_against": pl.String,
+                "ct_flag": pl.String,
+                "hc_flag": pl.String,
+                "hc_code": pl.String,
+                "offense_category_name": pl.String,
+                "offense_group": pl.String,
+            },
+            self.SUSPECT_USING: {
+                "data_year": pl.Int16,
+                "suspect_using_id": pl.Int16,
+                "offense_id": pl.Int64,
+            },
+            self.VICTIM: {
+                "data_year": pl.Int16,
+                "victim_id": pl.Int64,
+                "incident_id": pl.Int64,
+                "victim_seq_num": pl.Int16,
+                "victim_type_id": pl.Int16,
+                "assignment_type_id": pl.Int16,
+                "activity_type_id": pl.Int16,
+                "outside_agency_id": pl.Int64,
+                "age_id": pl.Int16,
+                "age_num": pl.String,
+                "sex_code": pl.String,
+                "race_id": pl.Int16,
+                "ethnicity_id": pl.Int16,
+                "resident_status_code": pl.String,
+                "age_range_low_num": pl.Int16,
+                "age_code_range_high": pl.Int16,
+            },
+            self.VICTIM_OFFENSE: {
+                "data_year": pl.Int16,
+                "victim_id": pl.Int64,
+                "offense_id": pl.Int64,
+            }
+        }[self]
+
+        return dict(schema)
+
+    def fit_schema(self, year: int, directory: Path) -> "TableSchema":
+        """
+        Get the list of column names for the actual CSV file and the schema
+        mapping the desired names to their types.
+        """
+        if 2020 < year:
+            return TableSchema(self, year, self.latest_schema)
+
+        # Compute the pre-2021 columns by restoring old names and...
+        schema = {}
+        for c, t in self.latest_schema:
+            mapping = self.column_names_until_2020
+            if self is not self.AGENCIES and c in mapping:
+                c = mapping[c]
+            elif self.has_offense_type_until_2020 and c == "offense_code":
+                # Update schema column and patch up later
+                c = "offense_type_id"
+                t = pl.Int64
+
+            schema[c] = t
+
+        # ... and restoring columns with no contemporary equivalents.
+        schema = _insert_columns(schema, self.columns_until_2020)
+
+        if 2015 < year:
+            return TableSchema(self, year, schema)
+
+        # The pre-2016 columns depend on the table's actual column names.
+        actual_names = _read_column_names(directory / self.csv_file)
+        if actual_names == schema.keys():
+            return TableSchema(self, year, schema)
+
+        if self.maybe_no_offense_group_until_2015:
+            del schema["offense_group"]
+        if self.maybe_no_data_year_until_2015:
+            del schema["data_year"]
+        schema = _insert_columns(schema, self.optional_columns_until_2015)
+        return TableSchema(self, year, schema)
+
+
+class TableSchema:
+
+    def __init__(
+        self,
+        table: Table,
+        year: int,
+        schema: dict[str, ColumnType],
+    ) -> None:
+        self._table = table
+        self._year = year
+        self._schema = schema
+
+    @property
+    def instance(self) -> dict[str, ColumnType]:
+        return self._schema
+
+    def normalize[F: (pl.DataFrame, pl.LazyFrame)](
+        self,
+        frame: F,
+        offense_type: None | F,
+        is_legacy_age: bool,
+    ) -> F:
+        if 2020 < self._year:
+            return frame
+
+        reselect_columns = False
+        if self._year <= 2015:
+            cs = self._table.optional_columns_until_2015
+            if len(cs) != 0:
+                frame = frame.drop(*cs.keys())
+
+            if self._table.maybe_no_data_year_until_2015:
+                frame = frame.with_columns(
+                    pl.lit(self._year, dtype=pl.Int16).alias("data_year")
+                )
+                reselect_columns = True
+
+        if self._year <= 2020:
+            if self._table is not Table.AGENCIES:
+                cs = self._table.column_names_after_2020
+                if len(cs) != 0:
+                    frame = frame.rename(cs)
+
+            if self._table.has_offense_type_until_2020:
+                assert offense_type is not None
+                frame = frame.join(
+                    offense_type,
+                    on="offense_type_id",
+                    how="left",
+                )
+                reselect_columns = True
+
+        if reselect_columns:
+            frame = frame.select(
+                self._schema.keys()
+            )
+
+        if self._table.has_demographics:
+            frame = frame.with_columns(
+                AGE_IN_YEARS_V1 if is_legacy_age else AGE_IN_YEARS_V2
+            )
+
+            if self._year <= 2020:
+                frame = frame.with_columns(
+                    pl.col(Id.ETHNICITY).replace_strict(
+                        Ethnicity.legacy_value_map(),
+                        return_dtype=pl.Int16,
+                    ),
+                    pl.col(Id.RACE).replace_strict(
+                        Race.legacy_value_map(),
+                        return_dtype=pl.Int16,
+                    ),
+                    pl.col(Id.SEX).replace({"": Sex.NOT_SPECIFIED})
+                )
+
+        return frame
+
+
+@functools.cache
+def _read_column_names(path: Path) -> Sequence[str]:
+    # The column names are needed when picking the right schema for tables
+    # dating from 2015 or earlier.
+    with open(path, mode="r", encoding="utf8") as file:
+        # Chop off newline, split by commas, normalize to lower case...
+        actual = (c.lower() for c in file.readline()[:-1].split(","))
+        # Strip off double quotes...
+        actual = [(c[1:-1] if c[0] == '"' and c[-1] == '"' else c) for c in actual]
+    return actual
+
+
+def _insert_columns(
+    columns: dict[str, ColumnType],
+    updates: Mapping[str, tuple[ColumnType, None | str]]
+) -> dict[str, ColumnType]:
+    if len(updates) == 0:
+        return columns
+
+    successors = {p: (c, t) for c, (t, p) in updates.items()}
+    result = {}
+
+    if None in successors:
+        c, t = successors[None]
+        result[c] = t
+
+    for c, t in columns:
+        result[c] = t
+        if c in successors:
+            c, t = successors[c]
+            result[c] = t
+
+    return result
+
 
 class NibrsTable(enum.StrEnum):
     """The names of essential NIBRS tables."""
@@ -526,8 +1009,6 @@ class SchemaExtension(enum.Enum):
     })
     """
     Extra offense columns.
-
-
 
     The primary `criminal_act_id` must be 4, i.e., exploitation of children. At
     most two `other_criminal_act_ids` are optional. If they include cultivation
