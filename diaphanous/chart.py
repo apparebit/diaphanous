@@ -167,7 +167,7 @@ def plot_sex_by_age_grid(frame: pl.DataFrame) -> alt.VConcatChart:
         )
 
     return alt.vconcat(
-        hrule(7.5),
+        hrule(7.5, 10 * 300 + 9 * 20),
         *rows,
         spacing=15
     ).resolve_scale(
@@ -364,7 +364,11 @@ def plot_cdf_grid(
     for index, (labels, group) in enumerate(group_iter):
         if index % column_count == 0:
             if 0 < index:
-                grid.append(hrule(gap - small_gap, color="#ffffff"))
+                grid.append(hrule(
+                    gap - small_gap,
+                    column_count * cell_width + (column_count - 1) * gap,
+                    color="#ffffff",
+                ))
             grid.append([])
             grid.append([])
 
@@ -386,7 +390,7 @@ def plot_cdf_grid(
     ]
 
     return alt.vconcat(
-        hrule(7.5),
+        hrule(7.5, column_count * cell_width + (column_count - 1) * gap),
         *rows,
         spacing=small_gap
     ).resolve_scale(
@@ -420,7 +424,7 @@ def _plot_age_sex_cdfs(
         alt.Chart().mark_rule(
             color=Palette.BLACK,
             strokeWidth=4,
-            strokeDash=(4, 2),
+            strokeDash=(10, 5),
         ).encode(
             alt.XDatum(20 if country == "New Zealand" else 18)
         ),
@@ -457,7 +461,7 @@ def _plot_age_sex_bands(
         alt.Chart().mark_rule(
             color=Palette.BLACK,
             strokeWidth=4,
-            strokeDash=(4, 2),
+            strokeDash=(10, 5),
         ).encode(
             alt.XDatum(20 if country == "New Zealand" else 18)
         ),
