@@ -10,6 +10,57 @@ import great_tables as gt
 from ._const import TOTAL
 
 
+COUNTRIES = [
+    "Australia",
+    "Finland",
+    "Germany",
+    "Italy",
+    "New Zealand",
+    "Spain",
+    "United States",
+]
+
+MATERIALS = [
+    "CSAM",
+    "Porn",
+]
+
+METRICS = [
+    "Australia CSAM Offenders",
+    "Finland CSAM Offenders",
+    "Germany CSAM Offenders",
+    "Italy CSAM Offenders",
+    "New Zealand CSAM Offenders",
+    "Spain CSAM Offenders",
+    "United States CSAM Offenders",
+    "United States CSAM Arrestees",
+    "United States Porn Offenders",
+    "United States Porn Arrestees",
+]
+
+ROLES = [
+    "Offender",
+    "Arrestee",
+]
+
+
+AGE_GROUP_ORDER = {
+    None: 0,
+    "Child": 1,
+    "Juvenile": 2,
+    "Minor": 3,
+    "Adult": 4,
+}
+
+METRIC_ORDER = {metric: index + 1 for index, metric in enumerate(METRICS)}
+
+SEX_ORDER = {
+    "Female": -1,
+    None: 0,
+    "Male": 1,
+}
+
+
 def configure() -> None:
     """Configure Pola.rs to print readable tables."""
     pl.Config.set_tbl_cols(20)
@@ -47,25 +98,6 @@ def to_title(label: str) -> str:
     return " ".join(words)
 
 
-def with_total_and_percent(
-    table: pl.DataFrame, name: str = "Variant", count: str = "Count"
-) -> pl.DataFrame:
-    """
-    Add a new row with the total count and a new column with percentage values
-    to the data frame.
-    """
-    total = table.select(pl.col(count).sum()).item()
-
-    data: dict[str, list[None | str]] = {column: [None] for column in table.columns}
-    data[name] = [TOTAL]
-    data[count] = [total]
-    total_row = pl.DataFrame(data).with_columns(pl.col(count).cast(pl.Int64))
-
-    return pl.concat([table, total_row]).with_columns(
-        (pl.col(count) / total).alias("Percent")
-    )
-
-
 def format_table(frame: pl.DataFrame, title: None | str = None) -> gt.GT:
     """Format the given data frame as a good-looking table"""
     table = gt.GT(frame)
@@ -95,6 +127,9 @@ def format_table(frame: pl.DataFrame, title: None | str = None) -> gt.GT:
         .sub_missing(missing_text="")
         .opt_horizontal_padding(scale=2)
     )
+
+
+# ======================================================================================
 
 
 @overload
@@ -139,23 +174,6 @@ def finish_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](
     juvenile_min: int,
     juvenile_max: int,
 ) -> F:
-    frame = add_age_group(frame, juvenile_min, juvenile_max)
-    frame = _add_country_material_role(frame, country, material, role)
-    frame = frame.with_columns(
-        pl.col("sex").replace({
-            "Female": -1,
-            None: 0,
-            "Male": 1,
-        }).alias("sex_order"),
-    )
-    return _arrange_age_distribution(frame)
-
-
-def add_age_group[F: (pl.DataFrame, pl. LazyFrame)](
-    frame: F,
-    juvenile_min: int,
-    juvenile_max: int,
-) -> F:
     return frame.with_columns(
         pl.when(
             pl.col("age").lt(juvenile_min)
@@ -171,78 +189,19 @@ def add_age_group[F: (pl.DataFrame, pl. LazyFrame)](
             pl.lit("Adult", dtype=pl.String)
         ).alias("age_group"),
     ).with_columns(
-        pl.col("age_group").replace({
-            "Child": 1,
-            "Juvenile": 2,
-            "Adult": 3,
-        }, return_dtype=pl.Int8).alias("age_group_order")
-    )
-
-
-COUNTRIES = [
-    "Australia",
-    "Finland",
-    "Germany",
-    "Italy",
-    "New Zealand",
-    "Spain",
-    "United States",
-]
-
-
-METRICS = [
-    "Australia CSAM Offenders",
-    "Finland CSAM Offenders",
-    "Germany CSAM Offenders",
-    "Italy CSAM Offenders",
-    "New Zealand CSAM Offenders",
-    "Spain CSAM Offenders",
-    "United States CSAM Offenders",
-    "United States CSAM Arrestees",
-    "United States Porn Offenders",
-    "United States Porn Arrestees",
-]
-
-_METRIC_ORDER = {metric: index + 1 for index, metric in enumerate(METRICS)}
-
-
-AGE_DISTRIBUTION_COLUMNS = {
-    "country": pl.Enum(COUNTRIES),
-    "material": pl.Enum(["CSAM", "Porn"]),
-    "role": pl.Enum(["Offender", "Arrestee"]),
-    "metric": pl.Enum(METRICS),
-    "metric_order": pl.Int8,
-    "data_year": pl.Int16,
-    "age": pl.Int8,
-    "age_group": pl.Enum(["Child", "Juvenile", "Adult", "Minor"]),
-    "age_group_order": pl.Int8,
-    "sex": pl.Enum(["Female", "Male"]),
-    "sex_order": pl.Int8,
-    "ethnicity": pl.String,
-    "activity": pl.Enum(["Consumer", "Producer"]),
-    "count": pl.Float64,
-}
-
-
-def _add_country_material_role[F: (pl.DataFrame, pl.LazyFrame)](
-    frame: F,
-    country: str,
-    material: Literal["Porn", "CSAM"],
-    role: Literal["Offender", "Arrestee"],
-) -> F:
-    metric = f"{country} {material} {role}s"
-    return frame.with_columns(
+        pl.col("age_group").replace(
+            AGE_GROUP_ORDER, return_dtype=pl.Int8
+        ).alias("age_group_order")
+    ).with_columns(
         pl.lit(country, dtype=pl.String).alias("country"),
         pl.lit(material, dtype=pl.Enum(["CSAM", "Porn"])).alias("material"),
         pl.lit(role, dtype=pl.Enum(["Offender", "Arrestee"])).alias("role"),
-        pl.lit(metric, dtype=pl.Enum(METRICS)).alias("metric"),
+        pl.lit(f"{country} {material} {role}s", dtype=pl.Enum(METRICS)).alias("metric"),
     ).with_columns(
-        pl.col("metric").replace(_METRIC_ORDER).alias("metric_order"),
-    )
-
-
-def _arrange_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](frame: F) -> F:
-    return frame.select(
+        pl.col("metric").replace(METRIC_ORDER).alias("metric_order"),
+    ).with_columns(
+        pl.col("sex").replace(SEX_ORDER, return_dtype=pl.Int8).alias("sex_order")
+    ).select(
         pl.col(
             "country", "material", "role", "metric", "metric_order",
             "data_year",
@@ -264,32 +223,46 @@ def _arrange_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](frame: F) -> F:
     )
 
 
-_INDEX_COLUMNS = ("country", "material", "role", "metric", "data_year")
-
-def regularize_age_distribution(frame: pl.DataFrame, *variables: str) -> pl.DataFrame:
-    index = [c for c in _INDEX_COLUMNS if c in frame.columns]
-
-    # Compute lists with unique variable values.
-    template = frame.select(
-        pl.col(*index),
-        pl.col(*variables).unique(maintain_order=True).implode(),
+def to_minor_adult[F: (pl.DataFrame, pl.LazyFrame)](frame: F) -> F:
+    return frame.with_columns(
+        pl.col("age_group").replace({
+            "Child": "Minor",
+            "Juvenile": "Minor",
+        })
+    ).with_columns(
+        pl.col("age_group").replace(AGE_GROUP_ORDER).alias("age_group_order")
     )
 
-    # Explode each list into a column. Index columns cause redundant rows.
-    for variable in variables:
-        template = template.explode(variable)
 
-    # Remove redundant rows again before joining.
-    return template.unique(maintain_order=True).join(
-        frame,
-        on=[*index, *variables],
-        how="left",
-        maintain_order="left",
-    ).group_by(
-        *index, *variables, maintain_order=True,
-    ).agg(
-        pl.col("count").sum()
-    )
+# _INDEX_COLUMNS = ("country", "material", "role", "metric", "data_year")
+
+# def regularize_age_distribution(frame: pl.DataFrame, *variables: str) -> pl.DataFrame:
+#     index = [c for c in _INDEX_COLUMNS if c in frame.columns]
+
+#     # Compute lists with unique variable values.
+#     template = frame.select(
+#         pl.col(*index),
+#         pl.col(*variables).unique(maintain_order=True).implode(),
+#     )
+
+#     # Explode each list into a column. Index columns cause redundant rows.
+#     for variable in variables:
+#         template = template.explode(variable)
+
+#     # Remove redundant rows again before joining.
+#     return template.unique(maintain_order=True).join(
+#         frame,
+#         on=[*index, *variables],
+#         how="left",
+#         maintain_order="left",
+#     ).group_by(
+#         *index, *variables, maintain_order=True,
+#     ).agg(
+#         pl.col("count").sum()
+#     )
+
+
+# ======================================================================================
 
 
 def compute_age_cdfs(frame: pl.DataFrame) -> pl.DataFrame:
@@ -407,6 +380,48 @@ def to_axis_range(min: float, max: float) -> tuple[int, int, int]:
     )
 
 
+def to_contingency_table(
+    frame: pl.DataFrame,
+    x_axis: str,
+    y_axis: str,
+    x_order: None | str = None,
+    y_order: None | str = None,
+) -> None | np.ndarray:
+    extras = []
+    if x_order not in (None, x_axis):
+        extras.append(x_order)
+    if y_order not in (None, y_axis):
+        extras.append(y_order)
+
+    frame = frame.select(
+        x_axis, y_axis, *extras, "count"
+    ).drop_nulls(
+        [x_axis, y_axis]
+    ).group_by(
+        x_axis, y_axis, *extras
+    ).agg(
+        pl.col("count").sum().round().cast(pl.Int64),
+    ).sort(
+        x_order or x_axis, y_order or y_axis
+    ).drop(
+        *extras
+    )
+
+    if frame.height < 4:
+        return None
+
+    return frame.pivot(
+        on=x_axis,
+        values="count",
+        maintain_order=True,
+    ).drop(
+        y_axis
+    ).to_numpy(
+        order="c",
+        structured=False,
+    )
+
+
 def rate_pvalue(pvalue: float) -> str:
     if pvalue <= 0.0001:
         return "★★★★"
@@ -425,7 +440,11 @@ def hrule(
     width: None | float | Literal["container"] = None,
     color: str = "#000000",
 ) -> alt.Chart:
-    """Create a horizontal bar suitable as spacer."""
+    """
+    Create a horizontal bar suitable as visible bar or spacer. In particular,
+    the returned chart has no visible detritus when selecting white as its
+    color.
+    """
     if width is None:
         width = "container"
 

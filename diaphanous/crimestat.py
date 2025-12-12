@@ -3,7 +3,7 @@ import polars as pl
 from .aunz import au_age_distribution, nz_age_distribution
 from .bka import de_age_distribution
 from .nibrs import compute_us_age_distribution, load_all_us_csam, load_all_us_porn
-from .util import add_empty_year, finish_age_distribution
+from .util import add_empty_year, finish_age_distribution, to_minor_adult
 
 
 def es_age_distribution() -> pl.LazyFrame:
@@ -239,7 +239,7 @@ def summarize_age_and_sex(
     frame: pl.DataFrame,
     year_range: tuple[int, int] = (2020, 2025),
 ) -> pl.DataFrame:
-    return frame.filter(
+    frame = frame.filter(
         pl.col("country").ne("Australia").and_(
             pl.col("data_year").is_between(*year_range, closed="left")
         ).and_(
@@ -247,13 +247,10 @@ def summarize_age_and_sex(
         ).and_(
             pl.col("sex").is_not_null()
         )
-    ).select(
-        pl.col("metric", "data_year"),
-        pl.col("age_group").replace({
-            "Child": "Minor",
-            "Juvenile": "Minor",
-        }),
-        pl.col("sex", "count"),
+    )
+
+    return to_minor_adult(frame).select(
+        "metric", "data_year", "age_group", "sex", "count"
     ).group_by(
         "metric", "data_year", "age_group", "sex", maintain_order=True
     ).agg(
