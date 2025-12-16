@@ -45,6 +45,7 @@ dependencies = [
     "great_tables",       #         -- better tables
     "selenium",           #         -- save to PDF from great_tables
     "scipy",              #         -- χ² and Monte-Carlo p-values
+    "prettypretty",       #         -- color science
 ]
 
 dynamic = ["version"]
