@@ -228,6 +228,7 @@ dependencies = [
     { name = "pandas" },
     { name = "plotly" },
     { name = "polars" },
+    { name = "prettypretty" },
     { name = "pyarrow" },
     { name = "rpy2" },
     { name = "scipy" },
@@ -260,6 +261,7 @@ requires-dist = [
     { name = "pandas-stubs", marker = "extra == 'dev'" },
     { name = "plotly" },
     { name = "polars" },
+    { name = "prettypretty" },
     { name = "pyarrow" },
     { name = "rpy2" },
     { name = "scipy" },
@@ -999,6 +1001,28 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/7a/26/4c5da9f42fa067b2302fe62bcbf91faac5506c6513d910fae9548fc78d65/polars-1.33.1-cp39-abi3-manylinux_2_24_aarch64.whl", hash = "sha256:094a37d06789286649f654f229ec4efb9376630645ba8963b70cb9c0b008b3e1", size = 36684940, upload-time = "2025-09-09T08:36:50.561Z" },
     { url = "https://files.pythonhosted.org/packages/06/a6/dc535da476c93b2efac619e04ab81081e004e4b4553352cd10e0d33a015d/polars-1.33.1-cp39-abi3-win_amd64.whl", hash = "sha256:c9781c704432a2276a185ee25898aa427f39a904fbe8fde4ae779596cdbd7a9e", size = 39456676, upload-time = "2025-09-09T08:36:54.612Z" },
     { url = "https://files.pythonhosted.org/packages/cb/4e/a4300d52dd81b58130ccadf3873f11b3c6de54836ad4a8f32bac2bd2ba17/polars-1.33.1-cp39-abi3-win_arm64.whl", hash = "sha256:c3cfddb3b78eae01a218222bdba8048529fef7e14889a71e33a5198644427642", size = 35445171, upload-time = "2025-09-09T08:36:58.043Z" },
+]
+
+[[package]]
+name = "prettypretty"
+version = "0.12.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/fc/4e/ec9fa627d2416175b1d8abd379c723cf3667d58d474458ac1fe8a6efa951/prettypretty-0.12.0.tar.gz", hash = "sha256:e27349090c3bdf60de2e12ec2f820d00a863f21bb5a98cfaa9e5f75f9447eb7c", size = 161707, upload-time = "2025-09-15T22:00:08.821Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/13/eb/b94b831a3e7accbe121c7367607d334aa0734fc4593533bae103ec542214/prettypretty-0.12.0-cp311-abi3-macosx_10_12_x86_64.whl", hash = "sha256:707d3f99473023bc365f850376adad0e2d005958fbc9dcfd066cb601765fa14d", size = 614664, upload-time = "2025-09-15T22:00:02.033Z" },
+    { url = "https://files.pythonhosted.org/packages/a7/b0/f418c1c6228e286ee8e295f72e81c0c34f26e6a4ca6985364d49cdedbda6/prettypretty-0.12.0-cp311-abi3-macosx_11_0_arm64.whl", hash = "sha256:a4afc4ac3eb8fbfeedea502b5e2d716f1c668fda48d5622de57c4eeff00510b5", size = 582563, upload-time = "2025-09-15T22:00:00.721Z" },
+    { url = "https://files.pythonhosted.org/packages/9d/8f/3189343ee206679cbaf0257d28726c578ab331d8ca4a1bde514734098907/prettypretty-0.12.0-cp311-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:792df54bf580dda620aa57ad1648388156cc5a2938055118941592d1a7948b2c", size = 623653, upload-time = "2025-09-15T21:59:51.892Z" },
+    { url = "https://files.pythonhosted.org/packages/6a/5e/2f637ae5f5e8ddb46875d9f2406add4fc659aa0c10a08b01ae18a03edc7d/prettypretty-0.12.0-cp311-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:250d263af4b091c7030208a47dbe839db6d9ebd12a9417ea8838baedf72518a5", size = 639432, upload-time = "2025-09-15T21:59:53.53Z" },
+    { url = "https://files.pythonhosted.org/packages/a2/90/f062e392f81494d6e06399abc04812849976d8f88afce4bc57f6e3134d04/prettypretty-0.12.0-cp311-abi3-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:7122e5ca90d0a4558691548f5851f763d1c352e09768fdcb648f24d563bb63cb", size = 751416, upload-time = "2025-09-15T21:59:54.748Z" },
+    { url = "https://files.pythonhosted.org/packages/5d/26/519c00a2f7f6645145e29fcc5fa8bcf19dfbc06a54bfc2a984ed57638bdd/prettypretty-0.12.0-cp311-abi3-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:4463bd454471c18b5a9e2e807eec7ad097c507707cff82a45fe41dbbd14e5573", size = 663428, upload-time = "2025-09-15T21:59:56.351Z" },
+    { url = "https://files.pythonhosted.org/packages/37/e8/5b47b1abd28e1429eadf142bc62300c70d64e06c5b414dcfbd4e71daea7d/prettypretty-0.12.0-cp311-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:64fb0ea0337e54dc84e531c65cae6f40492856bb7fbe78368fb541538cb568de", size = 632761, upload-time = "2025-09-15T21:59:59.247Z" },
+    { url = "https://files.pythonhosted.org/packages/71/ca/68246b327ab62adf11c67ac5a595b52d1ff17815d1b581be27fcf3d61aea/prettypretty-0.12.0-cp311-abi3-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:c265c02fc51cbc4b69aba062fbc35a8b0f90c8de5aa43f4f53bef40508486f57", size = 680144, upload-time = "2025-09-15T21:59:57.887Z" },
+    { url = "https://files.pythonhosted.org/packages/fe/b0/d7203dd7d8981e34e2d22a68ab996eb66efe7d2621ed53cd692302a68ed0/prettypretty-0.12.0-cp311-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:768b14d79383827d995ea9e44d54d0a9fe60148a342c9ead9ccd257b20989ab7", size = 802463, upload-time = "2025-09-15T22:00:03.429Z" },
+    { url = "https://files.pythonhosted.org/packages/84/44/036dcdfbcdf77b11e34b4741777346d7395cf2080e7f5153ca49e386e557/prettypretty-0.12.0-cp311-abi3-musllinux_1_2_armv7l.whl", hash = "sha256:16d2fc5cf3419314a5aa72fa9e5bbdf158b2fb187796cc5dd5360368e5ac0253", size = 903446, upload-time = "2025-09-15T22:00:04.558Z" },
+    { url = "https://files.pythonhosted.org/packages/d3/18/47461cc286ae7a2362c6d53e9f16471459152f4a7ea60699c719741a1b26/prettypretty-0.12.0-cp311-abi3-musllinux_1_2_i686.whl", hash = "sha256:1cba2f291f71e9d220eb96014627564a1b1c88bb9f0322951197188a464b573b", size = 842918, upload-time = "2025-09-15T22:00:05.919Z" },
+    { url = "https://files.pythonhosted.org/packages/13/a4/a98755e9466982da6c6e27c8a3761a93df161ce74b27defac202029ca99f/prettypretty-0.12.0-cp311-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:fae2b48cdcd13e445c241222e1ceb17b508d3ab1657c1658a1655fa38593c2d2", size = 803022, upload-time = "2025-09-15T22:00:07.484Z" },
+    { url = "https://files.pythonhosted.org/packages/b9/8d/8b7ca7f4be1929a42e96805bd3353f69819738bddc48dd0f1aa37487b5de/prettypretty-0.12.0-cp311-abi3-win32.whl", hash = "sha256:b355edf54ac87fa7a76fa7ec03bc8287c7353e8d6972b522a487b234f801a87a", size = 442858, upload-time = "2025-09-15T22:00:10.624Z" },
+    { url = "https://files.pythonhosted.org/packages/92/a9/595a3495e19fd7dab87c4dd962d203e3ef0afb7bec0437a58adbee9af209/prettypretty-0.12.0-cp311-abi3-win_amd64.whl", hash = "sha256:03f420a8c3aa3201a8b1b9b57a87380020897ba822a06d025fe582fdd029d66a", size = 459321, upload-time = "2025-09-15T22:00:09.632Z" },
 ]
 
 [[package]]
