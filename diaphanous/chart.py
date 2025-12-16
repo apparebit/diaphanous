@@ -98,9 +98,9 @@ def plot_sex_by_age_detailed(
     ]
 
     range = [
-        Palette.PINK, Palette.RED, Palette.LIGHT_GRAY,
+        Palette.PINK, Palette.PINK, Palette.LIGHT_GRAY,
         Palette.BLACK,
-        Palette.LIGHT_BLUE, Palette.BLUE, Palette.LIGHT_GRAY,
+        Palette.LIGHT_BLUE, Palette.LIGHT_BLUE, Palette.LIGHT_GRAY,
     ]
 
     right_side = alt.Axis(
@@ -169,7 +169,7 @@ def plot_sex_by_age_grid(frame: pl.DataFrame) -> alt.VConcatChart:
     return alt.vconcat(
         hrule(7.5, 10 * 300 + 9 * 20),
         *rows,
-        spacing=15
+        spacing=30,
     ).resolve_scale(
         x="shared"
     ).configure_axis(
@@ -186,7 +186,7 @@ def plot_sex_by_age_grid(frame: pl.DataFrame) -> alt.VConcatChart:
             dx=0,
             dy=-10,
             subtitle=(
-                "With Female Minors in Red, Male Minors in Blue, and "
+                "With Female Minors in Pink, Male Minors in Blue, and "
                 "People w/o Sex in Black"
             ),
             subtitleFontSize=40,
@@ -254,9 +254,9 @@ def plot_sex_by_age(
     ]
 
     range = [
-        Palette.RED, Palette.RED, Palette.LIGHT_GRAY,
+        Palette.PINK, Palette.PINK, Palette.GRAY,
         Palette.BLACK,
-        Palette.BLUE, Palette.BLUE, Palette.LIGHT_GRAY,
+        Palette.LIGHT_BLUE, Palette.LIGHT_BLUE, Palette.GRAY,
     ]
 
     actual_min, actual_max = data.filter(
@@ -397,8 +397,8 @@ def plot_cdf_grid(
         x="shared",
     ).properties(
         title=alt.Title(
-            "Yearly Cumulative Distributions for Male/Female Perpetrators "
-            "by Age and Country",
+            "Cumulative Distributions for Female (Pink) and Male (Blue) Perpetrators "
+            "by Age (0→100), Year (Light to Dark), and Country",
             fontSize=40,
             fontWeight="bold",
             anchor="start",
@@ -412,11 +412,13 @@ def plot_cdf_grid(
 def _plot_age_sex_cdfs(
     frame: pl.DataFrame, country: str, material_role: str
 ) -> alt.LayerChart:
-    male_colors = Scale.BLUE.value
-    female_colors = Scale.RED.value
     if country == "Australia":
-        male_colors = male_colors[7]
-        female_colors = female_colors[7]
+        male_colors = Scale.BLUE.value[4]
+        female_colors = Scale.PINK.value[4]
+    else:
+        male_colors = [f"{c}a0" for c in Scale.BLUE.value]
+        female_colors = [f"{c}a0" for c in Scale.PINK.value]
+
 
     return alt.layer(
         _plot_cdf(frame, column="male_cdf", colors=male_colors),
@@ -442,7 +444,7 @@ def _plot_cdf(
     if isinstance(colors, str):
         colors = [colors] * (year_max - year_min)
 
-    return alt.Chart(frame).mark_line().encode(
+    return alt.Chart(frame).mark_line(strokeWidth=3).encode(
         alt.X("age:Q", axis=alt.Axis(labels=False)).title(None),
         alt.Y(f"{column}:Q", axis=alt.Axis(labels=False)).title(None),
         alt.Color("data_year:N", legend=None).scale(
@@ -456,8 +458,8 @@ def _plot_age_sex_bands(
 ) -> alt.LayerChart:
     extrema = compute_age_sex_cdf_extrema(frame)
     return alt.layer(
-        _plot_cdf_band(extrema, "male_cdf", color=f"{Scale.BLUE.value[6]}80"),
-        _plot_cdf_band(extrema, "female_cdf", color=f"{Scale.RED.value[4]}80"),
+        _plot_cdf_band(extrema, "female_cdf", color=f"{Palette.PINK}d0"),
+        _plot_cdf_band(extrema, "male_cdf", color=f"{Palette.BLUE}80"),
         alt.Chart().mark_rule(
             color=Palette.BLACK,
             strokeWidth=4,
