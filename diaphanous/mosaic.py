@@ -1,12 +1,16 @@
 from collections.abc import Sequence
 
 import altair as alt
+import itertools
+import numpy as np
 import polars as pl
 from polars.expr.whenthen import ChainedThen, Then
 from scipy import stats
 
 from .color import Palette
-from .util import hrule, rate_pvalue, regularize_age_distribution, to_contingency_table
+from .util import (
+    hrule, MATERIALS, rate_pvalue, ROLES, to_contingency_table, to_minor_adult
+)
 
 
 def _sort_values(values: Sequence[None | str]) -> Sequence[None | str]:
@@ -18,12 +22,18 @@ def _make_index(
     columns: Sequence[str],
     index: None | dict[str, Sequence[None | str]] = None,
 ) -> dict[str, Sequence[None | str]]:
+    """
+    Create an index for the given columns. This function fills in the given
+    index, if not null. Otherwise, it creates an index from scratch. The index
+    is an ordered map of columns names as keys and the list of column values as
+    values.
+    """
     if index is None:
         index = {}
 
     for column in columns:
         frame_values = frame.select(
-            pl.col(column).unique()
+            pl.col(column).unique(maintain_order=True)
         ).get_column(column).to_list()
 
         index_values = index.get(column)
@@ -172,12 +182,7 @@ def make_mosaic_frame(
 ) -> pl.DataFrame:
     # use_minor and include_null both impact index
     if use_minor:
-        frame = frame.with_columns(
-            pl.col("age_group").replace({
-                "Child": "Minor",
-                "Juvenile": "Minor",
-            })
-        )
+        frame = to_minor_adult(frame)
     if not include_null:
         frame = frame.drop_nulls(
             [x_axis, y_axis]
@@ -307,6 +312,53 @@ def make_mosaic_frame(
     })
 
     if show_counts:
+        mosaic_frame.with_columns(
+            pl.row_index("y_index").over(
+                "country", "material", "role", "metric", "data_year"
+            )
+        ).with_columns(
+            pl.col("count")
+                .cast(pl.String)
+                .str.replace(r"(\d+)(\d\d\d)$", "${1},${2}")
+                .alias("label_text"),
+
+            pl.when(
+                pl.col("y_index").lt(
+                    pl.col("y_index").max()
+                )
+            ).then(
+                pl.col("y1")
+            ).otherwise(
+                pl.col("y2")
+            ).over(
+                "country", "material", "role", "metric", "data_year"
+            ).alias("label_y"),
+
+            pl.when(
+                pl.col("y_index").lt(
+                    pl.col("y_index").max()
+                )
+            ).then(
+                pl.lit("left")
+            ).otherwise(
+                pl.lit("right")
+            ).over(
+                "country", "material", "role", "metric", "data_year"
+            ).alias("label_align"),
+        ).with_columns(
+            pl.when(
+                pl.col("y_index").lt(
+                    pl.col("y_index").max()
+                )
+            ).then(
+                pl.col("y1")
+            ).otherwise(
+                pl.col("y2")
+            ).over(
+                "country", "material", "role", "metric", "data_year"
+            )
+        )
+
         labels = []
         for x, y in ((1, 1), (1, 2), (2, 1), (2, 2)):
             labels.append(
@@ -327,13 +379,6 @@ def make_mosaic_frame(
                 ).otherwise(
                     pl.lit("", dtype=pl.String)
                 ).alias(f"label{x}{y}")
-            )
-
-        expr = _make_highlight_expr([x_axis, y_axis], highlights)
-        labels.append(
-            pl.lit(Palette.BLACK, dtype=pl.String) if expr is None else expr.otherwise(
-                pl.lit(Palette.BLACK, dtype=pl.String)
-            ).alias("label_color")
         )
 
         mosaic_frame = mosaic_frame.with_columns(*labels)
@@ -348,7 +393,7 @@ def make_mosaic_frame(
         "x1", "x2", "normalized_x1", "normalized_x2", "x_scale",
         "y1", "y2", "normalized_y1", "normalized_y2", "y_scale",
         *(
-            ["label11", "label12", "label21", "label22", "label_color"] if show_counts
+            ["label11", "label12", "label21", "label22"] if show_counts
             else []
         ),
     ).with_columns(
@@ -363,7 +408,12 @@ def test_chi2_independence(
     frame: pl.DataFrame,
     x_axis: str,
     y_axis: str,
+    x_order: None | str = None,
+    y_order: None | str = None,
 ) -> pl.DataFrame:
+    x_order = x_order or x_axis
+    y_order = y_order or y_axis
+
     # Collect results in column form to more easily reintegrate into data frame
     metrics = []
     years = []
@@ -377,33 +427,17 @@ def test_chi2_independence(
         years.append(labels[1])
 
         # Reduce group data to bare essentials
-        group = group.select(
-            x_axis, y_axis, "count"
-        ).drop_nulls(
-            [x_axis, y_axis]
+        table = to_contingency_table(
+            group, x_axis, y_axis,
+            x_order=x_order,
+            y_order=y_order,
         )
 
-        # Is χ² safe to use?
-        use_chi2 = group.select(
-            pl.col("count").ge(5).all()
-        ).item()
-
-        if not use_chi2 or group.height < 2:
+        if table is None or not np.all(table >= 5):
             chi2s.append(None)
             p_values.append(None)
-            ratings.append("" if group.height < 2 else "N/A")
+            ratings.append("" if table is None else "N/A")
             continue
-
-        # Extract group data as contingency table
-        table = group.pivot(
-            on=x_axis,
-            values="count",
-        ).drop(
-            y_axis
-        ).to_numpy(
-            order="c",
-            structured=False,
-        )
 
         # Perform Monte Carlo version of χ² test
         result = stats.chi2_contingency(
@@ -483,15 +517,14 @@ def plot_mosaic_grid(
                     fontSize=30,
                 ).encode(
                     alt.Text(f"label{x}{y}:N"),
-                    alt.Color("label_color:N", legend=None).scale(None)
                 ))
 
         if show_ratings:
             labels.append(base.mark_text(
                 x=160,
-                y=-5,
+                y=325,
                 align="center",
-                baseline="bottom",
+                baseline="top",
                 fontSize=30,
             ).encode(
                 alt.Text("rating:N"),
@@ -547,7 +580,7 @@ def plot_mosaic_grid(
 
     # Combine rows into grid
     grid = alt.vconcat(
-        hrule(10),
+        hrule(10, 10 * cell_width + 9 * column_gap),
         *rows,
         spacing=row_gap,
     ).resolve_scale(
@@ -563,6 +596,226 @@ def plot_mosaic_grid(
     )
 
     return grid
+
+
+def compute_odds_ratios(
+    frame: pl.DataFrame,
+    x_axis: str,
+    y_axis: str,
+    x_order: None | str = None,
+    y_order: None | str = None,
+    use_minor: bool = False,
+) -> pl.DataFrame:
+    x_order = x_order or x_axis
+    y_order = y_order or y_axis
+
+    if use_minor:
+        frame = to_minor_adult(frame)
+
+    labels = []
+    odds_ratios = []
+    odds_labels = []
+    lower_cis = []
+    upper_cis = []
+
+    for label, group in frame.group_by(
+        "country", "material", "role", "data_year", maintain_order=True
+    ):
+        labels.append(label)
+
+        table = to_contingency_table(
+            group, x_axis, y_axis,
+            x_order=x_order,
+            y_order=y_order,
+        )
+
+        if table is None or not np.all(table > 0):
+            odds_ratios.append(None)
+            odds_labels.append(
+                "NaN" if label[0] != "Australia" and label[0] != "Italy" else ""
+            )
+            lower_cis.append(None)
+            upper_cis.append(None)
+            continue
+
+        ratio = stats.contingency.odds_ratio(table, kind="sample")
+        odds_ratios.append(ratio.statistic)
+        odds_labels.append("")
+
+        ci = ratio.confidence_interval()
+        lower_cis.append(ci[0])
+        upper_cis.append(ci[1])
+
+    # Turn rows into columns
+    labels = [*zip(*labels)]
+
+    return pl.DataFrame({
+        "country": labels[0],
+        "material": labels[1],
+        "role": labels[2],
+        "data_year": labels[3],
+        "odds_ratio": odds_ratios,
+        "odds_label": odds_labels,
+        "lower_ci": lower_cis,
+        "upper_ci": upper_cis,
+    }, schema={
+        "country": pl.String,
+        "material": pl.Enum(MATERIALS),
+        "role": pl.Enum(ROLES),
+        "data_year": pl.Int16,
+        "odds_ratio": pl.Float64,
+        "odds_label": pl.Enum(["", "NaN"]),
+        "lower_ci": pl.Float64,
+        "upper_ci": pl.Float64,
+    })
+
+
+def plot_odds_ratio_grid(
+    frame: pl.DataFrame,
+    cell_width: float = 300,
+    cell_height: float = 300,
+    column_count: int = 5,
+    gap: float = 20,
+) -> alt.VConcatChart:
+    group_iter = frame.group_by("country", "material", "role", maintain_order=True)
+    grid = []
+
+    for index, (labels, group) in enumerate(group_iter):
+        is_first_column = index % column_count == 0
+        if is_first_column:
+            grid.append([])
+
+        country, material, role = labels
+        material_role = f"{material} {role}s"
+
+        outlier = None
+        if country == "Finland":
+            outlier = group.filter(
+                pl.col("data_year").eq(2019)
+            ).select(
+                "lower_ci", "odds_ratio", "upper_ci"
+            ).row(0)
+
+            group = group.with_columns(
+                *(
+                    pl.when(
+                        pl.col("data_year").eq(2019)
+                    ).then(
+                        pl.lit(None)
+                    ).otherwise(
+                        pl.col(c)
+                    ).alias(c)
+                    for c in ("lower_ci", "odds_ratio", "upper_ci")
+                )
+            )
+
+        min_ci, max_ci = group.select(
+            pl.col("lower_ci").min().alias("min_ci"),
+            pl.col("upper_ci").max().alias("max_ci"),
+        ).row(0)
+
+        base = alt.Chart(group)
+
+        if country == "Finland":
+            assert outlier is not None
+            label = f"{outlier[1]:.1f}, 95% CI [{outlier[0]:.1f}, {outlier[2]:.1f}]"
+
+            outlier_text = [base.mark_text(
+                fontSize=15,
+                x=cell_width,
+                dx=-17,
+                y=4 * cell_height / 10 + cell_height / 10 / 2,
+                align="right",
+                baseline="middle",
+            ).encode(
+                alt.TextDatum(label),
+            )]
+        else:
+            outlier_text = []
+
+        if min_ci < 1.0 < max_ci:
+            independence_rule = [base.mark_rule(
+                strokeWidth=2.5,
+                strokeDash=(8, 4),
+            ).encode(
+                alt.XDatum(1),
+            )]
+        else:
+            independence_rule = []
+
+        chart = alt.layer(
+            base.mark_point(
+                filled=True,
+                size=45,
+                color=Palette.BLACK,
+            ).encode(
+                alt.X("odds_ratio:Q", axis=alt.Axis(
+                    labelFontSize=18,
+                    title=None,
+                )),
+                alt.Y("data_year:N", axis=alt.Axis(
+                    labels=is_first_column,
+                    labelFontSize=18,
+                    title=None,
+                )),
+            ),
+            base.mark_point(
+                size=1,
+                color="transparent",
+            ).encode(
+                alt.XDatum(0),
+                alt.Y("data_year:N"),
+            ),
+            base.mark_rule(
+                strokeWidth=2,
+                color=Palette.BLACK,
+            ).encode(
+                alt.X("lower_ci:Q"),
+                alt.X2("upper_ci:Q"),
+                alt.Y("data_year:N"),
+            ),
+            base.mark_text(
+                fontSize=15,
+            ).encode(
+                alt.Y("data_year:N"),
+                alt.Text("odds_label:N"),
+            ),
+            *outlier_text,
+            *independence_rule,
+            title=alt.Title(
+                country,
+                subtitle=material_role,
+                anchor="middle",
+                orient="bottom",
+                fontSize=20,
+                fontWeight="normal",
+                subtitleFontSize=18,
+                dy=10,
+            ),
+        ).properties(
+            width=cell_width,
+            height=cell_height,
+        )
+
+        grid[-1].append(chart)
+
+    return alt.vconcat(
+        hrule(7.5, column_count * cell_width + (column_count - 1) * gap),
+        *(
+            alt.hconcat(*row, spacing=gap) for row in grid
+        ),
+        spacing=gap,
+    ).properties(
+        title=alt.Title(
+            "Odds Ratios for Age Group and Sex by Year and Country",
+            fontSize=20,
+            fontWeight="bold",
+            anchor="start",
+            frame="group",
+            dx=0,
+            dy=-10,
+        )
+    )
 
 
 if __name__ == "__main__":
