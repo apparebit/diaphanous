@@ -16,7 +16,9 @@ from .chart import (
     plot_sex_by_age_grid, plot_sex_by_age_detailed, plot_cdf_grid
 )
 from .color import Palette
-from .mosaic import make_mosaic_frame, plot_mosaic_grid, test_chi2_independence
+from .mosaic import (
+    make_mosaic_frame, plot_mosaic_grid, compute_odds_ratios, plot_odds_ratio_grid,
+)
 from .platform.data import REPORTS_PER_PLATFORM
 from .util import compute_age_cdfs
 
@@ -946,6 +948,8 @@ printr()
 
     DETAIL_YEARS = (2023, 2024)
     THUMB_YEARS = (2015, 2024)
+    THUMB_GAP = 20
+    THUMB_WIDTH = 3_000
 
     def filter_years(
         self, distributions: dict[str, pl.DataFrame], first: int, last: int
@@ -1012,9 +1016,7 @@ printr()
         )
 
         fig = plot_mosaic_grid(
-            frame.filter(
-                pl.col("country").ne("Australia")
-            ),
+            frame,
             x_label="Age Group",
             y_label="Sex",
             subtitle=(
@@ -1027,7 +1029,23 @@ printr()
         fig.save(path)
         self.svg(path)
 
-        cdfs = compute_age_cdfs(pl.concat(data.values()))
+        fig = plot_odds_ratio_grid(
+            compute_odds_ratios(
+                data.with_columns(
+                    pl.col("sex_order").mul(-1)
+                ),
+                "age_group",
+                "sex",
+                x_order="age_group_order",
+                y_order="sex_order",
+                use_minor=True
+            )
+        )
+        path = "figure/odds-ratio-grid.svg"
+        fig.save(path)
+        self.svg(path)
+
+        cdfs = compute_age_cdfs(data)
         fig = plot_cdf_grid(cdfs)
         path = "figure/age-sex-cdf-grid.svg"
         fig.save(path)
@@ -1058,6 +1076,7 @@ printr()
         <tr><th scope=row>Australia</th> <td>10 (Not in VIC, ACT)</td> <td>18</td></tr>
         <tr><th scope=row>Finland</th> <td>15</td> <td>18</td></tr>
         <tr><th scope=row>Germany</th> <td>14</td> <td>18</td></tr>
+        <tr><th scope=row>Italy</th> <td>14</td> <td>18</td></tr>
         <tr><th scope=row>New Zealand</th> <td>10</td> <td>20</td></tr>
         <tr><th scope=row>Spain</th> <td>14</td> <td>18</td></tr>
         <tr><th scope=row>United States</th> <td>11 (Federal Law)</td> <td>18</td></tr>
