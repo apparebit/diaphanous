@@ -32,11 +32,11 @@ _COLORS = [c for c in Palette.__members__.values() if c is not Palette.GRAY]
 
 
 class PlusMinus(enum.StrEnum):
-    PLUS_PLUS = "#018a30"
-    PLUS = "#44b358"
+    PLUS_PLUS = "#3ca951"
+    PLUS = "#3ca95180"
     NEUTRAL = "#aaaeb6"
-    MINUS = "#ff583b"
-    MINUS_MINUS = "#d02500"
+    MINUS = "#ff725c80"
+    MINUS_MINUS = "#ff725c"
 
 
 class Scale(enum.Enum):

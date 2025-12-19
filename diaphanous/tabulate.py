@@ -15,9 +15,9 @@ import polars as pl
 from .chart import (
     plot_sex_by_age_grid, plot_sex_by_age_detailed, plot_cdf_grid
 )
-from .color import Palette
 from .mosaic import (
     make_mosaic_frame, plot_mosaic_grid, compute_odds_ratios, plot_odds_ratio_grid,
+    test_chi2_independence,
 )
 from .platform.data import REPORTS_PER_PLATFORM
 from .util import compute_age_cdfs
@@ -419,7 +419,7 @@ class Analyzer:
                 frequency data.</p>
             """)
 
-            self.emit_mosaics()
+            #self.emit_mosaics()
             self.emit_age_distributions()
 
     def emit_mean_difference_plots(self) -> None:
@@ -961,7 +961,7 @@ printr()
             )
         return filtered
 
-    def emit_age_distributions(self) -> None:
+    def emit_age_distribution_detail(self) -> None:
         self.html("<div class=wide>\n")
         self.h3("Age Distribution of Offenders: The Last Two Years")
 
@@ -990,7 +990,9 @@ printr()
         self.svg(path)
         self.html("</div>\n")
 
-        self.h3("Age Distribution of Perpetrators: The Last Decade")
+    def emit_age_distributions(self) -> None:
+        self.h3("Perpetrator Age Distributions Over the Last Decade")
+        distributions = crimestat.load_all_age_distributions()
         data = pl.concat(self.filter_years(distributions, *self.THUMB_YEARS).values())
 
         self.html("<div class=extra-wide>\n")
@@ -1004,15 +1006,17 @@ printr()
             x_axis="age_group",
             y_axis="sex",
             index={"age_group": ["Minor", None, "Adult"]},
-            highlights={
-                "Minor": {
-                    "Male": Palette.BLUE,
-                    "Female": Palette.RED,
-                }
-            },
             use_minor=True,
             include_null=True,
             show_counts=True,
+        )
+
+        frame = test_chi2_independence(
+            frame,
+            x_axis="age_group",
+            y_axis="sex",
+            x_order="x_order",
+            y_order="y_order",
         )
 
         fig = plot_mosaic_grid(

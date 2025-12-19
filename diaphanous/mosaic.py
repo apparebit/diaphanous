@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+from typing import Literal
 
 import altair as alt
 import itertools
@@ -7,9 +8,10 @@ import polars as pl
 from polars.expr.whenthen import ChainedThen, Then
 from scipy import stats
 
-from .color import Palette
+from .color import Palette, PlusMinus
 from .util import (
-    hrule, MATERIALS, rate_pvalue, ROLES, to_contingency_table, to_minor_adult
+    COUNTRIES, hrule, MATERIALS, METRIC_ORDER, METRICS, rate_pvalue, ROLES,
+    to_contingency_table, to_minor_adult
 )
 
 
@@ -53,6 +55,64 @@ def _make_index(
     return index
 
 
+def _make_index_norm(
+    frame: pl.DataFrame,
+    index: dict[str, Sequence[None | str]],
+) -> pl.DataFrame:
+    # Compute the empty core with null column values only
+    empty_core = pl.DataFrame({
+        c: None for c in index.keys()
+    }).cast({
+        c: frame.schema[c] for c in index.keys()
+    })
+
+    # Compute the core product of column values
+    core = pl.DataFrame({
+        # Compute rows with the product of per-column values, all in order, and
+        # then convert to columnar form.
+        c: v for c, v in zip(index.keys(), zip(*itertools.product(*index.values())))
+    }).cast({
+        c: frame.schema[c] for c in index.keys()
+    })
+
+    # For every metric...
+    all_data = []
+    for (metric,), group in frame.group_by(pl.col("metric"), maintain_order=True):
+        country_material, _, role = metric.rpartition(" ")
+        role = role[:-1]
+        country, _, material = country_material.rpartition(" ")
+        metric_columns = [
+            pl.lit(country, dtype=pl.Enum(COUNTRIES)).alias("country"),
+            pl.lit(material, dtype=pl.Enum(MATERIALS)).alias("material"),
+            pl.lit(role, dtype=pl.Enum(ROLES)).alias("role"),
+            pl.lit(metric, dtype=pl.Enum(METRICS)).alias("metric"),
+            pl.lit(METRIC_ORDER[metric], dtype=pl.Int8).alias("metric_order"),
+        ]
+
+        # Determine years with non-null column values
+        data_years = frozenset(group.select(
+            pl.col("data_year").filter(
+                *(
+                    pl.col(c).is_not_null() for c in index.keys()
+                )
+            ).unique()
+        ).get_column("data_year"))
+
+        # For every year...
+        for year in group.select(
+            pl.col("data_year").unique(maintain_order=True)
+        ).get_column("data_year"):
+            all_data.append(
+                (core if year in data_years else empty_core).select(
+                    *metric_columns,
+                    pl.lit(year, dtype=pl.Int16).alias("data_year"),
+                    *core.columns,
+                )
+            )
+
+    return pl.concat(all_data)
+
+
 def _check_highlights(
     columns: Sequence[str],
     index: dict[str, Sequence[None | str]],
@@ -90,6 +150,65 @@ def _check_counts(
         raise ValueError(
             f"can't show counts for column {columns[1]} with {count} distinct values"
         )
+
+
+def _make_null_predicate(
+    columns: Sequence[str],
+    junction: Literal["and", "or"],
+    predicate: None | pl.Expr = None,
+) -> pl.Expr:
+    for column in columns:
+        if predicate is None:
+            predicate = pl.col(column).is_null()
+        elif junction == "and":
+            predicate = predicate.and_(
+                pl.col(column).is_null()
+            )
+        elif junction == "or":
+            predicate = predicate.or_(
+                pl.col(column).is_null()
+            )
+        else:
+            assert False, "unreachable"
+
+    assert predicate is not None
+    return predicate
+
+
+def _make_color_expr(
+    columns: Sequence[str],
+    default_color: str = Palette.GRAY,
+    alpha: str = "ff",
+    include_null: bool = False,
+) -> pl.Expr:
+    expr = None
+
+    predicate = None
+    for column in columns:
+
+        if predicate is None:
+            predicate = pl.col(column).is_null()
+        else:
+            predicate = predicate.and_(
+                pl.col(column).is_null()
+            )
+
+        assert predicate is not None
+        expr = pl.when(
+            predicate
+        ).then(
+            pl.lit("transparent")
+        ).when(
+            pl.col(columns[0]).is_null().or_(
+                pl.col(columns[1]).is_null()
+            )
+        ).then(
+            pl.lit("#dadee6a0")
+        )
+
+    return (pl.lit(Palette.GRAY) if expr is None else expr.otherwise(
+        pl.lit(Palette.GRAY)
+    )).cast(pl.String).alias("stroke")
 
 
 def _make_stroke_expr(
@@ -139,15 +258,71 @@ def _make_highlight_expr(
     return expr
 
 
+def _compute_residuals(
+    frame: pl.DataFrame,
+    x_axis: str,
+    y_axis: str,
+    x_order: None | str = None,
+    y_order: None | str = None,
+) -> pl.DataFrame:
+    data = []
+    for (metric, year), group in frame.group_by(
+        "metric", "data_year",
+        maintain_order=True
+    ):
+        observed = to_contingency_table(
+            group, x_axis, y_axis,
+            x_order=x_order,
+            y_order=y_order,
+        )
+
+        if observed is None:
+            continue
+
+        expected = stats.contingency.expected_freq(observed)
+        if np.any(expected == 0):
+            continue
+
+        residuals = (observed - expected) / np.sqrt(expected)
+        column = np.reshape(residuals, shape=residuals.size)
+
+        data.append(group.filter(
+            pl.col(x_axis).is_not_null().and_(pl.col(y_axis).is_not_null())
+        ).select(
+            pl.lit(metric, dtype=pl.Enum(METRICS)).alias("metric"),
+            pl.lit(year, dtype=pl.Int16).alias("data_year"),
+            pl.col(x_axis),
+            pl.col(y_axis),
+            pl.lit(column, dtype=pl.List(pl.Float64)).alias("residual")
+        ).explode("residual"))
+
+    return pl.concat(data)
+
+
 def _make_fill_expr(
     columns: Sequence[str],
-    highlights: dict[None | str, dict[None | str, str]],
     include_null: bool = False,
 ) -> pl.Expr:
-    expr = _make_highlight_expr(columns, highlights, "a0")
+    expr = pl.when(
+        pl.col("residual").le(-4)
+    ).then(
+        pl.lit(PlusMinus.MINUS_MINUS)
+    ).when(
+        pl.col("residual").le(-2)
+    ).then(
+        pl.lit(PlusMinus.MINUS)
+    ).when(
+        pl.col("residual").ge(4)
+    ).then(
+        pl.lit(PlusMinus.PLUS_PLUS)
+    ).when(
+        pl.col("residual").ge(2)
+    ).then(
+        pl.lit(PlusMinus.PLUS)
+    )
 
     if include_null:
-        expr = (pl if expr is None else expr).when(
+        expr = expr.when(
             pl.col(columns[0]).is_null().and_(
                 pl.col(columns[1]).is_null()
             )
@@ -161,7 +336,7 @@ def _make_fill_expr(
             pl.lit("#dadee6a0")
         )
 
-    expr = pl.lit("#aaaeb6a0") if expr is None else expr.otherwise(
+    expr = expr.otherwise(
         pl.lit("#aaaeb6a0")
     )
 
@@ -175,7 +350,6 @@ def make_mosaic_frame(
     *,
     gap: float = 3.0,
     index: None | dict[str, Sequence[None | str]] = None,
-    highlights: None | dict[None | str, dict[None | str, str]] = None,
     use_minor: bool = False,
     include_null: bool = False,
     show_counts: bool = False,
@@ -188,14 +362,12 @@ def make_mosaic_frame(
             [x_axis, y_axis]
         )
 
-    # Fill in index of axis values and thereafter check highlights and counts
+    # Fill in index of axis values and thereafter check counts
     index = _make_index(frame, [x_axis, y_axis], index)
-    highlights = _check_highlights([x_axis, y_axis], index, highlights)
     if show_counts:
         _check_counts([x_axis, y_axis], index, include_null)
 
-    # Compute frequency form for two axes. Also, since row order determines
-    # rectangle order in the mosaic, ensure correct order.
+    # Compute frequency form for two axes.
     contingencies = frame.group_by(
         "country", "material", "role", "metric", "metric_order",
         "data_year",
@@ -203,8 +375,33 @@ def make_mosaic_frame(
         maintain_order=True
     ).agg(
         pl.col("count").sum().round().cast(pl.Int64),
+    )
+
+    # Normalize frequency table by including all possible non-null rows.
+    # Ensure the table covers all possible rows
+    norm = _make_index_norm(contingencies, index)
+    contingencies = norm.join(
+        contingencies,
+        on=[
+            "country", "material", "role", "metric", "metric_order",
+            "data_year",
+            x_axis, y_axis,
+        ],
+        how="left",
+        maintain_order="left",
+        nulls_equal=True,
+    ).filter(
+        pl.col("count").is_not_null().or_(
+            pl.col(x_axis).is_not_null().and_(
+                pl.col(y_axis).is_not_null()
+            )
+        )
     ).with_columns(
-        # We achieve custom sort orders by mapping values to integers.
+        pl.col("count").fill_null(0),
+    )
+
+    # Sort rows in custom order by mapping values to integer.
+    contingencies = contingencies.with_columns(
         pl.col(x_axis).replace({
             value: key for key, value in enumerate(index[x_axis])
         }).alias("x_order"),
@@ -214,14 +411,6 @@ def make_mosaic_frame(
     ).sort(
         "metric_order", "data_year", "x_order", "y_order"
     )
-
-    # contingencies = regularize_age_distribution(
-    #     contingencies,
-    #     "metric",
-    #     "data_year",
-    #     x_axis,
-    #     y_axis,
-    # )
 
     # Compute x coordinates using x_axis' marginal frequencies: Normalize
     # counts, add in gaps, normalize again.
@@ -295,9 +484,6 @@ def make_mosaic_frame(
     )
 
     # Combine coordinates into one data frame.
-    stroke_expr = _make_stroke_expr([x_axis, y_axis], include_null)
-    fill_expr = _make_fill_expr([x_axis, y_axis], highlights, include_null)
-
     mosaic_frame = xs.drop(
         "count"
     ).join(
@@ -311,66 +497,18 @@ def make_mosaic_frame(
         "scale_right": "y_scale",
     })
 
+    # Add count labels.
     if show_counts:
-        mosaic_frame.with_columns(
-            pl.row_index("y_index").over(
-                "country", "material", "role", "metric", "data_year"
-            )
-        ).with_columns(
-            pl.col("count")
-                .cast(pl.String)
-                .str.replace(r"(\d+)(\d\d\d)$", "${1},${2}")
-                .alias("label_text"),
-
-            pl.when(
-                pl.col("y_index").lt(
-                    pl.col("y_index").max()
-                )
-            ).then(
-                pl.col("y1")
-            ).otherwise(
-                pl.col("y2")
-            ).over(
-                "country", "material", "role", "metric", "data_year"
-            ).alias("label_y"),
-
-            pl.when(
-                pl.col("y_index").lt(
-                    pl.col("y_index").max()
-                )
-            ).then(
-                pl.lit("left")
-            ).otherwise(
-                pl.lit("right")
-            ).over(
-                "country", "material", "role", "metric", "data_year"
-            ).alias("label_align"),
-        ).with_columns(
-            pl.when(
-                pl.col("y_index").lt(
-                    pl.col("y_index").max()
-                )
-            ).then(
-                pl.col("y1")
-            ).otherwise(
-                pl.col("y2")
-            ).over(
-                "country", "material", "role", "metric", "data_year"
-            )
-        )
-
         labels = []
         for x, y in ((1, 1), (1, 2), (2, 1), (2, 2)):
             labels.append(
                 pl.when(
                     (
-                        pl.col("x1").eq(0) if x == 1
-                        else pl.col("x2").eq(pl.col("x_scale"))
+                        pl.col("x_order").eq(pl.col("x_order").min()) if x == 1
+                        else pl.col("x_order").eq(pl.col("x_order").max())
                     ).and_(
-                        pl.col("y1").eq(0) if y == 1
-                        else pl.col("y2").eq(pl.col("y_scale"))
-                    ).and_(
-                        pl.col("count").gt(0)
+                        pl.col("y_order").eq(pl.col("y_order").min()) if y == 1
+                        else pl.col("y_order").eq(pl.col("y_order").max())
                     )
                 ).then(
                     pl.col("count")
@@ -379,7 +517,7 @@ def make_mosaic_frame(
                 ).otherwise(
                     pl.lit("", dtype=pl.String)
                 ).alias(f"label{x}{y}")
-        )
+            )
 
         mosaic_frame = mosaic_frame.with_columns(*labels)
 
@@ -388,7 +526,7 @@ def make_mosaic_frame(
     mosaic_frame = mosaic_frame.select(
         "country", "material", "role", "metric",
         "data_year",
-        x_axis, y_axis,
+        x_axis, y_axis, "x_order", "y_order",
         "count",
         "x1", "x2", "normalized_x1", "normalized_x2", "x_scale",
         "y1", "y2", "normalized_y1", "normalized_y2", "y_scale",
@@ -396,7 +534,19 @@ def make_mosaic_frame(
             ["label11", "label12", "label21", "label22"] if show_counts
             else []
         ),
-    ).with_columns(
+    )
+
+    residuals = _compute_residuals(mosaic_frame, x_axis, y_axis, "x_order", "y_order")
+    mosaic_frame = mosaic_frame.join(
+        residuals,
+        on=["metric", "data_year", x_axis, y_axis],
+        how="left",
+        maintain_order="left",
+    )
+
+    stroke_expr = _make_stroke_expr([x_axis, y_axis], include_null)
+    fill_expr = _make_fill_expr([x_axis, y_axis], include_null=include_null)
+    mosaic_frame = mosaic_frame.with_columns(
         stroke_expr,
         fill_expr,
     )
@@ -458,6 +608,9 @@ def test_chi2_independence(
             "chi2": chi2s,
             "pvalue": p_values,
             "rating": ratings,
+        }).cast({
+            "metric": pl.Enum(METRICS),
+            "data_year": pl.Int16,
         }),
         on=["metric", "data_year"],
         how="left",
@@ -580,7 +733,7 @@ def plot_mosaic_grid(
 
     # Combine rows into grid
     grid = alt.vconcat(
-        hrule(10, 10 * cell_width + 9 * column_gap),
+        hrule(10, 10 * cell_width + 11 * column_gap),
         *rows,
         spacing=row_gap,
     ).resolve_scale(
@@ -632,7 +785,7 @@ def compute_odds_ratios(
         if table is None or not np.all(table > 0):
             odds_ratios.append(None)
             odds_labels.append(
-                "NaN" if label[0] != "Australia" and label[0] != "Italy" else ""
+                "N/A" if label[0] != "Australia" and label[0] != "Italy" else ""
             )
             lower_cis.append(None)
             upper_cis.append(None)
@@ -664,7 +817,7 @@ def compute_odds_ratios(
         "role": pl.Enum(ROLES),
         "data_year": pl.Int16,
         "odds_ratio": pl.Float64,
-        "odds_label": pl.Enum(["", "NaN"]),
+        "odds_label": pl.Enum(["", "N/A"]),
         "lower_ci": pl.Float64,
         "upper_ci": pl.Float64,
     })
@@ -800,7 +953,7 @@ def plot_odds_ratio_grid(
         grid[-1].append(chart)
 
     return alt.vconcat(
-        hrule(7.5, column_count * cell_width + (column_count - 1) * gap),
+        hrule(7.5, column_count * cell_width + (column_count + 1) * gap),
         *(
             alt.hconcat(*row, spacing=gap) for row in grid
         ),

@@ -167,7 +167,7 @@ def plot_sex_by_age_grid(frame: pl.DataFrame) -> alt.VConcatChart:
         )
 
     return alt.vconcat(
-        hrule(7.5, 10 * 300 + 9 * 20),
+        hrule(7.5, 10 * 300 + 11 * 20),
         *rows,
         spacing=30,
     ).resolve_scale(
@@ -366,7 +366,7 @@ def plot_cdf_grid(
             if 0 < index:
                 grid.append(hrule(
                     gap - small_gap,
-                    column_count * cell_width + (column_count - 1) * gap,
+                    column_count * cell_width + (column_count + 1) * gap,
                     color="#ffffff",
                 ))
             grid.append([])
@@ -390,7 +390,7 @@ def plot_cdf_grid(
     ]
 
     return alt.vconcat(
-        hrule(7.5, column_count * cell_width + (column_count - 1) * gap),
+        hrule(7.5, column_count * cell_width + (column_count + 1) * gap),
         *rows,
         spacing=small_gap
     ).resolve_scale(
