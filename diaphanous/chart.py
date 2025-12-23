@@ -47,7 +47,13 @@ def _prep_sex_by_age(frame: pl.DataFrame) -> pl.DataFrame:
 
 
 def plot_sex_by_age_detailed(
-    frame: pl.DataFrame, country: str, material: str, role: str
+    frame: pl.DataFrame,
+    country: str,
+    material: str,
+    role: str,
+    has_legend: bool = False,
+    large_font_size: int = 20,
+    font_size: int = 18,
 ) -> alt.Chart | alt.LayerChart | alt.FacetChart:
     data = _prep_sex_by_age(frame).with_columns(
         pl.when(
@@ -70,7 +76,7 @@ def plot_sex_by_age_detailed(
         num = int(n)
         return (
             "" if num == 0 else
-            f"Not shown: {num:,} {role}{"" if num == 1 else "s"} Without Age"
+            f"Not shown: {num:,} {role.lower()}{"" if num == 1 else "s"} w/o age"
         )
 
     labels = frame.group_by(
@@ -98,28 +104,37 @@ def plot_sex_by_age_detailed(
     ]
 
     range = [
-        Palette.PINK, Palette.PINK, Palette.LIGHT_GRAY,
+        Palette.PINK, Palette.PINK, Palette.GRAY,
         Palette.BLACK,
-        Palette.LIGHT_BLUE, Palette.LIGHT_BLUE, Palette.LIGHT_GRAY,
+        Palette.LIGHT_BLUE, Palette.LIGHT_BLUE, Palette.GRAY,
     ]
 
     right_side = alt.Axis(
         labelExpr = 'format(datum.value < 0 ? -datum.value : datum.value, ",d")',
         orient="right",
+        labelFontSize=font_size,
     )
 
     base = alt.Chart(data)
+    color = alt.Color("age_group:N").scale(domain=domain, range=range)
+    if has_legend:
+        color = color.title("Sex and Age Group")
+    else:
+        color = color.legend(None)
 
     chart = base.mark_bar(size=4).encode(
-        alt.X("age:Q").scale(domain=(0, 100)).title("Age"),
+        alt.X(
+            "age:Q",
+            axis=alt.Axis(
+                labelFontSize=font_size,
+            ),
+        ).scale(domain=(0, 100)).title(None),
         alt.Y("range_start:Q", axis=right_side).title(None),
         alt.Y2("range_stop:Q"),
-        alt.Color("age_group:N")
-            .title("Sex and Age Group")
-            .scale(domain=domain, range=range),
+        color,
     ).properties(
         width=440,
-        height=220,
+        height=330,
     )
 
     rule = base.mark_rule().encode(
@@ -133,23 +148,29 @@ def plot_sex_by_age_detailed(
         y=20,
         dx=-10,
         align="right",
-        fontSize=14,
-        fontStyle="italic",
+        fontSize=font_size,
+        fontWeight="lighter",
     ).encode(
         alt.Text("label:N", title=None)
     )
 
     return alt.layer(chart, rule, label).facet(
-        facet=alt.Facet("data_year:N", title="Year"),
+        facet=alt.Facet(
+            "data_year:N",
+            title=None,
+            header=alt.Header(
+                labelFontSize=large_font_size,
+            ),
+        ),
         title=alt.Title(
-            f"{country}: {material} {role}s",
+            f"{country} {material} {role}s",
             anchor="middle",
             orient="left",
             angle=270,
-            fontSize=15,
-            subtitle="Women (down) and Men (up)",
-            subtitleFontSize=14,
+            fontSize=large_font_size,
+            fontWeight="normal",
         ),
+        spacing=35,
     )
 
 

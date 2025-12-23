@@ -301,28 +301,33 @@ def _compute_residuals(
 
 def _make_fill_expr(
     columns: Sequence[str],
+    highlights: dict[None | str, dict[None | str, str]],
+    use_residuals: bool = False,
     include_null: bool = False,
 ) -> pl.Expr:
-    expr = pl.when(
-        pl.col("residual").le(-4)
-    ).then(
-        pl.lit(PlusMinus.MINUS_MINUS)
-    ).when(
-        pl.col("residual").le(-2)
-    ).then(
-        pl.lit(PlusMinus.MINUS)
-    ).when(
-        pl.col("residual").ge(4)
-    ).then(
-        pl.lit(PlusMinus.PLUS_PLUS)
-    ).when(
-        pl.col("residual").ge(2)
-    ).then(
-        pl.lit(PlusMinus.PLUS)
-    )
+    expr = _make_highlight_expr(columns, highlights, "a0")
+
+    if use_residuals:
+        expr = (pl.when if expr is None else expr.when)(
+            pl.col("residual").le(-4)
+        ).then(
+            pl.lit(PlusMinus.MINUS_MINUS)
+        ).when(
+            pl.col("residual").le(-2)
+        ).then(
+            pl.lit(PlusMinus.MINUS)
+        ).when(
+            pl.col("residual").ge(4)
+        ).then(
+            pl.lit(PlusMinus.PLUS_PLUS)
+        ).when(
+            pl.col("residual").ge(2)
+        ).then(
+            pl.lit(PlusMinus.PLUS)
+        )
 
     if include_null:
-        expr = expr.when(
+        expr = (pl.when if expr is None else expr.when)(
             pl.col(columns[0]).is_null().and_(
                 pl.col(columns[1]).is_null()
             )
@@ -336,7 +341,7 @@ def _make_fill_expr(
             pl.lit("#dadee6a0")
         )
 
-    expr = expr.otherwise(
+    expr = pl.lit("#aaaeb6a0") if expr is None else expr.otherwise(
         pl.lit("#aaaeb6a0")
     )
 
@@ -350,6 +355,8 @@ def make_mosaic_frame(
     *,
     gap: float = 3.0,
     index: None | dict[str, Sequence[None | str]] = None,
+    highlights: None | dict[None | str, dict[None | str, str]] = None,
+    use_residuals: bool = False,
     use_minor: bool = False,
     include_null: bool = False,
     show_counts: bool = False,
@@ -364,6 +371,7 @@ def make_mosaic_frame(
 
     # Fill in index of axis values and thereafter check counts
     index = _make_index(frame, [x_axis, y_axis], index)
+    highlights = _check_highlights([x_axis, y_axis], index, highlights)
     if show_counts:
         _check_counts([x_axis, y_axis], index, include_null)
 
@@ -536,22 +544,28 @@ def make_mosaic_frame(
         ),
     )
 
-    residuals = _compute_residuals(mosaic_frame, x_axis, y_axis, "x_order", "y_order")
-    mosaic_frame = mosaic_frame.join(
-        residuals,
-        on=["metric", "data_year", x_axis, y_axis],
-        how="left",
-        maintain_order="left",
-    )
+    # Compute Pearson residuals
+    if use_residuals:
+        residuals = _compute_residuals(mosaic_frame, x_axis, y_axis, "x_order", "y_order")
+        mosaic_frame = mosaic_frame.join(
+            residuals,
+            on=["metric", "data_year", x_axis, y_axis],
+            how="left",
+            maintain_order="left",
+        )
 
     stroke_expr = _make_stroke_expr([x_axis, y_axis], include_null)
-    fill_expr = _make_fill_expr([x_axis, y_axis], include_null=include_null)
-    mosaic_frame = mosaic_frame.with_columns(
+    fill_expr = _make_fill_expr(
+        [x_axis, y_axis],
+        highlights,
+        use_residuals=use_residuals,
+        include_null=include_null,
+    )
+
+    return mosaic_frame.with_columns(
         stroke_expr,
         fill_expr,
     )
-
-    return mosaic_frame
 
 
 def test_chi2_independence(

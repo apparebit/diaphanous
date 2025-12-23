@@ -15,6 +15,7 @@ import polars as pl
 from .chart import (
     plot_sex_by_age_grid, plot_sex_by_age_detailed, plot_cdf_grid
 )
+from .color import Palette
 from .mosaic import (
     make_mosaic_frame, plot_mosaic_grid, compute_odds_ratios, plot_odds_ratio_grid,
     test_chi2_independence,
@@ -394,6 +395,7 @@ class Analyzer:
                 necessary for building the contingency tables relating offenses
                 involving CSAM with offender age and sex:</p>
                 <ul>
+                <li>Australia
                 <li>Finland
                 <li>Germany
                 <li>Italy
@@ -946,7 +948,7 @@ printr()
         self.svg("figure/us-age-activity-2024.svg")
         self.end_col()
 
-    DETAIL_YEARS = (2023, 2024)
+    DETAIL_YEARS = (2021, 2024)
     THUMB_YEARS = (2015, 2024)
     THUMB_GAP = 20
     THUMB_WIDTH = 3_000
@@ -993,19 +995,64 @@ printr()
     def emit_age_distributions(self) -> None:
         self.h3("Perpetrator Age Distributions Over the Last Decade")
         distributions = crimestat.load_all_age_distributions()
-        data = pl.concat(self.filter_years(distributions, *self.THUMB_YEARS).values())
+        full_data = pl.concat(
+            self.filter_years(distributions, *self.THUMB_YEARS).values()
+        )
 
+        # All distributions
         self.html("<div class=extra-wide>\n")
-        fig = plot_sex_by_age_grid(data)
+        fig = plot_sex_by_age_grid(full_data)
         path = "figure/age-sex-pyramid-grid.svg"
         fig.save(path)
         self.svg(path)
 
+        # US detail
+        detail_data = self.filter_years(distributions, *self.DETAIL_YEARS)
+        fig = plot_sex_by_age_detailed(
+            detail_data["us_csam_offenders"], "US", "CSAM", "Offender"
+        )
+        path = "figure/us-age-distribution-detail.svg"
+        fig.save(path)
+        self.svg(path)
+
+        # Mosaics I: Highlight minors
         frame = make_mosaic_frame(
-            data,
+            full_data,
             x_axis="age_group",
             y_axis="sex",
             index={"age_group": ["Minor", None, "Adult"]},
+            highlights={
+                "Minor": {
+                    "Male": Palette.LIGHT_BLUE,
+                    "Female": Palette.PINK,
+                },
+            },
+            use_minor=True,
+            include_null=True,
+            show_counts=True,
+        )
+
+        fig = plot_mosaic_grid(
+            frame,
+            x_label="Age Group",
+            y_label="Sex",
+            subtitle=(
+                "Male and female minors are shown in blue and red (respectively), "
+                "people with unknown age or sex in light gray, and those with unknown "
+                "age and sex in white."
+            ),
+        )
+        path = "figure/age-sex-mosaic-grid.svg"
+        fig.save(path)
+        self.svg(path)
+
+        # Mosaics II: Highlight large residuals
+        frame = make_mosaic_frame(
+            full_data,
+            x_axis="age_group",
+            y_axis="sex",
+            index={"age_group": ["Minor", None, "Adult"]},
+            use_residuals=True,
             use_minor=True,
             include_null=True,
             show_counts=True,
@@ -1029,13 +1076,13 @@ printr()
                 "age and sex in white."
             ),
         )
-        path = "figure/age-sex-mosaic-grid.svg"
+        path = "figure/age-sex-mosaic-residual-grid.svg"
         fig.save(path)
         self.svg(path)
 
         fig = plot_odds_ratio_grid(
             compute_odds_ratios(
-                data.with_columns(
+                full_data.with_columns(
                     pl.col("sex_order").mul(-1)
                 ),
                 "age_group",
@@ -1049,7 +1096,7 @@ printr()
         fig.save(path)
         self.svg(path)
 
-        cdfs = compute_age_cdfs(data)
+        cdfs = compute_age_cdfs(full_data)
         fig = plot_cdf_grid(cdfs)
         path = "figure/age-sex-cdf-grid.svg"
         fig.save(path)
