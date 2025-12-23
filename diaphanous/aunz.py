@@ -66,7 +66,9 @@ def au_age_distribution() -> pl.LazyFrame:
 # ======================================================================================
 
 
-POLICEDATA = Path("data/policedata.nz/nz-up-to-2025-08.csv")
+POLICEDATA = (
+    Path(__file__).parent.parent / Path("data/policedata.nz/nz-up-to-2025-08.csv")
+)
 
 def nz_load() -> pl.LazyFrame:
     # UTF-16? That's just plain nuts. Also, Pola.rs does not support lazily

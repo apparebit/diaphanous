@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import polars as pl
 
 from .aunz import au_age_distribution, nz_age_distribution
@@ -6,9 +8,12 @@ from .nibrs import compute_us_age_distribution, load_all_us_csam, load_all_us_po
 from .util import add_empty_year, finish_age_distribution, to_minor_adult
 
 
+_ROOT = Path(__file__).parent.parent
+
+
 def es_age_distribution() -> pl.LazyFrame:
     frame = pl.scan_csv(
-        "data/spain.csv", separator=";"
+        _ROOT / "data/spain.csv", separator=";"
     ).rename({
         "Age group": "age",
         "Sex": "sex",
@@ -52,7 +57,7 @@ def es_age_distribution() -> pl.LazyFrame:
 
 def fi_age_distribution() -> pl.LazyFrame:
     frame = pl.scan_csv(
-        "data/finland.csv",
+        _ROOT / "data/finland.csv",
     ).select(
         pl.exclude(
             "ICCS offence category",
@@ -127,7 +132,7 @@ def fi_age_distribution() -> pl.LazyFrame:
 
 def it_age_distribution() -> pl.LazyFrame:
     frame = pl.scan_csv(
-        "data/italy.csv"
+        _ROOT / "data/italy.csv"
     ).select(
         "AGE", "Sex (DESC)", "CITIZENSHIP", "TIME_PERIOD", "Observation",
     ).filter(
