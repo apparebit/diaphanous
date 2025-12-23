@@ -1025,7 +1025,11 @@ printr()
                 "Minor": {
                     "Male": Palette.LIGHT_BLUE,
                     "Female": Palette.PINK,
+                    None: Palette.BLACK,
                 },
+                "Adult": {
+                    None: Palette.BLACK,
+                }
             },
             use_minor=True,
             include_null=True,
@@ -1154,7 +1158,7 @@ printr()
 
         <li>Statistics Finland's <a
         href="https://pxdata.stat.fi/PxWeb/pxweb/en/StatFin/StatFin__rpk/statfin_rpk_pxt_13kr.px/">StatFin
-        table 13kr</a with the "Persons suspected of solved offences by the
+        table 13kr</a> with the "Persons suspected of solved offences by the
         International Classification of Crime for Statistical Purposes (ICCS),
         year of solving, age, sex and nationality, 2006-2024."
 
