@@ -360,6 +360,7 @@ def make_mosaic_frame(
     use_minor: bool = False,
     include_null: bool = False,
     show_counts: bool = False,
+    show_percent: bool = False,
 ) -> pl.DataFrame:
     # use_minor and include_null both impact index
     if use_minor:
@@ -374,6 +375,9 @@ def make_mosaic_frame(
     highlights = _check_highlights([x_axis, y_axis], index, highlights)
     if show_counts:
         _check_counts([x_axis, y_axis], index, include_null)
+    if show_percent:
+        if not show_counts:
+            raise ValueError("can't show percent without counts")
 
     # Compute frequency form for two axes.
     contingencies = frame.group_by(
@@ -505,6 +509,20 @@ def make_mosaic_frame(
         "scale_right": "y_scale",
     })
 
+    if show_percent:
+        mosaic_frame = mosaic_frame.with_columns(
+            pl.col("count").fill_null(0).sum().over(
+                "metric", "data_year"
+            ).alias("non_null_total"),
+        ).with_columns(
+            pl.col("count").truediv("non_null_total").mul(100).alias("percent")
+        ).with_columns(
+            pl.col("percent").map_elements(
+                lambda v: f"({v:.1f}%)",
+                return_dtype=pl.String,
+            )
+        )
+
     # Add count labels.
     if show_counts:
         labels = []
@@ -525,6 +543,23 @@ def make_mosaic_frame(
                 ).otherwise(
                     pl.lit("", dtype=pl.String)
                 ).alias(f"label{x}{y}")
+            )
+
+        mosaic_frame = mosaic_frame.with_columns(*labels)
+
+    if show_percent:
+        labels = []
+        for x, y in ((1, 1), (1, 2), (2, 1), (2, 2)):
+            label = f"label{x}{y}"
+
+            labels.append(
+                pl.when(
+                    pl.col(label).ne("")
+                ).then(
+                    pl.concat_list(label, "percent")
+                ).otherwise(
+                    pl.lit([], dtype=pl.List(pl.String))
+                )
             )
 
         mosaic_frame = mosaic_frame.with_columns(*labels)
@@ -662,6 +697,9 @@ def plot_mosaic_grid(
         title["subtitleFontSize"] = 40
 
     show_counts = "label12" in frame.columns and "label21" in frame.columns
+    show_percent = (
+        "label12" in frame.columns and isinstance(frame.schema["label12"], pl.List)
+    )
     show_ratings = "chi2" in frame.columns and "rating" in frame.columns
 
     last_metric = frame.select(
@@ -678,7 +716,7 @@ def plot_mosaic_grid(
             for x, y in ((1, 1), (1, 2), (2, 1), (2, 2)):
                 labels.append(base.mark_text(
                     x=0 if x == 1 else 320,
-                    y=325 if y == 1 else -5,
+                    y=325 if y == 1 else (-40 if show_percent else -5),
                     align="left" if x== 1 else "right",
                     baseline="top" if y == 1 else "bottom",
                     fontSize=30,
@@ -749,7 +787,7 @@ def plot_mosaic_grid(
     grid = alt.vconcat(
         hrule(10, 10 * cell_width + 11 * column_gap),
         *rows,
-        spacing=row_gap,
+        spacing=row_gap + (20 if show_percent else 0),
     ).resolve_scale(
         x="shared",
     ).configure_axis(

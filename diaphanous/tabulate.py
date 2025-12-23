@@ -1030,6 +1030,7 @@ printr()
             use_minor=True,
             include_null=True,
             show_counts=True,
+            show_percent=True,
         )
 
         fig = plot_mosaic_grid(
