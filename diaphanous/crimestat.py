@@ -4,7 +4,7 @@ import polars as pl
 
 from .aunz import au_age_distribution, nz_age_distribution
 from .bka import de_age_distribution
-from .nibrs import compute_us_age_distribution, load_all_us_csam, load_all_us_porn
+from .nibrs import us_age_distributions
 from .util import add_empty_year, finish_age_distribution, to_minor_adult
 
 
@@ -195,12 +195,11 @@ def load_all_age_distributions(compact: bool = False) -> dict[str, pl.DataFrame]
     also is sorted alphabetically by country name. Each frame, in turn, is
     sorted by year, age, sex, ethnicity, and activity.
     """
-    csam = load_all_us_csam()
-    csam_offenders = csam.offender_demographics().age_distribution()
-    csam_arrestees = csam.arrestee_demographics().age_distribution()
-    porn = load_all_us_porn()
-    porn_offenders = compute_us_age_distribution(porn[1], "Porn", "Offender")
-    porn_arrestees = compute_us_age_distribution(porn[0], "Porn", "Arrestee")
+    us = us_age_distributions()
+    csam_offenders = us.filter(pl.col("metric").eq("United States CSAM Offenders"))
+    csam_arrestees = us.filter(pl.col("metric").eq("United States CSAM Arrestees"))
+    porn_offenders = us.filter(pl.col("metric").eq("United States Porn Offenders"))
+    porn_arrestees = us.filter(pl.col("metric").eq("United States Porn Arrestees"))
 
     distributions = {
         "au": au_age_distribution().collect(),

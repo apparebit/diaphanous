@@ -3,6 +3,7 @@ import enum
 import functools
 from pathlib import Path
 from types import MappingProxyType
+from typing import Any
 
 import polars as pl
 
@@ -15,7 +16,8 @@ type ColumnType = pl.Int16 | pl.Int64 | pl.String
 
 
 class Table(enum.StrEnum):
-    """Key NIBRS tables."""
+    """Supported NIBRS tables."""
+
     AGE = "age"
     AGENCIES = "agencies"
     ARRESTEE = "arrestee"
@@ -27,6 +29,11 @@ class Table(enum.StrEnum):
     SUSPECT_USING = "suspect_using"
     VICTIM = "victim"
     VICTIM_OFFENSE = "victim_offense"
+
+    @property
+    def primary_key(self) -> None | str:
+        """Get this table's primary key."""
+        return _PRIMARY_KEY[self]
 
     @property
     def csv_file(self) -> str:
@@ -47,13 +54,13 @@ class Table(enum.StrEnum):
     @property
     def maybe_no_data_year_until_2015(self) -> bool:
         """
-        Determine whether pre-2016 versions of this table lack the `data_year:
-        pl.Int16` column. Tables for different states in years up to and
-        including 2015 may or may not include the `data_year` column. If they do
-        not, they must include any optional columns identified by the
+        Determine whether pre-2016 versions of this table possibly lack the
+        `data_year: pl.Int16` column. Tables for different states in years up to
+        and including 2015 may or may not include the `data_year` column. If
+        they do not, they must include any optional columns identified by the
         `optional_columns_until_2015` property.
         """
-        return self not in (
+        return self in (
             self.ARRESTEE, self.CRIMINAL_ACT, self.INCIDENT,
             self.OFFENDER, self.OFFENSE, self.SUSPECT_USING,
             self.VICTIM, self.VICTIM_OFFENSE
@@ -62,9 +69,8 @@ class Table(enum.StrEnum):
     @property
     def maybe_no_offense_group_until_2015(self) -> bool:
         """
-        Determine whether pre-2016 versions of this table may omit the
-        `offense_group` column. If this property is set, it applies to all
-        tables in years up to and including 2015.
+        Determine whether pre-2016 versions of this table may possibly omit the
+        `offense_group` column.
         """
         return self is self.OFFENSE_TYPE
 
@@ -74,33 +80,14 @@ class Table(enum.StrEnum):
     ) -> Mapping[str, tuple[ColumnType, None | str]]:
         """
         Determine the names, types, and predecessors of pre-2016 columns. If the
-        predecessor is `None`, the column is the first column. Note that the
-        predecessor may be another legacy column. Tables for different states
-        may or may not include these columns, at least for 2015. If a table does
-        include these columns and the `no_data_year_until_215` property is set,
-        that table does not have the `data_year` column.
+        predecessor is `None`, the column is the first column. If it is *not*
+        `None`, it may be any column including another legacy column. Tables for
+        different states may or may not include these columns, at least for
+        2015. If a table does include these columns and the
+        `maybe_no_data_year_until_2015` property is set, that table does not
+        have the `data_year` column.
         """
-        return {
-            self.ARRESTEE: {
-                "arrest_num": (pl.Int64, "arrestee_seq_num"),
-                "ff_line_number": (pl.Int64, "clearance_ind"),
-            },
-            self.INCIDENT: {
-                "ddocname": (pl.String, "data_home"),
-                "ff_line_number": (pl.Int64, "orig_format"),
-                "incident_number": (pl.String, "nibrs_month_id"),
-            },
-            self.OFFENDER: {
-                "ff_line_number": (pl.Int64, "ethnicity_id"),
-            },
-            self.OFFENSE: {
-                "ff_line_number": (pl.Int64, "method_entry_code"),
-            },
-            self.VICTIM: {
-                "agency_data_year": (pl.Int16, "resident_status_code"),
-                "ff_line_number": (pl.Int64, "agency_data_year"),
-            },
-        }.get(self, {})
+        return _OPTIONAL_COLUMNS_UNTIL_2015.get(self, _EMPTY_MAPPING)
 
     @property
     def columns_until_2020(self) -> Mapping[str, tuple[ColumnType, None | str]]:
@@ -110,11 +97,7 @@ class Table(enum.StrEnum):
         predecessor may be another legacy column. This applies to all state
         tables for years up to and including 2020.
         """
-        return {
-            self.OFFENSE_TYPE: {
-                "offense_type_id": (pl.Int64, None),
-            },
-        }.get(self, {}) # type: ignore
+        return _COLUMNS_UNTIL_2020.get(self, _EMPTY_MAPPING) # type: ignore
 
     @property
     def has_offense_type_until_2020(self) -> bool:
@@ -132,19 +115,7 @@ class Table(enum.StrEnum):
         Access a mapping from current column names to pre-2021 column names. The
         mapping applies to all tables of years up to and including 2020.
         """
-        return {
-            self.AGENCIES: {
-                "female_officer+female_civilian":
-                    "ped.female_civilian+ped.female_officer",
-                "male_officer+male_civilian":
-                    "ped.male_officer+ped.male_civilian",
-                "officer_rate": "0",
-                "employee_rate": "0",
-            },
-            self.VICTIM: {
-                "age_code_range_high": "age_range_high_num"
-            }
-        }.get(self, {})
+        return _COLUMN_NAMES_UNTIL_2020.get(self, _EMPTY_MAPPING)
 
     @property
     def column_names_after_2020(self) -> Mapping[str, str]:
@@ -156,204 +127,27 @@ class Table(enum.StrEnum):
         """
         if self is self.AGENCIES:
             raise ValueError("unable to map names due to conflicting columns")
-        elif self is self.VICTIM:
-            return {
-                "age_range_high_num": "age_code_range_high"
-            }
-        else:
-            return {}
+
+        return _COLUMN_NAMES_AFTER_2020.get(self, _EMPTY_MAPPING)
 
     @property
-    def latest_schema(self) -> dict[str, ColumnType]:
+    def latest_schema(self) -> Mapping[str, ColumnType]:
         """Get the column names and types for the latest version of this table."""
-        schema = {
-            self.AGE: {
-                "age_id": pl.Int16,
-                "age_code": pl.String,
-                "age_name": pl.String,
-            },
-            self.AGENCIES: {
-                "yearly_agency_id": pl.Int64,
-                "agency_id": pl.Int64,
-                "data_year": pl.Int32,
-                "ori": pl.String,
-                "legacy_ori": pl.String,
-                "covered_by_legacy_ori": pl.String,
-                "direct_contributor_flag": pl.String,
-                "dormant_flag": pl.String,
-                "dormant_year": pl.Int32,
-                "reporting_type": pl.String,
-                "ucr_agency_name": pl.String,
-                "ncic_agency_name": pl.String,
-                "pub_agency_name": pl.String,
-                "pub_agency_unit": pl.String,
-                "agency_status": pl.String,
-                "state_id": pl.Int32,
-                "state_name": pl.String,
-                "state_abbr": pl.String,
-                "state_postal_abbr": pl.String,
-                "division_code": pl.Int32,
-                "division_name": pl.String,
-                "region_code": pl.Int32,
-                "region_name": pl.String,
-                "region_desc": pl.String,
-                "agency_type_name": pl.String,
-                "population": pl.Int32,
-                "submitting_agency_id": pl.Int32,
-                "sai": pl.String,
-                "submitting_agency_name": pl.String,
-                "suburban_area_flag": pl.String,
-                "population_group_id": pl.Int32,
-                "population_group_code": pl.String,
-                "population_group_desc": pl.String,
-                "parent_pop_group_code": pl.Int32,
-                "parent_pop_group_desc": pl.String,
-                "mip_flag": pl.String,
-                "pop_sort_order": pl.Int32,
-                "summary_rape_def": pl.String,
-                "pe_reported_flag": pl.String,
-                "male_officer": pl.Int32,
-                "male_civilian": pl.Int32,
-                "male_officer+male_civilian": pl.Int32,
-                "female_officer": pl.Int32,
-                "female_civilian": pl.Int32,
-                "female_officer+female_civilian": pl.Int32,
-                "officer_rate": pl.Decimal(6, 2),
-                "employee_rate": pl.Decimal(6, 2),
-                "nibrs_cert_date": pl.String,
-                "nibrs_start_date": pl.String,
-                "nibrs_leoka_start_date": pl.String,
-                "nibrs_ct_start_date": pl.String,
-                "nibrs_multi_bias_start_date": pl.String,
-                "nibrs_off_eth_start_date": pl.String,
-                "covered_flag": pl.String,
-                "county_name": pl.String,
-                "msa_name": pl.String,
-                "publishable_flag": pl.String,
-                "participated": pl.String,
-                "nibrs_participated": pl.String,
-            },
-            self.ARRESTEE: {
-                "data_year": pl.Int16,
-                "arrestee_id": pl.Int64,
-                "incident_id": pl.Int64,
-                "arrestee_seq_num": pl.Int16,
-                "arrest_date": pl.String,
-                "arrest_type_id": pl.Int16,
-                "multiple_indicator": pl.String,
-                "offense_code": pl.String,
-                "age_id": pl.Int16,
-                "age_num": pl.String,
-                "sex_code": pl.String,
-                "race_id": pl.Int16,
-                "ethnicity_id": pl.Int16,
-                "resident_code": pl.String,
-                "under_18_disposition_code": pl.String,
-                "clearance_ind": pl.String,
-                "age_range_low_num": pl.Int16,
-                "age_range_high_num": pl.Int16,
-            },
-            self.CRIMINAL_ACT: {
-                "data_year": pl.Int16,
-                "criminal_act_id": pl.Int16,
-                "offense_id": pl.Int64,
-            },
-            self.INCIDENT: {
-                "data_year": pl.Int16,
-                "agency_id": pl.Int64,
-                "incident_id": pl.Int64,
-                "nibrs_month_id": pl.Int64,
-                "cargo_theft_flag": pl.String,
-                "submission_date": pl.String,
-                "incident_date": pl.String,
-                "report_date_flag": pl.String,
-                "incident_hour": pl.Int16,
-                "cleared_except_id": pl.Int16,
-                "cleared_except_date": pl.String,
-                "incident_status": pl.String,
-                "data_home": pl.String,
-                "orig_format": pl.String,
-                "did": pl.Int64,
-            },
-            self.OFFENDER: {
-                "data_year": pl.Int16,
-                "offender_id": pl.Int64,
-                "incident_id": pl.Int64,
-                "offender_seq_num": pl.Int16,
-                "age_id": pl.Int16,
-                "age_num": pl.String,
-                "sex_code": pl.String,
-                "race_id": pl.Int16,
-                "ethnicity_id": pl.Int16,
-                "age_range_low_num": pl.Int16,
-                "age_range_high_num": pl.Int16,
-            },
-            self.OFFENSE: {
-                "data_year": pl.Int16,
-                "offense_id": pl.Int64,
-                "incident_id": pl.Int64,
-                "offense_code": pl.String,
-                "attempt_complete_flag": pl.String,
-                "location_id": pl.Int64,
-                "num_premises_entered": pl.Int16,
-                "method_entry_code": pl.String,
-            },
-            self.OFFENSE_TYPE: {
-                "offense_code": pl.String,
-                "offense_name": pl.String,
-                "crime_against": pl.String,
-                "ct_flag": pl.String,
-                "hc_flag": pl.String,
-                "hc_code": pl.String,
-                "offense_category_name": pl.String,
-                "offense_group": pl.String,
-            },
-            self.SUSPECT_USING: {
-                "data_year": pl.Int16,
-                "suspect_using_id": pl.Int16,
-                "offense_id": pl.Int64,
-            },
-            self.VICTIM: {
-                "data_year": pl.Int16,
-                "victim_id": pl.Int64,
-                "incident_id": pl.Int64,
-                "victim_seq_num": pl.Int16,
-                "victim_type_id": pl.Int16,
-                "assignment_type_id": pl.Int16,
-                "activity_type_id": pl.Int16,
-                "outside_agency_id": pl.Int64,
-                "age_id": pl.Int16,
-                "age_num": pl.String,
-                "sex_code": pl.String,
-                "race_id": pl.Int16,
-                "ethnicity_id": pl.Int16,
-                "resident_status_code": pl.String,
-                "age_range_low_num": pl.Int16,
-                "age_code_range_high": pl.Int16,
-            },
-            self.VICTIM_OFFENSE: {
-                "data_year": pl.Int16,
-                "victim_id": pl.Int64,
-                "offense_id": pl.Int64,
-            }
-        }[self]
+        return _LATEST_SCHEMA[self]
 
-        return dict(schema)
-
-    def fit_schema(self, year: int, directory: Path) -> "TableSchema":
+    def fit_schema(self, year: int, directory: Path) -> "EffectiveSchema":
         """
-        Get the list of column names for the actual CSV file and the schema
-        mapping the desired names to their types.
+        Get the effective schema for the CSV file in the given directory for the
+        given year.
         """
         if 2020 < year:
-            return TableSchema(self, year, self.latest_schema)
+            return EffectiveSchema(self, year, directory, dict(self.latest_schema))
 
         # Compute the pre-2021 columns by restoring old names and...
         schema = {}
-        for c, t in self.latest_schema:
-            mapping = self.column_names_until_2020
-            if self is not self.AGENCIES and c in mapping:
-                c = mapping[c]
+        for c, t in self.latest_schema.items():
+            if self is not self.AGENCIES and c in self.column_names_until_2020:
+                c = self.column_names_until_2020[c]
             elif self.has_offense_type_until_2020 and c == "offense_code":
                 # Update schema column and patch up later
                 c = "offense_type_id"
@@ -365,168 +159,122 @@ class Table(enum.StrEnum):
         schema = _insert_columns(schema, self.columns_until_2020)
 
         if 2015 < year:
-            return TableSchema(self, year, schema)
+            return EffectiveSchema(self, year, directory, schema)
 
         # The pre-2016 columns depend on the table's actual column names.
         actual_names = _read_column_names(directory / self.csv_file)
         if actual_names == schema.keys():
-            return TableSchema(self, year, schema)
+            return EffectiveSchema(self, year, directory, schema)
 
-        if self.maybe_no_offense_group_until_2015:
+        if (
+            self.maybe_no_offense_group_until_2015
+            and "offense_group" not in actual_names
+        ):
             del schema["offense_group"]
-        if self.maybe_no_data_year_until_2015:
+
+        if self.maybe_no_data_year_until_2015 and "data_year" not in actual_names:
             del schema["data_year"]
-        schema = _insert_columns(schema, self.optional_columns_until_2015)
-        return TableSchema(self, year, schema)
+
+        optional_columns = {
+            c: tnp
+            for c, tnp in self.optional_columns_until_2015.items()
+            if c in actual_names
+        }
+        if 0 < len(optional_columns):
+            schema = _insert_columns(schema, optional_columns)
+
+        return EffectiveSchema(self, year, directory, schema)
 
 
-class TableSchema:
-
-    def __init__(
-        self,
-        table: Table,
-        year: int,
-        schema: dict[str, ColumnType],
-    ) -> None:
-        self._table = table
-        self._year = year
-        self._schema = schema
-
-    @property
-    def instance(self) -> dict[str, ColumnType]:
-        return self._schema
-
-    def normalize[F: (pl.DataFrame, pl.LazyFrame)](
-        self,
-        frame: F,
-        offense_type: None | F,
-        is_legacy_age: bool,
-    ) -> F:
-        if 2020 < self._year:
-            return frame
-
-        reselect_columns = False
-        if self._year <= 2015:
-            cs = self._table.optional_columns_until_2015
-            if len(cs) != 0:
-                frame = frame.drop(*cs.keys())
-
-            if self._table.maybe_no_data_year_until_2015:
-                frame = frame.with_columns(
-                    pl.lit(self._year, dtype=pl.Int16).alias("data_year")
-                )
-                reselect_columns = True
-
-        if self._year <= 2020:
-            if self._table is not Table.AGENCIES:
-                cs = self._table.column_names_after_2020
-                if len(cs) != 0:
-                    frame = frame.rename(cs)
-
-            if self._table.has_offense_type_until_2020:
-                assert offense_type is not None
-                frame = frame.join(
-                    offense_type,
-                    on="offense_type_id",
-                    how="left",
-                )
-                reselect_columns = True
-
-        if reselect_columns:
-            frame = frame.select(
-                self._schema.keys()
-            )
-
-        if self._table.has_demographics:
-            frame = frame.with_columns(
-                AGE_IN_YEARS_V1 if is_legacy_age else AGE_IN_YEARS_V2
-            )
-
-            if self._year <= 2020:
-                frame = frame.with_columns(
-                    pl.col(Id.ETHNICITY).replace_strict(
-                        Ethnicity.legacy_value_map(),
-                        return_dtype=pl.Int16,
-                    ),
-                    pl.col(Id.RACE).replace_strict(
-                        Race.legacy_value_map(),
-                        return_dtype=pl.Int16,
-                    ),
-                    pl.col(Id.SEX).replace({"": Sex.NOT_SPECIFIED})
-                )
-
-        return frame
+# --------------------------------------------------------------------------------------
 
 
-@functools.cache
-def _read_column_names(path: Path) -> Sequence[str]:
-    # The column names are needed when picking the right schema for tables
-    # dating from 2015 or earlier.
-    with open(path, mode="r", encoding="utf8") as file:
-        # Chop off newline, split by commas, normalize to lower case...
-        actual = (c.lower() for c in file.readline()[:-1].split(","))
-        # Strip off double quotes...
-        actual = [(c[1:-1] if c[0] == '"' and c[-1] == '"' else c) for c in actual]
-    return actual
+SOURCE_FILES = frozenset(["postgres_load.sql"]) | frozenset(t.csv_file for t in Table)
 
 
-def _insert_columns(
-    columns: dict[str, ColumnType],
-    updates: Mapping[str, tuple[ColumnType, None | str]]
-) -> dict[str, ColumnType]:
-    if len(updates) == 0:
-        return columns
-
-    successors = {p: (c, t) for c, (t, p) in updates.items()}
-    result = {}
-
-    if None in successors:
-        c, t = successors[None]
-        result[c] = t
-
-    for c, t in columns:
-        result[c] = t
-        if c in successors:
-            c, t = successors[c]
-            result[c] = t
-
-    return result
+_EMPTY_MAPPING = MappingProxyType({})
 
 
-class NibrsTable(enum.StrEnum):
-    """The names of essential NIBRS tables."""
-    AGE = "age"
-    AGENCIES = "agencies"
-    ARRESTEE = "arrestee"
-    CRIMINAL_ACT = "criminal_act"
-    INCIDENT = "incident"
-    OFFENDER = "offender"
-    OFFENSE = "offense"
-    OFFENSE_TYPE = "offense_type"
-    SUSPECT_USING = "suspect_using"
-    VICTIM = "victim"
-    VICTIM_OFFENSE = "victim_offense"
-
-    @property
-    def csv_file(self) -> str:
-        return "agencies.csv" if self == self.AGENCIES else f"nibrs_{self}.csv"
+_PRIMARY_KEY = MappingProxyType({
+    Table.AGE: "age_id",
+    Table.AGENCIES: "agency_id",
+    Table.ARRESTEE: "arrestee_id",
+    Table.CRIMINAL_ACT: None,
+    Table.INCIDENT: "incident_id",
+    Table.OFFENDER: "offender_id",
+    Table.OFFENSE: "offense_id",
+    Table.OFFENSE_TYPE: "offense_code",
+    Table.SUSPECT_USING: "suspect_using_id",
+    Table.VICTIM: "victim_id",
+    Table.VICTIM_OFFENSE: None,
+})
 
 
-NIBRS_SOURCE_FILES = frozenset(["postgres_load.sql"]) | frozenset(
-    t.csv_file for t in NibrsTable.__members__.values()
-)
-"""The names of essential files in the NIBRS distribution."""
+_OPTIONAL_COLUMNS_UNTIL_2015: Mapping[
+    Table,
+    Mapping[str, tuple[Any, None | str]],
+] = MappingProxyType({
+    Table.ARRESTEE: MappingProxyType({
+        "arrest_num": (pl.String, "arrestee_seq_num"),
+        "ff_line_number": (pl.Int64, "clearance_ind"),
+    }),
+    Table.INCIDENT: MappingProxyType({
+        "ddocname": (pl.String, "data_home"),
+        "ff_line_number": (pl.Int64, "orig_format"),
+        "incident_number": (pl.String, "nibrs_month_id"),
+    }),
+    Table.OFFENDER: MappingProxyType({
+        "ff_line_number": (pl.Int64, "ethnicity_id"),
+    }),
+    Table.OFFENSE: MappingProxyType({
+        "ff_line_number": (pl.Int64, "method_entry_code"),
+    }),
+    Table.VICTIM: MappingProxyType({
+        "agency_data_year": (pl.Int16, "resident_status_code"),
+        "ff_line_number": (pl.Int64, "agency_data_year"),
+    }),
+})
 
 
-class NibrsSchema(enum.Enum):
-    """The schemata of core NIBRS tables."""
+_COLUMNS_UNTIL_2020: Mapping[
+    Table,
+    Mapping[str, tuple[Any, None | str]],
+] = MappingProxyType({
+    Table.OFFENSE_TYPE: MappingProxyType({
+        "offense_type_id": (pl.Int64, None),
+    }),
+})
 
-    AGE = pl.Schema({
+
+_COLUMN_NAMES_UNTIL_2020 = MappingProxyType({
+    Table.AGENCIES: MappingProxyType({
+        "female_officer+female_civilian":
+            "ped.female_civilian+ped.female_officer",
+        "male_officer+male_civilian":
+            "ped.male_officer+ped.male_civilian",
+        "officer_rate": "0",
+        "employee_rate": "0",
+    }),
+    Table.VICTIM: MappingProxyType({
+        "age_code_range_high": "age_range_high_num"
+    }),
+})
+
+
+_COLUMN_NAMES_AFTER_2020 = MappingProxyType({
+    Table.VICTIM: MappingProxyType({
+        "age_range_high_num": "age_code_range_high"
+    }),
+})
+
+
+_LATEST_SCHEMA: Mapping[Table, Mapping[str, Any]] = MappingProxyType({
+    Table.AGE: MappingProxyType({
         "age_id": pl.Int16,
         "age_code": pl.String,
         "age_name": pl.String,
-    })
-    AGENCIES = pl.Schema({
+    }),
+    Table.AGENCIES: MappingProxyType({
         "yearly_agency_id": pl.Int64,
         "agency_id": pl.Int64,
         "data_year": pl.Int32,
@@ -586,49 +334,8 @@ class NibrsSchema(enum.Enum):
         "publishable_flag": pl.String,
         "participated": pl.String,
         "nibrs_participated": pl.String,
-    })
-    ARRESTEE_LEGACY = pl.Schema({
-        "arrestee_id": pl.Int64,
-        "incident_id": pl.Int64,
-        "arrestee_seq_num": pl.Int16,
-        "arrest_num": pl.Int64,
-        "arrest_date": pl.String,
-        "arrest_type_id": pl.Int16,
-        "multiple_indicator": pl.String,
-        "offense_type_id": pl.Int64,
-        "age_id": pl.Int16,
-        "age_num": pl.String,
-        "sex_code": pl.String,
-        "race_id": pl.Int16,
-        "ethnicity_id": pl.Int16,
-        "resident_code": pl.String,
-        "under_18_disposition_code": pl.String,
-        "clearance_ind": pl.String,
-        "ff_line_number": pl.Int64,
-        "age_range_low_num": pl.Int16,
-        "age_range_high_num": pl.Int16,
-    })
-    ARRESTEE_WITH_OFFENSE_TYPE = pl.Schema({
-        "data_year": pl.Int16,
-        "arrestee_id": pl.Int64,
-        "incident_id": pl.Int64,
-        "arrestee_seq_num": pl.Int16,
-        "arrest_date": pl.String,
-        "arrest_type_id": pl.Int16,
-        "multiple_indicator": pl.String,
-        "offense_type_id": pl.Int64,
-        "age_id": pl.Int16,
-        "age_num": pl.String,
-        "sex_code": pl.String,
-        "race_id": pl.Int16,
-        "ethnicity_id": pl.Int16,
-        "resident_code": pl.String,
-        "under_18_disposition_code": pl.String,
-        "clearance_ind": pl.String,
-        "age_range_low_num": pl.Int16,
-        "age_range_high_num": pl.Int16,
-    })
-    ARRESTEE = pl.Schema({
+    }),
+    Table.ARRESTEE: MappingProxyType({
         "data_year": pl.Int16,
         "arrestee_id": pl.Int64,
         "incident_id": pl.Int64,
@@ -647,37 +354,14 @@ class NibrsSchema(enum.Enum):
         "clearance_ind": pl.String,
         "age_range_low_num": pl.Int16,
         "age_range_high_num": pl.Int16,
-    })
-    CRIMINAL_ACT_LEGACY = pl.Schema({
-        "criminal_act_id": pl.Int16,
-        "offense_id": pl.Int64,
-    })
-    CRIMINAL_ACT = pl.Schema({
+    }),
+    Table.CRIMINAL_ACT: MappingProxyType({
         "data_year": pl.Int16,
         "criminal_act_id": pl.Int16,
         "offense_id": pl.Int64,
-    })
-    INCIDENT_LEGACY = pl.Schema({
-        "agency_id": pl.Int64,
-        "incident_id": pl.Int64,
-        "nibrs_month_id": pl.Int64,
-        "incident_number": pl.String,
-        "cargo_theft_flag": pl.String,
-        "submission_date": pl.String,
-        "incident_date": pl.String,
-        "report_date_flag": pl.String,
-        "incident_hour": pl.Int16,
-        "cleared_except_id": pl.Int16,
-        "cleared_except_date": pl.String,
-        "incident_status": pl.String,
-        "data_home": pl.String,
-        "ddocname": pl.String,
-        "orig_format": pl.String,
-        "ff_line_number": pl.Int64,
-        "did": pl.Int64,
-    })
-    INCIDENT = pl.Schema({
-	    "data_year": pl.Int16,
+    }),
+    Table.INCIDENT: MappingProxyType({
+        "data_year": pl.Int16,
         "agency_id": pl.Int64,
         "incident_id": pl.Int64,
         "nibrs_month_id": pl.Int64,
@@ -692,21 +376,8 @@ class NibrsSchema(enum.Enum):
         "data_home": pl.String,
         "orig_format": pl.String,
         "did": pl.Int64,
-    })
-    OFFENDER_LEGACY = pl.Schema({
-        "offender_id": pl.Int64,
-        "incident_id": pl.Int64,
-        "offender_seq_num": pl.Int16,
-        "age_id": pl.Int16,
-        "age_num": pl.String,
-        "sex_code": pl.String,
-        "race_id": pl.Int16,
-        "ethnicity_id": pl.Int16,
-        "ff_line_number": pl.Int64,
-        "age_range_low_num": pl.Int16,
-        "age_range_high_num": pl.Int16,
-    })
-    OFFENDER = pl.Schema({
+    }),
+    Table.OFFENDER: MappingProxyType({
         "data_year": pl.Int16,
         "offender_id": pl.Int64,
         "incident_id": pl.Int64,
@@ -718,28 +389,8 @@ class NibrsSchema(enum.Enum):
         "ethnicity_id": pl.Int16,
         "age_range_low_num": pl.Int16,
         "age_range_high_num": pl.Int16,
-    })
-    OFFENSE_LEGACY = pl.Schema({
-        "offense_id": pl.Int64,
-        "incident_id": pl.Int64,
-        "offense_type_id": pl.Int64,
-        "attempt_complete_flag": pl.String,
-        "location_id": pl.Int64,
-        "num_premises_entered": pl.Int16,
-        "method_entry_code": pl.String,
-        "ff_line_number": pl.Int64,
-    })
-    OFFENSE_WITH_OFFENSE_TYPE = pl.Schema({
-        "data_year": pl.Int16,
-        "offense_id": pl.Int64,
-        "incident_id": pl.Int64,
-        "offense_type_id": pl.Int64,
-        "attempt_complete_flag": pl.String,
-        "location_id": pl.Int64,
-        "num_premises_entered": pl.Int16,
-        "method_entry_code": pl.String,
-    })
-    OFFENSE = pl.Schema({
+    }),
+    Table.OFFENSE: MappingProxyType({
         "data_year": pl.Int16,
         "offense_id": pl.Int64,
         "incident_id": pl.Int64,
@@ -748,19 +399,8 @@ class NibrsSchema(enum.Enum):
         "location_id": pl.Int64,
         "num_premises_entered": pl.Int16,
         "method_entry_code": pl.String,
-    })
-    OFFENSE_TYPE_LEGACY_TERSE = pl.Schema({
-        "offense_type_id": pl.Int64,
-        "offense_code": pl.String,
-        "offense_name": pl.String,
-        "crime_against": pl.String,
-        "ct_flag": pl.String,
-        "hc_flag": pl.String,
-        "hc_code": pl.String,
-        "offense_category_name": pl.String,
-    })
-    OFFENSE_TYPE_LEGACY = pl.Schema({
-        "offense_type_id": pl.Int64,
+    }),
+    Table.OFFENSE_TYPE: MappingProxyType({
         "offense_code": pl.String,
         "offense_name": pl.String,
         "crime_against": pl.String,
@@ -769,46 +409,13 @@ class NibrsSchema(enum.Enum):
         "hc_code": pl.String,
         "offense_category_name": pl.String,
         "offense_group": pl.String,
-    })
-    OFFENSE_TYPE = pl.Schema({
-        "offense_code": pl.String,
-        "offense_name": pl.String,
-        "crime_against": pl.String,
-        "ct_flag": pl.String,
-        "hc_flag": pl.String,
-        "hc_code": pl.String,
-        "offense_category_name": pl.String,
-        "offense_group": pl.String,
-    })
-    SUSPECT_USING_LEGACY = pl.Schema({
-        "suspect_using_id": pl.Int16,
-        "offense_id": pl.Int64,
-    })
-    SUSPECT_USING = pl.Schema({
+    }),
+    Table.SUSPECT_USING: MappingProxyType({
         "data_year": pl.Int16,
         "suspect_using_id": pl.Int16,
         "offense_id": pl.Int64,
-    })
-    VICTIM_LEGACY = pl.Schema({
-        "victim_id": pl.Int64,
-        "incident_id": pl.Int64,
-        "victim_seq_num": pl.Int16,
-        "victim_type_id": pl.Int16,
-        "assignment_type_id": pl.Int16,
-        "activity_type_id": pl.Int16,
-        "outside_agency_id": pl.Int64,
-        "age_id": pl.Int16,
-        "age_num": pl.String,
-        "sex_code": pl.String,
-        "race_id": pl.Int16,
-        "ethnicity_id": pl.Int16,
-        "resident_status_code": pl.String,
-        "agency_data_year": pl.Int16,
-        "ff_line_number": pl.Int64,
-        "age_range_low_num": pl.Int16,
-        "age_code_range_high": pl.Int16,
-    })
-    VICTIM = pl.Schema({
+    }),
+    Table.VICTIM: MappingProxyType({
         "data_year": pl.Int16,
         "victim_id": pl.Int64,
         "incident_id": pl.Int64,
@@ -825,154 +432,159 @@ class NibrsSchema(enum.Enum):
         "resident_status_code": pl.String,
         "age_range_low_num": pl.Int16,
         "age_code_range_high": pl.Int16,
-    })
-    VICTIM_OFFENSE_LEGACY = pl.Schema({
-        "victim_id": pl.Int64,
-        "offense_id": pl.Int64,
-    })
-    VICTIM_OFFENSE = pl.Schema({
+    }),
+    Table.VICTIM_OFFENSE: MappingProxyType({
         "data_year": pl.Int16,
         "victim_id": pl.Int64,
         "offense_id": pl.Int64,
-    })
-
-    def csv_file(self) -> str:
-        return {
-            self.AGE: "nibrs_age.csv",
-            self.AGENCIES: "agencies.csv",
-            self.ARRESTEE_LEGACY: "nibrs_arrestee.csv",
-            self.ARRESTEE_WITH_OFFENSE_TYPE: "nibrs_arrestee.csv",
-            self.ARRESTEE: "nibrs_arrestee.csv",
-            self.CRIMINAL_ACT_LEGACY: "nibrs_criminal_act.csv",
-            self.CRIMINAL_ACT: "nibrs_criminal_act.csv",
-            self.INCIDENT_LEGACY: "nibrs_incident.csv",
-            self.INCIDENT: "nibrs_incident.csv",
-            self.OFFENDER_LEGACY: "nibrs_offender.csv",
-            self.OFFENDER: "nibrs_offender.csv",
-            self.OFFENSE_LEGACY: "nibrs_offense.csv",
-            self.OFFENSE_WITH_OFFENSE_TYPE: "nibrs_offense.csv",
-            self.OFFENSE: "nibrs_offense.csv",
-            self.OFFENSE_TYPE_LEGACY_TERSE: "nibrs_offense_type.csv",
-            self.OFFENSE_TYPE_LEGACY: "nibrs_offense_type.csv",
-            self.OFFENSE_TYPE: "nibrs_offense_type.csv",
-            self.SUSPECT_USING_LEGACY: "nibrs_suspect_using.csv",
-            self.SUSPECT_USING: "nibrs_suspect_using.csv",
-            self.VICTIM_LEGACY: "nibrs_victim.csv",
-            self.VICTIM: "nibrs_victim.csv",
-            self.VICTIM_OFFENSE_LEGACY: "nibrs_victim_offense.csv",
-            self.VICTIM_OFFENSE: "nibrs_victim_offense.csv",
-        }[self]
-
-    def columns(self) -> list[str]:
-        return self.value.names()
-
-    def has_demographics(self) -> bool:
-        return self in (
-            self.ARRESTEE, self.ARRESTEE_LEGACY,
-            self.OFFENDER, self.OFFENDER_LEGACY,
-            self.VICTIM, self.VICTIM_LEGACY
-        )
-
-    def requires_data_year(self) -> bool:
-        return self in (
-            self.ARRESTEE_LEGACY, self.CRIMINAL_ACT_LEGACY, self.INCIDENT_LEGACY,
-            self.OFFENDER_LEGACY, self.OFFENSE_LEGACY, self.SUSPECT_USING_LEGACY,
-            self.VICTIM_LEGACY, self.VICTIM_OFFENSE_LEGACY
-        )
-
-    def requires_offense_code(self) -> bool:
-        return self in (
-            self.ARRESTEE_WITH_OFFENSE_TYPE, self.ARRESTEE_LEGACY,
-            self.OFFENSE_WITH_OFFENSE_TYPE, self.OFFENSE_LEGACY,
-        )
-
-    def columns_to_drop(self) -> None | Sequence[str]:
-        return {
-            self.ARRESTEE_LEGACY: ["arrest_num", "ff_line_number"],
-            self.INCIDENT_LEGACY: ["ddocname", "ff_line_number", "incident_number"],
-            self.OFFENDER_LEGACY: ["ff_line_number"],
-            self.OFFENSE_LEGACY: ["ff_line_number"],
-            self.VICTIM_LEGACY: ["agency_data_year", "ff_line_number"],
-        }.get(self)
-
-    def _actual_column_names(self, path: Path) -> list[str]:
-        with open(path / self.csv_file(), mode="r", encoding="utf8") as file:
-            # Chop off newline, split by commas, normalize to lower case...
-            actual = (c.lower() for c in file.readline()[:-1].split(","))
-            # Strip off double quotes...
-            actual = [(c[1:-1] if c[0] == '"' and c[-1] == '"' else c) for c in actual]
-        return actual
-
-    def _pick(self, year: int, columns: list[str]) -> "NibrsSchema":
-        if year <= 2015:
-            schemas = {
-                self.ARRESTEE: (self.ARRESTEE_WITH_OFFENSE_TYPE, self.ARRESTEE_LEGACY),
-                self.CRIMINAL_ACT: (self.CRIMINAL_ACT, self.CRIMINAL_ACT_LEGACY),
-                self.INCIDENT: (self.INCIDENT, self.INCIDENT_LEGACY),
-                self.OFFENDER: (self.OFFENDER, self.OFFENDER_LEGACY),
-                self.OFFENSE: (self.OFFENSE_WITH_OFFENSE_TYPE, self.OFFENSE_LEGACY),
-                self.OFFENSE_TYPE: (
-                    self.OFFENSE_TYPE_LEGACY, self.OFFENSE_TYPE_LEGACY_TERSE
-                ),
-                self.SUSPECT_USING: (self.SUSPECT_USING, self.SUSPECT_USING_LEGACY),
-                self.VICTIM: (self.VICTIM, self.VICTIM_LEGACY),
-                self.VICTIM_OFFENSE: (self.VICTIM_OFFENSE, self.VICTIM_OFFENSE_LEGACY),
-            }.get(self)
-            if schemas is None:
-                return self
-
-            matching, fallback = schemas
-            matching_columns = matching.columns()
-            if matching is self.VICTIM:
-                matching_columns[-1] = "age_range_high_num"
-            return matching if columns == matching_columns else fallback
-
-        if year <= 2020:
-            legacy = {
-                self.ARRESTEE: self.ARRESTEE_WITH_OFFENSE_TYPE,
-                self.OFFENSE: self.OFFENSE_WITH_OFFENSE_TYPE,
-                self.OFFENSE_TYPE: self.OFFENSE_TYPE_LEGACY,
-            }.get(self)
-            if legacy is not None:
-                return legacy
-
-        return self
-
-    def pick(self, year: int, path: Path) -> "NibrsSchema":
-        actual_columns = self._actual_column_names(path)
-        effective_schema = self._pick(year, actual_columns)
-
-        if self is self.AGENCIES and year <= 2020:
-            expected_columns = ORIGINAL_AGENCY_COLUMNS
-        elif self is self.VICTIM and year <= 2020:
-            expected_columns = effective_schema.columns()
-            expected_columns[-1] = "age_range_high_num"
-        else:
-            expected_columns = effective_schema.columns()
-
-        if expected_columns == actual_columns:
-            return effective_schema
-
-        expected_columns = [f"{name}\n" for name in expected_columns]
-        actual_columns = [f"{name}\n" for name in actual_columns]
-
-        from difflib import ndiff
-        diff = "    ".join(ndiff(expected_columns, actual_columns))
-        raise AssertionError(
-            f"{path}/{self.csv_file()} doesn't have expected columns:\n    {diff}"
-        )
+    }),
+})
 
 
-_AGENCY_COLUMN_MAP = {
-    "female_officer+female_civilian": "ped.female_civilian+ped.female_officer",
-    "male_officer+male_civilian": "ped.male_officer+ped.male_civilian",
-    "officer_rate": "0",
-    "employee_rate": "0"
-}
+# --------------------------------------------------------------------------------------
 
-ORIGINAL_AGENCY_COLUMNS = [
-    _AGENCY_COLUMN_MAP.get(c, c) for c in NibrsSchema.AGENCIES.value.keys()
-]
+
+@functools.cache
+def _read_column_names(path: Path) -> Sequence[str]:
+    # The column names are needed when picking the right schema for tables
+    # dating from 2015 or earlier.
+    with open(path, mode="r", encoding="utf8") as file:
+        # Chop off newline, split by commas, normalize to lower case...
+        actual = (c.lower() for c in file.readline()[:-1].split(","))
+        # Strip off double quotes...
+        actual = [(c[1:-1] if c[0] == '"' and c[-1] == '"' else c) for c in actual]
+    return actual
+
+
+def _insert_columns(
+    columns: dict[str, ColumnType],
+    updates: Mapping[str, tuple[ColumnType, None | str]]
+) -> dict[str, ColumnType]:
+    if len(updates) == 0:
+        return columns
+
+    successors = {p: (c, t) for c, (t, p) in updates.items()}
+    result = {}
+
+    if None in successors:
+        c, t = successors[None]
+        result[c] = t
+
+    for c, t in columns.items():
+        result[c] = t
+        while c in successors:
+            c, t = successors[c]
+            result[c] = t
+
+    return result
+
+
+# --------------------------------------------------------------------------------------
+
+
+class EffectiveSchema:
+    """The effective schema for the CSV data representing a table."""
+
+    def __init__(
+        self,
+        table: Table,
+        year: int,
+        directory: Path,
+        schema: dict[str, ColumnType],
+    ) -> None:
+        self._table = table
+        self._year = year
+        self._directory = directory
+        self._schema = schema
+
+    @property
+    def table(self) -> Table:
+        return self._table
+
+    @property
+    def year(self) -> int:
+        return self._year
+
+    @property
+    def directory(self) -> Path:
+        return self._directory
+
+    @property
+    def value(self) -> dict[str, ColumnType]:
+        """The effective schema value."""
+        return self._schema
+
+    def normalize[F: (pl.DataFrame, pl.LazyFrame)](
+        self,
+        frame: F,
+        offense_type: None | F,
+        is_legacy_age: bool,
+    ) -> F:
+        """Normalize the data frame against this schema."""
+        reorder_columns = False
+        if self._year <= 2015:
+            cs = self._table.optional_columns_until_2015
+            if len(cs) != 0:
+                frame = frame.drop(*cs.keys(), strict=False)
+
+            if self._table.maybe_no_data_year_until_2015:
+                # with_columns() allows redundant addition of column
+                frame = frame.with_columns(
+                    pl.lit(self._year, dtype=pl.Int16).alias("data_year")
+                )
+                reorder_columns = True
+
+        if self._year <= 2020:
+            if self._table is not Table.AGENCIES:
+                cs = self._table.column_names_after_2020
+                if len(cs) != 0:
+                    frame = frame.rename(cs)
+
+            if self._table.has_offense_type_until_2020:
+                assert offense_type is not None
+                frame = frame.join(
+                    offense_type,
+                    on="offense_type_id",
+                    how="left",
+                )
+                reorder_columns = True
+
+        if reorder_columns:
+            frame = frame.select(
+                self._table.latest_schema.keys()
+            )
+
+        if self._table.has_demographics:
+            frame = frame.with_columns(
+                AGE_IN_YEARS_V1 if is_legacy_age else AGE_IN_YEARS_V2
+            )
+
+            if self._year <= 2020:
+                # Account for out-dated encoding
+                frame = frame.with_columns(
+                    pl.col(Id.ETHNICITY).replace_strict(
+                        Ethnicity.legacy_value_map(),
+                        return_dtype=pl.Int16,
+                    ),
+                    pl.col(Id.RACE).replace_strict(
+                        Race.legacy_value_map(),
+                        return_dtype=pl.Int16,
+                    ),
+                    pl.col(Id.SEX).replace({"": Sex.NOT_SPECIFIED})
+                )
+
+        return frame
+
+    def validate(self, frame: pl.DataFrame) -> None:
+        """Validate the given data frame against this schema."""
+        if self._table.primary_key is not None:
+            n_unique = frame.select(pl.col(self._table.primary_key).n_unique()).item()
+            if n_unique != frame.height:
+                raise AssertionError(
+                    f'frame has {n_unique:,} different values '
+                    f'across {frame.height:,} rows '
+                    f'in primary key column "{self._table.primary_key}"'
+                )
 
 
 class SchemaExtension(enum.Enum):
@@ -1020,6 +632,7 @@ class SchemaExtension(enum.Enum):
 
 # ======================================================================================
 # NIBRS Data
+
 
 AGE_IN_YEARS_V1 = pl.when(
     pl.col("age_id").is_in([1, 2, 3])
@@ -1101,6 +714,7 @@ class Id(enum.StrEnum):
     """The NIBRS identifiers serving as foreign keys."""
     ACTIVITY = "activity"
     AGE = "age_id"
+    AGE_CODE = "age_code"
     AGE_VALUE = "age_num"
     AGENCY = "agency_id"
     ARRESTEE = "arrestee_id"
@@ -1111,9 +725,13 @@ class Id(enum.StrEnum):
     GROUP = "age_group"
     INCIDENT = "incident_id"
     LOCATION = "location_id"
+    MATERIAL = "material"
     OFFENDER = "offender_id"
     OFFENSE = "offense_id"
+    OFFENSE_CODE = "offense_code"
+    OFFENSE_TYPE = "offense_type_id"
     RACE = "race_id"
+    ROLE = "role"
     SEX = "sex_code"
     SUSPECT_USING = "suspect_using_id"
     VICTIM = "victim_id"

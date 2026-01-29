@@ -1,19 +1,16 @@
-from .data import (
-    compute_us_age_distribution, CsamData, load, load_all_us_csam, load_all_us_porn
-)
 from .model import (
     Activity, Clearance, Column, CriminalAct, Entry, Ethnicity, Group, humanize_frame,
-    humanize_values, Id, JuvenileDisposition, Location, NIBRS_SOURCE_FILES,
-    NibrsSchema, NibrsTable, OffenseCode, Race, SchemaExtension, Sex, Using
+    humanize_values, Id, JuvenileDisposition, Location, OffenseCode, Race,
+    SchemaExtension, Sex, Using
 )
+
+from .reader import us_age_distributions
 
 __all__ = (
     "Activity",
     "Clearance",
     "Column",
-    "compute_us_age_distribution",
     "CriminalAct",
-    "CsamData",
     "Entry",
     "Ethnicity",
     "Group",
@@ -21,16 +18,11 @@ __all__ = (
     "humanize_values",
     "Id",
     "JuvenileDisposition",
-    "load",
-    "load_all_us_csam",
-    "load_all_us_porn",
     "Location",
-    "NIBRS_SOURCE_FILES",
-    "NibrsSchema",
-    "NibrsTable",
     "OffenseCode",
     "Race",
     "SchemaExtension",
     "Sex",
     "Using",
+    "us_age_distributions",
 )

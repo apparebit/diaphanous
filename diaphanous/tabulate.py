@@ -866,7 +866,9 @@ printr()
         self.end_col()
 
         self.h3("United States")
-        frame = nibrs.load_all_us_csam().offender_demographics().age_distribution()
+        frame = nibrs.us_age_distributions().filter(
+            pl.col("metric").eq("United States CSAM Offenders")
+        )
         frame = frame.drop_nulls(
             ["age_group", "sex"],
         ).group_by(

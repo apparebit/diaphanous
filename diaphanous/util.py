@@ -7,8 +7,6 @@ import numpy as np
 import polars as pl
 import great_tables as gt
 
-from ._const import TOTAL
-
 
 COUNTRIES = [
     "Australia",
@@ -169,12 +167,13 @@ def add_empty_year[F: (pl.DataFrame, pl.LazyFrame)](frame: F, year: int) -> F:
 def finish_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](
     frame: F,
     country: str,
-    material: Literal["CSAM", "Porn"],
+    material: None | Literal["CSAM", "Porn"],
     role: Literal["Offender", "Arrestee"],
     juvenile_min: int,
     juvenile_max: int,
+    sorted: bool = True,
 ) -> F:
-    return frame.with_columns(
+    frame = frame.with_columns(
         pl.when(
             pl.col("age").lt(juvenile_min)
         ).then(
@@ -189,18 +188,36 @@ def finish_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](
             pl.lit("Adult", dtype=pl.String)
         ).alias("age_group"),
     ).with_columns(
-        pl.col("age_group").replace(
-            AGE_GROUP_ORDER, return_dtype=pl.Int8
-        ).alias("age_group_order")
-    ).with_columns(
+        pl.col("age_group").replace_strict(
+            AGE_GROUP_ORDER,
+            return_dtype=pl.Int8,
+        ).alias("age_group_order"),
         pl.lit(country, dtype=pl.String).alias("country"),
-        pl.lit(material, dtype=pl.Enum(["CSAM", "Porn"])).alias("material"),
         pl.lit(role, dtype=pl.Enum(["Offender", "Arrestee"])).alias("role"),
-        pl.lit(f"{country} {material} {role}s", dtype=pl.Enum(METRICS)).alias("metric"),
-    ).with_columns(
+        pl.col("sex").replace_strict(
+            SEX_ORDER,
+            return_dtype=pl.Int8,
+        ).alias("sex_order")
+    )
+
+    if material is None:
+        frame = frame.with_columns(
+            pl.format(
+                f"{country} {{}} {role}s", pl.col("material")
+            ).cast(
+                pl.Enum(METRICS)
+            ).alias("metric")
+        )
+    else:
+        frame = frame.with_columns(
+            pl.lit(material, dtype=pl.Enum(["CSAM", "Porn"])).alias("material"),
+            pl.lit(
+                f"{country} {material} {role}s", dtype=pl.Enum(METRICS)
+            ).alias("metric"),
+        )
+
+    frame = frame.with_columns(
         pl.col("metric").replace(METRIC_ORDER).alias("metric_order"),
-    ).with_columns(
-        pl.col("sex").replace(SEX_ORDER, return_dtype=pl.Int8).alias("sex_order")
     ).select(
         pl.col(
             "country", "material", "role", "metric", "metric_order",
@@ -210,7 +227,16 @@ def finish_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](
             "ethnicity", "activity",
             "count"
         )
-    ).sort(
+    )
+
+    if sorted:
+        frame = sort_age_distribution(frame)
+
+    return frame
+
+
+def sort_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](frame: F) -> F:
+    return frame.sort(
         "metric_order", "data_year", "age", "sex_order", "ethnicity", "activity"
     ).with_columns(
         pl.col("country").cast(pl.Enum(COUNTRIES)),
@@ -220,6 +246,7 @@ def finish_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](
         pl.col("metric_order").cast(pl.Int8),
         pl.col("data_year").cast(pl.Int16),
         pl.col("age").cast(pl.Int8),
+        pl.col("activity").cast(pl.Enum(["Consumer", "Producer"])),
     )
 
 
