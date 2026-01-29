@@ -391,18 +391,13 @@ def plot_cdf_grid(
                     color="#ffffff",
                 ))
             grid.append([])
-            grid.append([])
 
         country = labels[0]
         material_role = f"{labels[1]} {labels[2]}s"
 
-        grid[-2].append(_plot_age_sex_cdfs(group, country, material_role).properties(
-            width=cell_width,
-            height=cell_height,
-        ))
         grid[-1].append(_plot_age_sex_bands(group, country, material_role).properties(
             width=cell_width,
-            height=cell_small_height,
+            height=cell_height,
         ))
 
     rows = [
@@ -418,8 +413,8 @@ def plot_cdf_grid(
         x="shared",
     ).properties(
         title=alt.Title(
-            "Cumulative Distributions for Female (Pink) and Male (Blue) Perpetrators "
-            "by Age (0→100), Year (Light to Dark), and Country",
+            "Ten-Year Spread of Cumulative Distributions for Female and Male "
+            "Perpetrators by Age and Country",
             fontSize=40,
             fontWeight="bold",
             anchor="start",
@@ -478,13 +473,19 @@ def _plot_age_sex_bands(
     frame: pl.DataFrame, country: str, material_role: str
 ) -> alt.LayerChart:
     extrema = compute_age_sex_cdf_extrema(frame)
+    majority = 20 if country == "New Zealand" else 18
+    minors = extrema.filter(pl.col("age").le(majority))
+    adults = extrema.filter(pl.col("age").ge(majority))
+
     return alt.layer(
-        _plot_cdf_band(extrema, "female_cdf", color=f"{Palette.PINK}d0"),
-        _plot_cdf_band(extrema, "male_cdf", color=f"{Palette.BLUE}80"),
+        _plot_cdf_band(minors, "female_cdf", color=f"{Palette.PINK}d0"),
+        _plot_cdf_band(adults, "female_cdf", color=f"{Palette.GRAY}80"),
+        _plot_cdf_band(minors, "male_cdf", color=f"{Palette.BLUE}80"),
+        _plot_cdf_band(adults, "male_cdf", color=f"{Palette.GRAY}80"),
         alt.Chart().mark_rule(
             color=Palette.BLACK,
-            strokeWidth=4,
-            strokeDash=(10, 5),
+            strokeWidth=3,
+            strokeDash=(12, 6),
         ).encode(
             alt.XDatum(20 if country == "New Zealand" else 18)
         ),
