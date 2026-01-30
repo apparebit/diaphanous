@@ -1150,7 +1150,9 @@ printr()
 
         fig = plot_odds_ratio_grid(
             compute_odds_ratios(
-                activity_data,
+                activity_data.with_columns(
+                    pl.col("activity_order").mul(-1)
+                ),
                 "age_group",
                 "activity",
                 x_order="age_group_order",
