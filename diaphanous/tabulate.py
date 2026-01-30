@@ -1116,6 +1116,7 @@ printr()
                 "Germany CSAM Offenders",
                 "New Zealand CSAM Offenders",
                 "United States CSAM Offenders",
+                "United States CSAM Arrestees",
             ])
         )
 
