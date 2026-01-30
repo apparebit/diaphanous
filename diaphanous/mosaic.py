@@ -938,7 +938,7 @@ def plot_odds_ratio_grid(
         else:
             outlier_text = []
 
-        if min_ci < 1.0 < max_ci:
+        if 1.0 < max_ci:
             independence_rule = [base.mark_rule(
                 strokeWidth=2.5,
                 strokeDash=(8, 4),
