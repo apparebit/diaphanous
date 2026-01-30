@@ -4,7 +4,7 @@ import polars as pl
 
 from .aunz import au_age_distribution, nz_age_distribution
 from .bka import de_age_distribution
-from .nibrs import us_age_distributions
+from .nibrs import done_ingestion, step_ingestion, us_age_distributions
 from .util import add_empty_year, finish_age_distribution, to_minor_adult
 
 
@@ -187,7 +187,10 @@ def it_age_distribution() -> pl.LazyFrame:
 
 
 
-def load_all_age_distributions(compact: bool = False) -> dict[str, pl.DataFrame]:
+def load_all_age_distributions(
+    compact: bool = False,
+    verbose: bool = False,
+) -> dict[str, pl.DataFrame]:
     """
     Load all age distributions. The resulting dictionary uses ISO two-letter
     codes to identify countries, with "us" followed by CSAM/porn and
@@ -195,7 +198,10 @@ def load_all_age_distributions(compact: bool = False) -> dict[str, pl.DataFrame]
     also is sorted alphabetically by country name. Each frame, in turn, is
     sorted by year, age, sex, ethnicity, and activity.
     """
-    us = us_age_distributions()
+    if verbose:
+        us = us_age_distributions(step_ingestion, done_ingestion)
+    else:
+        us = us_age_distributions()
     csam_offenders = us.filter(pl.col("metric").eq("United States CSAM Offenders"))
     csam_arrestees = us.filter(pl.col("metric").eq("United States CSAM Arrestees"))
     porn_offenders = us.filter(pl.col("metric").eq("United States Porn Offenders"))
@@ -270,7 +276,7 @@ if __name__ == "__main__":
     pl.Config.set_tbl_cell_numeric_alignment("RIGHT")
 
     # _WIDTH, _ = shutil.get_terminal_size()
-    compact = load_all_age_distributions(compact=True)
+    compact = load_all_age_distributions(compact=True, verbose=True)
     frame = pl.concat(compact.values())
     frame.write_csv("data/age-distributions.csv")
 

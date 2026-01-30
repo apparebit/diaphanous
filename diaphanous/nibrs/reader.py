@@ -416,25 +416,36 @@ def _prepare_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](
     )
 
 
+def step_ingestion(year: int, state: str) -> None:
+    print("\x1b[G" f"Ingesting NIBRS data for {year} {state}...", end="", flush=True)
+
+
+def done_ingestion() -> None:
+    print()
+
+
 def us_age_distributions(
-    trace: Callable[[int, str], None] = lambda year, state: None,
+    step: None | Callable[[int, str], None] = None,
+    done: None | Callable[[], None] = None,
 ) -> pl.DataFrame:
     """
     Build a data frame with the age distributions for offenders and arrestees
     involved in either CSAM or porn offenses.
     """
     root = Path(__file__).parent.parent.parent / "data" / "nibrs"
-    cache = root / "age-distribution.parquet"
+    cache = root / "age-distributions.parquet"
 
     if cache.exists():
         return pl.read_parquet(cache)
+
+    do_step = step or (lambda year, state: None)
 
     all_offenders = []
     all_arrestees = []
     for year in range(2015, 2025):
         path = Path(__file__).parent.parent.parent / "data" / "nibrs" / f"{year}"
         for archive in sorted(path.glob("??-????.zip")):
-            trace(year, archive.name[:2])
+            do_step(year, archive.name[:2])
             reader = Reader(archive)
             offenders, arrestees = reader.ingest_age_distributions()
             all_offenders.append(offenders)
@@ -443,20 +454,20 @@ def us_age_distributions(
     frame = sort_age_distribution(
         pl.concat((*all_offenders, *all_arrestees))
     )
+
     if isinstance(frame, pl.LazyFrame):
         frame = frame.collect()
-
     frame.write_parquet(cache)
+
+    if done is not None:
+        done()
+
     return frame
 
 
 if __name__ == "__main__":
-    def trace(year: int, state: str) -> None:
-        print("\x1b[G" f"ingested {year} {state}", end="", flush=True)
-
     print()
-    frame = us_age_distributions(trace)
-    print()
+    frame = us_age_distributions(step_ingestion, done_ingestion)
 
     for metric in (
         "United States CSAM Offenders",

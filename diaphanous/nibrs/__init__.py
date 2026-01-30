@@ -4,13 +4,14 @@ from .model import (
     SchemaExtension, Sex, Using
 )
 
-from .reader import us_age_distributions
+from .reader import done_ingestion, step_ingestion, us_age_distributions
 
 __all__ = (
     "Activity",
     "Clearance",
     "Column",
     "CriminalAct",
+    "done_ingestion",
     "Entry",
     "Ethnicity",
     "Group",
@@ -23,6 +24,7 @@ __all__ = (
     "Race",
     "SchemaExtension",
     "Sex",
+    "step_ingestion",
     "Using",
     "us_age_distributions",
 )
