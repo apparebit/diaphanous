@@ -42,6 +42,12 @@ ROLES = [
 ]
 
 
+ACTIVITY_ORDER = {
+    "Producer": -1,
+    None: 0,
+    "Consumer": 1,
+}
+
 AGE_GROUP_ORDER = {
     None: 0,
     "Child": 1,
@@ -197,7 +203,11 @@ def finish_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](
         pl.col("sex").replace_strict(
             SEX_ORDER,
             return_dtype=pl.Int8,
-        ).alias("sex_order")
+        ).alias("sex_order"),
+        pl.col("activity").replace_strict(
+            ACTIVITY_ORDER,
+            return_dtype=pl.Int8,
+        ).alias("activity_order"),
     )
 
     if material is None:
@@ -224,7 +234,8 @@ def finish_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](
             "data_year",
             "age", "age_group", "age_group_order",
             "sex", "sex_order",
-            "ethnicity", "activity",
+            "ethnicity",
+            "activity", "activity_order",
             "count"
         )
     )
@@ -237,7 +248,7 @@ def finish_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](
 
 def sort_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](frame: F) -> F:
     return frame.sort(
-        "metric_order", "data_year", "age", "sex_order", "ethnicity", "activity"
+        "metric_order", "data_year", "age", "sex_order", "ethnicity", "activity_order"
     ).with_columns(
         pl.col("country").cast(pl.Enum(COUNTRIES)),
         pl.col("material").cast(pl.Enum(["CSAM", "Porn"])),
