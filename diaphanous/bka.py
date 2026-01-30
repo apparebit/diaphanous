@@ -382,9 +382,7 @@ class Data:
             pl.col("sex"),
             pl.lit(None, dtype=pl.String).alias("ethnicity"),
             pl.col("activity", "count"),
-        ).explode("age").sort(
-            Id.YEAR, "age", "sex", "activity"
-        )
+        ).explode("age")
 
         return finish_age_distribution(frame, "Germany", "CSAM", "Offender", 14, 17)
 
