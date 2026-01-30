@@ -777,7 +777,7 @@ printr()
         frame = aunz.nz_age_distribution().collect().drop_nulls(
             ["age_group", "sex"]
         ).group_by(
-            pl.col("data_year", "age_group", "sex", "activity")
+            "data_year", "age_group", "sex", "activity", maintain_order=True
         ).agg(
             pl.col("count").sum()
         )
@@ -872,7 +872,8 @@ printr()
         frame = frame.drop_nulls(
             ["age_group", "sex"],
         ).group_by(
-            pl.col("data_year", "age_group", "ethnicity", "sex", "activity")
+            "data_year", "age_group", "ethnicity", "sex", "activity",
+            maintain_order=True
         ).agg(
             pl.col("count").sum()
         )
@@ -969,7 +970,7 @@ printr()
         self.html("<div class=wide>\n")
         self.h3("Age Distribution of Offenders: The Last Two Years")
 
-        distributions = crimestat.load_all_age_distributions()
+        distributions = crimestat.load_all_age_distributions(verbose=True)
         data = self.filter_years(distributions, *self.DETAIL_YEARS)
 
         fig = alt.vconcat(
@@ -996,7 +997,7 @@ printr()
 
     def emit_age_distributions(self) -> None:
         self.h3("Perpetrator Age Distributions Over the Last Decade")
-        distributions = crimestat.load_all_age_distributions()
+        distributions = crimestat.load_all_age_distributions(verbose=True)
         full_data = pl.concat(
             self.filter_years(distributions, *self.THUMB_YEARS).values()
         )
@@ -1004,7 +1005,7 @@ printr()
         # All distributions
         self.html("<div class=extra-wide>\n")
         fig = plot_sex_by_age_grid(full_data)
-        path = "figure/age-sex-pyramid-grid.svg"
+        path = "figure/age-sex-pyramids.svg"
         fig.save(path)
         self.svg(path)
 
@@ -1013,7 +1014,7 @@ printr()
         fig = plot_sex_by_age_detailed(
             detail_data["us_csam_offenders"], "US", "CSAM", "Offender"
         )
-        path = "figure/us-age-distribution-detail.svg"
+        path = "figure/us-age-sex-detail.svg"
         fig.save(path)
         self.svg(path)
 
@@ -1027,11 +1028,7 @@ printr()
                 "Minor": {
                     "Male": Palette.LIGHT_BLUE,
                     "Female": Palette.PINK,
-                    None: Palette.BLACK,
                 },
-                "Adult": {
-                    None: Palette.BLACK,
-                }
             },
             use_minor=True,
             include_null=True,
@@ -1049,7 +1046,7 @@ printr()
                 "age and sex in white."
             ),
         )
-        path = "figure/age-sex-mosaic-grid.svg"
+        path = "figure/age-sex-mosaics.svg"
         fig.save(path)
         self.svg(path)
 
@@ -1083,7 +1080,7 @@ printr()
                 "age and sex in white."
             ),
         )
-        path = "figure/age-sex-mosaic-residual-grid.svg"
+        path = "figure/age-sex-residual-mosaics.svg"
         fig.save(path)
         self.svg(path)
 
@@ -1099,18 +1096,74 @@ printr()
                 use_minor=True
             )
         )
-        path = "figure/odds-ratio-grid.svg"
+        path = "figure/age-sex-odds-ratios.svg"
         fig.save(path)
         self.svg(path)
 
         cdfs = compute_age_cdfs(full_data)
         fig = plot_cdf_grid(cdfs)
-        path = "figure/age-sex-cdf-grid.svg"
+        path = "figure/age-sex-cdfs.svg"
         fig.save(path)
         self.svg(path)
         self.html("</div>\n")
 
+        # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+        self.h3("Marginal Distributions of Age vs Producers/Consumers")
+        self.html("<div class=extra-wide>\n")
 
+        activity_data = full_data.filter(
+            pl.col("metric").is_in([
+                "Germany CSAM Offenders",
+                "New Zealand CSAM Offenders",
+                "United States CSAM Offenders",
+            ])
+        )
+
+        frame = make_mosaic_frame(
+            activity_data,
+            x_axis="age_group",
+            y_axis="activity",
+            index={
+                "age_group": ["Minor", None, "Adult"],
+                "activity": ["Producer", None, "Consumer"],
+            },
+            highlights={
+                "Minor": {
+                    "Producer": Palette.RED,
+                    "Consumer": Palette.ORANGE,
+                },
+            },
+            use_minor=True,
+            include_null=True,
+            show_counts=True,
+            show_percent=True,
+        )
+
+        fig = plot_mosaic_grid(
+            frame,
+            x_label="Age Group",
+            y_label="Activity",
+        )
+        path = "figure/age-activity-mosaics.svg"
+        fig.save(path)
+        self.svg(path)
+
+        fig = plot_odds_ratio_grid(
+            compute_odds_ratios(
+                activity_data,
+                "age_group",
+                "activity",
+                x_order="age_group_order",
+                y_order="activity_order",
+                use_minor=True,
+            )
+        )
+        path = "figure/age-activity-odds-ratios.svg"
+        fig.save(path)
+        self.svg(path)
+        self.html("</div>\n")
+
+        # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         self.h3("Notes")
         self.html("""
         <p>In the above age distributions, a <em>child</em> is younger than the
