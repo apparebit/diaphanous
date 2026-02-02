@@ -285,18 +285,6 @@ class Reader:
             Table.VICTIM: victims,
         }
 
-    def ingest_age_distributions(self) -> tuple[FrameType, FrameType]:
-        """
-        Ingest the age distributions for offenders and arrestees (in that
-        order). The two age distributions are not sorted.
-        """
-        frames = self.ingest_all()
-
-        return (
-            _prepare_age_distribution(frames[Table.OFFENDER], "Offender"),
-            _prepare_age_distribution(frames[Table.ARRESTEE], "Arrestee"),
-        )
-
 
 def _prepare_criminal_acts[F: (pl.DataFrame, pl.LazyFrame)](frame: F) -> F:
     """
@@ -353,6 +341,88 @@ def _prepare_criminal_acts[F: (pl.DataFrame, pl.LazyFrame)](frame: F) -> F:
             pl.Enum(["Consumer", "Producer"])
         ).alias(Id.ACTIVITY)
     )
+
+
+def step_ingestion(year: int, state: str) -> None:
+    print("\x1b[G" f"Ingesting NIBRS data for {year} {state}...", end="", flush=True)
+
+
+def done_ingestion() -> None:
+    print()
+
+
+_DATA_ROOT = Path(__file__).parent.parent.parent / "data" / "nibrs"
+
+def ingest_tables(
+    step: None | Callable[[int, str], None] = None,
+) -> Mapping[Table, FrameType]:
+    """
+    Build data frames with the un-accumulated case data for arrestees,
+    incidents, offenders, and victims involving porn.
+    """
+    do_step = step or (lambda year, state: None)
+
+    all_arrestees = []
+    all_incidents = []
+    all_offenders = []
+    all_victims = []
+
+    for year in range(2015, 2025):
+        path = _DATA_ROOT / f"{year}"
+        for archive in sorted(path.glob("??-????.zip")):
+            do_step(year, archive.name[:2])
+            reader = Reader(archive)
+            tables = reader.ingest_all()
+            all_arrestees.append(tables[Table.ARRESTEE])
+            all_incidents.append(tables[Table.INCIDENT])
+            all_offenders.append(tables[Table.OFFENDER])
+            all_victims.append(tables[Table.VICTIM])
+
+    return {
+        Table.ARRESTEE: pl.concat(all_arrestees),
+        Table.INCIDENT: pl.concat(all_incidents),
+        Table.OFFENDER: pl.concat(all_offenders),
+        Table.VICTIM: pl.concat(all_victims)
+    }
+
+
+def ingest_age_distributions(
+    step: None | Callable[[int, str], None] = None,
+) -> pl.DataFrame:
+    """Ingest the age distributions from the per year and state archives."""
+    tables = ingest_tables(step)
+
+    distribution = sort_age_distribution(
+        pl.concat([
+            _prepare_age_distribution(tables[Table.OFFENDER], "Offender"),
+            _prepare_age_distribution(tables[Table.ARRESTEE], "Arrestee"),
+        ])
+    )
+
+    if isinstance(distribution, pl.LazyFrame):
+        distribution = distribution.collect()
+    return distribution
+
+
+def us_age_distributions(
+    step: None | Callable[[int, str], None] = None,
+    done: None | Callable[[], None] = None,
+) -> pl.DataFrame:
+    """
+    Build a data frame with the age distributions for offenders and arrestees
+    involved in either CSAM or porn offenses. This function stores the result.
+    """
+    cache = _DATA_ROOT / "age-distributions.parquet"
+    if cache.exists():
+        return pl.read_parquet(cache)
+
+    distributions = ingest_age_distributions(step)
+    distributions.write_parquet(cache)
+
+    if done is not None:
+        done()
+
+    return distributions
 
 
 def _prepare_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](
@@ -414,55 +484,6 @@ def _prepare_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](
         17,
         sorted=False,
     )
-
-
-def step_ingestion(year: int, state: str) -> None:
-    print("\x1b[G" f"Ingesting NIBRS data for {year} {state}...", end="", flush=True)
-
-
-def done_ingestion() -> None:
-    print()
-
-
-def us_age_distributions(
-    step: None | Callable[[int, str], None] = None,
-    done: None | Callable[[], None] = None,
-) -> pl.DataFrame:
-    """
-    Build a data frame with the age distributions for offenders and arrestees
-    involved in either CSAM or porn offenses.
-    """
-    root = Path(__file__).parent.parent.parent / "data" / "nibrs"
-    cache = root / "age-distributions.parquet"
-
-    if cache.exists():
-        return pl.read_parquet(cache)
-
-    do_step = step or (lambda year, state: None)
-
-    all_offenders = []
-    all_arrestees = []
-    for year in range(2015, 2025):
-        path = Path(__file__).parent.parent.parent / "data" / "nibrs" / f"{year}"
-        for archive in sorted(path.glob("??-????.zip")):
-            do_step(year, archive.name[:2])
-            reader = Reader(archive)
-            offenders, arrestees = reader.ingest_age_distributions()
-            all_offenders.append(offenders)
-            all_arrestees.append(arrestees)
-
-    frame = sort_age_distribution(
-        pl.concat((*all_offenders, *all_arrestees))
-    )
-
-    if isinstance(frame, pl.LazyFrame):
-        frame = frame.collect()
-    frame.write_parquet(cache)
-
-    if done is not None:
-        done()
-
-    return frame
 
 
 if __name__ == "__main__":

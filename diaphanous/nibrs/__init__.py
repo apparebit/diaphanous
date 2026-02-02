@@ -4,7 +4,11 @@ from .model import (
     SchemaExtension, Sex, Using
 )
 
-from .reader import done_ingestion, step_ingestion, us_age_distributions
+from .reader import (
+    done_ingestion, ingest_age_distributions, ingest_tables, step_ingestion,
+    us_age_distributions,
+)
+
 
 __all__ = (
     "Activity",
@@ -18,6 +22,8 @@ __all__ = (
     "humanize_frame",
     "humanize_values",
     "Id",
+    "ingest_age_distributions",
+    "ingest_tables",
     "JuvenileDisposition",
     "Location",
     "OffenseCode",
