@@ -1708,6 +1708,15 @@ def juxtapose(frame: pl.DataFrame) -> pl.DataFrame:
     ).collect()
 
 
+def format_percent(value: None | float) -> str:
+    if value is None:
+        return ""
+    if value < 0.000005:
+        return "ε"
+
+    return f"{value * 100:0.3f}%"
+
+
 def format_juxtaposition(frame: pl.DataFrame, with_highlights: bool = False) -> gt.GT:
     """Format the juxtaposition as a great table."""
 
@@ -1807,7 +1816,7 @@ def format_juxtaposition(frame: pl.DataFrame, with_highlights: bool = False) -> 
         columns="pct_diff",
         zero_text="≡",
     ).fmt(
-        lambda x: "ε" if x < 0.000005 else f"{x * 100:0.3f}%",
+        format_percent,
         columns="pct_total",
         is_substitution=True,
     ).opt_table_font(
@@ -1833,6 +1842,11 @@ def get_options() -> Any:
         action="store_true",
         dest="with_platforms",
         help="audit platforms' report counts",
+    )
+    parser.add_argument(
+        "--with-icc",
+        action="store_true",
+        help="compute ICC for platform counts",
     )
     parser.add_argument(
         "--crimes",
