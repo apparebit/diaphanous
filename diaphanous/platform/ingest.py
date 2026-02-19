@@ -1,7 +1,6 @@
 from collections import defaultdict
-from collections.abc import Sequence
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
-from itertools import chain
 import re
 from typing import cast, Callable, ClassVar, Literal, NamedTuple, TypeAlias
 
@@ -41,7 +40,7 @@ def _ingest_period(platform: str, period: str) -> pd.Period:
 # Cell Values
 
 
-_InternalSchemaEntry: TypeAlias = Literal["Int64", "float64", "string"]
+_InternalSchemaEntry: TypeAlias = Literal["bool", "Int64", "float64", "string"]
 
 _SCHEMA_ENTRIES: dict[SchemaEntryType, _InternalSchemaEntry] = {
     "int": "Int64",
@@ -153,6 +152,7 @@ def ingest_table(
     platform: str, data: DisclosureType, include_redundant: bool = False
 ) -> pd.DataFrame:
     # Warm up.
+    assert "columns" in data
     columns = list(data["columns"])
     raw_schema = data.get("schema", {})
 
@@ -171,6 +171,7 @@ def ingest_table(
 
     # Ingest rows.
     indexed_rows = []
+    assert "rows" in data
     for row_data in data["rows"]:
         row = _ingest_row(
             platform, row_data, columns, schema, include_redundant=include_redundant
@@ -194,45 +195,34 @@ def ingest_table(
 def _compute_columns(
     platform: str, data: DisclosureType, table: pd.DataFrame
 ) -> pd.DataFrame:
-    if "sums" not in data and "products" not in data:
+    if "sums" not in data:
         return table
 
-    for computation in ("sums", "products"):
-        if computation not in data:
-            continue
+    for target, sources in data["sums"].items():
+        if len(sources) == 0:
+            raise ValueError(f"{platform} tries to compute {target} from nothing")
+        for source in sources:
+            if source not in table.columns:
+                raise ValueError(
+                    f"{platform} tries to compute {target} "
+                    f"from non-existent {source} column"
+                )
 
-        for target, sources in data[computation].items():
-            if target in table.columns and computation == "products":
-                raise ValueError(f"{platform} tries to recompute {target} column")
-            if len(sources) == 0:
-                raise ValueError(f"{platform} tries to compute {target} from nothing")
-            for source in sources:
-                if source not in table.columns:
-                    raise ValueError(
-                        f"{platform} tries to compute {target} "
-                        f"from non-existent {source} column"
-                    )
+    for target, sources in data["sums"].items():
+        if all(is_integer_dtype(table.dtypes[c]) for c in sources):
+            dtype = "Int64"
+        else:
+            dtype = "float64"
 
-    for computation in ("sums", "products"):
-        if computation not in data:
-            continue
+        result = (
+            getattr(table[list(sources)], "sum")(axis=1, min_count=1)
+            .astype(dtype)
+        )
 
-        for target, sources in data[computation].items():
-            if all(is_integer_dtype(table.dtypes[c]) for c in sources):
-                dtype = "Int64"
-            else:
-                dtype = "float64"
-
-            result = (
-                getattr(table[list(sources)], computation[:-1])(axis=1, min_count=1)
-                .astype(dtype)
-            )
-
-            if target in table:
-                assert computation == "sums"
-                table[target] = table[target].add(result, fill_value=0)
-            else:
-                table[target] = result
+        if target in table:
+            table[target] = table[target].add(result, fill_value=0)
+        else:
+            table[target] = result
 
     return table
 
@@ -287,7 +277,7 @@ def ingest_reports_per_platform(
                     f'and not social_media by itself nor {", ".join(_FEATURE_FIELDS)}'
                 )
             if "terms" in features:
-                features["terms"] = "; ".join(features["terms"])
+                features["terms"] = "; ".join(cast(Iterable[str], features["terms"]))
             if "has_reports" in features:
                 features["has_reports"] = (
                     "reports" in record.get("columns", [])
@@ -299,6 +289,7 @@ def ingest_reports_per_platform(
 
         # Check that disclosure record has either none or all required table properties.
         missing = _TABLE_FIELDS - record.keys()
+        assert "rows" in record
         if missing == _TABLE_FIELDS or len(record["rows"]) == 0:
             logger("➖ {} (no CSAM data)", platform)
             continue
@@ -361,6 +352,7 @@ def combine_brands(data: PlatformData) -> dict[str, pd.DataFrame]:
             del disclosures[brand]
 
         if firm_data is not None:
+            assert schema is not None
             disclosures[firm_name] = firm_data.astype(schema)
 
     return disclosures
