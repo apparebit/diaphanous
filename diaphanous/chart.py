@@ -200,16 +200,16 @@ def plot_sex_by_age_grid(frame: pl.DataFrame) -> alt.VConcatChart:
         title=alt.Title(
             "Perpetrators by Age (0→100), Sex (Female↓, Male↑), "
             "Year (2015⇒2024), and Country",
-            fontSize=45,
+            fontSize=50,
             fontWeight="bold",
             anchor="start",
             frame="group",
             dx=0,
             dy=-10,
-            subtitle=(
-                "With Female Minors in Pink, Male Minors in Blue, and "
-                "People w/o Sex in Black"
-            ),
+            # subtitle=(
+            #     "With Female Minors in Pink, Male Minors in Blue, and "
+            #     "People w/o Sex in Black"
+            # ),
             subtitleFontSize=40,
         )
     )

@@ -683,8 +683,18 @@ def plot_mosaic_grid(
     years as columns and different combinations of country, material, and role
     as rows.
     """
+    show_counts = "label12" in frame.columns and "label21" in frame.columns
+    show_percent = (
+        "label12" in frame.columns and isinstance(frame.schema["label12"], pl.List)
+    )
+    show_ratings = "chi2" in frame.columns and "rating" in frame.columns
+
+    title_text = f"Perpetrators by {x_label}, {y_label}, Year, and Country"
+    if show_ratings:
+        title_text += " (Incl. χ² Test for Independence)"
+
     title = alt.Title(
-        f"Perpetrators by {x_label}, {y_label}, Year, and Country",
+        title_text,
         fontSize=50,
         fontWeight="bold",
         anchor="start",
@@ -695,12 +705,6 @@ def plot_mosaic_grid(
     if subtitle is not None:
         title["subtitle"] = subtitle
         title["subtitleFontSize"] = 40
-
-    show_counts = "label12" in frame.columns and "label21" in frame.columns
-    show_percent = (
-        "label12" in frame.columns and isinstance(frame.schema["label12"], pl.List)
-    )
-    show_ratings = "chi2" in frame.columns and "rating" in frame.columns
 
     last_metric = frame.select(
         pl.col("metric").last()
@@ -881,6 +885,7 @@ def plot_odds_ratio_grid(
     cell_height: float = 300,
     column_count: int = 5,
     gap: float = 20,
+    second_variable: str = "Sex"
 ) -> alt.VConcatChart:
     group_iter = frame.group_by("country", "material", "role", maintain_order=True)
     grid = []
@@ -1012,8 +1017,8 @@ def plot_odds_ratio_grid(
         spacing=gap,
     ).properties(
         title=alt.Title(
-            "Odds Ratios for Age Group and Sex by Year and Country",
-            fontSize=20,
+            f"Odds Ratios for Age Group and {second_variable} by Year and Country",
+            fontSize=25,
             fontWeight="bold",
             anchor="start",
             frame="group",

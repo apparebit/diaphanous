@@ -289,8 +289,7 @@ def ingest_reports_per_platform(
 
         # Check that disclosure record has either none or all required table properties.
         missing = _TABLE_FIELDS - record.keys()
-        assert "rows" in record
-        if missing == _TABLE_FIELDS or len(record["rows"]) == 0:
+        if missing == _TABLE_FIELDS or ("rows" in record and len(record["rows"]) == 0):
             logger("➖ {} (no CSAM data)", platform)
             continue
         if len(missing) > 0 and missing != {"schema"}:

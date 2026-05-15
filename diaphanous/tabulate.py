@@ -371,10 +371,11 @@ class Analyzer:
         if self._with_crimes:
             self.h2("Crime Statistics About CSAM")
             self.html("""
-                <p>The following countries (and supranational organization) do
-                not appear to publish crime statistics that are sufficiently
-                granular to relate particular offenses to age and sex of
-                offenders:</p>
+                <p>The following <strong>12 countries</strong> and <strong>ond
+                supranational organization</strong> do not appear to publish
+                crime statistics that are sufficiently granular to relate
+                particular offenses to age and sex of offenders:</p>
+
                 <ul>
                 <li>Brazil
                 <li>Canada
@@ -391,9 +392,10 @@ class Analyzer:
                 <li>United Kingdom
                 </ul>
 
-                <p>Meanwhile the following countries do publish the data
-                necessary for building the contingency tables relating offenses
-                involving CSAM with offender age and sex:</p>
+                <p>Meanwhile the following <strong>7 countries</strong> do
+                publish the data necessary for building the contingency tables
+                relating offenses involving CSAM with offender age and sex:</p>
+
                 <ul>
                 <li>Australia
                 <li>Finland
@@ -404,8 +406,8 @@ class Analyzer:
                 <li>United States
                 </ul>
 
-                <p>Beyond offense, offender age, and offender sex, all but Spain
-                capture additional information:</p>
+                <p>Beyond offense, offender age, and offender sex, all but
+                Australia and Spain capture additional information:</p>
 
                 <ul>
                 <li>Finland: coarse nationality of offenders
@@ -421,7 +423,6 @@ class Analyzer:
                 frequency data.</p>
             """)
 
-            #self.emit_mosaics()
             self.emit_age_distributions()
 
     def emit_mean_difference_plots(self) -> None:
@@ -996,7 +997,7 @@ printr()
         self.html("</div>\n")
 
     def emit_age_distributions(self) -> None:
-        self.h3("Perpetrator Age Distributions Over the Last Decade")
+        self.h3("Perpetrators by Age, Sex, Year, Country")
         distributions = crimestat.load_all_age_distributions(verbose=True)
         full_data = pl.concat(
             self.filter_years(distributions, *self.THUMB_YEARS).values()
@@ -1040,11 +1041,11 @@ printr()
             frame,
             x_label="Age Group",
             y_label="Sex",
-            subtitle=(
-                "Male and female minors are shown in blue and red (respectively), "
-                "people with unknown age or sex in light gray, and those with unknown "
-                "age and sex in white."
-            ),
+            # subtitle=(
+            #     "Male and female minors are shown in blue and red (respectively), "
+            #     "people with unknown age or sex in light gray, and those with unknown "
+            #     "age and sex in white."
+            # ),
         )
         path = "figure/age-sex-mosaics.svg"
         fig.save(path)
@@ -1074,11 +1075,11 @@ printr()
             frame,
             x_label="Age Group",
             y_label="Sex",
-            subtitle=(
-                "Male and female minors are shown in blue and red (respectively), "
-                "people with unknown age or sex in light gray, and those with unknown "
-                "age and sex in white."
-            ),
+            # subtitle=(
+            #     "Male and female minors are shown in blue and red (respectively), "
+            #     "people with unknown age or sex in light gray, and those with unknown "
+            #     "age and sex in white."
+            # ),
         )
         path = "figure/age-sex-residual-mosaics.svg"
         fig.save(path)
@@ -1108,7 +1109,7 @@ printr()
         self.html("</div>\n")
 
         # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-        self.h3("Marginal Distributions of Age vs Producers/Consumers")
+        self.h3("Perpetrators by Age, Activity, Year, Country")
         self.html("<div class=extra-wide>\n")
 
         activity_data = full_data.filter(
@@ -1159,7 +1160,8 @@ printr()
                 x_order="age_group_order",
                 y_order="activity_order",
                 use_minor=True,
-            )
+            ),
+            second_variable="Activity",
         )
         path = "figure/age-activity-odds-ratios.svg"
         fig.save(path)
@@ -1281,7 +1283,7 @@ printr()
         self._section(s, level=4)
 
     def _section(self, title: str, level: Literal[2, 3, 4] = 2) -> None:
-        self.html(f"\n\n<h{level}>{title}</h{level}>\n")
+        self.html(f"\n\n<h{level}><span>{title}</span></h{level}>\n")
 
     def col(self, num: int) -> None:
         self.html(
@@ -1405,9 +1407,10 @@ _HEAD = """
     line-height: 1.5;
     --black: #1d1d20;
     --white: #f5f5f8;
+    --xl: 3rem;
 }
 body {
-    margin: 3rem 0.5rem;
+    margin: var(--xl) 0.5rem;
 }
 
 svg {
@@ -1417,7 +1420,7 @@ svg {
     display: block !important;
 }
 figure {
-    margin: 2rem 0;
+    margin: var(--xl) 0;
 }
 
 main > * {
@@ -1434,19 +1437,30 @@ main > .extra-wide {
     max-width: 1200px;
 }
 
-h2 {
-    margin-top: 3rem;
-    padding: 0.5rem;
+h2, h3 {
+    margin-top: var(--xl);
+    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
     background-color: #e8e8e8;
 }
 
-h3 {
-    margin-top: 2rem;
-    border-bottom: 0.2rem solid #000;
+h2 > span, h3 > span {
+    display: block;
+    max-width: 80rch;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+h2 {
+    border-bottom: 0.3rem solid #000;
 }
 
 h4 {
     margin-top: 2rem;
+    border-bottom: 0.2rem solid #000;
 }
 
 figure svg {
@@ -1546,7 +1560,7 @@ hr {
 </head>
 <body>
 <main>
-<h1>The CyberTipline Reporting System</h1>
+<h1>Diaphanous: Statistics on Child Sexual Exploitation</h1>
 """
 
 
