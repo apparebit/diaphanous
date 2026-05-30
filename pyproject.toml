@@ -46,6 +46,7 @@ dependencies = [
     "selenium",           #         -- save to PDF from great_tables
     "scipy",              #         -- χ² and Monte-Carlo p-values
     "prettypretty",       #         -- color science
+    "playwright",         #         -- scrape
 ]
 
 dynamic = ["version"]

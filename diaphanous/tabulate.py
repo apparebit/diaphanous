@@ -996,7 +996,7 @@ printr()
         self.svg(path)
         self.html("</div>\n")
 
-    def emit_age_distributions(self) -> None:
+    def emit_age_distributions(self, with_chi2: bool = False) -> None:
         self.h3("Perpetrators by Age, Sex, Year, Country")
         distributions = crimestat.load_all_age_distributions(verbose=True)
         full_data = pl.concat(
@@ -1052,38 +1052,39 @@ printr()
         self.svg(path)
 
         # Mosaics II: Highlight large residuals
-        frame = make_mosaic_frame(
-            full_data,
-            x_axis="age_group",
-            y_axis="sex",
-            index={"age_group": ["Minor", None, "Adult"]},
-            use_residuals=True,
-            use_minor=True,
-            include_null=True,
-            show_counts=True,
-        )
+        if with_chi2:
+            frame = make_mosaic_frame(
+                full_data,
+                x_axis="age_group",
+                y_axis="sex",
+                index={"age_group": ["Minor", None, "Adult"]},
+                use_residuals=True,
+                use_minor=True,
+                include_null=True,
+                show_counts=True,
+            )
 
-        frame = test_chi2_independence(
-            frame,
-            x_axis="age_group",
-            y_axis="sex",
-            x_order="x_order",
-            y_order="y_order",
-        )
+            frame = test_chi2_independence(
+                frame,
+                x_axis="age_group",
+                y_axis="sex",
+                x_order="x_order",
+                y_order="y_order",
+            )
 
-        fig = plot_mosaic_grid(
-            frame,
-            x_label="Age Group",
-            y_label="Sex",
-            # subtitle=(
-            #     "Male and female minors are shown in blue and red (respectively), "
-            #     "people with unknown age or sex in light gray, and those with unknown "
-            #     "age and sex in white."
-            # ),
-        )
-        path = "figure/age-sex-residual-mosaics.svg"
-        fig.save(path)
-        self.svg(path)
+            fig = plot_mosaic_grid(
+                frame,
+                x_label="Age Group",
+                y_label="Sex",
+                # subtitle=(
+                #     "Male and female minors are shown in blue and red (respectively), "
+                #     "people with unknown age or sex in light gray, and those with unknown "
+                #     "age and sex in white."
+                # ),
+            )
+            path = "figure/age-sex-residual-mosaics.svg"
+            fig.save(path)
+            self.svg(path)
 
         fig = plot_odds_ratio_grid(
             compute_odds_ratios(
