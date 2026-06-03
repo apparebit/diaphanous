@@ -67,7 +67,7 @@ def _read(path: Path, quarter: pd.Period) -> pd.DataFrame:
     "4%-5%". This function normalizes the value to 4.5%.
     """
     # mypy madness: read_csv's dtype accepts defaultdict but not dict.
-    data = pd.read_csv(path, dtype=SCHEMA)
+    data = pd.read_csv(path, dtype=SCHEMA) # type: ignore
 
     # Quick and dirty mitigation against unusual value "4%-5%":
     if quarter >= _PATCH_REPORT_START:
@@ -247,7 +247,7 @@ def csam_reports(ncmec: pd.DataFrame) -> pd.DataFrame:
 
 FILE_NAME = re.compile("meta-([0-9]{4})-q([1-4]).csv")
 
-def extract(file: str) -> tuple[int, int, dict[str, list[None|str]]]:
+def extract(file: str) -> tuple[int, int, dict[str, str]]:
     """Extract the latest data from the file containing Meta's transparency data."""
     match = FILE_NAME.match(Path(file).name)
     if match is None:
@@ -262,7 +262,7 @@ def extract(file: str) -> tuple[int, int, dict[str, list[None|str]]]:
 
     data = pd.read_csv(file)
 
-    def query(firm: str, policy: str, metric: str) -> str:
+    def query(firm: str, policy: str, metric: str) -> None | str:
         values = data[
             (data["app"] == firm) &
             (data["policy_area"] == policy) &
@@ -277,7 +277,7 @@ def extract(file: str) -> tuple[int, int, dict[str, list[None|str]]]:
         else:
             return values.iloc[0]
 
-    def by_firm(firm: str) -> list[None | str]:
+    def by_firm(firm: str) -> str:
         row = []
 
         for metric in [

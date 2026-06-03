@@ -31,6 +31,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     "Amazon": frozen({
         "brands": ("Twitch",),
         "sources": (
+            "https://www.aboutamazon.com/news/policy-news-views/amazon-csam-transparency-report-2025",
             "https://www.aboutamazon.com/news/policy-news-views/amazon-csam-transparency-report-2024",
             "https://www.aboutamazon.com/news/policy-news-views/amazon-csam-transparency-report-2023",
             "https://www.aboutamazon.com/news/policy-news-views/amazon-csam-transparency-report-2022",
@@ -59,6 +60,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         }),
         "rows": (
             #fmt: off
+            {"2025": (26_500, 21_437, None, 676, 3_069)},
             {"2024": (64_195, 30_778, 337, 752, 3_959)},
             {"2023": (31_281, 24_653, 103, 611, 4_111)},
             {"2022": (67_073, 52_633, 23, 398, 7_322)},
@@ -192,6 +194,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         }),
         "rows": (
             # fmt: off
+            {"2025 Q4": (None,       None, 2_500_000,  9_900_000,    None, 213_600,   691_600,   None, 75_000, 263_300,   None,  44_000,    84_400)},
             {"2025 Q3": (None,       None, 3_700_000,  6_000_000,    None, 230_100,   501_400,   None, 48_800, 155_900,   None, 224_700,   432_900)},
             {"2025 Q2": (None,       None, 2_500_000,  5_000_000,    None, 202_000,   567_100,   None, 40_200, 150_000,   None, 472_600,   605_700)},
             {"2025 Q1": (None,       None, 1_500_000,  4_600_000,    None, 163_000,   398_100,   None, 32_000, 127_000,   None,  42_700,   287_400)},
@@ -242,7 +245,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "columns": ("accounts", "reports"),
         "rows": (
             # fmt: off
-            {"2025": (16, 6)},
+            #{"2025": (16, 6)},
             {"2024": (5, 16)},
             {"2023": (3, 37)},
             {"2022": (1, 6)},
@@ -273,6 +276,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "columns": ("pieces", "reports", "accounts", "urls"),
         "rows": (
             # fmt: off
+            {"2025 H2": (5_406_758, 561_820, 365_597, 264_371)},
             {"2025 H1": (2_779_166, 273_052, 341_670, 293_493)},
             {"2024 H2": (2_286_288, 353_503, 282_584, 882_941)},
             {"2024 H1": (2_508_680, 318_568, 360_375, 402_839)},
@@ -285,6 +289,17 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2020 H2": (2_804_726, 246_325, 97_958, 210_756)},
             {"2020 H1": (1_461_582, 112_595, 77_940, 331_865)},
             # fmt: on
+        ),
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Grindr": frozen({
+        "features": frozen({
+            "social_media": True,
+        }),
+        "comments": (
+            "Grindr adheres to the European Union's Digital Services Act and",
+            "publishes transparency reports about its content moderation.",
+            "Alas, they are limited to the EU member countries only."
         ),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -330,32 +345,33 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         }),
         "rows": (
             # fmt: off
-            {"2025 Q3": (None,      None,   786_100, 4_200_000,   None,  46_600, 240_500,   None,  8_300, 80_100,  None,   2_700, 2_319_900)},
-            {"2025 Q2": (None,      None,   579_600, 1_900_000,   None,  48_000, 171_600,   None, 10_400, 41_200,  None,   4_900,    38_100)},
-            {"2025 Q1": (None,      None,   616_000, 1_500_000,   None,  58_800,  93_200,   None, 23_500, 28_900,  None,   7_200,    32_500)},
-            {"2024 Q4": (None,      None,   946_400, 2_000_000,   None, 138_700,  67_000,   None, 60_400, 16_300,  None,   9_400,     4_900)},
-            {"2024 Q3": (None,      None, 1_000_000, 5_600_000,   None, 150_700, 122_400,   None, 68_500, 25_600,  None,   9_000,     6_700)},
-            {"2024 Q2": (None,      None,   176_800, 2_800_000,   None,  31_700,  71_100,   None,  5_300, 21_600,  None,     400,    11_500)},
-            {"2024 Q1": (None,      None,   183_600, 2_700_000,   None,  39_400,  68_600,   None,  5_300, 26_900,  None,     300,    11_100)},
-            {"2023 Q4": (None,      None,   198_500, 2_100_000,   None,  34_700,  79_100,   None,  4_600, 26_500,  None,  11_900,    86_800)},
-            {"2023 Q3": (None,      None,   227_700, 1_600_000,   None,  44_400,  38_200,   None,  5_600, 14_300,  None,   1_100,     3_100)},
-            {"2023 Q2": (None,      None,   320_700, 1_700_000,   None,  22_000,  22_800,   None,  5_200,  6_300,  None,     700,       700)},
-            {"2023 Q1": (None,      None,   567_100, 8_700_000,   None,  29_100,  20_600,   None,  4_300,  2_100,  None,   2_400,     1_600)},
-            {"2022 Q4": (None,      None,   620_700, 9_700_000,   None,  16_000,   5_800,   None,  2_000,    100,  None,   4_900,     2_400)},
-            {"2022 Q3": (None,      None, 1_000_000, 1_300_000,   None,  36_000,   3_500,   None,  4_100,    200,  None,   6_400,     7_100)},
-            {"2022 Q2": (None,      None,   480_500, 1_200_000,   None,  29_200,   4_100,   None,  3_800,    200,  None,   5_900,       400)},
-            {"2022 Q1": (None,      None,   600_700, 1_500_000,   None,       0,       0,   None,      0,     20,  None,  10_700,   154_200)},
-            {"2021 Q4": (None,      None,   983_400, 2_600_000,   None,       0,       0,   None,      0,      0,  None,  13_600,     1_600)},
-            {"2021 Q3": (None,      None,   526_500, 1_600_000,   None,       0,       0,   None,      0,      0,  None, 168_300,       300)},
-            {"2021 Q2": (None,      None,   458_300, 1_400_000,   None,       0,       0,   None,      0,      0,  None,   4_500,       300)},
-            {"2021 Q1": (None,   812_400,      None,      None,      0,    None,    None,      0,   None,   None, 3_500,    None,      None)},
-            {"2020 Q4": (None,   809_400,      None,      None,      0,    None,    None,      0,   None,   None, 2_900,    None,      None)},
-            {"2020 Q3": (None, 1_000_000,      None,      None,      0,    None,    None,     10,   None,   None,   700,    None,      None)},
-            {"2020 Q2": (None,   481_400,      None,      None,      0,    None,    None,      0,   None,   None,    30,    None,      None)},
-            {"2020 Q1": (None, 1_000_000,      None,      None, 53_400,    None,    None, 16_100,   None,   None,   200,    None,      None)},
-            {"2019 Q4": (None,   686_400,      None,      None,   None,    None,    None,   None,   None,   None,  None,    None,      None)},
-            {"2019 Q3": (None,   755_800,      None,      None,   None,    None,    None,   None,   None,   None,  None,    None,      None)},
-            {"2019 Q2": (None,   526_200,      None,      None,   None,    None,    None,   None,   None,   None,  None,    None,      None)},
+            {"2025 Q4": (None,      None,   799_000, 3_400_000,   None,  48_000, 414_500,   None, 16_700, 151_700,  None,  13_600,    56_800)},
+            {"2025 Q3": (None,      None,   786_100, 4_200_000,   None,  46_600, 240_500,   None,  8_300,  80_100,  None,   2_700, 2_319_900)},
+            {"2025 Q2": (None,      None,   579_600, 1_900_000,   None,  48_000, 171_600,   None, 10_400,  41_200,  None,   4_900,    38_100)},
+            {"2025 Q1": (None,      None,   616_000, 1_500_000,   None,  58_800,  93_200,   None, 23_500,  28_900,  None,   7_200,    32_500)},
+            {"2024 Q4": (None,      None,   946_400, 2_000_000,   None, 138_700,  67_000,   None, 60_400,  16_300,  None,   9_400,     4_900)},
+            {"2024 Q3": (None,      None, 1_000_000, 5_600_000,   None, 150_700, 122_400,   None, 68_500,  25_600,  None,   9_000,     6_700)},
+            {"2024 Q2": (None,      None,   176_800, 2_800_000,   None,  31_700,  71_100,   None,  5_300,  21_600,  None,     400,    11_500)},
+            {"2024 Q1": (None,      None,   183_600, 2_700_000,   None,  39_400,  68_600,   None,  5_300,  26_900,  None,     300,    11_100)},
+            {"2023 Q4": (None,      None,   198_500, 2_100_000,   None,  34_700,  79_100,   None,  4_600,  26_500,  None,  11_900,    86_800)},
+            {"2023 Q3": (None,      None,   227_700, 1_600_000,   None,  44_400,  38_200,   None,  5_600,  14_300,  None,   1_100,     3_100)},
+            {"2023 Q2": (None,      None,   320_700, 1_700_000,   None,  22_000,  22_800,   None,  5_200,   6_300,  None,     700,       700)},
+            {"2023 Q1": (None,      None,   567_100, 8_700_000,   None,  29_100,  20_600,   None,  4_300,   2_100,  None,   2_400,     1_600)},
+            {"2022 Q4": (None,      None,   620_700, 9_700_000,   None,  16_000,   5_800,   None,  2_000,     100,  None,   4_900,     2_400)},
+            {"2022 Q3": (None,      None, 1_000_000, 1_300_000,   None,  36_000,   3_500,   None,  4_100,     200,  None,   6_400,     7_100)},
+            {"2022 Q2": (None,      None,   480_500, 1_200_000,   None,  29_200,   4_100,   None,  3_800,     200,  None,   5_900,       400)},
+            {"2022 Q1": (None,      None,   600_700, 1_500_000,   None,       0,       0,   None,      0,      20,  None,  10_700,   154_200)},
+            {"2021 Q4": (None,      None,   983_400, 2_600_000,   None,       0,       0,   None,      0,       0,  None,  13_600,     1_600)},
+            {"2021 Q3": (None,      None,   526_500, 1_600_000,   None,       0,       0,   None,      0,       0,  None, 168_300,       300)},
+            {"2021 Q2": (None,      None,   458_300, 1_400_000,   None,       0,       0,   None,      0,       0,  None,   4_500,       300)},
+            {"2021 Q1": (None,   812_400,      None,      None,      0,    None,    None,      0,   None,    None, 3_500,    None,      None)},
+            {"2020 Q4": (None,   809_400,      None,      None,      0,    None,    None,      0,   None,    None, 2_900,    None,      None)},
+            {"2020 Q3": (None, 1_000_000,      None,      None,      0,    None,    None,     10,   None,    None,   700,    None,      None)},
+            {"2020 Q2": (None,   481_400,      None,      None,      0,    None,    None,      0,   None,    None,    30,    None,      None)},
+            {"2020 Q1": (None, 1_000_000,      None,      None, 53_400,    None,    None, 16_100,   None,    None,   200,    None,      None)},
+            {"2019 Q4": (None,   686_400,      None,      None,   None,    None,    None,   None,   None,    None,  None,    None,      None)},
+            {"2019 Q3": (None,   755_800,      None,      None,   None,    None,    None,   None,   None,    None,  None,    None,      None)},
+            {"2019 Q2": (None,   526_200,      None,      None,   None,    None,    None,   None,   None,    None,  None,    None,      None)},
             # fmt: on
         ),
     }),
@@ -382,7 +398,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "columns": ("pieces",),
         "rows": (
             # fmt: off
-            {"2025 H1": (311,)},
+            #{"2025 H1": (311,)},
             {"2024 H2": (112,)},
             {"2024 H1": (65,)},
             {"2023 H2": (210,)},
@@ -407,7 +423,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Meta": frozen({
-        "brands": ("Facebook", "Instagram", "Threads", "WhatsApp"),
+        "brands": ("Facebook", "Instagram", "Meta AI", "Threads", "WhatsApp"),
         "features": frozen({
             "social_media": True,
         }),
@@ -422,6 +438,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "https://transparency.meta.com/integrity-reports-q1-2025",
             "https://transparency.meta.com/integrity-reports-q2-2025",
             "https://transparency.meta.com/reports/integrity-reports-q3-2025/",
+            "https://transparency.meta.com/reports/integrity-reports-h1-2026/",
         ),
         "columns": (
             "reports",
@@ -447,6 +464,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         }),
         "rows": (
             # fmt: off
+            {"2025 Q4": (2_600_000, None, None, None, None, None, None, None, None, None, None, None, None)},
             {"2025 Q3": (2_000_000, None, None, None, None, None, None, None, None, None, None, None, None)},
             {"2025 Q2": (2_000_000, None, None, None, None, None, None, None, None, None, None, None, None)},
             {"2025 Q1": (1_700_000, None, None, None, None, None, None, None, None, None, None, None, None)},
@@ -459,6 +477,12 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2023 Q2": (3_700_000, None, None, None, None, None, None, None, None, None, None, None, None)},
             # fmt: on
         ),
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Meta AI": frozen({
+        "features": frozen({
+            "social_media": False,
+        }),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Microsoft": frozen({
@@ -546,6 +570,29 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         }),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "OpenAI": frozen({
+        "sources": (
+            "https://openai.com/trust-and-transparency/",
+        ),
+        "features": frozen({
+            "data": None,
+            "history": None,
+            "terms": ("child safety",),
+            "quantities": "counts",
+            "granularity": "H",
+            "frequency": "H",
+            "coverage": "2025 H2",
+            "social_media": False,
+        }),
+        "columns": (
+            "reports",
+            "pieces",
+        ),
+        "rows": (
+            {"2025 H2": (107_817, 107_667)},
+        ),
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Pinterest": frozen({
         "sources": (
             "https://help.pinterest.com/en/guide/transparency-report-archive",
@@ -557,6 +604,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "https://policy.pinterest.com/en/transparency-report-h1-2024",
             "https://policy.pinterest.com/en/transparency-report-h2-2024",
             "https://policy.pinterest.com/en/transparency-report-h1-2025",
+            "https://policy.pinterest.com/en/transparency-report-h2-2025",
             "https://policy.pinterest.com/en/transparency-report",
         ),
         "features": frozen({
@@ -595,40 +643,44 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         ),
         "rows": (
             # fmt: off
-            #            Reports|        |          Pins           |      |  Pieces|       Boards      |        Accounts        |        |         Reach          |
-            {"2025 Q2": (   None, 659_426, 16_966_208, 22_356,  992, 1_434, 202_866,    868,    8,    1, 615_313, 91_348,  6_883, 121_560,   63,   34,    2,    1)},
-            {"2025 Q1": (   None,  12_083,  8_003_405,  8_350,  360,   506,  23_310,  1_144,    3,    3, 340_942, 39_979, 12_157,  37_394,   61,   35,    2,    1)}, # Last quantity is <1%
-            {"2025 H1": (171_999,    None,       None,   None, None,  None,    None,   None, None, None,    None,   None,   None,    None, None, None, None, None)},
-            {"2024 Q4": (   None,  27_692,  5_591_489,  1_087,   21,   786,   3_111,    542,    0,    0, 134_105, 15_623,  7_249,  13_094,   59,   37,    2,    1)},
-            {"2024 Q3": (   None,  40_223,  4_269_964,    332,   25, 1_992,   8_517,  1_068,    0,    0,  78_233,  8_197,  5_377,   9_624,   79,   20,    1,    1)}, # Last two quantities are <1%
-            {"2024 H2": (  8_989,    None,       None,   None, None,  None,    None,   None, None, None,    None,   None,   None,    None, None, None, None, None)},
-            {"2024 Q2": (   None,   7_180,  4_533_695,     99,    1, 1_384,   4_123,    705,    1,    1,  55_814,  5_429,  4_016,   5_349,   82,   15,    2,    1)}, # Last quantity is <1%
-            {"2024 Q1": (   None,   5_575,  3_322_789,     13,    0,   894,   3_770,  3_100,    0,    0,  68_230,  8_424,  5_191,   8_370,   78,   19,    3,    1)},
-            {"2024 H1": ( 16_234,    None,       None,   None, None,  None,    None,   None, None, None,    None,   None,   None,    None, None, None, None, None)},
-            {"2023 Q4": (   None,   7_089,  3_602_828,     34,    6, 1_163,   7_488,  4_237,    0,    0, 173_110, 27_499, 19_754,   7_034,   78,   18,    3,    1)},
-            {"2023 Q3": (   None,   5_489,  1_469_597,      2,    2, 2_246,  10_471,    318,    0,    0, 244_258, 65_254, 49_854,   7_303,   73,   22,    4,    2)},
-            {"2023 H2": ( 16_234,    None,       None,   None, None,  None,    None,   None, None, None,    None,   None,   None,    None, None, None, None, None)},
-            {"2023 Q2": (   None,   9_691,  3_877_286,   None, None, 1_071,  16_336, 48_039, None, None, 172_633, 20_136,  9_874,   3_896,   83,   14,    2,    1)},
-            {"2023 Q1": (   None,   8_393,  1_846_326,   None, None, 2_348,  23_479, 17_715, None, None,  63_761,  8_524,  3_925,   5_726,   65,   26,    6,    3)},
-            {"2023 H1": ( 34_203,    None,       None,   None, None,  None,    None,   None, None, None,    None,   None,   None,    None, None, None, None, None)},
-            {"2022 Q4": (   None,  12_733,  1_716_192,   None, None, 5_292,  24_288,  1_108, None, None,  33_228,  5_731,  2_686,   4_940,   51,   35,    9,    4)},
-            {"2022 Q3": (   None,  10_772,    687_825,   None, None, 2_987,   7_318,    633, None, None,  21_033,  3_896,  2_053,   2_513,   61,   29,    6,    3)},
-            {"2022 H2": ( 27_995,    None,       None,   None, None,  None,    None,   None, None, None,    None,   None,   None,    None, None, None, None, None)},
-            {"2022 Q2": (   None,   9_085,    712_295,   None, None, 2_038,   4_988,  1_162, None, None,  37_694,  7_467,  5_971,   2_399,   61,   30,    6,    2)},
-            {"2022 Q1": (   None,   2_499,    300_003,   None, None,   184,     542,    492, None, None,  10_743,  2_164,  1_169,   1_735,   63,   28,    6,    3)},
-            {"2022 H1": (  4_969,    None,       None,   None, None,  None,    None,   None, None, None,    None,   None,   None,    None, None, None, None, None)},
-            {"2021 Q4": (   None,   2_545,    104_029,   None, None,   228,     627,    578, None, None,  17_423,  3_110,  2_120,   1_044,   83,   13,    3,    2)},
-            {"2021 Q3": (   None,   2_362,    262_164,   None, None,   295,     981,    862, None, None,  28_289,  5_718,  4_305,   1_378,   72,   21,    4,    2)},
-            {"2021 H2": (  1_794,    None,       None,   None, None,  None,    None,   None, None, None,    None,   None,   None,    None, None, None, None, None)},
-            {"2021 H1": (    890,    None,       None,   None, None,  None,    None,   None, None, None,    None,   None,   None,    None, None, None, None, None)},
-            {"2020 H2": (  1_794,    None,       None,   None, None,  None,    None,   None, None, None,    None,   None,   None,    None, None, None, None, None)},
-            {"2020 H1": (  1_638,    None,       None,   None, None,  None,    None,   None, None, None,    None,   None,   None,    None, None, None, None, None)},
+            #            Reports|        |           Pins           |      |  Pieces|       Boards      |        Accounts        |        |         Reach          |
+            {"2025 Q4": (   None,  16_109, 10_075_038, 20_871, 5_480, 1_807,  91_156,    953,    4,    0,  50_042,  8_768,  2_684,  16_636,   66,   31,    2,    1)}, # Last quantity is <1%
+            {"2025 Q3": (   None,  20_026, 13_519_577, 27_182, 2_743, 1_003, 184_587,  1_000,    7,    0, 127_577, 21_534,  6_665,  20_353,   78,   20,    1,    1)}, # Last two quantities are <1%
+            {"2025 H2": (235_769,    None,       None,   None,  None,  None,    None,   None, None, None,    None,   None,   None,    None, None, None, None, None)},
+            {"2025 Q2": (   None, 659_426, 16_966_208, 22_356,   992, 1_434, 202_866,    868,    8,    1, 615_313, 91_348,  6_883, 121_560,   63,   34,    2,    1)},
+            {"2025 Q1": (   None,  12_083,  8_003_405,  8_350,   360,   506,  23_310,  1_144,    3,    3, 340_942, 39_979, 12_157,  37_394,   61,   35,    2,    1)}, # Last quantity is <1%
+            {"2025 H1": (171_999,    None,       None,   None,  None,  None,    None,   None, None, None,    None,   None,   None,    None, None, None, None, None)},
+            {"2024 Q4": (   None,  27_692,  5_591_489,  1_087,    21,   786,   3_111,    542,    0,    0, 134_105, 15_623,  7_249,  13_094,   59,   37,    2,    1)},
+            {"2024 Q3": (   None,  40_223,  4_269_964,    332,    25, 1_992,   8_517,  1_068,    0,    0,  78_233,  8_197,  5_377,   9_624,   79,   20,    1,    1)}, # Last two quantities are <1%
+            {"2024 H2": (  8_989,    None,       None,   None,  None,  None,    None,   None, None, None,    None,   None,   None,    None, None, None, None, None)},
+            {"2024 Q2": (   None,   7_180,  4_533_695,     99,     1, 1_384,   4_123,    705,    1,    1,  55_814,  5_429,  4_016,   5_349,   82,   15,    2,    1)}, # Last quantity is <1%
+            {"2024 Q1": (   None,   5_575,  3_322_789,     13,     0,   894,   3_770,  3_100,    0,    0,  68_230,  8_424,  5_191,   8_370,   78,   19,    3,    1)},
+            {"2024 H1": ( 16_234,    None,       None,   None,  None,  None,    None,   None, None, None,    None,   None,   None,    None, None, None, None, None)},
+            {"2023 Q4": (   None,   7_089,  3_602_828,     34,     6, 1_163,   7_488,  4_237,    0,    0, 173_110, 27_499, 19_754,   7_034,   78,   18,    3,    1)},
+            {"2023 Q3": (   None,   5_489,  1_469_597,      2,     2, 2_246,  10_471,    318,    0,    0, 244_258, 65_254, 49_854,   7_303,   73,   22,    4,    2)},
+            {"2023 H2": ( 16_234,    None,       None,   None,  None,  None,    None,   None, None, None,    None,   None,   None,    None, None, None, None, None)},
+            {"2023 Q2": (   None,   9_691,  3_877_286,   None,  None, 1_071,  16_336, 48_039, None, None, 172_633, 20_136,  9_874,   3_896,   83,   14,    2,    1)},
+            {"2023 Q1": (   None,   8_393,  1_846_326,   None,  None, 2_348,  23_479, 17_715, None, None,  63_761,  8_524,  3_925,   5_726,   65,   26,    6,    3)},
+            {"2023 H1": ( 34_203,    None,       None,   None,  None,  None,    None,   None, None, None,    None,   None,   None,    None, None, None, None, None)},
+            {"2022 Q4": (   None,  12_733,  1_716_192,   None,  None, 5_292,  24_288,  1_108, None, None,  33_228,  5_731,  2_686,   4_940,   51,   35,    9,    4)},
+            {"2022 Q3": (   None,  10_772,    687_825,   None,  None, 2_987,   7_318,    633, None, None,  21_033,  3_896,  2_053,   2_513,   61,   29,    6,    3)},
+            {"2022 H2": ( 27_995,    None,       None,   None,  None,  None,    None,   None, None, None,    None,   None,   None,    None, None, None, None, None)},
+            {"2022 Q2": (   None,   9_085,    712_295,   None,  None, 2_038,   4_988,  1_162, None, None,  37_694,  7_467,  5_971,   2_399,   61,   30,    6,    2)},
+            {"2022 Q1": (   None,   2_499,    300_003,   None,  None,   184,     542,    492, None, None,  10_743,  2_164,  1_169,   1_735,   63,   28,    6,    3)},
+            {"2022 H1": (  4_969,    None,       None,   None,  None,  None,    None,   None, None, None,    None,   None,   None,    None, None, None, None, None)},
+            {"2021 Q4": (   None,   2_545,    104_029,   None,  None,   228,     627,    578, None, None,  17_423,  3_110,  2_120,   1_044,   83,   13,    3,    2)},
+            {"2021 Q3": (   None,   2_362,    262_164,   None,  None,   295,     981,    862, None, None,  28_289,  5_718,  4_305,   1_378,   72,   21,    4,    2)},
+            {"2021 H2": (  1_794,    None,       None,   None,  None,  None,    None,   None, None, None,    None,   None,   None,    None, None, None, None, None)},
+            {"2021 H1": (    890,    None,       None,   None,  None,  None,    None,   None, None, None,    None,   None,   None,    None, None, None, None, None)},
+            {"2020 H2": (  1_794,    None,       None,   None,  None,  None,    None,   None, None, None,    None,   None,   None,    None, None, None, None, None)},
+            {"2020 H1": (  1_638,    None,       None,   None,  None,  None,    None,   None, None, None,    None,   None,   None,    None, None, None, None, None)},
             # fmt: on
         ),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Pornhub": frozen({
         "sources": (
+            "https://help.pornhub.com/hc/en-us/articles/50069808248339-2025-Transparency-Report-Second-Half",
             "https://help.pornhub.com/hc/en-us/articles/46213095031827-2025-Transparency-Report-First-Half",
             "https://help.pornhub.com/hc/en-us/articles/46213396642195-2024-Transparency-Report-Second-Half",
             "https://help.pornhub.com/hc/en-us/articles/46213097399315-2024-Transparency-Report-First-Half",
@@ -669,6 +721,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         }),
         "rows": (
             # fmt: off
+            {"2025 H2": (2_716,  4_355, 1_853)},
             {"2025 H1": (  975,  1_451,   293)},
             {"2024 H2": (4_037,  5_707, 1_057)},
             {"2024 H1": (1_471,  3_089,   670)},
@@ -695,6 +748,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Reddit": frozen({
         "sources": (
+            "https://redditinc.com/policies/transparency-report-july-to-december-2025-reddit",
             "https://redditinc.com/policies/transparency-report-january-to-june-2025-reddit",
             "https://redditinc.com/policies/transparency-report-july-to-december-2024",
             "https://redditinc.com/policies/transparency-report-january-to-june-2024",
@@ -717,36 +771,43 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "coverage": "2021",
             "social_media": True,
         }),
-        "comments": [
-            "pieces includes posts and comments but not private messages"
-        ],
+        "comments": (
+            "`pieces (minor sexualization)` covers posts and comments only.",
+            "Private messages are one-on-one, whereas chat messages are group-based.",
+
+        ),
         "columns": (
             "pieces",
             "reports",
             "pieces (minor sexualization)",
             "private messages (minor sexualization)",
+            "chat messages (minor sexualization)",
             "subreddits (minor sexualization)",
+            "content appeals (minor sexualization)",
+            "content reversals percent (minor sexualization)",
             "temporary account suspensions (minor sexualization)",
             "accounts (minor sexualization)",
             "account appeals (minor sexualization)",
             "account reversals percent (minor sexualization)",
         ),
         "schema": frozen({
+            "content reversals percent (minor sexualization)": "float",
             "account reversals percent (minor sexualization)": "float",
         }),
         "rows": (
             # fmt: off
-            {"2025 H1": ( 46_414,  32_759,  84_916,  124,   266, 10_086,  42_541,  8_167, 14.9)},
-            {"2024 H2": (195_605, 113_568, 139_948,  171,   388, 18_425,  65_098, 11_466, 13.2)},
-            {"2024 H1": (   None, 221_029, 323_150,  304, 1_110, 15_150, 176_679, 10_892, 15.1)},
-            {"2023 H2": (   None, 133_588, 349_189,  263, 1_536, 15_744, 128_513,  5_801,  8.6)},
-            {"2023 H1": (149_084, 156_533, 181_083,  296,   987, 27_219,  68_900,  2_924,  7.8)},
-            {"2022 H2": ( 31_574,  40_243,    None, None,  None,   None,    None,   None, None), "redundant": True},
-            {"2022 H1": (   None,  12_349,    None, None,  None,   None,    None,   None, None), "redundant": True},
-            {"2022":    ( 80_888,  52_592, 266_473,  390, 5_149, 70_201,  93_997,  7_513,  9.5)},
-            {"2021":    (  9_258,  10_059, 117_093,  243, 1_914,      0,   4_659,   None, None)},
-            {"2020":    (   None,   2_233,    None, None,  None, 15_940,  21_946,   None, None)},
-            {"2019":    (   None,     724,  38_410, None,   280,   None,  10_781,   None, None)},
+            {"2025 H2": ( 55_048,  32_747,  72_981,    7,  96_264,   267, 11_454, 17.4, 12_615,  48_660, 10_741, 10.1)},
+            {"2025 H1": ( 46_414,  32_759,  84_916,  124, 133_866,   266,  4_752, 10.9, 10_086,  42_541,  8_167, 14.9)},
+            {"2024 H2": (195_605, 113_568, 139_948,  171, 158_280,   388, 14_603, 12.0, 18_425,  65_098, 11_466, 13.2)},
+            {"2024 H1": (   None, 221_029, 323_150,  304,  85_447, 1_110, 12_425, 15.4, 15_150, 176_679, 10_892, 15.1)},
+            {"2023 H2": (   None, 133_588, 349_189,  263,    None, 1_536,   None, None, 15_744, 128_513,  5_801,  8.6)},
+            {"2023 H1": (149_084, 156_533, 181_083,  296,    None,   987,   None, None, 27_219,  68_900,  2_924,  7.8)},
+            {"2022 H2": ( 31_574,  40_243,    None, None,    None,  None,   None, None,   None,    None,   None, None), "redundant": True},
+            {"2022 H1": (   None,  12_349,    None, None,    None,  None,   None, None,   None,    None,   None, None), "redundant": True},
+            {"2022":    ( 80_888,  52_592, 266_473,  390,    None, 5_149,   None, None, 70_201,  93_997,  7_513,  9.5)},
+            {"2021":    (  9_258,  10_059, 117_093,  243,    None, 1_914,   None, None,      0,   4_659,   None, None)},
+            {"2020":    (   None,   2_233,    None, None,    None,  None,   None, None, 15_940,  21_946,   None, None)},
+            {"2019":    (   None,     724,  38_410, None,    None,   280,   None, None,   None,  10_781,   None, None)},
             # fmt: on
         ),
     }),
@@ -881,14 +942,14 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         }),
         "rows": (
             # fmt: off
-            {"2023 Q4": (None, None, None, 0.232, 0.981, 0.781, 0.902, 0.135, 176_461_963, 128_300_584, 8_038_106, None, None, None)},
-            {"2023 Q3": (None, None, None, 0.279, 0.987, 0.792, 0.916, 0.161, 136_530_418,  88_721_552, 7_084_629, None, None, None)},
-            {"2023 Q2": (None, None, None, 0.308, 0.986, 0.836, 0.911, 0.145, 106_476_032,  66_440_775, 6_750_002, None, None, None)},
-            {"2023 Q1": (None, 0.023, 0.306, None, None, None, None, None, 91_003_510, 53_494_911, None, 0.869, 0.784, 0.927)},
-            {"2022 Q4": (415_278, 0.033, 0.333, None, None, None, None, None, 85_680_819, 46_836_047, None, 0.887, 0.821, 0.931)},
-            {"2022 Q3": (792_473, 0.033, 0.429, None, None, None, None, None, 110_954_663, 53_287_839, None, 0.925, 0.883, 0.951,)},
-            {"2022 Q2": (None, 0.024, 0.437, None, None, None, None, None, 113_809_300, 48_011_571, None, 0.907, 0.858, 0.932)},
-            {"2022 Q1": (None, 0.019, 0.417, None, None, None, None, None, 102_305_516, 34_726_592, None, 0.903, 0.825, 0.906)},
+            {"2023 Q4": (   None,  None,  None, 0.232, 0.981, 0.781, 0.902, 0.135, 176_461_963, 128_300_584, 8_038_106,  None,  None,  None)},
+            {"2023 Q3": (   None,  None,  None, 0.279, 0.987, 0.792, 0.916, 0.161, 136_530_418,  88_721_552, 7_084_629,  None,  None,  None)},
+            {"2023 Q2": (   None,  None,  None, 0.308, 0.986, 0.836, 0.911, 0.145, 106_476_032,  66_440_775, 6_750_002,  None,  None,  None)},
+            {"2023 Q1": (   None, 0.023, 0.306,  None,  None,  None,  None,  None,  91_003_510,  53_494_911,      None, 0.869, 0.784, 0.927)},
+            {"2022 Q4": (415_278, 0.033, 0.333,  None,  None,  None,  None,  None,  85_680_819,  46_836_047,      None, 0.887, 0.821, 0.931)},
+            {"2022 Q3": (792_473, 0.033, 0.429,  None,  None,  None,  None,  None, 110_954_663,  53_287_839,      None, 0.925, 0.883, 0.951,)},
+            {"2022 Q2": (   None, 0.024, 0.437,  None,  None,  None,  None,  None, 113_809_300,  48_011_571,      None, 0.907, 0.858, 0.932)},
+            {"2022 Q1": (   None, 0.019, 0.417,  None,  None,  None,  None,  None, 102_305_516,  34_726_592,      None, 0.903, 0.825, 0.906)},
             # fmt: on
         ),
     }),
@@ -902,6 +963,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Twitch": frozen({
         "sources": (
+            "https://safety.twitch.tv/s/article/H2-2025-Transparency-Report",
             "https://safety.twitch.tv/s/article/H1-2025-Transparency-Report",
             "https://safety.twitch.tv/s/article/H2-2024-Transparency-Report",
             "https://safety.twitch.tv/s/article/H1-2024-Transparency-Report",
@@ -927,11 +989,13 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "Twitch's data are marked as redundant because their report counts are",
             "included with Amazon's yearly disclosures. For years where NCMEC breaks",
             "out Twitch from Amazon, Twitch's report counts appear to be more accurate",
-            "than those of Amazon.",
+            "than those of Amazon. For 2025 H2, Twitch reported an increase of 46.92%",
+            "over H2, but left out the absolute count."
         ),
         "columns": ("reports",),
         "rows": (
             # fmt: off
+            {"2025 H2": (450,), "redundant": True},
             {"2025 H1": (959,), "redundant": True},
             {"2024 H2": (759,), "redundant": True},
             {"2024 H1": (1_523,), "redundant": True},
@@ -1037,7 +1101,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "quantities": "counts",
             "granularity": "H",
             "frequency": "H",
-            "coverage": "2024 H1",
+            "coverage": "2024 H1 - 2024 H2",
             "social_media": True,
         }),
         "columns": (
@@ -1081,6 +1145,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "columns": ("pieces", "reports"),
         "rows": (
             # fmt: off
+            {"2025 H2": (300_804, 300_464)},
             {"2025 H1": (344_941, 321_868)},
             {"2024 H2": (242_121, 223_477)},
             {"2024 H1": (320_498, 280_478)},
@@ -1151,6 +1216,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2019": ("Facebook", None, None, None)},
             {"2019": ("GitHub", 2, None, None)},
             {"2019": ("Google", None, None, None)},
+            {"2019": ("Grindr", 13, None, None)},
             {"2019": ("Imgur", 73_929, None, None)},
             {"2019": ("Instagram", None, None, None)},
             {"2019": ("Kik", None, None, None)},
@@ -1189,6 +1255,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2020": ("Facebook", None, None, None)},
             {"2020": ("GitHub", 2, None, None)},
             {"2020": ("Google", None, None, None)},
+            {"2020": ("Grindr", 302, None, None)},
             {"2020": ("Imgur", 31_571, None, None)},
             {"2020": ("Instagram", None, None, None)},
             {"2020": ("Kik", 14_515, None, None)},
@@ -1229,6 +1296,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2021": ("Facebook", 22_118_952, 28, 7.27)},
             {"2021": ("GitHub", 4, None, None)},
             {"2021": ("Google", None, 975, 6.77)},
+            {"2021": ("Grindr", 10_671, None, None)},
             {"2021": ("Imgur", 47_274, None, None)},
             {"2021": ("Instagram", 3_393_654, 22, 4.45)},
             {"2021": ("Kik", 33_619, None, None)},
@@ -1274,6 +1342,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2022": ("Facebook", 21_165_208, 10, 4.4)},
             {"2022": ("GitHub", 6, None, None)},
             {"2022": ("Google", None, 916, 4.2)},
+            {"2022": ("Grindr", 22_819, None, None)},
             {"2022": ("Imgur", 64_211, None, None)},
             {"2022": ("Instagram", 5_007_902, 13, 3.7)},
             {"2022": ("Kik", 36_801, None, None)},
@@ -1321,6 +1390,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2023": ("Discord", 339_412, None, None)},
             {"2023": ("Facebook", 17_838_422, None, None)},
             {"2023": ("Google", None, None, None)},
+            {"2023": ("Grindr", 45_073, None, None)},
             {"2023": ("GitHub", 1, None, None)},
             {"2023": ("Imgur", 58_957, None, None)},
             {"2023": ("Instagram", 11_430_007, None, None)},
@@ -1335,6 +1405,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2023": ("Microsoft", 1_537, None, None)},
             {"2023": ("Microsoft", 225, None, None)},
             {"2023": ("Omegle", 188_102, None, None)},
+            {"2023": ("OpenAI", 329, None, None)},
             {"2023": ("Pinterest", 52_356, None, None)},
             {"2023": ("Pornhub", 16, None, None)},  # Under Aylo
             {"2023": ("Pornhub", 2_487, None, None)},  # Under MindGeek
@@ -1371,6 +1442,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2024": ("Facebook", 8_590_357, None, None)},
             {"2024": ("GitHub", None, None, None)},
             {"2024": ("Google", 1_175_084, None, None)},
+            {"2024": ("Grindr", 78_886, None, None)},
             {"2024": ("Imgur", 554_710, None, None)},
             {"2024": ("Instagram", 3_320_008, None, None)},
             {"2024": ("Kik", 114_155, None, None)},
@@ -1382,6 +1454,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2024": ("Microsoft", 1_324, None, None)}, # Xbox
             {"2024": ("Microsoft", 324, None, None)}, # Other Products
             {"2024": ("Omegle", 12, None, None)},
+            {"2024": ("OpenAI", 32_079, None, None)},
             {"2024": ("Pinterest", 65_810, None, None)},
             {"2024": ("Pornhub", None, None, None)},  # Under Aylo
             {"2024": ("Quora", 8_778, None, None)},
@@ -1400,6 +1473,55 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2024": ("YouTube", None, None, None)},
             {"2024": ("ESP Total", 20_348_306, None, None)},
             {"2024": ("Total", 20_512_803, None, None)},
+            # ───────────────────────────────────────────────────────
+            {"2025": ("Alphabet", None, None, None)},
+            {"2025": ("Amazon", 435, None, None)},
+            {"2025": ("Amazon", 1_105_405, None, None)}, # AI Services
+            {"2025": ("Amazon", 21_360, None, None)}, # Photos
+            {"2025": ("Amino", 62, None, None)},
+            {"2025": ("Apple", 296, None, None)},
+            {"2025": ("Automattic", None, None, None)},
+            {"2025": ("Aylo", 3_534, None, None)},  # Pornhub
+            {"2025": ("Aylo", 3, None, None)},  # Redtube
+            {"2025": ("Aylo", 2, None, None)},  # YouPorn
+            {"2025": ("Aylo", 17, None, None)},  # MyDirtyHobby
+            {"2025": ("Discord", 489_782, None, None)},
+            {"2025": ("Facebook", 4_907_710, None, None)},
+            {"2025": ("GitHub", None, None, None)},
+            {"2025": ("Google", 1_461_378, None, None)},
+            {"2025": ("Grindr", 111_334, None, None)},
+            {"2025": ("Imgur", 22_459, None, None)},
+            {"2025": ("Instagram", 3_673_045, None, None)},
+            {"2025": ("Kik", 111_394, None, None)},
+            {"2025": ("LinkedIn", 182, None, None)},
+            {"2025": ("MediaLab", None, None, None)},
+            {"2025": ("Meta", None, None, None)},
+            {"2025": ("Meta AI", 582, None, None)},
+            {"2025": ("MindGeek", 30, None, None)}, # Pornhub
+            {"2025": ("Microsoft", 111_093, None, None)}, # Online Operations
+            {"2025": ("Microsoft", 1_652, None, None)}, # Xbox
+            {"2025": ("Microsoft", 8_477, None, None)}, # Other Products
+            {"2025": ("Omegle", 11, None, None)},
+            {"2025": ("OpenAI", 182_844, None, None)},
+            {"2025": ("Pinterest", 418_394, None, None)},
+            {"2025": ("Pornhub", None, None, None)},  # Under Aylo
+            {"2025": ("Quora", 5_646, None, None)},
+            {"2025": ("Reddit", 65_381, None, None)},
+            {"2025": ("Snap", 752_031, None, None)},
+            {"2025": ("Telegram", None, None, None)},
+            {"2025": ("Threads", 56_094, None, None)},
+            {"2025": ("TikTok", 3_623_177, None, None)},
+            {"2025": ("Tumblr", 2_881, None, None)},
+            {"2025": ("Twitch", 2_390, None, None)},
+            {"2025": ("Twitter", None, None, None)},
+            {"2025": ("WhatsApp", 2_355_302, None, None)},
+            {"2025": ("Wikimedia", 60, None, None)},
+            {"2025": ("Wordpress", 176, None, None)},
+            {"2025": ("X", 816_611, None, None)},
+            {"2025": ("X.AI", 135_373, None, None)},
+            {"2025": ("YouTube", None, None, None)},
+            {"2025": ("ESP Total", 21_181_300, None, None)},
+            {"2025": ("Total", 21_351_493, None, None)},
             # fmt: on
         ),
     }),

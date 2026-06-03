@@ -292,6 +292,10 @@ class Analyzer:
             self.h2("Platforms vs NCMEC")
 
             self.h3("The Data")
+            diffs = self._diffs.sort(
+                pl.col("pct_diff"), descending=True
+            )
+
             self.html(f"""
                 <ul>
                 <li>{len(self._diffs.select(
@@ -313,27 +317,17 @@ class Analyzer:
                         negative differences
                     </li><li>{self._diffs.select(
                             pl.col("pct_diff").mean()
-                        ).item() * 100:.2}%
+                        ).item() * 100:.3f}%
                         mean difference
-                    </li><li>{self._diffs.filter(
-                            pl.col("platform").ne("Aylo").or_(
-                                pl.col("year").ne(2020)
-                            )
-                        ).select(
+                    </li><li>{diffs.tail(-1).select(
                             pl.col("pct_diff").mean()
-                        ).item() * 100:.2}% mean difference, discounting one explained
-                        outlier
-                    </li><li>{self._diffs.filter(
-                            pl.col("platform").ne("Aylo").or_(
-                                pl.col("year").ne(2020)
-                            ).and_(
-                                pl.col("platform").ne("Pinterest").or_(
-                                    pl.col("year").ne(2024)
-                                )
-                            )
-                        ).select(
+                        ).item() * 100:.3f}% mean difference, discounting top 1 outlier
+                    </li><li>{diffs.tail(-2).select(
                             pl.col("pct_diff").mean()
-                        ).item() * 100:.2}% mean difference, discounting top two outliers
+                        ).item() * 100:.3f}% mean difference, discounting top 2 outliers
+                    </li><li>{diffs.tail(-3).select(
+                            pl.col("pct_diff").mean()
+                        ).item() * 100:.3f}% mean difference, discounting top 3 outliers
                     </li></ul></li>
                 </ul>
             """)
@@ -347,10 +341,14 @@ class Analyzer:
             self.h3("A Histogram of Percent Differences")
             self.chart(
                 alt.Chart(
-                    self._diffs
+                    self._diffs.with_columns(
+                        pl.col("pct_diff").mul(100)
+                    )
                 ).mark_bar().encode(
-                    alt.X("pct_diff:Q", bin=True),
+                    alt.X("pct_diff:Q", bin=alt.Bin(step=10)),
                     alt.Y("count()"),
+                ).properties(
+                    width=500,
                 )
             )
             self._see_path()
@@ -426,18 +424,21 @@ class Analyzer:
             self.emit_age_distributions()
 
     def emit_mean_difference_plots(self) -> None:
-        self._runr(self._diffs, """
+        self._runr(self._diffs.with_columns(
+            pl.col("pct_diff").mul(100)
+        ), """
 library(tidyverse)
 library(patchwork)
 library(scales)
 
 COLORS <- c(
-    "2019" = "#0D0887",
-    "2020" = "#5402A3",
-    "2021" = "#8B0AA5",
-    "2022" = "#B93289",
-    "2023" = "#DB5C68",
-    "2024" = "#F48849"
+    "2019" = "#0d067e",
+    "2020" = "#470498",
+    "2021" = "#7f079c",
+    "2022" = "#b13688",
+    "2023" = "#dd2467",
+    "2024" = "#f94b3b",
+    "2025" = "#fc9506"
 )
 
 format_mean_zero <- number_format()
@@ -475,12 +476,12 @@ plot_pct_diff_over_mean <- function(platform, data, all.platforms = FALSE) {{
         geom_hline(yintercept = ymean, linetype = "dashed") +
         geom_point(size=2.5) +
         ylim(ylimits) +
-        xlab(ifelse(all.platforms, "log(Mean)", "Mean")) +
-        ylab("Δ% (Mean)") +
+        xlab(ifelse(all.platforms, "log(Mean of Report Counts)", "Mean of Report Counts")) +
+        ylab("Δ% (Mean of Report Counts)") +
         labs(title = platform)
 
     if (platform == "Reddit") {{
-        # Reddit is the only provider with data for all six years.
+        # Reddit is the only provider with data for all seven years.
         # Hence we enable the legend for this graph.
         graph <- graph + scale_color_manual(values = COLORS, name = "Year")
     }} else {{
@@ -493,7 +494,16 @@ plot_pct_diff_over_mean <- function(platform, data, all.platforms = FALSE) {{
         limits = xlimits,
     )
 
-    graph <- graph + theme_light() + theme(axis.title = element_text(face = "italic"))
+    graph <- graph + theme_light() + theme(
+        axis.title.y = element_text(
+            face = "italic",
+            margin = margin(t = 0, r = 10, b = 0, l = 0)
+        ),
+        axis.title.x = element_text(
+            face = "italic",
+            margin = margin(t = 10, r = 0, b = 0, l = 0)
+        )
+    )
     return(graph)
 }}
 
