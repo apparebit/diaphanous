@@ -10,6 +10,7 @@ from .finish import finish_caseload, finish_severity
 from .nibrs.model import Id, Column
 from .util import finish_age_distribution, format_table
 
+_LATEST_YEAR = 2024
 
 _ROOT = Path(__file__).parent.parent
 
@@ -65,7 +66,7 @@ class Data:
     @classmethod
     def ingest(cls) -> Self:
         suspects = []
-        for year in range(2015, 2025):
+        for year in range(2015, _LATEST_YEAR + 1):
             # https://www.bka.de/SharedDocs/Downloads/DE/Publikationen/
             # PolizeilicheKriminalstatistik/2020/Bund/Tatverdaechtige/
             # BU-TV-01-T20-TV_xls.xlsx?__blob=publicationFile&v=4
@@ -137,7 +138,7 @@ class Data:
         ).item()
 
         suspects = []
-        for year in range(2019, 2025):
+        for year in range(2019, _LATEST_YEAR + 1):
             if year == 2019:
                 frame = pl.read_csv(
                     _ROOT / "data" / "bka" / "old-suspects-2019.csv",
@@ -204,7 +205,22 @@ class Data:
         )
 
         incidents = []
-        for year in range(2023, 2025):
+        for year in range(2015, _LATEST_YEAR + 1):
+            if year == 2015:
+                filter = pl.col("id").str.starts_with("143").and_(
+                    pl.col("id").str.starts_with("1430").not_()
+                ).and_(
+                    pl.col("id").str.starts_with("1431").not_()
+                )
+                producers = _PRODUCER_IDS_V1
+                consumers = _CONSUMER_IDS_V1
+            else:
+                filter = pl.col("id").str.starts_with("1432").or_(
+                    pl.col("id").str.starts_with("1435")
+                )
+                producers = _PRODUCER_IDS_V2
+                consumers = _CONSUMER_IDS_V2
+
             incidents.append(pl.read_excel(
                 _ROOT / "data" / "bka" / f"incidents-{year}.xlsx",
                 sheet_name="T01",
@@ -240,19 +256,17 @@ class Data:
                     "__column-20": pl.Float64,
                 },
             ).filter(
-                pl.col("id").str.starts_with("1432").or_(
-                    pl.col("id").str.starts_with("1435")
-                )
+                filter
             ).insert_column(
                 0,
                 pl.lit(year, dtype=pl.Int16).alias(Id.YEAR)
             ).with_columns(
                 pl.when(
-                    pl.col("id").is_in(["143210", "143220", "143510", "143520"])
+                    pl.col("id").is_in(producers)
                 ).then(
                     pl.lit("Production"),
                 ).when(
-                    pl.col("id").is_in(["143230", "143530"])
+                    pl.col("id").is_in(consumers)
                 ).then(
                     pl.lit("Consumption"),
                 ).alias("activity"),
@@ -392,15 +406,15 @@ def de_age_distribution() -> pl.LazyFrame:
 
 
 if __name__ == "__main__":
+    pl.Config.set_tbl_cols(10)
     pl.Config.set_tbl_rows(200)
     pl.Config.set_thousands_separator(",")
 
     data = Data.ingest()
     print(data.incidents)
-    print(data.caseload())
-    print(data.severity())
-    print(data.age_distribution())
-    print(data.suspects)
+    #print(data.caseload())
+    #print(data.severity())
+    #print(data.age_distribution())
+    #print(data.suspects)
 
-    # print(data.suspects)
     # data.demographics().write_csv(_ROOT / "data" / "bka" / "suspects.csv")
