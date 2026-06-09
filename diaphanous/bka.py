@@ -137,7 +137,7 @@ class Data:
             ).all()
         ).item()
 
-        suspects = []
+        old_suspects = []
         for year in range(2019, _LATEST_YEAR + 1):
             if year == 2019:
                 frame = pl.read_csv(
@@ -167,7 +167,7 @@ class Data:
                     read_options=_READ_OPTIONS_OLD_SUSPECTS,
                 )
 
-            suspects.append(frame.filter(
+            old_suspects.append(frame.filter(
                 pl.col("id").str.starts_with("1432").or_(
                     pl.col("id").str.starts_with("1435")
                 )
@@ -179,8 +179,8 @@ class Data:
             ))
 
         all_suspects = all_suspects.join(
-            pl.concat(suspects),
-            on=["data_year", "id", "sex"],
+            pl.concat(old_suspects),
+            on=[Id.YEAR, "id", "sex"],
             how="left",
         )
 
@@ -279,6 +279,24 @@ class Data:
             ))
 
         all_incidents = pl.concat(incidents)
+
+        # Validate that incidents and suspects agree on numbers of suspects
+        assert all_suspects.filter(
+            pl.col("activity").is_not_null().and_(pl.col("sex").eq("X"))
+        ).select(
+            pl.col(Id.YEAR, "id", "total")
+        ).join(
+            all_incidents.filter(
+                pl.col("activity").is_not_null(),
+            ).select(
+                pl.col(Id.YEAR, "id", "suspects")
+            ),
+            on=[Id.YEAR, "id"],
+            how="inner",
+        ).select(
+            pl.col("total").eq(pl.col("suspects")).all()
+        ).item()
+
         return cls(all_incidents, all_suspects)
 
     def caseload(self) -> pl.DataFrame:
