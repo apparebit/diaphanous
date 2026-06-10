@@ -264,11 +264,11 @@ class Data:
                 pl.when(
                     pl.col("id").is_in(producers)
                 ).then(
-                    pl.lit("Production"),
+                    pl.lit("Producer"),
                 ).when(
                     pl.col("id").is_in(consumers)
                 ).then(
-                    pl.lit("Consumption"),
+                    pl.lit("Consumer"),
                 ).alias("activity"),
             ).select(
                 pl.col(
@@ -416,7 +416,35 @@ class Data:
             pl.col("activity", "count"),
         ).explode("age")
 
-        return finish_age_distribution(frame, "Germany", "CSAM", "Offender", 14, 17)
+        # Between 2015 and 2025 (inclusive), the number of suspects per solved
+        # incident ranges from 0.979 to 1.041. Likewise, the number of solved
+        # incidents per suspect ranges from 0.960 to 1.022. In other words,
+        # there is an almost one-to-one correspondence between incidents and
+        # suspects. We assume that this relationship also holds for unresolved
+        # incidents and extend the age distribution with these counts.
+        unsolved = self.incidents.lazy().filter(
+            pl.col("activity").is_not_null(),
+        ).group_by(
+            Id.YEAR, "activity",
+        ).agg(
+            pl.col("incidents", "solved").sum(),
+        ).select(
+            pl.col(Id.YEAR),
+            pl.lit(None).cast(pl.Int8).alias("age"),
+            pl.lit(None).cast(pl.String).alias("sex"),
+            pl.lit(None).cast(pl.String).alias("ethnicity"),
+            pl.col("activity"),
+            pl.col("incidents").sub(pl.col("solved")).cast(pl.Float64).alias("count"),
+        )
+
+        return finish_age_distribution(
+            pl.concat([frame, unsolved]),
+            "Germany",
+            "CSAM",
+            "Offender",
+            14,
+            17
+        )
 
 
 def de_age_distribution() -> pl.LazyFrame:
@@ -429,10 +457,16 @@ if __name__ == "__main__":
     pl.Config.set_thousands_separator(",")
 
     data = Data.ingest()
-    print(data.incidents)
-    #print(data.caseload())
-    #print(data.severity())
-    #print(data.age_distribution())
-    #print(data.suspects)
+    incidents = data.incidents.filter(
+        pl.col("activity").is_not_null(),
+    ).group_by(
+        Id.YEAR,
+    ).agg(
+        pl.col("incidents", "solved", "suspects").sum()
+    ).with_columns(
+        pl.col("suspects").truediv(pl.col("solved")).alias("suspects_per_incident"),
+        pl.col("solved").truediv(pl.col("suspects")).alias("incidents_per_suspect"),
+    )
 
-    # data.demographics().write_csv(_ROOT / "data" / "bka" / "suspects.csv")
+    print(incidents)
+    print(data.age_distribution().collect())
