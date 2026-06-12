@@ -102,6 +102,26 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         }),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "Bluesky": frozen({
+        "sources": (
+            "https://bsky.social/about/blog/01-29-2026-transparency-report-2025",
+            "https://bsky.social/about/blog/01-17-2025-moderation-2024",
+        ),
+        "features": frozen({
+            "social_media": True,
+        }),
+        "columns": (
+            "pieces",
+            "reports",
+        ),
+        "rows": (
+            #fmt: off
+            {"2025": (12_647, 5_238)},
+            {"2024": (None,   1_154)},
+            #fmt: on
+        )
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "Discord": frozen({
         "sources": (
             "https://discord.com/blog/discord-transparency-report-july-dec-2020",
@@ -1387,6 +1407,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2023": ("Aylo", 29, None, None)},  # Tube8
             {"2023": ("Aylo", 4, None, None)},  # YouPorn
             {"2023": ("Aylo", 8, None, None)},  # MyDirtyHobby
+            {"2023": ("Bluesky", 1, None, None)},
             {"2023": ("Discord", 339_412, None, None)},
             {"2023": ("Facebook", 17_838_422, None, None)},
             {"2023": ("Google", None, None, None)},
@@ -1438,6 +1459,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2024": ("Aylo", 1, None, None)},  # Tube8
             {"2024": ("Aylo", 2, None, None)},  # YouPorn
             {"2024": ("Aylo", 23, None, None)},  # MyDirtyHobby
+            {"2024": ("Bluesky", 1_156, None, None)},
             {"2024": ("Discord", 241_354, None, None)},
             {"2024": ("Facebook", 8_590_357, None, None)},
             {"2024": ("GitHub", None, None, None)},
@@ -1485,6 +1507,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2025": ("Aylo", 3, None, None)},  # Redtube
             {"2025": ("Aylo", 2, None, None)},  # YouPorn
             {"2025": ("Aylo", 17, None, None)},  # MyDirtyHobby
+            {"2025": ("Bluesky", 5_264, None, None)},
             {"2025": ("Discord", 489_782, None, None)},
             {"2025": ("Facebook", 4_907_710, None, None)},
             {"2025": ("GitHub", None, None, None)},
