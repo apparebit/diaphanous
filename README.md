@@ -129,9 +129,11 @@ organizations and their platforms:
       * Wordpress
   * Aylo (née MindGeek)
       * Pornhub
+  * Bluesky
   * Discord
   * Google
       * YouTube
+  * Grindr
   * MediaLab
       * Amino
       * Imgur
@@ -139,12 +141,14 @@ organizations and their platforms:
   * Meta
       * Facebook
       * Instagram
+      * Meta AI
       * Threads
       * WhatsApp
   * Microsoft
       * GitHub
       * LinkedIn
   * Omegle
+  * OpenAI
   * Pinterest
   * Quora
   * Reddit
@@ -153,6 +157,7 @@ organizations and their platforms:
   * TikTok
   * Wikimedia
   * X (née Twitter)
+  * X.AI
 
 Surveyed organizations fall into at least one of the following categories:
 
