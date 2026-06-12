@@ -289,7 +289,15 @@ class Analyzer:
             self.emit_regression_models()
 
         if self._with_platforms:
-            self.h2("Platforms vs NCMEC")
+            self.h2("Platforms' vs NCMEC's Disclosures")
+
+            self.html("""
+                <p>The analysis assumes that counting errors accumulate with the
+                magnitude of counts. Hence, for each pair of report counts
+                disclosed by a platform and NCMEC, the difference of report
+                counts is scaled by the mean of report counts, resulting in
+                Δ%.</p>
+            """)
 
             self.h3("The Data")
             diffs = self._diffs.sort(
@@ -305,14 +313,16 @@ class Analyzer:
                 )) - 2} surveyed platforms make necessary disclosures
                 </li><li>{len(self._diffs)} data pairs
                     <ul>
+                    <li>{len(self._diffs.filter(pl.col("pct_diff").abs().le(0.20)))}
+                        differ by less than 20%
                     <li>{len(self._diffs.filter(pl.col("pct_diff").abs().le(0.10)))}
                         differ by less than 10%
                     </li><li>{len(self._diffs.filter(pl.col("pct_diff").abs().le(0.01)))}
                         differ by less than 1%
-                    </li><li>{len(self._diffs.filter(pl.col("pct_diff").sign().gt(0)))}
-                        positive differences
                     </li><li>{len(self._diffs.filter(pl.col("pct_diff").sign().eq(0)))}
                         with no difference
+                    </li><li>{len(self._diffs.filter(pl.col("pct_diff").sign().gt(0)))}
+                        positive differences
                     </li><li>{len(self._diffs.filter(pl.col("pct_diff").sign().lt(0)))}
                         negative differences
                     </li><li>{self._diffs.select(
@@ -322,10 +332,10 @@ class Analyzer:
                     </li><li>{diffs.tail(-1).select(
                             pl.col("pct_diff").mean()
                         ).item() * 100:.3f}% mean difference, discounting top 1 outlier
-                    </li><li>{diffs.tail(-2).select(
+                    </li><li><strong>{diffs.tail(-2).select(
                             pl.col("pct_diff").mean()
                         ).item() * 100:.3f}% mean difference, discounting top 2 outliers
-                    </li><li>{diffs.tail(-3).select(
+                    </strong></li><li>{diffs.tail(-3).select(
                             pl.col("pct_diff").mean()
                         ).item() * 100:.3f}% mean difference, discounting top 3 outliers
                     </li></ul></li>
@@ -477,7 +487,7 @@ plot_pct_diff_over_mean <- function(platform, data, all.platforms = FALSE) {{
         geom_point(size=2.5) +
         ylim(ylimits) +
         xlab(ifelse(all.platforms, "log(Mean of Report Counts)", "Mean of Report Counts")) +
-        ylab("Δ% (Mean of Report Counts)") +
+        ylab("Δ%(Report Counts)") +
         labs(title = platform)
 
     if (platform == "Reddit") {{
@@ -528,19 +538,18 @@ plots[[length(platforms) + 1]] <- plot_pct_diff_over_mean(
     all.platforms = TRUE
 )
 
-design <- "ABC
-           DEF
-           GHI
-           JJJ"
+design <- "AABBCCDDEE
+           FFGGHHIIJJ
+           #KKKKKKKK#"
 
 plot.grid <- wrap_plots(
     plots,
-    ncol=3,
+    ncol=10,
     guides="collect",
     design=design,
     axis_titles = "collect"
 )
-ggsave("figure/comparable-reports.svg", plot.grid, width=8, height=8)
+ggsave("figure/comparable-reports.svg", plot.grid, width=11, height=7)
 printr()
         """)
         self.svg(
