@@ -348,6 +348,11 @@ class Analyzer:
             )
             self._see_path()
 
+            fig = plot_reports_per_provider()
+            path = "figure/reports-per-provider.svg"
+            fig.save(path)
+            self.svg(path)
+
             self.h3("A Histogram of Percent Differences")
             self.chart(
                 alt.Chart(
@@ -1859,6 +1864,71 @@ def format_juxtaposition(frame: pl.DataFrame, with_highlights: bool = False) -> 
         locations="row_group",
     ).opt_vertical_padding(
         scale=0.8,
+    )
+
+# --------------------------------------------------------------------------------------
+
+_PROVIDERS = [
+    ["Meta"],
+    ["Amazon", "Google", "Snap", "TikTok", "X"],
+    ["Discord", "MediaLab", "Omegle", "Reddit", "Pinterest"],
+    ["Automattic", "Grindr", "Microsoft", "OpenAI", "X.AI"],
+    ["Apple", "Aylo", "Bluesky",  "Quora", "Wikimedia"],
+]
+
+_COLORS = [
+    Palette.BLUE,
+    Palette.ORANGE,
+    Palette.RED,
+    Palette.GREEN,
+    Palette.PURPLE,
+]
+
+def plot_reports_per_provider() -> alt.VConcatChart:
+    table = tabulate().filter(
+        pl.col("source").eq("NCMEC").and_(
+            pl.col("variable").eq("reports")
+        ).and_(
+            pl.col("target").is_in(["Total", "ESP Total"]).not_()
+        )
+    ).select(
+        pl.col("year"),
+        pl.col("target").alias("provider"),
+        pl.col("value").truediv(1_000_000).alias("reports"),
+    )
+
+    charts = []
+    for providers in _PROVIDERS:
+        data = table.filter(pl.col("provider").is_in(providers))
+        chart = alt.Chart(data).mark_line().encode(
+            alt.X("year:O").title(None),
+            alt.Y("reports:Q").title(None),
+            alt.Color("provider:N").title(None)
+            .scale(range=_COLORS).legend(orient="right"),
+        ).properties(
+            height=200,
+            width=200,
+        )
+
+        if "X.AI" in providers:
+            chart = chart + alt.Chart(data.filter(
+                pl.col("provider").eq("X.AI")
+            )).mark_point(
+                shape="triangle",
+                size=50,
+            ).encode(
+                alt.X("year:O"),
+                alt.Y("reports:Q"),
+                alt.Color("provider:N").scale(range=_COLORS).legend(None)
+            )
+
+        charts.append(chart)
+
+    return alt.vconcat(
+        alt.hconcat(*charts[:3]).resolve_scale(x="shared", color="independent"),
+        alt.hconcat(*charts[3:]).resolve_scale(x="shared", color="independent"),
+    ).properties(
+        title="Reports (Millions) per Year per Service Provider"
     )
 
 # --------------------------------------------------------------------------------------
