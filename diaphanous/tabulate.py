@@ -1901,7 +1901,7 @@ def plot_reports_per_provider() -> alt.VConcatChart:
     for providers in _PROVIDERS:
         data = table.filter(pl.col("provider").is_in(providers))
         chart = alt.Chart(data).mark_line().encode(
-            alt.X("year:O").title(None),
+            alt.X("year:O").title(None).axis(labelAngle=-45),
             alt.Y("reports:Q").title(None),
             alt.Color("provider:N").title(None)
             .scale(range=_COLORS).legend(orient="right"),
