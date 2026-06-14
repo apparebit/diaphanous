@@ -20,6 +20,7 @@ from .mosaic import (
     make_mosaic_frame, plot_mosaic_grid, compute_odds_ratios, plot_odds_ratio_grid,
     test_chi2_independence,
 )
+from .nibrs.model import Id
 from .platform.data import REPORTS_PER_PLATFORM
 from .util import compute_age_cdfs
 
@@ -383,8 +384,29 @@ class Analyzer:
 
         if self._with_crimes:
             self.h2("Crime Statistics About CSAM")
-            self.html("""
-                <p>The following <strong>12 countries</strong> and <strong>ond
+
+            stats = bka.Data.ingest().incidents.filter(
+                pl.col("activity").is_not_null(),
+            ).group_by(
+                Id.YEAR,
+            ).agg(
+                pl.col("incidents", "solved", "suspects").sum()
+            ).with_columns(
+                pl.col("suspects").truediv(pl.col("solved")).alias("suspects_per_incident"),
+                pl.col("solved").truediv(pl.col("suspects")).alias("incidents_per_suspect"),
+            ).select(
+                pl.col("suspects_per_incident").min().alias("spi_minimum"),
+                pl.col("suspects_per_incident").max().alias("spi_maximum"),
+                pl.col("incidents_per_suspect").min().alias("ips_minimum"),
+                pl.col("incidents_per_suspect").max().alias("ips_maximum"),
+            ).row()
+
+            print("######################")
+            print(stats[0], 1/stats[0])
+            print(stats[1], 1/stats[1])
+
+            self.html(f"""
+                <p>The following <strong>13 countries</strong> and <strong>ond
                 supranational organization</strong> do not appear to publish
                 crime statistics that are sufficiently granular to relate
                 particular offenses to age and sex of offenders:</p>
@@ -396,6 +418,7 @@ class Analyzer:
                 <li>European Union
                 <li>France
                 <li>India
+                <li>Japan
                 <li>Mexico
                 <li>Phillipines
                 <li>Poland
@@ -434,6 +457,17 @@ class Analyzer:
                 System (NIBRS) goes well beyond the above listed information
                 because it is the only country publishing case data instead of
                 frequency data.</p>
+
+                <p>The offender statistics for Germany (and very likely also
+                Italy and Spain) are misleading in that they do not include
+                incidents with unknown offenders. But accounting for those
+                incidents is critical to determine to what degree offender
+                demographics are representative.</p>
+
+                <p>For <strong>Germany</strong>, the number of suspects per
+                solved incident ranges from {stats[0]:.3f} to {stats[1]:.3f}.
+                Hence, we assume that each unsolved incident has one suspect and
+                accordingly backfill the suspects data.</p>
             """)
 
             self.emit_age_distributions()
