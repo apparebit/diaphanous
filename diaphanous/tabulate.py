@@ -17,8 +17,8 @@ from .chart import (
 )
 from .color import Palette
 from .mosaic import (
-    make_mosaic_frame, plot_mosaic_grid, compute_odds_ratios, plot_odds_ratio_grid,
-    test_chi2_independence,
+    make_contingencies,  make_mosaic_frame, plot_mosaic_grid, compute_odds_ratios,
+    plot_odds_ratio_grid, test_chi2_independence,
 )
 from .nibrs.model import Id
 from .platform.data import REPORTS_PER_PLATFORM
@@ -384,27 +384,6 @@ class Analyzer:
 
         if self._with_crimes:
             self.h2("Crime Statistics About CSAM")
-
-            stats = bka.Data.ingest().incidents.filter(
-                pl.col("activity").is_not_null(),
-            ).group_by(
-                Id.YEAR,
-            ).agg(
-                pl.col("incidents", "solved", "suspects").sum()
-            ).with_columns(
-                pl.col("suspects").truediv(pl.col("solved")).alias("suspects_per_incident"),
-                pl.col("solved").truediv(pl.col("suspects")).alias("incidents_per_suspect"),
-            ).select(
-                pl.col("suspects_per_incident").min().alias("spi_minimum"),
-                pl.col("suspects_per_incident").max().alias("spi_maximum"),
-                pl.col("incidents_per_suspect").min().alias("ips_minimum"),
-                pl.col("incidents_per_suspect").max().alias("ips_maximum"),
-            ).row()
-
-            print("######################")
-            print(stats[0], 1/stats[0])
-            print(stats[1], 1/stats[1])
-
             self.html(f"""
                 <p>The following <strong>13 countries</strong> and <strong>ond
                 supranational organization</strong> do not appear to publish
@@ -457,17 +436,43 @@ class Analyzer:
                 System (NIBRS) goes well beyond the above listed information
                 because it is the only country publishing case data instead of
                 frequency data.</p>
+            """)
 
+            self.h3("Backfilling Suspects for Unsolved Incidents")
+
+            stats = bka.Data.ingest().incidents.filter(
+                pl.col("activity").is_not_null(),
+            ).group_by(
+                Id.YEAR,
+            ).agg(
+                pl.col("incidents", "solved", "suspects").sum()
+            ).with_columns(
+                pl.col("suspects").truediv(pl.col("solved")).alias("suspects_per_incident"),
+            ).select(
+                pl.col("suspects_per_incident").min().alias("minimum"),
+                pl.col("suspects_per_incident").mean().alias("mean"),
+                pl.col("suspects_per_incident").max().alias("maximum"),
+            ).row(0)
+
+            self.html(f"""
                 <p>The offender statistics for Germany (and very likely also
-                Italy and Spain) are misleading in that they do not include
-                incidents with unknown offenders. But accounting for those
-                incidents is critical to determine to what degree offender
+                Finland, Italy, and Spain) are misleading in that they do not
+                include incidents with unknown offenders. But accounting for
+                those incidents is critical to determine to what degree offender
                 demographics are representative.</p>
 
                 <p>For <strong>Germany</strong>, the number of suspects per
-                solved incident ranges from {stats[0]:.3f} to {stats[1]:.3f}.
-                Hence, we assume that each unsolved incident has one suspect and
-                accordingly backfill the suspects data.</p>
+                solved incident range from {stats[0]:.3f} to {stats[2]:.3f},
+                with a mean of {stats[1]:.3f}. The reciprocal incidents per
+                suspect range from {1/stats[2]:.3f} to {1/stats[0]:.3f}, with a
+                mean of {1/stats[1]:.3f}. Assuming that this relationship also
+                holds for unsolved incidents, we then backfill the suspects
+                table for Germany by counting one suspect for each unsolved
+                incident. Since these suspects are unknown, their age and sex
+                must remain <code>null</code>. However, since Germany publishes
+                incident data, just like suspect data, broken down by law, we
+                can still backfill the activity, i.e., distinguish between
+                consumers and producers.</p>
             """)
 
             self.emit_age_distributions()
@@ -1055,7 +1060,7 @@ printr()
         self.html("</div>\n")
 
     def emit_age_distributions(self, with_chi2: bool = False) -> None:
-        self.h3("Perpetrators by Age, Sex, Year, Country")
+        self.h3("Perpetrators by Country, Year, Age, and Sex")
         distributions = crimestat.load_all_age_distributions(verbose=True)
         full_data = pl.concat(
             self.filter_years(distributions, *self.THUMB_YEARS).values()
@@ -1082,7 +1087,10 @@ printr()
             full_data,
             x_axis="age_group",
             y_axis="sex",
-            index={"age_group": ["Minor", None, "Adult"]},
+            index={
+                "age_group": ["Minor", None, "Adult"],
+                "sex": ["Female", None, "Male"],
+            },
             highlights={
                 "Minor": {
                     "Male": Palette.LIGHT_BLUE,
@@ -1165,10 +1173,12 @@ printr()
         path = "figure/age-sex-cdfs.svg"
         fig.save(path)
         self.svg(path)
+
+        self.emit_contingency_tables(full_data, "sex")
         self.html("</div>\n")
 
         # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-        self.h3("Perpetrators by Age, Activity, Year, Country")
+        self.h3("Perpetrators by Country, Year, Age, and Activity")
         self.html("<div class=extra-wide>\n")
 
         activity_data = full_data.filter(
@@ -1225,6 +1235,8 @@ printr()
         path = "figure/age-activity-odds-ratios.svg"
         fig.save(path)
         self.svg(path)
+
+        self.emit_contingency_tables(activity_data, "activity")
         self.html("</div>\n")
 
         # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
@@ -1308,6 +1320,99 @@ printr()
         href="https://cde.ucr.cjis.gov/LATEST/webapp/#/pages/explorer/crime/crime-trend">Crime
         Data Explorer</a>.
         """)
+
+    def emit_contingency_tables(self, data: pl.DataFrame, y_axis: str) -> None:
+        # Prepare index
+        table_index: dict[str, Sequence[str | None]] = {
+            "age_group": ["Minor", None, "Adult"]
+        }
+
+        if y_axis == "sex":
+            table_index[y_axis] = ["Male", None, "Female"]
+        elif y_axis == "activity":
+            table_index[y_axis] = ["Consumer", None, "Producer"]
+        else:
+            raise ValueError(f"{y_axis} not supported")
+
+        contingencies = make_contingencies(
+            data,
+            "age_group",
+            y_axis,
+            include_null=True,
+            use_minor=True,
+            index=table_index,
+        )
+
+        markup = []
+        metric = None
+
+        def emit_cells(group, row_offset: int = 0):
+            counts = (
+                "&nbsp;" if c == 0 else f"{c:,}"
+                for c in group.get_column("count")
+            )
+            fractions = (
+                "&nbsp;" if f == 0 else f"({f:.1f}%)"
+                for f in group.get_column("fraction")
+            )
+
+            previous_row = None
+            for index, (count, fraction) in enumerate(zip(counts, fractions)):
+                current_row = 1 + index // 3 + row_offset
+                if current_row != previous_row:
+                    if previous_row is not None:
+                        markup.append("  </tr>\n")
+                    markup.append("  <tr>\n")
+                    previous_row = current_row
+
+                markup.append(
+                    f'    <td class="col{1 + index % 3} row{current_row}">'
+                    f'<span class=count>{count}</span>'
+                    f'<span class=fraction>{fraction}</span>'
+                    '</td>\n'
+                )
+            markup.append("  </tr>\n")
+
+        for selectors, group in contingencies.group_by(
+            "country", "material", "role", "metric", "metric_order", "data_year",
+            maintain_order=True,
+        ):
+            # Skip years without data
+            if group.select(pl.col("count").sum().eq(0)).item():
+                continue
+
+            # Separate different metrics
+            if metric != selectors[3]:
+                if metric is not None:
+                    markup.append("</div>\n")
+                    self.html("".join(markup))
+                    markup = []
+
+                metric = selectors[3]
+                self.h4(f"Contingency Tables for {metric}")
+                markup.append(f'<div class="contingency-tables {y_axis}-vs-age">\n')
+
+            # Build table
+            markup.append("<table class=contingency>\n")
+            markup.append(f"<caption>{selectors[5]}</caption>\n")
+            markup.append("<tbody>\n")
+            emit_cells(group)
+            markup.append("</tbody>\n")
+
+            age_group = group.group_by(
+                "age_group", maintain_order=True
+            ).agg(
+                pl.col("count", "fraction").sum()
+            )
+
+            markup.append("<tfoot>\n")
+            emit_cells(age_group, row_offset=3)
+            markup.append("</tfoot>\n")
+
+            markup.append("</table>\n")
+
+        markup.append("</div>\n")
+        self.html("".join(markup))
 
     # ==================================================================================
 
@@ -1614,6 +1719,81 @@ hr {
 }
 .mytable tbody > tr.highlight > td {
     text-align: center;
+}
+
+/* ------------------------------ Contingency Tables ------------------------------ */
+
+.contingency-tables {
+    --inter-table-gap: 1em;
+    --intra-table-gap: 0.3em;
+    --cell-padding: 0.2em;
+
+    --cell31: #e8e8e8;
+    --cell33: #e8e8e8;
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--inter-table-gap);
+}
+
+.sex-vs-age {
+    --cell11: #e6efff;
+    --cell13: #ffe5ef;
+}
+
+.activity-vs-age {
+    --cell11: #ffecc5;
+    --cell13: #ffe7e3;
+}
+
+table.contingency {
+    font-size: 0.8em;
+    line-height: 1.2;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    width: max-content;
+}
+table.contingency caption {
+    grid-column: span 3;
+    font-style: italic;
+    margin-bottom: var(--cell-padding);
+}
+table.contingency tbody, table.contingency tfoot {
+    grid-column: span 3;
+    display: grid;
+    grid-template-columns: subgrid;
+    gap: var(--intra-table-gap);
+}
+table.contingency tbody {
+    border-top: 2px solid black;
+    border-bottom: 1px solid black;
+}
+table.contingency tfoot {
+    border-bottom: 2px solid black;
+}
+table.contingency tr {
+    display: contents;
+}
+table.contingency td {
+    display: grid;
+    grid-template-columns: subgrid;
+    padding: var(--cell-padding);
+}
+table.contingency td > span {
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+table.contingency tbody .col1.row1 {
+    background-color: var(--cell11);
+}
+table.contingency tbody .col1.row3 {
+    background-color: var(--cell13);
+}
+table.contingency tbody .col3.row1 {
+    background-color: var(--cell31);
+}
+table.contingency tbody .col3.row3 {
+    background-color: var(--cell33);
 }
 </style>
 </head>

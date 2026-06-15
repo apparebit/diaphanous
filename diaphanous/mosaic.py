@@ -1,4 +1,4 @@
-from collections.abc import Sequence
+from collections.abc import Iterable, Sequence
 from typing import Literal
 
 import altair as alt
@@ -15,7 +15,7 @@ from .util import (
 )
 
 
-def _sort_values(values: Sequence[None | str]) -> Sequence[None | str]:
+def _sort_values(values: Iterable[None | str]) -> Sequence[None | str]:
     return sorted(values, key=lambda v:"0" if v is None else f"1:{v}")
 
 
@@ -34,9 +34,9 @@ def _make_index(
         index = {}
 
     for column in columns:
-        frame_values = frame.select(
+        frame_values = [v for v in frame.select(
             pl.col(column).unique(maintain_order=True)
-        ).get_column(column).to_list()
+        ).get_column(column).to_list() if v is not None]
 
         index_values = index.get(column)
         if index_values is None:
@@ -47,7 +47,11 @@ def _make_index(
             else:
                 index[column] = _sort_values(frame_values)
 
-        elif (fvs := _sort_values(frame_values)) != (ivs := _sort_values(index_values)):
+        elif (
+            fvs := _sort_values(frame_values)
+        ) != (
+            ivs := _sort_values(v for v in index_values if v is not None)
+        ):
             raise ValueError(
                 f"index for column {column} contains {ivs} instead of {fvs}"
             )
@@ -346,6 +350,74 @@ def _make_fill_expr(
     )
 
     return expr.cast(pl.String).alias("fill")
+
+
+def make_contingencies(
+    frame: pl.DataFrame,
+    x_axis: str,
+    y_axis: str,
+    *,
+    include_null: bool = False,
+    use_minor: bool = False,
+    index: None | dict[str, Sequence[None | str]] = None,
+) -> pl.DataFrame:
+    """Prepare a normalized contingency table."""
+    # use_minor and include_null both impact index
+    if use_minor:
+        frame = to_minor_adult(frame)
+    if not include_null:
+        frame = frame.drop_nulls(
+            [x_axis, y_axis]
+        )
+
+    index = _make_index(frame, [x_axis, y_axis], index)
+    _check_counts([x_axis, y_axis], index, include_null)
+
+    contingencies = frame.group_by(
+        "country", "material", "role", "metric", "metric_order",
+        "data_year",
+        x_axis, y_axis,
+        maintain_order=True
+    ).agg(
+        pl.col("count").sum().round().cast(pl.Int64),
+    )
+
+    # Normalize frequency table by including all possible non-null rows.
+    # Ensure the table covers all possible rows
+    norm = _make_index_norm(contingencies, index)
+    contingencies = norm.join(
+        contingencies,
+        on=[
+            "country", "material", "role", "metric", "metric_order",
+            "data_year",
+            x_axis, y_axis,
+        ],
+        how="left",
+        maintain_order="left",
+        nulls_equal=True,
+    ).with_columns(
+        pl.col("count").fill_null(0),
+    ).with_columns(
+        pl.col("count").sum().over(
+            "metric", "data_year"
+        ).alias("total"),
+    ).with_columns(
+        pl.col("count").truediv(pl.col("total")).mul(100).alias("fraction"),
+    )
+
+    # Sort rows in custom order by mapping values to integer.
+    contingencies = contingencies.with_columns(
+        pl.col(x_axis).replace({
+            value: key for key, value in enumerate(index[x_axis])
+        }).alias("x_order"),
+        pl.col(y_axis).replace({
+            value: key for key, value in enumerate(index[y_axis])
+        }).alias("y_order"),
+    ).sort(
+        "metric_order", "data_year", "y_order", "x_order"
+    )
+
+    return contingencies
 
 
 def make_mosaic_frame(
@@ -689,7 +761,7 @@ def plot_mosaic_grid(
     )
     show_ratings = "chi2" in frame.columns and "rating" in frame.columns
 
-    title_text = f"Perpetrators by {x_label}, {y_label}, Year, and Country"
+    title_text = f"Perpetrators by Country, Year, {x_label}, and {y_label}"
     if show_ratings:
         title_text += " (Incl. χ² Test for Independence)"
 
@@ -1017,7 +1089,7 @@ def plot_odds_ratio_grid(
         spacing=gap,
     ).properties(
         title=alt.Title(
-            f"Odds Ratios for Age Group and {second_variable} by Year and Country",
+            f"Odds Ratios by Country, Year, {second_variable} and Age Group",
             fontSize=25,
             fontWeight="bold",
             anchor="start",
@@ -1038,15 +1110,17 @@ if __name__ == "__main__":
     from .crimestat import load_all_age_distributions
 
     # _WIDTH, _ = shutil.get_terminal_size()
-    distributions = load_all_age_distributions(compact=True)
+    distributions = load_all_age_distributions()
     #frame = pl.concat(distributions.values())
+    frame = distributions["de"]
 
-    frame = make_mosaic_frame(
-        distributions["nz"],
+    frame = make_contingencies(
+        frame,
         "age_group",
         "sex",
-        index={"age_group": ["Minor", "Adult"], "sex": ["Male", "Female"]},
+        include_null=True,
         use_minor=True,
-    ) # type: ignore
+        index={"age_group": ["Minor", None, "Adult"], "sex": ["Male", None, "Female"]},
+    )
 
-    print(frame.select(pl.exclude("metric")))
+    print(frame)
