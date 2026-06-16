@@ -1173,7 +1173,9 @@ printr()
         path = "figure/age-sex-cdfs.svg"
         fig.save(path)
         self.svg(path)
+        self.html("</div>\n")
 
+        self.html("<div class=wide>\n")
         self.emit_contingency_tables(full_data, "sex")
         self.html("</div>\n")
 
@@ -1235,7 +1237,9 @@ printr()
         path = "figure/age-activity-odds-ratios.svg"
         fig.save(path)
         self.svg(path)
+        self.html("</div>\n")
 
+        self.html("<div class=wide>\n")
         self.emit_contingency_tables(activity_data, "activity")
         self.html("</div>\n")
 
@@ -1594,7 +1598,7 @@ main > * {
 }
 
 main > .wide {
-    max-width: 1085px;
+    max-width: 950px;
 }
 
 main > .extra-wide {
@@ -1731,9 +1735,12 @@ hr {
     --cell31: #e8e8e8;
     --cell33: #e8e8e8;
 
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     gap: var(--inter-table-gap);
+    margin-left: auto;
+    margin-right: auto;
+    max-width: max-content;
 }
 
 .sex-vs-age {
