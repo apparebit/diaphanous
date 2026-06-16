@@ -1,5 +1,6 @@
 from argparse import ArgumentParser
 from collections.abc import Iterator, Sequence
+import datetime as dt
 from io import StringIO
 import os
 from pathlib import Path
@@ -476,6 +477,14 @@ class Analyzer:
             """)
 
             self.emit_age_distributions()
+
+        now = dt.datetime.now(dt.UTC)
+        date = now.date().isoformat()
+        time = now.time().isoformat("seconds")
+        self.html(
+            '<p style="font-size: 0.8em;"><i>This report was generated'
+            f' on {date} at {time} UTC.</i></p>'
+        )
 
     def emit_mean_difference_plots(self) -> None:
         self._runr(self._diffs.with_columns(
@@ -2082,7 +2091,7 @@ def format_juxtaposition(frame: pl.DataFrame, with_highlights: bool = False) -> 
     ).opt_table_font(
         stack="neo-grotesque",
     ).opt_all_caps(
-        locations="row_group",
+        locations=gt.loc.row_group,
     ).opt_vertical_padding(
         scale=0.8,
     )

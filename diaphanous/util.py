@@ -228,7 +228,10 @@ def finish_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](
             "metric"
         )
     ).with_columns(
-        pl.col("metric").replace(METRIC_ORDER).alias("metric_order"),
+        pl.col("metric").replace_strict(
+            METRIC_ORDER,
+            return_dtype=pl.Int8,
+        ).alias("metric_order"),
     ).select(
         pl.col(
             "country", "material", "role", "metric", "metric_order",
@@ -269,7 +272,10 @@ def to_minor_adult[F: (pl.DataFrame, pl.LazyFrame)](frame: F) -> F:
             "Juvenile": "Minor",
         })
     ).with_columns(
-        pl.col("age_group").replace(AGE_GROUP_ORDER).alias("age_group_order")
+        pl.col("age_group").replace_strict(
+            AGE_GROUP_ORDER,
+            return_dtype=pl.Int8
+        ).alias("age_group_order")
     )
 
 

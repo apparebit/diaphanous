@@ -28,12 +28,12 @@ def au_age_distribution() -> pl.LazyFrame:
         value_name="count",
     ).with_columns(
         pl.col("sex").replace({"All": None}),
-        pl.col("age").replace({
+        pl.col("age").replace_strict({
             "10-17": 10,
             "18-44": 18,
             "45+": 45,
         }, return_dtype=pl.Int8).alias("age_first"),
-        pl.col("age").replace({
+        pl.col("age").replace_strict({
             "10-17": 18,
             "18-44": 45,
             "45+": 100,
@@ -41,7 +41,7 @@ def au_age_distribution() -> pl.LazyFrame:
     ).with_columns(
         pl.col("count").truediv(pl.col("age_last").sub(pl.col("age_first")))
     ).select(
-        pl.col("year").replace(
+        pl.col("year").replace_strict(
             {"2022/23": 2023},
             return_dtype=pl.Int16
         ).alias("data_year"),
@@ -87,7 +87,7 @@ def nz_load() -> pl.LazyFrame:
         pl.col("Age Group").alias("age"),
     ).with_columns(
         pl.col("year_month").str.extract(r"...(\d+)").cast(pl.Int16).alias("year"),
-        pl.col("year_month").str.extract("(...)").replace({
+        pl.col("year_month").str.extract("(...)").replace_strict({
             "Jan": 1,
             "Feb": 2,
             "Mar": 3,
@@ -100,7 +100,7 @@ def nz_load() -> pl.LazyFrame:
             "Oct": 10,
             "Nov": 11,
             "Dec": 12,
-        }).alias("month"),
+        }, return_dtype=pl.Int8).alias("month"),
         pl.col("age").str.extract(r"(\d+)").cast(pl.Int8).alias("age_low"),
         pl.when(
             pl.col("age").eq("80yearsorover")

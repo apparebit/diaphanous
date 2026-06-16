@@ -392,14 +392,14 @@ def make_contingencies(
         pl.col("count").truediv(pl.col("total")).mul(100).alias("fraction"),
     )
 
-    # Sort rows in custom order by mapping values to integer.
+    # Sort rows in custom order by mapping values to integers.
     contingencies = contingencies.with_columns(
-        pl.col(x_axis).replace({
+        pl.col(x_axis).replace_strict({
             value: key for key, value in enumerate(index[x_axis])
-        }).alias("x_order"),
-        pl.col(y_axis).replace({
+        }, return_dtype=pl.Int8).alias("x_order"),
+        pl.col(y_axis).replace_strict({
             value: key for key, value in enumerate(index[y_axis])
-        }).alias("y_order"),
+        }, return_dtype=pl.Int8).alias("y_order"),
     ).sort(
         "metric_order", "data_year", "y_order", "x_order"
     )
@@ -474,12 +474,12 @@ def make_mosaic_frame(
 
     # Sort rows in custom order by mapping values to integer.
     contingencies = contingencies.with_columns(
-        pl.col(x_axis).replace({
+        pl.col(x_axis).replace_strict({
             value: key for key, value in enumerate(index[x_axis])
-        }).alias("x_order"),
-        pl.col(y_axis).replace({
+        }, return_dtype=pl.Int8).alias("x_order"),
+        pl.col(y_axis).replace_strict({
             value: key for key, value in enumerate(index[y_axis])
-        }).alias("y_order"),
+        }, return_dtype=pl.Int8).alias("y_order"),
     ).sort(
         "metric_order", "data_year", "x_order", "y_order"
     )
