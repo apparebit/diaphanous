@@ -437,7 +437,16 @@ class Analyzer:
                 System (NIBRS) goes well beyond the above listed information
                 because it is the only country publishing case data instead of
                 frequency data.</p>
+
+                <p>In addition to being case-based, the United States' NIBRS
+                also captures many more statistics at finer granularity.
+                Notably, age is represented in years from 0-99, whereas the
+                other countries use buckets. As illustrated in the chart below,
+                the number and size of buckets varies widely amongst
+                countries.</p>
             """)
+
+            self.emit_age_buckets()
 
             self.h3("Backfilling Suspects for Unsolved Incidents")
 
@@ -1427,6 +1436,53 @@ printr()
 
         markup.append("</div>\n")
         self.html("".join(markup))
+
+    def emit_age_buckets(self) -> None:
+        data = pl.read_csv("data/age-groupings.csv")
+
+        fig = (
+            alt.Chart(
+                data.group_by(
+                    "country"
+                ).agg(
+                    pl.col("start_age").min().alias("min"),
+                    pl.lit(100).alias("max"),
+                )
+            ).mark_rule(
+                stroke=Palette.LIGHT_BLUE,
+                strokeWidth=3,
+            ).encode(
+                alt.X("min:Q").scale(domain=(0, 100)),
+                alt.X2("max:Q"),
+                alt.Y("country:N")
+            )
+            +
+            alt.Chart(data).mark_tick(
+                stroke=Palette.BLUE,
+                thickness=0.1,
+                size=12,
+            ).encode(
+                alt.X("start_age:Q").scale(domain=(0, 100)).title("Age").axis(
+                    tickCount=11,
+                ),
+                alt.Y("country:N").title(None).axis(
+                    ticks=False,
+                    domain=False,
+                    labelPadding=5,
+                ),
+            )
+        ).properties(
+            width=270,
+            height=120,
+        )
+
+        self.html(
+            '<div style="max-width: 30em; margin-left: auto; margin-right: auto">\n'
+        )
+        path = "figure/age-groupings.svg"
+        fig.save(path)
+        self.svg(path)
+        self.html("</div>\n")
 
     # ==================================================================================
 

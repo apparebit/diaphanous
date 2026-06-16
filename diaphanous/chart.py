@@ -427,7 +427,7 @@ def plot_cdf_grid(
 
 def _plot_age_sex_cdfs(
     frame: pl.DataFrame, country: str, material_role: str
-) -> alt.LayerChart:
+) -> alt.FacetChart | alt.LayerChart:
     if country == "Australia":
         male_colors = Scale.BLUE.value[4]
         female_colors = Scale.PINK.value[4]
@@ -471,7 +471,7 @@ def _plot_cdf(
 
 def _plot_age_sex_bands(
     frame: pl.DataFrame, country: str, material_role: str
-) -> alt.LayerChart:
+) -> alt.FacetChart | alt.LayerChart:
     extrema = compute_age_sex_cdf_extrema(frame)
     majority = 20 if country == "New Zealand" else 18
     minors = extrema.filter(pl.col("age").le(majority))
