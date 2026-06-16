@@ -21,22 +21,49 @@ def _sort_values(values: Iterable[None | str]) -> Sequence[None | str]:
 
 def _make_index(
     frame: pl.DataFrame,
-    columns: Sequence[str],
+    x_axis: str,
+    y_axis: str,
+    *,
+    include_null: bool = False,
+    use_minor: bool = False,
     index: None | dict[str, Sequence[None | str]] = None,
-) -> dict[str, Sequence[None | str]]:
+) -> tuple[pl.DataFrame, dict[str, Sequence[None | str]]]:
     """
-    Create an index for the given columns. This function fills in the given
-    index, if not null. Otherwise, it creates an index from scratch. The index
-    is an ordered map of columns names as keys and the list of column values as
-    values.
+    If necessary, update the data frame by filtering out null attributes and/or
+    combining the age groups for children and juveniles. Also, validate or fill
+    in the index dictionary mapping column names to ordered values.
     """
+    # 1. Process the data frame:
+    if use_minor:
+        frame = to_minor_adult(frame)
+
+    if include_null:
+        # For mosaic charts, we still want to draw lines when non-null
+        # attributes have null or zero counts. However, if either attribute is
+        # null, we do NOT want to draw lines, since the lines and surrounding
+        # gaps distort the chart. For example, this is the case for Finland's
+        # age distribution, which includes zero counts for all combinations of
+        # attribute values including null. Hence we filter the data accordingly.
+        frame = frame.filter(
+            pl.col(x_axis).is_not_null().and_(
+                pl.col(y_axis).is_not_null()
+            ).or_(
+                pl.col("count").gt(0)
+            )
+        )
+    else:
+        frame = frame.drop_nulls(
+            [x_axis, y_axis]
+        )
+
+    # 2. Process the index:
     if index is None:
         index = {}
 
-    for column in columns:
-        frame_values = [v for v in frame.select(
-            pl.col(column).unique(maintain_order=True)
-        ).get_column(column).to_list() if v is not None]
+    for column in (x_axis, y_axis):
+        frame_values = frame.select(
+            pl.col(column).unique()
+        ).get_column(column).to_list()
 
         index_values = index.get(column)
         if index_values is None:
@@ -48,7 +75,7 @@ def _make_index(
                 index[column] = _sort_values(frame_values)
 
         elif (
-            fvs := _sort_values(frame_values)
+            fvs := _sort_values(v for v in frame_values if v is not None)
         ) != (
             ivs := _sort_values(v for v in index_values if v is not None)
         ):
@@ -56,7 +83,8 @@ def _make_index(
                 f"index for column {column} contains {ivs} instead of {fvs}"
             )
 
-    return index
+    # Et voilà!
+    return frame, index
 
 
 def _make_index_norm(
@@ -154,65 +182,6 @@ def _check_counts(
         raise ValueError(
             f"can't show counts for column {columns[1]} with {count} distinct values"
         )
-
-
-def _make_null_predicate(
-    columns: Sequence[str],
-    junction: Literal["and", "or"],
-    predicate: None | pl.Expr = None,
-) -> pl.Expr:
-    for column in columns:
-        if predicate is None:
-            predicate = pl.col(column).is_null()
-        elif junction == "and":
-            predicate = predicate.and_(
-                pl.col(column).is_null()
-            )
-        elif junction == "or":
-            predicate = predicate.or_(
-                pl.col(column).is_null()
-            )
-        else:
-            assert False, "unreachable"
-
-    assert predicate is not None
-    return predicate
-
-
-def _make_color_expr(
-    columns: Sequence[str],
-    default_color: str = Palette.GRAY,
-    alpha: str = "ff",
-    include_null: bool = False,
-) -> pl.Expr:
-    expr = None
-
-    predicate = None
-    for column in columns:
-
-        if predicate is None:
-            predicate = pl.col(column).is_null()
-        else:
-            predicate = predicate.and_(
-                pl.col(column).is_null()
-            )
-
-        assert predicate is not None
-        expr = pl.when(
-            predicate
-        ).then(
-            pl.lit("transparent")
-        ).when(
-            pl.col(columns[0]).is_null().or_(
-                pl.col(columns[1]).is_null()
-            )
-        ).then(
-            pl.lit("#dadee6a0")
-        )
-
-    return (pl.lit(Palette.GRAY) if expr is None else expr.otherwise(
-        pl.lit(Palette.GRAY)
-    )).cast(pl.String).alias("stroke")
 
 
 def _make_stroke_expr(
@@ -362,17 +331,18 @@ def make_contingencies(
     index: None | dict[str, Sequence[None | str]] = None,
 ) -> pl.DataFrame:
     """Prepare a normalized contingency table."""
-    # use_minor and include_null both impact index
-    if use_minor:
-        frame = to_minor_adult(frame)
-    if not include_null:
-        frame = frame.drop_nulls(
-            [x_axis, y_axis]
-        )
-
-    index = _make_index(frame, [x_axis, y_axis], index)
+    # Prepare data frame and index, then check data
+    frame, index = _make_index(
+        frame,
+        x_axis,
+        y_axis,
+        include_null=include_null,
+        use_minor=use_minor,
+        index=index,
+    )
     _check_counts([x_axis, y_axis], index, include_null)
 
+    # Simplify data frame
     contingencies = frame.group_by(
         "country", "material", "role", "metric", "metric_order",
         "data_year",
@@ -429,21 +399,22 @@ def make_mosaic_frame(
     index: None | dict[str, Sequence[None | str]] = None,
     highlights: None | dict[None | str, dict[None | str, str]] = None,
     use_residuals: bool = False,
-    use_minor: bool = False,
     include_null: bool = False,
+    use_minor: bool = False,
     show_counts: bool = False,
     show_percent: bool = False,
 ) -> pl.DataFrame:
-    # use_minor and include_null both impact index
-    if use_minor:
-        frame = to_minor_adult(frame)
-    if not include_null:
-        frame = frame.drop_nulls(
-            [x_axis, y_axis]
-        )
+    # Prepare data frame and index
+    frame, index = _make_index(
+        frame,
+        x_axis,
+        y_axis,
+        include_null=include_null,
+        use_minor=use_minor,
+        index=index,
+    )
 
-    # Fill in index of axis values and thereafter check counts
-    index = _make_index(frame, [x_axis, y_axis], index)
+    # Check arguments
     highlights = _check_highlights([x_axis, y_axis], index, highlights)
     if show_counts:
         _check_counts([x_axis, y_axis], index, include_null)
