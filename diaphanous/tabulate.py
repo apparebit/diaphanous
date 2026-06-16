@@ -1372,17 +1372,18 @@ printr()
             previous_row = None
             for index, (count, fraction) in enumerate(zip(counts, fractions)):
                 current_row = 1 + index // 3 + row_offset
+
                 if current_row != previous_row:
                     if previous_row is not None:
                         markup.append("  </tr>\n")
-                    markup.append("  <tr>\n")
+                    markup.append(f"  <tr class=row{current_row}>\n")
                     previous_row = current_row
 
                 markup.append(
-                    f'    <td class="col{1 + index % 3} row{current_row}">'
-                    f'<span class=count>{count}</span>'
-                    f'<span class=fraction>{fraction}</span>'
-                    '</td>\n'
+                    f"    <td class=col{1 + index % 3}>"
+                    f"<span class=count>{count}</span>"
+                    f"<span class=fraction>{fraction}</span>"
+                    "</td>\n"
                 )
             markup.append("  </tr>\n")
 
@@ -1741,8 +1742,8 @@ hr {
     --intra-table-gap: 0.3em;
     --cell-padding: 0.2em;
 
-    --cell31: #e8e8e8;
-    --cell33: #e8e8e8;
+    --row1-col3: #e8e8e8;
+    --row3-col3: #e8e8e8;
 
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
@@ -1753,13 +1754,13 @@ hr {
 }
 
 .sex-vs-age {
-    --cell11: #e6efff;
-    --cell13: #ffe5ef;
+    --row1-col1: #e6efff;
+    --row3-col1: #ffe5ef;
 }
 
 .activity-vs-age {
-    --cell11: #ffecc5;
-    --cell13: #ffe7e3;
+    --row1-col1: #ffecc5;
+    --row3-col1: #ffe7e3;
 }
 
 table.contingency {
@@ -1799,17 +1800,17 @@ table.contingency td > span {
     font-variant-numeric: tabular-nums;
     text-align: right;
 }
-table.contingency tbody .col1.row1 {
-    background-color: var(--cell11);
+table.contingency tbody .row1 .col1 {
+    background-color: var(--row1-col1);
 }
-table.contingency tbody .col1.row3 {
-    background-color: var(--cell13);
+table.contingency tbody .row3 .col1 {
+    background-color: var(--row3-col1);
 }
-table.contingency tbody .col3.row1 {
-    background-color: var(--cell31);
+table.contingency tbody .row1 .col3 {
+    background-color: var(--row1-col3);
 }
-table.contingency tbody .col3.row3 {
-    background-color: var(--cell33);
+table.contingency tbody .row3 .col3 {
+    background-color: var(--row3-col3);
 }
 </style>
 </head>
