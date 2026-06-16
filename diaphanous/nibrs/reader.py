@@ -10,7 +10,7 @@ import polars as pl
 from .model import (
     CriminalAct, Ethnicity, Id, OffenseCode, Race, Sex, SOURCE_FILES, Table
 )
-from ..util import finish_age_distribution, sort_age_distribution
+from ..util import finish_age_distribution, MATERIALS, ROLES
 
 
 type FrameType = pl.DataFrame
@@ -310,7 +310,7 @@ def _prepare_criminal_acts[F: (pl.DataFrame, pl.LazyFrame)](frame: F) -> F:
         ).otherwise(
             pl.lit("Porn")
         ).cast(
-            pl.Enum(["CSAM", "Porn"])
+            pl.Enum(MATERIALS)
         ).alias(Id.MATERIAL),
 
         # Distinguish criminal acts involving production from consumption.
@@ -386,17 +386,98 @@ def ingest_tables(
     }
 
 
+def analyze_porn_incidents(
+    step: None | Callable[[int, str], None] = None,
+) -> Mapping[str, int]:
+    tables = ingest_tables(step)
+
+    incidents = tables[Table.INCIDENT]
+    porn_incidents = incidents.filter(
+        pl.col(Id.MATERIAL).eq("Porn")
+    )
+
+    def restrict(table, selection) -> pl.DataFrame:
+        return table.join(
+            selection.select(pl.col(Id.YEAR, Id.INCIDENT)),
+            on=(Id.YEAR, Id.INCIDENT),
+            how="inner",
+        )
+
+    victims= tables[Table.VICTIM]
+    porn_victims = restrict(victims, porn_incidents)
+    unknown_age_victims = porn_victims.filter(
+        pl.col("age").is_null()
+    )
+    child_victims = porn_victims.filter(
+        pl.col("age").lt(18)
+    )
+
+    unknown_age_incidents = restrict(porn_incidents, unknown_age_victims)
+
+    child_porn_incidents = restrict(porn_incidents, child_victims)
+    offenders = tables[Table.OFFENDER]
+    porn_offenders = restrict(offenders, porn_incidents)
+    juvenile_offenders = porn_offenders.filter(
+        pl.col("age").lt(18)
+    )
+    juvenile_incidents = restrict(porn_incidents, juvenile_offenders)
+    juvenile_victims = restrict(porn_victims, juvenile_incidents)
+    juvenile_child_victims = juvenile_victims.filter(
+        pl.col("age").lt(18)
+    )
+
+    return {
+        "Incidents": len(incidents),
+        "Incidents involving porn": len(porn_incidents),
+        "Victims": len(porn_victims),
+        "Victims witbout age": len(unknown_age_victims),
+        "Child victims": len(child_victims),
+        "Unknown age incidents": len(unknown_age_incidents),
+        "Child porn incidents": len(child_porn_incidents),
+        "Offenders": len(porn_offenders),
+        "Juvenile offenders": len(juvenile_offenders),
+        "Juvenile incidents": len(juvenile_incidents),
+        "Juvenile incident victims": len(juvenile_victims),
+        "Juvenile incident child victims": len(juvenile_child_victims),
+    }
+
+
 def ingest_age_distributions(
     step: None | Callable[[int, str], None] = None,
 ) -> pl.DataFrame:
     """Ingest the age distributions from the per year and state archives."""
     tables = ingest_tables(step)
 
-    distribution = sort_age_distribution(
-        pl.concat([
-            _prepare_age_distribution(tables[Table.OFFENDER], "Offender"),
-            _prepare_age_distribution(tables[Table.ARRESTEE], "Arrestee"),
-        ])
+    # Prepare age distributions for offenders and arrestees
+    distribution = pl.concat([
+        _prepare_age_distribution(tables[Table.OFFENDER], "Offender"),
+        _prepare_age_distribution(tables[Table.ARRESTEE], "Arrestee"),
+    ])
+
+    # Update age distributions so that CSAM offenders and arrestees are proper
+    # subsets of porn offenders and arrestees
+    distribution = pl.concat([
+        distribution.filter(
+            pl.col(Id.MATERIAL).eq("CSAM")
+        ),
+        distribution.with_columns(
+            pl.lit("Porn", dtype=pl.Enum(MATERIALS)).alias(Id.MATERIAL),
+        ).group_by(
+            Id.MATERIAL, Id.ROLE, Id.YEAR, "age", "sex", "ethnicity", Id.ACTIVITY,
+        ).agg(
+            pl.col("count").sum()
+        ),
+    ])
+
+    print(len(distribution.filter(pl.col(Id.ROLE).is_null())), "out of", len(distribution))
+
+    distribution = finish_age_distribution(
+        distribution,
+        "United States",
+        None,
+        None,
+        11,
+        17,
     )
 
     if isinstance(distribution, pl.LazyFrame):
@@ -467,22 +548,16 @@ def _prepare_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](
         {Id.SEX: "sex", Id.RACE.value: "ethnicity"}
     )
 
-    # Tabulate counts
-    frame = frame.group_by(
-        Id.MATERIAL, Id.YEAR, "age", "sex", "ethnicity", Id.ACTIVITY,
-    ).agg(
-        pl.len().cast(pl.Float64).alias("count")
+    # Add role
+    frame = frame.with_columns(
+        pl.lit(role, dtype=pl.Enum(ROLES)).alias(Id.ROLE)
     )
 
-    # Finish the age distribution
-    return finish_age_distribution(
-        frame,
-        "United States",
-        None,
-        role,
-        11,
-        17,
-        sorted=False,
+    # Tabulate counts
+    return frame.group_by(
+        Id.MATERIAL, Id.ROLE, Id.YEAR, "age", "sex", "ethnicity", Id.ACTIVITY,
+    ).agg(
+        pl.len().cast(pl.Float64).alias("count")
     )
 
 
@@ -513,7 +588,6 @@ if __name__ == "__main__":
     pl.Config.set_float_precision(1)
     pl.Config.set_tbl_cell_numeric_alignment("RIGHT")
 
-
     print(frame.filter(
         pl.col("metric").eq("United States CSAM Offenders").and_(
             pl.col("data_year").eq(2024)
@@ -526,3 +600,11 @@ if __name__ == "__main__":
             "sex_order"
         )
     ))
+
+    print()
+    stats = analyze_porn_incidents(step_ingestion)
+    print()
+
+    label_size = max(len(label) for label in stats)
+    for k, v in stats.items():
+        print(f"{k.ljust(label_size)}: {v:11,}")

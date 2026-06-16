@@ -1661,6 +1661,8 @@ Finland,CSAM,Offender,Finland CSAM Offenders,2,2024,96,Adult,4,Male,1,,,0,0.84
 Finland,CSAM,Offender,Finland CSAM Offenders,2,2024,97,Adult,4,Male,1,,,0,0.84
 Finland,CSAM,Offender,Finland CSAM Offenders,2,2024,98,Adult,4,Male,1,,,0,0.84
 Finland,CSAM,Offender,Finland CSAM Offenders,2,2024,99,Adult,4,Male,1,,,0,0.84
+Germany,CSAM,Offender,Germany CSAM Offenders,3,2015,,,0,,0,,Producer,-1,468.0
+Germany,CSAM,Offender,Germany CSAM Offenders,3,2015,,,0,,0,,Consumer,1,627.0
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2015,8,Child,1,Female,-1,,Producer,-1,2.0
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2015,8,Child,1,Male,1,,Producer,-1,1.0
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2015,8,Child,1,Male,1,,Consumer,1,0.5
@@ -2027,6 +2029,8 @@ Germany,CSAM,Offender,Germany CSAM Offenders,3,2015,99,Adult,4,Female,-1,,Produc
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2015,99,Adult,4,Female,-1,,Consumer,1,0.25
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2015,99,Adult,4,Male,1,,Producer,-1,3.85
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2015,99,Adult,4,Male,1,,Consumer,1,6.05
+Germany,CSAM,Offender,Germany CSAM Offenders,3,2016,,,0,,0,,Producer,-1,571.0
+Germany,CSAM,Offender,Germany CSAM Offenders,3,2016,,,0,,0,,Consumer,1,334.0
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2016,6,Child,1,Male,1,,Producer,-1,0.5
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2016,7,Child,1,Male,1,,Producer,-1,0.5
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2016,8,Child,1,Male,1,,Producer,-1,2.5
@@ -2391,6 +2395,8 @@ Germany,CSAM,Offender,Germany CSAM Offenders,3,2016,99,Adult,4,Female,-1,,Produc
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2016,99,Adult,4,Female,-1,,Consumer,1,0.35
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2016,99,Adult,4,Male,1,,Producer,-1,3.825
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2016,99,Adult,4,Male,1,,Consumer,1,5.825
+Germany,CSAM,Offender,Germany CSAM Offenders,3,2017,,,0,,0,,Producer,-1,412.0
+Germany,CSAM,Offender,Germany CSAM Offenders,3,2017,,,0,,0,,Consumer,1,368.0
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2017,6,Child,1,Female,-1,,Producer,-1,1.0
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2017,7,Child,1,Female,-1,,Producer,-1,1.0
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2017,8,Child,1,Female,-1,,Producer,-1,3.5
@@ -2759,6 +2765,8 @@ Germany,CSAM,Offender,Germany CSAM Offenders,3,2017,99,Adult,4,Female,-1,,Produc
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2017,99,Adult,4,Female,-1,,Consumer,1,0.15
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2017,99,Adult,4,Male,1,,Producer,-1,5.55
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2017,99,Adult,4,Male,1,,Consumer,1,5.725
+Germany,CSAM,Offender,Germany CSAM Offenders,3,2018,,,0,,0,,Producer,-1,454.0
+Germany,CSAM,Offender,Germany CSAM Offenders,3,2018,,,0,,0,,Consumer,1,320.0
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2018,6,Child,1,Female,-1,,Producer,-1,1.0
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2018,6,Child,1,Male,1,,Producer,-1,1.5
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2018,7,Child,1,Female,-1,,Producer,-1,1.0
@@ -3129,6 +3137,8 @@ Germany,CSAM,Offender,Germany CSAM Offenders,3,2018,99,Adult,4,Female,-1,,Produc
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2018,99,Adult,4,Female,-1,,Consumer,1,0.25
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2018,99,Adult,4,Male,1,,Producer,-1,6.125
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2018,99,Adult,4,Male,1,,Consumer,1,7.0
+Germany,CSAM,Offender,Germany CSAM Offenders,3,2019,,,0,,0,,Producer,-1,529.0
+Germany,CSAM,Offender,Germany CSAM Offenders,3,2019,,,0,,0,,Consumer,1,398.0
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2019,0,Child,1,Male,1,,Producer,-1,0.16666666666666666
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2019,0,Child,1,Male,1,,Consumer,1,0.16666666666666666
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2019,1,Child,1,Male,1,,Producer,-1,0.16666666666666666
@@ -3508,6 +3518,8 @@ Germany,CSAM,Offender,Germany CSAM Offenders,3,2019,99,Adult,4,Female,-1,,Produc
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2019,99,Adult,4,Female,-1,,Consumer,1,0.05
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2019,99,Adult,4,Male,1,,Producer,-1,0.25
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2019,99,Adult,4,Male,1,,Consumer,1,0.45
+Germany,CSAM,Offender,Germany CSAM Offenders,3,2020,,,0,,0,,Producer,-1,996.0
+Germany,CSAM,Offender,Germany CSAM Offenders,3,2020,,,0,,0,,Consumer,1,661.0
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2020,0,Child,1,Female,-1,,Producer,-1,0.3333333333333333
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2020,0,Child,1,Male,1,,Producer,-1,0.8333333333333334
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2020,0,Child,1,Male,1,,Consumer,1,0.16666666666666666
@@ -3880,6 +3892,8 @@ Germany,CSAM,Offender,Germany CSAM Offenders,3,2020,98,Adult,4,Male,1,,Consumer,
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2020,99,Adult,4,Female,-1,,Consumer,1,0.1
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2020,99,Adult,4,Male,1,,Producer,-1,0.35
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2020,99,Adult,4,Male,1,,Consumer,1,1.0
+Germany,CSAM,Offender,Germany CSAM Offenders,3,2021,,,0,,0,,Producer,-1,1904.0
+Germany,CSAM,Offender,Germany CSAM Offenders,3,2021,,,0,,0,,Consumer,1,1592.0
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2021,0,Child,1,Female,-1,,Producer,-1,2.0
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2021,0,Child,1,Female,-1,,Consumer,1,0.16666666666666666
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2021,0,Child,1,Male,1,,Producer,-1,2.3333333333333335
@@ -4280,6 +4294,8 @@ Germany,CSAM,Offender,Germany CSAM Offenders,3,2021,99,Adult,4,Female,-1,,Produc
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2021,99,Adult,4,Female,-1,,Consumer,1,0.2
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2021,99,Adult,4,Male,1,,Producer,-1,1.1
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2021,99,Adult,4,Male,1,,Consumer,1,1.55
+Germany,CSAM,Offender,Germany CSAM Offenders,3,2022,,,0,,0,,Producer,-1,3334.0
+Germany,CSAM,Offender,Germany CSAM Offenders,3,2022,,,0,,0,,Consumer,1,1817.0
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2022,0,Child,1,Female,-1,,Producer,-1,5.333333333333333
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2022,0,Child,1,Female,-1,,Consumer,1,0.8333333333333334
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2022,0,Child,1,Male,1,,Producer,-1,10.333333333333334
@@ -4680,6 +4696,8 @@ Germany,CSAM,Offender,Germany CSAM Offenders,3,2022,99,Adult,4,Female,-1,,Produc
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2022,99,Adult,4,Female,-1,,Consumer,1,0.15
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2022,99,Adult,4,Male,1,,Producer,-1,0.9
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2022,99,Adult,4,Male,1,,Consumer,1,1.8
+Germany,CSAM,Offender,Germany CSAM Offenders,3,2023,,,0,,0,,Producer,-1,4713.0
+Germany,CSAM,Offender,Germany CSAM Offenders,3,2023,,,0,,0,,Consumer,1,1855.0
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2023,0,Child,1,Female,-1,,Producer,-1,12.666666666666666
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2023,0,Child,1,Female,-1,,Consumer,1,1.1666666666666667
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2023,0,Child,1,Male,1,,Producer,-1,17.333333333333332
@@ -5080,6 +5098,8 @@ Germany,CSAM,Offender,Germany CSAM Offenders,3,2023,99,Adult,4,Female,-1,,Produc
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2023,99,Adult,4,Female,-1,,Consumer,1,0.2
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2023,99,Adult,4,Male,1,,Producer,-1,2.25
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2023,99,Adult,4,Male,1,,Consumer,1,3.3
+Germany,CSAM,Offender,Germany CSAM Offenders,3,2024,,,0,,0,,Producer,-1,4596.0
+Germany,CSAM,Offender,Germany CSAM Offenders,3,2024,,,0,,0,,Consumer,1,2135.0
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2024,0,Child,1,Female,-1,,Producer,-1,23.5
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2024,0,Child,1,Female,-1,,Consumer,1,2.8333333333333335
 Germany,CSAM,Offender,Germany CSAM Offenders,3,2024,0,Child,1,Male,1,,Producer,-1,25.166666666666668

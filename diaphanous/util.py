@@ -174,7 +174,7 @@ def finish_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](
     frame: F,
     country: str,
     material: None | Literal["CSAM", "Porn"],
-    role: Literal["Offender", "Arrestee"],
+    role: None | Literal["Offender", "Arrestee"],
     juvenile_min: int,
     juvenile_max: int,
     sorted: bool = True,
@@ -199,7 +199,6 @@ def finish_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](
             return_dtype=pl.Int8,
         ).alias("age_group_order"),
         pl.lit(country, dtype=pl.String).alias("country"),
-        pl.lit(role, dtype=pl.Enum(["Offender", "Arrestee"])).alias("role"),
         pl.col("sex").replace_strict(
             SEX_ORDER,
             return_dtype=pl.Int8,
@@ -210,23 +209,25 @@ def finish_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](
         ).alias("activity_order"),
     )
 
-    if material is None:
+    if material is not None:
         frame = frame.with_columns(
-            pl.format(
-                f"{country} {{}} {role}s", pl.col("material")
-            ).cast(
-                pl.Enum(METRICS)
-            ).alias("metric")
+            pl.lit(material, dtype=pl.Enum(MATERIALS)).alias("material"),
         )
-    else:
+
+    if role is not None:
         frame = frame.with_columns(
-            pl.lit(material, dtype=pl.Enum(["CSAM", "Porn"])).alias("material"),
-            pl.lit(
-                f"{country} {material} {role}s", dtype=pl.Enum(METRICS)
-            ).alias("metric"),
+            pl.lit(role, dtype=pl.Enum(ROLES)).alias("role"),
         )
 
     frame = frame.with_columns(
+        pl.format(
+            f"{country} {{}} {{}}s", pl.col("material"), pl.col("role")
+        ).cast(
+            pl.Enum(METRICS)
+        ).alias(
+            "metric"
+        )
+    ).with_columns(
         pl.col("metric").replace(METRIC_ORDER).alias("metric_order"),
     ).select(
         pl.col(
