@@ -43,13 +43,30 @@ def _make_index(
         # null, we do NOT want to draw lines, since the lines and surrounding
         # gaps distort the chart. For example, this is the case for Finland's
         # age distribution, which includes zero counts for all combinations of
-        # attribute values including null. Hence we filter the data accordingly.
+        # attribute values including null.
+        #
+        # Having said that, we allow a single placeholder row with only null
+        # attributes for a given country, material, role, and year. It serves as
+        # indicator that no data is available for that year and helps align
+        # mosaic charts for the same year.
+        #
+        # The solution is to filter only within a group:
         frame = frame.filter(
-            pl.col(x_axis).is_not_null().and_(
-                pl.col(y_axis).is_not_null()
-            ).or_(
-                pl.col("count").gt(0)
-            )
+            (
+                pl.col(x_axis).is_not_null().and_(
+                    pl.col(y_axis).is_not_null()
+                ).or_(
+                    pl.col("count").gt(0)
+                ).or_(
+                    pl.len().eq(1).and_(
+                        pl.col(x_axis).is_null()
+                    ).and_(
+                        pl.col(y_axis).is_null()
+                    ).and_(
+                        pl.col("count").is_null()
+                    )
+                )
+            ).over("metric", "data_year")
         )
     else:
         frame = frame.drop_nulls(
