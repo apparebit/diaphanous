@@ -1,157 +1,164 @@
-country,start_age
-Australia,10
-Australia,18
-Australia,45
-Finland,0
-Finland,15
-Finland,18
-Finland,30
-Finland,50
-Germany,0
-Germany,6
-Germany,8
-Germany,10
-Germany,12
-Germany,14
-Germany,16
-Germany,18
-Germany,21
-Germany,23
-Germany,25
-Germany,30
-Germany,40
-Germany,50
-Germany,60
-Germany,65
-Germany,70
-Germany,75
-Germany,80
-Italy,0
-Italy,14
-Italy,18
-Italy,25
-Italy,35
-Italy,45
-Italy,55
-Italy,65
-New Zealand,5
-New Zealand,10
-New Zealand,15
-New Zealand,20
-New Zealand,25
-New Zealand,30
-New Zealand,35
-New Zealand,40
-New Zealand,45
-New Zealand,50
-New Zealand,55
-New Zealand,60
-New Zealand,65
-New Zealand,70
-New Zealand,75
-New Zealand,80
-Spain,14
-Spain,18
-Spain,31
-Spain,41
-Spain,65
-United States,0
-United States,1
-United States,2
-United States,3
-United States,4
-United States,5
-United States,6
-United States,7
-United States,8
-United States,9
-United States,10
-United States,11
-United States,12
-United States,13
-United States,14
-United States,15
-United States,16
-United States,17
-United States,18
-United States,19
-United States,20
-United States,21
-United States,22
-United States,23
-United States,24
-United States,25
-United States,26
-United States,27
-United States,28
-United States,29
-United States,30
-United States,31
-United States,32
-United States,33
-United States,34
-United States,35
-United States,36
-United States,37
-United States,38
-United States,39
-United States,40
-United States,41
-United States,42
-United States,43
-United States,44
-United States,45
-United States,46
-United States,47
-United States,48
-United States,49
-United States,50
-United States,51
-United States,52
-United States,53
-United States,54
-United States,55
-United States,56
-United States,57
-United States,58
-United States,59
-United States,60
-United States,61
-United States,62
-United States,63
-United States,64
-United States,65
-United States,66
-United States,67
-United States,68
-United States,69
-United States,70
-United States,71
-United States,72
-United States,73
-United States,74
-United States,75
-United States,76
-United States,77
-United States,78
-United States,79
-United States,80
-United States,81
-United States,82
-United States,83
-United States,84
-United States,85
-United States,86
-United States,87
-United States,88
-United States,89
-United States,90
-United States,91
-United States,92
-United States,93
-United States,94
-United States,95
-United States,96
-United States,97
-United States,98
-United States,99
+country,start_age,liability
+Australia,10,limited
+Australia,18,full
+Australia,45,full
+Australia,100,full
+Finland,0,none
+Finland,15,limited
+Finland,18,full
+Finland,30,full
+Finland,50,full
+Finland,100,full
+Germany,0,none
+Germany,6,none
+Germany,8,none
+Germany,10,none
+Germany,12,none
+Germany,14,limited
+Germany,16,limited
+Germany,18,full-or-limited
+Germany,21,full
+Germany,23,full
+Germany,25,full
+Germany,30,full
+Germany,40,full
+Germany,50,full
+Germany,60,full
+Germany,65,full
+Germany,70,full
+Germany,75,full
+Germany,80,full
+Germany,100,full
+Italy,0,none
+Italy,14,limited
+Italy,18,full
+Italy,25,full
+Italy,35,full
+Italy,45,full
+Italy,55,full
+Italy,65,full
+Italy,100,full
+New Zealand,5,none
+New Zealand,10,limited
+New Zealand,15,limited
+New Zealand,20,full
+New Zealand,25,full
+New Zealand,30,full
+New Zealand,35,full
+New Zealand,40,full
+New Zealand,45,full
+New Zealand,50,full
+New Zealand,55,full
+New Zealand,60,full
+New Zealand,65,full
+New Zealand,70,full
+New Zealand,75,full
+New Zealand,80,full
+New Zealand,100,full
+Spain,14,limited
+Spain,18,full
+Spain,31,full
+Spain,41,full
+Spain,65,full
+Spain,100,full
+United States,0,none
+United States,1,none
+United States,2,none
+United States,3,none
+United States,4,none
+United States,5,none
+United States,6,none
+United States,7,none
+United States,8,none
+United States,9,none
+United States,10,none
+United States,11,limited
+United States,12,limited
+United States,13,limited
+United States,14,limited
+United States,15,limited
+United States,16,limited
+United States,17,limited
+United States,18,full
+United States,19,full
+United States,20,full
+United States,21,full
+United States,22,full
+United States,23,full
+United States,24,full
+United States,25,full
+United States,26,full
+United States,27,full
+United States,28,full
+United States,29,full
+United States,30,full
+United States,31,full
+United States,32,full
+United States,33,full
+United States,34,full
+United States,35,full
+United States,36,full
+United States,37,full
+United States,38,full
+United States,39,full
+United States,40,full
+United States,41,full
+United States,42,full
+United States,43,full
+United States,44,full
+United States,45,full
+United States,46,full
+United States,47,full
+United States,48,full
+United States,49,full
+United States,50,full
+United States,51,full
+United States,52,full
+United States,53,full
+United States,54,full
+United States,55,full
+United States,56,full
+United States,57,full
+United States,58,full
+United States,59,full
+United States,60,full
+United States,61,full
+United States,62,full
+United States,63,full
+United States,64,full
+United States,65,full
+United States,66,full
+United States,67,full
+United States,68,full
+United States,69,full
+United States,70,full
+United States,71,full
+United States,72,full
+United States,73,full
+United States,74,full
+United States,75,full
+United States,76,full
+United States,77,full
+United States,78,full
+United States,79,full
+United States,80,full
+United States,81,full
+United States,82,full
+United States,83,full
+United States,84,full
+United States,85,full
+United States,86,full
+United States,87,full
+United States,88,full
+United States,89,full
+United States,90,full
+United States,91,full
+United States,92,full
+United States,93,full
+United States,94,full
+United States,95,full
+United States,96,full
+United States,97,full
+United States,98,full
+United States,99,full
+United States,100,full

@@ -439,11 +439,19 @@ class Analyzer:
                 frequency data.</p>
 
                 <p>In addition to being case-based, the United States' NIBRS
-                also captures many more statistics at finer granularity.
-                Notably, age is represented in years from 0-99, whereas the
-                other countries use buckets. As illustrated in the chart below,
-                the number and size of buckets varies widely amongst
-                countries.</p>
+                also captures many more statistics at much finer granularity.
+                Notably, age is captured in individual years from 0-99, whereas
+                other countries use buckets; except for New Zealand, buckets
+                have varying sizes.</p>
+
+                <p>The chart below illustrates the age resolution for surveyed
+                countries. Age ranges before the age of criminal responsibility,
+                i.e., when minors are not held criminally liable, are shown in
+                yellow. Age ranges between the age of criminal responsibility
+                and the age of majority, i.e., when minors face limited or
+                reduced criminal liability, are shown in red. Age ranges after
+                the age of majority during which young adults may still be
+                treated as minors are shown in purple.</p>
             """)
 
             self.emit_age_buckets()
@@ -1440,36 +1448,41 @@ printr()
     def emit_age_buckets(self) -> None:
         data = pl.read_csv("data/age-groupings.csv")
 
+        rule_data = data.group_by(
+            "country", "liability",
+            maintain_order=True
+        ).agg(
+            pl.col("start_age").min()
+        ).with_columns(
+            pl.col("start_age").shift(-1, fill_value=100).over(
+                pl.col("country")
+            ).alias("stop_age")
+        )
+        tick_data = data.filter(
+            pl.col("start_age").lt(100)
+        )
+
+        x = alt.X("start_age:Q").scale(domain=(0, 100)).axis(tickCount=11).title("Age")
+        y = alt.Y("country:N").axis(
+            ticks=False, domain=False, labelPadding=5,
+        ).title(None)
+        color = alt.Color("liability:N").scale(
+            domain=("none", "limited", "full-or-limited", "full"),
+            range=(Palette.ORANGE, Palette.RED, Palette.PURPLE, Palette.GRAY),
+        ).legend(None)
+
         fig = (
-            alt.Chart(
-                data.group_by(
-                    "country"
-                ).agg(
-                    pl.col("start_age").min().alias("min"),
-                    pl.lit(100).alias("max"),
-                )
-            ).mark_rule(
-                stroke=Palette.LIGHT_BLUE,
-                strokeWidth=3,
+            alt.Chart(rule_data).mark_rule(
+                strokeWidth=3
             ).encode(
-                alt.X("min:Q").scale(domain=(0, 100)),
-                alt.X2("max:Q"),
-                alt.Y("country:N")
+                x, alt.X2("stop_age:Q"), y, color
             )
             +
-            alt.Chart(data).mark_tick(
-                stroke=Palette.BLUE,
-                thickness=0.1,
+            alt.Chart(tick_data).mark_tick(
+                thickness=1.5,
                 size=12,
             ).encode(
-                alt.X("start_age:Q").scale(domain=(0, 100)).title("Age").axis(
-                    tickCount=11,
-                ),
-                alt.Y("country:N").title(None).axis(
-                    ticks=False,
-                    domain=False,
-                    labelPadding=5,
-                ),
+                x, y, color
             )
         ).properties(
             width=270,
@@ -1477,7 +1490,7 @@ printr()
         )
 
         self.html(
-            '<div style="max-width: 30em; margin-left: auto; margin-right: auto">\n'
+            '<div style="max-width: 34em; margin-left: auto; margin-right: auto">\n'
         )
         path = "figure/age-groupings.svg"
         fig.save(path)
