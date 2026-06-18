@@ -67,7 +67,7 @@ def au_age_distribution() -> pl.LazyFrame:
 
 
 POLICEDATA = (
-    Path(__file__).parent.parent / Path("data/policedata.nz/nz-up-to-2025-08.csv")
+    Path(__file__).parent.parent / Path("data/new-zealand/nz-up-to-2025-08.csv")
 )
 
 def nz_load() -> pl.LazyFrame:

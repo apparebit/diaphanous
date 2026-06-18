@@ -3,7 +3,7 @@ from pathlib import Path
 import polars as pl
 
 from .aunz import au_age_distribution, nz_age_distribution
-from .bka import de_age_distribution
+from .de import de_age_distribution
 from .nibrs import done_ingestion, step_ingestion, us_age_distributions
 from .util import add_empty_year, finish_age_distribution, to_minor_adult
 

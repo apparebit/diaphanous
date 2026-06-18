@@ -26,7 +26,7 @@ from .platform.data import REPORTS_PER_PLATFORM
 from .util import compute_age_cdfs
 
 import diaphanous.aunz as aunz
-import diaphanous.bka as bka
+import diaphanous.de as de
 import diaphanous.crimestat as crimestat
 import diaphanous.nibrs as nibrs
 
@@ -458,7 +458,7 @@ class Analyzer:
 
             self.h3("Backfilling Suspects for Unsolved Incidents")
 
-            stats = bka.Data.ingest().incidents.filter(
+            stats = de.Data.ingest().incidents.filter(
                 pl.col("activity").is_not_null(),
             ).group_by(
                 Id.YEAR,
@@ -809,7 +809,7 @@ printr()
         self.end_col()
 
         self.h3("Germany")
-        frame = bka.de_age_distribution().collect().group_by(
+        frame = de.de_age_distribution().collect().group_by(
             "data_year", "age_group", "sex", "activity", maintain_order=True
         ).agg(
             pl.col("count").sum()

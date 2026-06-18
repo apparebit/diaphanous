@@ -72,13 +72,13 @@ class Data:
             # BU-TV-01-T20-TV_xls.xlsx?__blob=publicationFile&v=4
             try:
                 frame = pl.read_excel(
-                    _ROOT / "data" / "bka" / f"suspects-{year}.xlsx",
+                    _ROOT / "data" / "germany" / f"suspects-{year}.xlsx",
                     sheet_name="T20",
                     read_options=_READ_OPTIONS_SUSPECTS,
                 )
             except ValueError:
                 frame = pl.read_excel(
-                    _ROOT / "data" / "bka" / f"suspects-{year}.xlsx",
+                    _ROOT / "data" / "germany" / f"suspects-{year}.xlsx",
                     sheet_name="BU-TV-01-T20-TV",
                     read_options=_READ_OPTIONS_SUSPECTS,
                 )
@@ -141,7 +141,7 @@ class Data:
         for year in range(2019, _LATEST_YEAR + 1):
             if year == 2019:
                 frame = pl.read_csv(
-                    _ROOT / "data" / "bka" / "old-suspects-2019.csv",
+                    _ROOT / "data" / "germany" / "old-suspects-2019.csv",
                     encoding="latin_1",
                     has_header=False,
                     skip_lines=5,
@@ -162,7 +162,7 @@ class Data:
                 )
             else:
                 frame = pl.read_excel(
-                    _ROOT / "data" / "bka" / f"old-suspects-{year}.xlsx",
+                    _ROOT / "data" / "germany" / f"old-suspects-{year}.xlsx",
                     sheet_name="T20-TV_AK60",
                     read_options=_READ_OPTIONS_OLD_SUSPECTS,
                 )
@@ -222,7 +222,7 @@ class Data:
                 consumers = _CONSUMER_IDS_V2
 
             incidents.append(pl.read_excel(
-                _ROOT / "data" / "bka" / f"incidents-{year}.xlsx",
+                _ROOT / "data" / "germany" / f"incidents-{year}.xlsx",
                 sheet_name="T01",
                 read_options=dict(
                     skip_rows=8,
