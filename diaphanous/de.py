@@ -439,11 +439,11 @@ class Data:
 
         return finish_age_distribution(
             pl.concat([frame, unsolved]),
-            "Germany",
-            "CSAM",
-            "Offender",
-            14,
-            17
+            country="Germany",
+            material="CSAM",
+            role="Offender",
+            juvenile_min=14,
+            juvenile_max=17,
         )
 
 

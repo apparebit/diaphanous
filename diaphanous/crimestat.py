@@ -51,7 +51,14 @@ def es_age_distribution() -> pl.LazyFrame:
         pl.lit(None, dtype=pl.String).alias("activity"),
     )
 
-    return finish_age_distribution(frame, "Spain", "CSAM", "Offender", 14, 17)
+    return finish_age_distribution(
+        frame,
+        country="Spain",
+        material="CSAM",
+        role="Offender",
+        juvenile_min=14,
+        juvenile_max=17,
+    )
 
 
 
@@ -127,7 +134,14 @@ def fi_age_distribution() -> pl.LazyFrame:
         pl.lit(None, dtype=pl.String).alias("activity"),
     )
 
-    return finish_age_distribution(frame, "Finland", "CSAM", "Offender", 15, 17)
+    return finish_age_distribution(
+        frame,
+        country="Finland",
+        material="CSAM",
+        role="Offender",
+        juvenile_min=15,
+        juvenile_max=17,
+    )
 
 
 def it_age_distribution() -> pl.LazyFrame:
@@ -183,7 +197,14 @@ def it_age_distribution() -> pl.LazyFrame:
     )
 
     frame = add_empty_year(frame, 2024)
-    return finish_age_distribution(frame, "Italy", "CSAM", "Offender", 14, 17)
+    return finish_age_distribution(
+        frame,
+        country="Italy",
+        material="CSAM",
+        role="Offender",
+        juvenile_min=14,
+        juvenile_max=17,
+    )
 
 
 

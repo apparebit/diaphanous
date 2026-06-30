@@ -480,9 +480,9 @@ class Analyzer:
                 demographics are representative.</p>
 
                 <p>For <strong>Germany</strong>, the number of suspects per
-                solved incident range from {stats[0]:.3f} to {stats[2]:.3f},
+                solved incident ranges from {stats[0]:.3f} to {stats[2]:.3f},
                 with a mean of {stats[1]:.3f}. The reciprocal incidents per
-                suspect range from {1/stats[2]:.3f} to {1/stats[0]:.3f}, with a
+                suspect ranges from {1/stats[2]:.3f} to {1/stats[0]:.3f}, with a
                 mean of {1/stats[1]:.3f}. Assuming that this relationship also
                 holds for unsolved incidents, we then backfill the suspects
                 table for Germany by counting one suspect for each unsolved
@@ -799,7 +799,7 @@ vcd::mosaic(
     direction = c("v", "h"),
     shade = TRUE,
     margins = c(2.5, 0.3, 0, 2.5),
-    main = paste0("Offenders by Age and Sex (Australia, 2022/23)")
+    main = paste0("Offenders by Sex and Age (Australia, 2022/23)")
 )
 dev.off()
 printr()
@@ -832,7 +832,7 @@ for (year in 2023:2024) {{
         direction = c("v", "h"),
         shade = TRUE,
         margins = c(2.5, 0.3, 0, 2.5),
-        main = paste0("Offenders by Age and Sex (Germany, ", year, ")")
+        main = paste0("Offenders by Sex and Age (Germany, ", year, ")")
     )
     dev.off()
 
@@ -889,7 +889,7 @@ for (year in 2023:2024) {{
         direction = c("v", "h"),
         shade = TRUE,
         margins = c(2.5, 0.3, 0, 2.5),
-        main = paste0("Offenders by Age and Sex (New Zealand, ", year, ")")
+        main = paste0("Offenders by Sex and Age (New Zealand, ", year, ")")
     )
     dev.off()
 
@@ -944,7 +944,7 @@ for (year in 2023:2024) {{
         direction = c("v", "h"),
         shade = TRUE,
         margins = c(2.5, 0.3, 0, 2.5),
-        main = paste0("Offenders by Age and Sex (Spain, ", year, ")")
+        main = paste0("Offenders by Sex and Age (Spain, ", year, ")")
     )
     dev.off()
 }}
@@ -988,7 +988,7 @@ for (year in 2023:2024) {{
         direction = c("v", "h"),
         shade = TRUE,
         margins = c(2.5, 0.3, 0, 2.5),
-        main = paste0("Offenders by Age and Sex (United States, ", year, ")")
+        main = paste0("Offenders by Sex and Age (United States, ", year, ")")
     )
     dev.off()
 
@@ -998,7 +998,7 @@ for (year in 2023:2024) {{
     vcd::mosaic(
         ~ age_group + ethnicity + sex, data = us.contab, direction = c("v", "h", "v"),
         shade = TRUE,
-        main = paste0("Offenders by Age, Race, and Sex (United States, ", year, ")"),
+        main = paste0("Offenders by Sex, Race, and Age (United States, ", year, ")"),
         rot_labels = c(0, 0, 45, 0),
         offset_labels = c(0, 0, -0.5, -0.5),
         just_labels = c("center", "left", "right", "right"),
@@ -1086,7 +1086,7 @@ printr()
         self.html("</div>\n")
 
     def emit_age_distributions(self, with_chi2: bool = False) -> None:
-        self.h3("Perpetrators by Country, Year, Age, and Sex")
+        self.h3("Perpetrators by Country, Year, Sex, and Age")
         distributions = crimestat.load_all_age_distributions(verbose=True)
         full_data = pl.concat(
             self.filter_years(distributions, *self.THUMB_YEARS).values()
@@ -1136,7 +1136,7 @@ printr()
             # subtitle=(
             #     "Male and female minors are shown in blue and red (respectively), "
             #     "people with unknown age or sex in light gray, and those with unknown "
-            #     "age and sex in white."
+            #     "sex and age in white."
             # ),
         )
         path = "figure/age-sex-mosaics.svg"
@@ -1171,7 +1171,7 @@ printr()
                 # subtitle=(
                 #     "Male and female minors are shown in blue and red (respectively), "
                 #     "people with unknown age or sex in light gray, and those with unknown "
-                #     "age and sex in white."
+                #     "sex and age in white."
                 # ),
             )
             path = "figure/age-sex-residual-mosaics.svg"
@@ -1202,11 +1202,15 @@ printr()
         self.html("</div>\n")
 
         self.html("<div class=wide>\n")
-        self.emit_contingency_tables(full_data, "sex")
+        self.emit_contingency_tables(
+            full_data,
+            x_axis="age_group",
+            y_axis="sex",
+        )
         self.html("</div>\n")
 
         # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-        self.h3("Perpetrators by Country, Year, Age, and Activity")
+        self.h3("Perpetrators by Country, Year, Activity, and Age Group")
         self.html("<div class=extra-wide>\n")
 
         activity_data = full_data.filter(
@@ -1266,7 +1270,11 @@ printr()
         self.html("</div>\n")
 
         self.html("<div class=wide>\n")
-        self.emit_contingency_tables(activity_data, "activity")
+        self.emit_contingency_tables(
+            activity_data,
+            x_axis="age_group",
+            y_axis="activity",
+        )
         self.html("</div>\n")
 
         # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
@@ -1351,22 +1359,33 @@ printr()
         Data Explorer</a>.
         """)
 
-    def emit_contingency_tables(self, data: pl.DataFrame, y_axis: str) -> None:
+    def emit_contingency_tables(
+        self,
+        data: pl.DataFrame,
+        x_axis: str,
+        y_axis: str,
+    ) -> None:
         # Prepare index
-        table_index: dict[str, Sequence[str | None]] = {
-            "age_group": ["Minor", None, "Adult"]
-        }
+        table_index: dict[str, Sequence[str | None]]
+
+        if x_axis == "age_group":
+            table_index = {
+                "age_group": ["Minor", None, "Adult"]
+            }
+            table_x_class = "age-group"
+        else:
+            raise ValueError(f"x-axis {x_axis} not supported")
 
         if y_axis == "sex":
             table_index[y_axis] = ["Male", None, "Female"]
         elif y_axis == "activity":
             table_index[y_axis] = ["Consumer", None, "Producer"]
         else:
-            raise ValueError(f"{y_axis} not supported")
+            raise ValueError(f"y-axis {y_axis} not supported")
 
         contingencies = make_contingencies(
             data,
-            "age_group",
+            x_axis,
             y_axis,
             include_null=True,
             use_minor=True,
@@ -1376,7 +1395,7 @@ printr()
         markup = []
         metric = None
 
-        def emit_cells(group, row_offset: int = 0):
+        def do_emit_cells(group, row_offset: int = 0):
             counts = (
                 "&nbsp;" if c == 0 else f"{c:,}"
                 for c in group.get_column("count")
@@ -1409,7 +1428,8 @@ printr()
             maintain_order=True,
         ):
             # Skip years without data
-            if group.select(pl.col("count").sum().eq(0)).item():
+            total = group.select(pl.col("total")).item(0, 0)
+            if total == 0:
                 continue
 
             # Separate different metrics
@@ -1421,23 +1441,25 @@ printr()
 
                 metric = selectors[3]
                 self.h4(f"Contingency Tables for {metric}")
-                markup.append(f'<div class="contingency-tables {y_axis}-vs-age">\n')
+                markup.append(
+                    f'<div class="contingency-tables {y_axis}-vs-{table_x_class}">\n'
+                )
 
             # Build table
             markup.append("<table class=contingency>\n")
-            markup.append(f"<caption>{selectors[5]}</caption>\n")
+            markup.append(f"<caption>{selectors[5]}: N={total:,d}</caption>\n")
             markup.append("<tbody>\n")
-            emit_cells(group)
+            do_emit_cells(group)
             markup.append("</tbody>\n")
 
-            age_group = group.group_by(
-                "age_group", maintain_order=True
+            x_group = group.group_by(
+                x_axis, maintain_order=True
             ).agg(
                 pl.col("count", "fraction").sum()
             )
 
             markup.append("<tfoot>\n")
-            emit_cells(age_group, row_offset=3)
+            do_emit_cells(x_group, row_offset=3)
             markup.append("</tfoot>\n")
 
             markup.append("</table>\n")
@@ -1811,8 +1833,12 @@ hr {
     --intra-table-gap: 0.3em;
     --cell-padding: 0.2em;
 
-    --row1-col3: #e8e8e8;
-    --row3-col3: #e8e8e8;
+    --row1-col1: none;
+    --row1-col2: none;
+    --row1-col3: none;
+    --row3-col1: none;
+    --row3-col2: none;
+    --row3-col3: none;
 
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
@@ -1822,34 +1848,47 @@ hr {
     max-width: max-content;
 }
 
-.sex-vs-age {
+.sex-vs-age-group, .activity-vs-age-group {
+    --row1-col3: #e8e8e8;
+    --row3-col3: #e8e8e8;
+}
+.sex-vs-age-group {
     --row1-col1: #e6efff;
     --row3-col1: #ffe5ef;
 }
-
-.activity-vs-age {
+.activity-vs-age-group {
     --row1-col1: #ffecc5;
     --row3-col1: #ffe7e3;
+}
+
+:where(.sex-vs-age-group, .activity-vs-age-group) table.contingency {
+    grid-template-columns: 1fr 1fr 1fr;
 }
 
 table.contingency {
     font-size: 0.8em;
     line-height: 1.2;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
     width: max-content;
 }
-table.contingency caption {
+
+:where(.sex-vs-age-group, .activity-vs-age-group)
+table.contingency
+:where(caption, tbody, tfoot) {
     grid-column: span 3;
+}
+
+table.contingency caption {
     font-style: italic;
     margin-bottom: var(--cell-padding);
 }
+
 table.contingency tbody, table.contingency tfoot {
-    grid-column: span 3;
     display: grid;
     grid-template-columns: subgrid;
     gap: var(--intra-table-gap);
 }
+
 table.contingency tbody {
     border-top: 2px solid black;
     border-bottom: 1px solid black;
@@ -1869,18 +1908,14 @@ table.contingency td > span {
     font-variant-numeric: tabular-nums;
     text-align: right;
 }
-table.contingency tbody .row1 .col1 {
-    background-color: var(--row1-col1);
-}
-table.contingency tbody .row3 .col1 {
-    background-color: var(--row3-col1);
-}
-table.contingency tbody .row1 .col3 {
-    background-color: var(--row1-col3);
-}
-table.contingency tbody .row3 .col3 {
-    background-color: var(--row3-col3);
-}
+
+table.contingency tbody .row1 .col1 { background-color: var(--row1-col1); }
+table.contingency tbody .row1 .col2 { background-color: var(--row1-col2); }
+table.contingency tbody .row1 .col3 { background-color: var(--row1-col3); }
+
+table.contingency tbody .row3 .col1 { background-color: var(--row3-col1); }
+table.contingency tbody .row3 .col2 { background-color: var(--row3-col2); }
+table.contingency tbody .row3 .col3 { background-color: var(--row3-col3); }
 </style>
 </head>
 <body>

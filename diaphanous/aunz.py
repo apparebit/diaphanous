@@ -60,7 +60,14 @@ def au_age_distribution() -> pl.LazyFrame:
         make_empty_year_lazily(y) for y in range(2014, 2024)
     ), frame, make_empty_year_lazily(2024)])
 
-    return finish_age_distribution(frame, "Australia", "CSAM", "Offender", 10, 17)
+    return finish_age_distribution(
+        frame,
+        country="Australia",
+        material="CSAM",
+        role="Offender",
+        juvenile_min=10,
+        juvenile_max=17,
+    )
 
 
 # ======================================================================================
@@ -146,4 +153,11 @@ def nz_age_distribution() -> pl.LazyFrame:
         pl.col("year").alias("data_year"),
     )
 
-    return finish_age_distribution(frame, "New Zealand", "CSAM", "Offender", 10, 19)
+    return finish_age_distribution(
+        frame,
+        country="New Zealand",
+        material="CSAM",
+        role="Offender",
+        juvenile_min=10,
+        juvenile_max=19,
+    )

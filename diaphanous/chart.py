@@ -198,8 +198,8 @@ def plot_sex_by_age_grid(frame: pl.DataFrame) -> alt.VConcatChart:
         titleFontSize=40,
     ).properties(
         title=alt.Title(
-            "Perpetrators by Age (0→100), Sex (Female↓, Male↑), "
-            "Year (2015⇒2024), and Country",
+            "Perpetrators by Country, Year (2015⇒2024), Sex (Female↓, Male↑), "
+            " and Age (0→100)",
             fontSize=50,
             fontWeight="bold",
             anchor="start",
@@ -413,8 +413,8 @@ def plot_cdf_grid(
         x="shared",
     ).properties(
         title=alt.Title(
-            "Ten-Year Spread of Cumulative Distributions for Female and Male "
-            "Perpetrators by Age and Country",
+            "Per-Country Ten-Year Spread of Cumulative Distributions "
+            "for Female and Male Perpetrators",
             fontSize=40,
             fontWeight="bold",
             anchor="start",

@@ -749,7 +749,7 @@ def plot_mosaic_grid(
     )
     show_ratings = "chi2" in frame.columns and "rating" in frame.columns
 
-    title_text = f"Perpetrators by Country, Year, {x_label}, and {y_label}"
+    title_text = f"Perpetrators by Country, Year, {y_label}, and {x_label}"
     if show_ratings:
         title_text += " (Incl. χ² Test for Independence)"
 
@@ -1077,7 +1077,7 @@ def plot_odds_ratio_grid(
         spacing=gap,
     ).properties(
         title=alt.Title(
-            f"Odds Ratios by Country, Year, {second_variable} and Age Group",
+            f"Odds Ratios by Country, Year, {second_variable}, and Age Group",
             fontSize=25,
             fontWeight="bold",
             anchor="start",

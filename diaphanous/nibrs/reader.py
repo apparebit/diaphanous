@@ -473,11 +473,11 @@ def ingest_age_distributions(
 
     distribution = finish_age_distribution(
         distribution,
-        "United States",
-        None,
-        None,
-        11,
-        17,
+        country="United States",
+        material=None,
+        role=None,
+        juvenile_min=11,
+        juvenile_max=17,
     )
 
     if isinstance(distribution, pl.LazyFrame):

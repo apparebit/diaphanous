@@ -172,6 +172,7 @@ def add_empty_year[F: (pl.DataFrame, pl.LazyFrame)](frame: F, year: int) -> F:
 
 def finish_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](
     frame: F,
+    *,
     country: str,
     material: None | Literal["CSAM", "Porn"],
     role: None | Literal["Offender", "Arrestee"],
