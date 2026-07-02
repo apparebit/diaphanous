@@ -10,7 +10,10 @@ import polars as pl
 from .model import (
     CriminalAct, Ethnicity, Id, OffenseCode, Race, Sex, SOURCE_FILES, Table
 )
-from ..util import finish_age_distribution, MATERIALS, ROLES
+from ..util import (
+    AGE_GROUP_ORDER, COUNTRIES, finish_age_distribution, MATERIALS, METRICS,
+    METRIC_ORDER, OUTCOMES, ROLES
+)
 
 
 type FrameType = pl.DataFrame
@@ -559,6 +562,103 @@ def _prepare_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](
     ).agg(
         pl.len().cast(pl.Float64).alias("count")
     )
+
+
+def combine_offenders_and_arrestees(
+    data: pl.DataFrame,
+    material: Literal["CSAM", "Porn"] = "Porn",
+) -> pl.DataFrame:
+    def prep(frame: pl.DataFrame, metric: str) -> pl.DataFrame:
+        return frame.filter(
+            pl.col("metric").eq(metric)
+        ).with_columns(
+            pl.when(
+                pl.col("age").lt(14)
+            ).then(
+                pl.lit("Child", dtype=pl.String)
+            ).when(
+                pl.col("age").le(17)
+            ).then(
+                pl.lit("Juvenile", dtype=pl.String)
+            ).when(
+                pl.col("age").gt(17)
+            ).then(
+                pl.lit("Adult", dtype=pl.String)
+            ).alias("age_group"),
+        ).with_columns(
+            pl.col("age_group").replace_strict(
+                AGE_GROUP_ORDER,
+                return_dtype=pl.Int8,
+            ).alias("age_group_order"),
+        ).group_by(
+            pl.col(
+                "data_year",
+                "age_group", "age_group_order",
+                "sex", "sex_order"
+            ),
+        ).agg(
+            pl.col("count").sum().round().cast(pl.Int64),
+        )
+
+    offender_metric = f"United States {material} Offenders"
+    offenders = prep(data, offender_metric)
+    arrestees = prep(data, f"United States {material} Arrestees")
+
+    no_sanctions = offenders.join(
+        arrestees,
+        on=[
+            "data_year",
+            "age_group", "age_group_order",
+            "sex", "sex_order",
+        ],
+        how="left",
+        nulls_equal=True,
+    ).with_columns(
+        # If we don't fill the arrestee counts with 0, null values
+        # effectively remove offender counts, resulting in data loss.
+        pl.col("count_right").fill_null(0)
+    ).with_columns(
+        pl.lit("No Sanction", dtype=pl.Enum(OUTCOMES)).alias("outcome"),
+        pl.lit(0, dtype=pl.Int8).alias("outcome_order"),
+        pl.col("count").sub(pl.col("count_right"))
+    ).select(
+        pl.exclude("count_right")
+    )
+
+    arrests = arrestees.with_columns(
+        pl.lit("Arrest", dtype=pl.Enum(OUTCOMES)).alias("outcome"),
+        pl.lit(1, dtype=pl.Int8).alias("outcome_order"),
+    )
+
+    result = pl.concat([no_sanctions, arrests]).with_columns(
+        pl.lit("United States", dtype=pl.Enum(COUNTRIES)).alias("country"),
+        pl.lit(material, dtype=pl.Enum(MATERIALS)).alias("material"),
+        pl.lit("Offender", dtype=pl.Enum(ROLES)).alias("role"),
+        pl.lit(offender_metric, dtype=pl.Enum(METRICS)).alias("metric"),
+        pl.lit(METRIC_ORDER[offender_metric], dtype=pl.Int8).alias("metric_order")
+    ).sort(
+        "data_year", "age_group_order", "sex_order", "outcome_order"
+    )
+
+    assert result.select(
+        pl.col("count").ge(0).all()
+    ).item()
+
+    assert offenders.select(
+        pl.col("data_year"),
+        pl.col("count").sum().over("data_year").alias("old_totals"),
+    ).join(
+        result.select(
+            pl.col("data_year"),
+            pl.col("count").sum().over("data_year").alias("new_totals"),
+        ),
+        on="data_year",
+        how="inner",
+    ).select(
+        pl.col("new_totals").eq(pl.col("old_totals")).all()
+    ).item()
+
+    return result
 
 
 if __name__ == "__main__":
