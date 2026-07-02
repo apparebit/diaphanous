@@ -36,6 +36,14 @@ METRICS = [
     "United States Porn Arrestees",
 ]
 
+OUTCOMES = [
+    "No Sanction",
+    "Arrest",
+    "Educational Measure",
+    "Disciplinary Measure",
+    "Jail",
+]
+
 ROLES = [
     "Offender",
     "Arrestee",
