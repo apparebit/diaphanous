@@ -22,6 +22,7 @@ from .mosaic import (
     plot_odds_ratio_grid, test_chi2_independence,
 )
 from .nibrs.model import Id
+from .nibrs.reader import combine_offenders_and_arrestees
 from .platform.data import REPORTS_PER_PLATFORM
 from .util import compute_age_cdfs
 
@@ -1206,6 +1207,12 @@ printr()
             full_data,
             x_axis="age_group",
             y_axis="sex",
+            index={
+                "age_group": ["Minor", None, "Adult"],
+                "sex": ["Male", None, "Female"],
+            },
+            include_null=True,
+            use_minor=True,
         )
         self.html("</div>\n")
 
@@ -1274,6 +1281,77 @@ printr()
             activity_data,
             x_axis="age_group",
             y_axis="activity",
+            index={
+                "age_group": ["Minor", None, "Adult"],
+                "activity": ["Consumer", None, "Producer"],
+            },
+            include_null=True,
+            use_minor=True,
+        )
+        self.html("</div>\n")
+
+        # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+        self.h3("Outcomes in Germany and the US")
+        self.html("""
+            <p>This section partitions both American and German offenders based
+            on the German ages of criminal responsibility and majority:</p>
+
+            <dl>
+            <dt>Children</dt>
+            <dd>younger than 14</dd>
+            <dt>Juveniles</dt>
+            <dd>at least 14 and younger than 18</dd>
+            <dt>Adults</dt>
+            <dd>at least 18</dd>
+            </dl>
+
+            <p>When combining NIBRS' offender and arrestee tables into an
+            offender table with an outcome column, the default outcome for
+            offenders, even those with null attributes, is the "No Sanction"
+            value (and not null).</p>
+        """)
+
+        sanctions = combine_offenders_and_arrestees(full_data)
+
+        highlights: dict[str | None, str] = {
+            "No Sanction": Palette.GREEN,
+            "Arrest": Palette.ORANGE,
+        }
+
+        frame = make_mosaic_frame(
+            sanctions,
+            x_axis="age_group",
+            y_axis="outcome",
+            index={
+                "age_group": ["Child", "Juvenile", None, "Adult"],
+                "outcome": ["No Sanction", None, "Arrest"],
+            },
+            highlights={
+                "Child": highlights,
+                "Juvenile": highlights,
+            },
+            include_null=True,
+        )
+
+        self.html("<div class=extra-wide>\n")
+        fig = plot_mosaic_grid(
+            frame,
+            x_label="Age Group",
+            y_label="Outcome",
+        )
+        path = "figure/age-outcome-mosaics.svg"
+        fig.save(path)
+        self.svg(path)
+
+        self.emit_contingency_tables(
+            sanctions,
+            x_axis="age_group",
+            y_axis="outcome",
+            index={
+                "age_group": ["Child", "Juvenile", None, "Adult"],
+                "outcome": ["Arrest", None, "No Sanction"],
+            },
+            include_null=True,
         )
         self.html("</div>\n")
 
@@ -1364,36 +1442,26 @@ printr()
         data: pl.DataFrame,
         x_axis: str,
         y_axis: str,
+        index: None | dict[str, Sequence[None | str]] = None,
+        include_null: bool = False,
+        use_minor: bool = False,
     ) -> None:
         # Prepare index
-        table_index: dict[str, Sequence[str | None]]
+        x_class = x_axis.lower().replace("_", "-")
+        y_class = y_axis.lower().replace("_", "-")
 
-        if x_axis == "age_group":
-            table_index = {
-                "age_group": ["Minor", None, "Adult"]
-            }
-            table_x_class = "age-group"
-        else:
-            raise ValueError(f"x-axis {x_axis} not supported")
-
-        if y_axis == "sex":
-            table_index[y_axis] = ["Male", None, "Female"]
-        elif y_axis == "activity":
-            table_index[y_axis] = ["Consumer", None, "Producer"]
-        else:
-            raise ValueError(f"y-axis {y_axis} not supported")
-
-        contingencies = make_contingencies(
+        contingencies, index = make_contingencies(
             data,
             x_axis,
             y_axis,
-            include_null=True,
-            use_minor=True,
-            index=table_index,
+            include_null=include_null,
+            use_minor=use_minor,
+            index=index,
         )
 
         markup = []
         metric = None
+        row_size = len(index[x_axis])
 
         def do_emit_cells(group, row_offset: int = 0):
             counts = (
@@ -1407,7 +1475,7 @@ printr()
 
             previous_row = None
             for index, (count, fraction) in enumerate(zip(counts, fractions)):
-                current_row = 1 + index // 3 + row_offset
+                current_row = 1 + index // row_size + row_offset
 
                 if current_row != previous_row:
                     if previous_row is not None:
@@ -1416,7 +1484,7 @@ printr()
                     previous_row = current_row
 
                 markup.append(
-                    f"    <td class=col{1 + index % 3}>"
+                    f"    <td class=col{1 + index % row_size}>"
                     f"<span class=count>{count}</span>"
                     f"<span class=fraction>{fraction}</span>"
                     "</td>\n"
@@ -1442,7 +1510,7 @@ printr()
                 metric = selectors[3]
                 self.h4(f"Contingency Tables for {metric}")
                 markup.append(
-                    f'<div class="contingency-tables {y_axis}-vs-{table_x_class}">\n'
+                    f'<div class="contingency-tables {y_class}-vs-{x_class}">\n'
                 )
 
             # Build table
@@ -1836,11 +1904,17 @@ hr {
     --row1-col1: none;
     --row1-col2: none;
     --row1-col3: none;
+
+    --row2-col1: none;
+    --row2-col2: none;
+    --row2-col3: none;
+
     --row3-col1: none;
     --row3-col2: none;
     --row3-col3: none;
 
     display: grid;
+
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     gap: var(--inter-table-gap);
     margin-left: auto;
@@ -1849,8 +1923,16 @@ hr {
 }
 
 .sex-vs-age-group, .activity-vs-age-group {
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+
     --row1-col3: #e8e8e8;
     --row3-col3: #e8e8e8;
+}
+.outcome-vs-age-group {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+
+    --row1-col4: #e8e8e8;
+    --row3-col4: #e8e8e8;
 }
 .sex-vs-age-group {
     --row1-col1: #e6efff;
@@ -1860,9 +1942,21 @@ hr {
     --row1-col1: #ffecc5;
     --row3-col1: #ffe7e3;
 }
+.outcome-vs-age-group {
+    --row1-col1: #ffebc1;
+    --row1-col2: #ffebc1;
+    --row3-col1: #c2ffca;
+    --row3-col2: #c2ffca;
+}
 
-:where(.sex-vs-age-group, .activity-vs-age-group) table.contingency {
+:where(.sex-vs-age-group, .activity-vs-age-group)
+table.contingency {
     grid-template-columns: 1fr 1fr 1fr;
+}
+
+:where(.outcome-vs-age-group)
+table.contingency {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
 }
 
 table.contingency {
@@ -1876,6 +1970,12 @@ table.contingency {
 table.contingency
 :where(caption, tbody, tfoot) {
     grid-column: span 3;
+}
+
+:where(.outcome-vs-age-group)
+table.contingency
+:where(caption, tbody, tfoot) {
+    grid-column: span 4;
 }
 
 table.contingency caption {
@@ -1912,10 +2012,17 @@ table.contingency td > span {
 table.contingency tbody .row1 .col1 { background-color: var(--row1-col1); }
 table.contingency tbody .row1 .col2 { background-color: var(--row1-col2); }
 table.contingency tbody .row1 .col3 { background-color: var(--row1-col3); }
+table.contingency tbody .row1 .col4 { background-color: var(--row1-col4); }
+
+table.contingency tbody .row2 .col1 { background-color: var(--row2-col1); }
+table.contingency tbody .row2 .col2 { background-color: var(--row2-col2); }
+table.contingency tbody .row2 .col3 { background-color: var(--row2-col3); }
+table.contingency tbody .row2 .col4 { background-color: var(--row2-col4); }
 
 table.contingency tbody .row3 .col1 { background-color: var(--row3-col1); }
 table.contingency tbody .row3 .col2 { background-color: var(--row3-col2); }
 table.contingency tbody .row3 .col3 { background-color: var(--row3-col3); }
+table.contingency tbody .row3 .col4 { background-color: var(--row3-col4); }
 </style>
 </head>
 <body>
