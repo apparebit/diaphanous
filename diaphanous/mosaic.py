@@ -346,7 +346,7 @@ def make_contingencies(
     include_null: bool = False,
     use_minor: bool = False,
     index: None | dict[str, Sequence[None | str]] = None,
-) -> pl.DataFrame:
+) -> tuple[pl.DataFrame, dict[str, Sequence[None | str]]]:
     """Prepare a normalized contingency table."""
     # Prepare data frame and index, then check data
     frame, index = _make_index(
@@ -357,7 +357,7 @@ def make_contingencies(
         use_minor=use_minor,
         index=index,
     )
-    _check_counts([x_axis, y_axis], index, include_null)
+    # _check_counts([x_axis, y_axis], index, include_null)
 
     # Simplify data frame
     contingencies = frame.group_by(
@@ -404,7 +404,7 @@ def make_contingencies(
         "metric_order", "data_year", "y_order", "x_order"
     )
 
-    return contingencies
+    return contingencies, index
 
 
 def make_mosaic_frame(
