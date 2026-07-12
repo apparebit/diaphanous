@@ -36,17 +36,46 @@ METRICS = [
     "United States Porn Arrestees",
 ]
 
+OUTCOME_COLUMNS = [
+    "adjudicated",
+    "adjudicated_adults",
+    "adjudicated_as_adults",
+    "adjudicated_as_juveniles",
+    "adjudicated_juveniles",
+    "convicted",
+    "convicted_adults",
+    "convicted_as_adults",
+    "convicted_as_juveniles",
+    "convicted_juveniles",
+    "convicted_juveniles_14_to_16",
+    "convicted_juveniles_16_to_18",
+]
+
 OUTCOMES = [
     "No Sanction",
     "Arrest",
-    "Educational Measure",
-    "Disciplinary Measure",
-    "Jail",
+    "Adjudication",
+    "Conviction",
+
+    # "Deferral",
+    # "Diversion",
+    # "Dismissal",
+    # "Acquittal",
+    # "Forced Hospitalization",
+    # "Transfer to Family Court",
+    # "Educational Measure",
+    # "Disciplinary Measure",
+    # "Jail",
 ]
 
 ROLES = [
     "Offender",
     "Arrestee",
+]
+
+SEX = [
+    "Female",
+    "Male",
 ]
 
 
@@ -65,6 +94,8 @@ AGE_GROUP_ORDER = {
 }
 
 METRIC_ORDER = {metric: index + 1 for index, metric in enumerate(METRICS)}
+
+OUTCOME_ORDER = {outcome: index + 1 for index, outcome in enumerate(OUTCOMES)}
 
 SEX_ORDER = {
     "Female": -1,

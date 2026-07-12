@@ -12,7 +12,7 @@ from .model import (
 )
 from ..util import (
     AGE_GROUP_ORDER, COUNTRIES, finish_age_distribution, MATERIALS, METRICS,
-    METRIC_ORDER, OUTCOMES, ROLES
+    METRIC_ORDER, OUTCOME_ORDER, OUTCOMES, ROLES
 )
 
 
@@ -619,7 +619,7 @@ def combine_offenders_and_arrestees(
         pl.col("count_right").fill_null(0)
     ).with_columns(
         pl.lit("No Sanction", dtype=pl.Enum(OUTCOMES)).alias("outcome"),
-        pl.lit(0, dtype=pl.Int8).alias("outcome_order"),
+        pl.lit(OUTCOME_ORDER["No Sanction"], dtype=pl.Int8).alias("outcome_order"),
         pl.col("count").sub(pl.col("count_right"))
     ).select(
         pl.exclude("count_right")
@@ -627,15 +627,22 @@ def combine_offenders_and_arrestees(
 
     arrests = arrestees.with_columns(
         pl.lit("Arrest", dtype=pl.Enum(OUTCOMES)).alias("outcome"),
-        pl.lit(1, dtype=pl.Int8).alias("outcome_order"),
+        pl.lit(OUTCOME_ORDER["Arrest"], dtype=pl.Int8).alias("outcome_order"),
     )
 
-    result = pl.concat([no_sanctions, arrests]).with_columns(
+    result = pl.concat([no_sanctions, arrests]).select(
         pl.lit("United States", dtype=pl.Enum(COUNTRIES)).alias("country"),
         pl.lit(material, dtype=pl.Enum(MATERIALS)).alias("material"),
         pl.lit("Offender", dtype=pl.Enum(ROLES)).alias("role"),
         pl.lit(offender_metric, dtype=pl.Enum(METRICS)).alias("metric"),
-        pl.lit(METRIC_ORDER[offender_metric], dtype=pl.Int8).alias("metric_order")
+        pl.lit(METRIC_ORDER[offender_metric], dtype=pl.Int8).alias("metric_order"),
+        pl.col(
+            "data_year",
+            "age_group", "age_group_order",
+            "sex", "sex_order",
+            "outcome", "outcome_order",
+            "count",
+        ),
     ).sort(
         "data_year", "age_group_order", "sex_order", "outcome_order"
     )

@@ -1293,8 +1293,35 @@ printr()
         # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         self.h3("Outcomes in Germany and the US")
         self.html("""
-            <p>This section partitions both American and German offenders based
-            on the German ages of criminal responsibility and majority:</p>
+            <p>This section approximates outcomes for both Germany and the
+            US.</p>
+
+            <p>For <strong>Germany</strong>, it uses separate statistics about
+            prosecutions, <a
+            href="https://www.statistischebibliothek.de/mir/receive/DESerie_mods_00000107">one
+            until and including 2021</a> and <a
+            href="https://www.statistischebibliothek.de/mir/receive/DESerie_mods_00008081">the
+            other starting with 2022</a>, released by Germany's federal
+            statistics agency. That data distinguishes between
+            <em>adjudications</em>, which include all formal proceedings
+            including prosecutors dismissing charges, and <em>convictions</em>,
+            which include educational measures, disciplinary measures, and jail
+            for minors based on Germany's three-tier juvenile justice
+            system.</p>
+
+            <p>The integration of this data is based on the assumption that
+            police-recorded incidents and statistics-agency-recorded
+            prosecutions coincide within the same year. That assumption is not
+            entirely realistic and may distort shifts in the agressiveness of
+            prosecutions over time. Alas, it is necessary without additional
+            information.</p>
+
+            <p>For the <strong>United States</strong>, it uses the arrestee
+            table of NIBRS.</p>
+
+            <p><strong>Independent of country</strong>, this section partitions
+            offenders into three age groups based on Germany's ages of criminal
+            responsibility and majority:</p>
 
             <dl>
             <dt>Children</dt>
@@ -1305,46 +1332,92 @@ printr()
             <dd>at least 18</dd>
             </dl>
 
-            <p>When combining NIBRS' offender and arrestee tables into an
-            offender table with an outcome column, the default outcome for
-            offenders, even those with null attributes, is the "No Sanction"
-            value (and not null).</p>
+            <p>When combining tables, the default outcome for offenders, even
+            for those with null attributes, is <em>No Sanction</em> (and not
+            null).</p>
         """)
 
-        sanctions = combine_offenders_and_arrestees(full_data)
-
-        highlights: dict[str | None, str] = {
+        de_outcomes = de.ingest_outcomes()
+        de_outcomes = de.combine_offenders_and_outcomes(
+            full_data, de_outcomes
+        )
+        de_highlights: dict[str | None, str] = {
             "No Sanction": Palette.GREEN,
-            "Arrest": Palette.ORANGE,
+            "Adjudication": Palette.ORANGE,
+            "Conviction": Palette.RED,
         }
-
-        frame = make_mosaic_frame(
-            sanctions,
+        de_frame = make_mosaic_frame(
+            de_outcomes,
             x_axis="age_group",
             y_axis="outcome",
             index={
                 "age_group": ["Child", "Juvenile", None, "Adult"],
-                "outcome": ["No Sanction", None, "Arrest"],
+                "outcome": [
+                    "No Sanction", None, "Adjudication", "Conviction"
+                ],
             },
             highlights={
-                "Child": highlights,
-                "Juvenile": highlights,
+                "Child": de_highlights,
+                "Juvenile": de_highlights,
+            },
+            include_null=True,
+        )
+
+        us_outcomes = combine_offenders_and_arrestees(full_data)
+        us_highlights: dict[str | None, str] = {
+            "No Sanction": Palette.GREEN,
+            "Arrest": Palette.ORANGE,
+        }
+        us_frame = make_mosaic_frame(
+            us_outcomes,
+            x_axis="age_group",
+            y_axis="outcome",
+            index={
+                "age_group": ["Child", "Juvenile", None, "Adult"],
+                "outcome": [
+                    "No Sanction", None, "Arrest"
+                ],
+            },
+            highlights={
+                "Child": us_highlights,
+                "Juvenile": us_highlights,
             },
             include_null=True,
         )
 
         self.html("<div class=extra-wide>\n")
+
         fig = plot_mosaic_grid(
-            frame,
+            de_frame,
             x_label="Age Group",
             y_label="Outcome",
         )
-        path = "figure/age-outcome-mosaics.svg"
+        path = "figure/de-age-outcome-mosaics.svg"
+        fig.save(path)
+        self.svg(path)
+
+        fig = plot_mosaic_grid(
+            us_frame,
+            x_label="Age Group",
+            y_label="Outcome",
+        )
+        path = "figure/us-age-outcome-mosaics.svg"
         fig.save(path)
         self.svg(path)
 
         self.emit_contingency_tables(
-            sanctions,
+            de_outcomes,
+            x_axis="age_group",
+            y_axis="outcome",
+            index={
+                "age_group": ["Child", "Juvenile", None, "Adult"],
+                "outcome": ["Conviction", "Adjudication", None, "No Sanction"],
+            },
+            include_null=True,
+        )
+
+        self.emit_contingency_tables(
+            us_outcomes,
             x_axis="age_group",
             y_axis="outcome",
             index={
@@ -1353,6 +1426,7 @@ printr()
             },
             include_null=True,
         )
+
         self.html("</div>\n")
 
         # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
@@ -1509,8 +1583,17 @@ printr()
 
                 metric = selectors[3]
                 self.h4(f"Contingency Tables for {metric}")
+
+                classes = f"{y_class}-vs-{x_class}"
+                if y_class == "outcome":
+                    if metric.startswith("Germany"):
+                        classes += " de"
+                    elif metric.startswith("United States"):
+                        classes += " us"
+                    else:
+                        raise ValueError(f"outcome with unsupported metric {metric}")
                 markup.append(
-                    f'<div class="contingency-tables {y_class}-vs-{x_class}">\n'
+                    f'<div class="contingency-tables {classes}">\n'
                 )
 
             # Build table
@@ -1913,6 +1996,10 @@ hr {
     --row3-col2: none;
     --row3-col3: none;
 
+    --row4-col1: none;
+    --row4-col2: none;
+    --row4-col3: none;
+
     display: grid;
 
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
@@ -1932,6 +2019,12 @@ hr {
     grid-template-columns: 1fr 1fr 1fr 1fr;
 
     --row1-col4: #e8e8e8;
+}
+.outcome-vs-age-group.de {
+    --row2-col4: #e8e8e8;
+    --row4-col4: #e8e8e8;
+}
+.outcome-vs-age-group.us {
     --row3-col4: #e8e8e8;
 }
 .sex-vs-age-group {
@@ -1942,7 +2035,15 @@ hr {
     --row1-col1: #ffecc5;
     --row3-col1: #ffe7e3;
 }
-.outcome-vs-age-group {
+.outcome-vs-age-group.de {
+    --row1-col1: #ffe6e2;
+    --row1-col2: #ffe6e2;
+    --row2-col1: #ffebc1;
+    --row2-col2: #ffebc1;
+    --row4-col1: #c2ffca;
+    --row4-col2: #c2ffca;
+}
+.outcome-vs-age-group.us {
     --row1-col1: #ffebc1;
     --row1-col2: #ffebc1;
     --row3-col1: #c2ffca;
@@ -2023,6 +2124,11 @@ table.contingency tbody .row3 .col1 { background-color: var(--row3-col1); }
 table.contingency tbody .row3 .col2 { background-color: var(--row3-col2); }
 table.contingency tbody .row3 .col3 { background-color: var(--row3-col3); }
 table.contingency tbody .row3 .col4 { background-color: var(--row3-col4); }
+
+table.contingency tbody .row4 .col1 { background-color: var(--row4-col1); }
+table.contingency tbody .row4 .col2 { background-color: var(--row4-col2); }
+table.contingency tbody .row4 .col3 { background-color: var(--row4-col3); }
+table.contingency tbody .row4 .col4 { background-color: var(--row4-col4); }
 </style>
 </head>
 <body>

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Self
+from typing import Literal, Self
 
 import great_tables as gt
 import polars as pl
@@ -8,7 +8,10 @@ import polars as pl
 from ._const import TOTAL
 from .finish import finish_caseload, finish_severity
 from .nibrs.model import Id, Column
-from .util import finish_age_distribution, format_table
+from .util import (
+    AGE_GROUP_ORDER, COUNTRIES, finish_age_distribution, format_table, MATERIALS,
+    METRICS, METRIC_ORDER, OUTCOME_COLUMNS, OUTCOME_ORDER, OUTCOMES, ROLES, SEX_ORDER,
+)
 
 _LATEST_YEAR = 2024
 
@@ -21,6 +24,7 @@ _ADULT_RANGES = ["18-21", "21-23", "23-25", "25-30", "30-40", "40-50", "50-60", 
 _OLD_ADULT_RANGES = ["60-65", "65-70", "70-75", "75-80", ">=80"]
 _AGE_RANGES = [*_CHILD_RANGES, *_JUVENILE_RANGES, *_ADULT_RANGES, *_OLD_ADULT_RANGES]
 
+# §§ 184b, 184c StGB
 _PRODUCER_IDS_V1 = ["143200", "143400", "143500", "143700"]
 _CONSUMER_IDS_V1 = ["143300", "143600"]
 _PRODUCER_IDS_V2 = ["143210", "143220", "143510", "143520"]
@@ -65,6 +69,10 @@ class Data:
 
     @classmethod
     def ingest(cls) -> Self:
+        # ------------------------------------------------------------------------------
+        # Read suspect data
+        # ------------------------------------------------------------------------------
+
         suspects = []
         for year in range(2015, _LATEST_YEAR + 1):
             # https://www.bka.de/SharedDocs/Downloads/DE/Publikationen/
@@ -119,6 +127,9 @@ class Data:
 
         all_suspects = pl.concat(suspects)
 
+        # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+        # Validate suspects
+
         assert all_suspects.select(
             pl.col("total").eq(
                 pl.col("<21").add(pl.col(">=21"))
@@ -136,6 +147,9 @@ class Data:
                 pl.col("child").add(pl.col("adolescent")).add(pl.col("18-21"))
             ).all()
         ).item()
+
+        # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+        # Fill in detail for older suspects
 
         old_suspects = []
         for year in range(2019, _LATEST_YEAR + 1):
@@ -184,6 +198,9 @@ class Data:
             how="left",
         )
 
+        # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+        # Further validate suspects
+
         test_frame = all_suspects.drop_nulls([
             "total_right", ">=21_right", ">=60_right"
         ])
@@ -203,6 +220,10 @@ class Data:
         all_suspects = all_suspects.drop(
             "total_right", ">=21_right", ">=60_right"
         )
+
+        # ------------------------------------------------------------------------------
+        # Read incident data
+        # ------------------------------------------------------------------------------
 
         incidents = []
         for year in range(2015, _LATEST_YEAR + 1):
@@ -280,7 +301,9 @@ class Data:
 
         all_incidents = pl.concat(incidents)
 
+        # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         # Validate that incidents and suspects agree on numbers of suspects
+
         assert all_suspects.filter(
             pl.col("activity").is_not_null().and_(pl.col("sex").eq("X"))
         ).select(
@@ -298,6 +321,7 @@ class Data:
         ).item()
 
         return cls(all_incidents, all_suspects)
+
 
     def caseload(self) -> pl.DataFrame:
         frame = self.incidents.filter(
@@ -451,22 +475,354 @@ def de_age_distribution() -> pl.LazyFrame:
     return Data.ingest().age_distribution()
 
 
+def ingest_outcomes() -> pl.DataFrame:
+    # ------------------------------------------------------------------------------
+    # Read outcomes data
+    # ------------------------------------------------------------------------------
+
+    outcomes = []
+
+    for year in range(2015, _LATEST_YEAR + 1):
+        if year < 2022:
+            height = 4
+            frame = pl.read_excel(
+                _ROOT / "data" / "germany" / f"prosecutions-{year}.xlsx",
+                sheet_name="Tab2_1_Lang",
+                read_options=dict(
+                    header_row=None,
+                    skip_rows=9,
+                    use_columns="A,D:K,T:X",
+                    column_names=[
+                        "crime",
+                        "sex",
+                        *OUTCOME_COLUMNS,
+                    ],
+                ),
+            ).with_columns(
+                pl.col("sex").replace({
+                    "m": "Male",
+                    "i": "*",
+                }),
+            )
+        else:
+            height = 6
+            frame = pl.read_excel(
+                _ROOT / "data" / "germany" / f"prosecutions-{year}.xlsx",
+                sheet_name="24311-05",
+                read_options=dict(
+                    header_row=None,
+                    skip_rows=9,
+                    use_columns="C:K,T:X",
+                    column_names=[
+                        "crime",
+                        "sex",
+                        *OUTCOME_COLUMNS,
+                    ],
+                )
+            ).with_columns(
+                pl.col("crime").replace({
+                    "StGB § 184 b": "184b",
+                    "StGB § 184 c": "184c",
+                }),
+                pl.col("sex").replace({
+                    "F": "Female",
+                    "M": "Male",
+                    "I": "*",
+                }),
+            )
+
+        frame = frame.slice(
+            # Select only child/youth pornography; empty rows in pre-2022 frames
+            # are not materialized.
+            frame.select(
+                pl.col("crime").index_of("184b")
+            ).item(),
+            height
+        ).insert_column(
+            # Add year
+            0,
+            pl.lit(year, dtype=pl.Int16).alias(Id.YEAR)
+        ).with_columns(
+            # Normalize crime: Null out entries other than paragraph numbers
+            pl.when(
+                pl.col("crime").ne("184b").and_(pl.col("crime").ne("184c"))
+            ).then(
+                pl.lit(None).alias("crime")
+            ).otherwise(
+                pl.col("crime")
+            ),
+        ).with_columns(
+            # Normalize crime: Fill in nulled out entries
+            pl.col("crime").forward_fill(),
+        )
+
+        if year <= 2021:
+            frame = pl.concat([
+                frame,
+                pl.concat([
+                    frame.filter(
+                        pl.col("sex").eq("*")
+                    ),
+                    frame.filter(
+                        pl.col("sex").eq("Male")
+                    ).with_columns(
+                        pl.exclude("data_year", "crime", "sex").mul(-1),
+                    )
+                ]).group_by(
+                    "data_year", "crime"
+                ).agg(
+                    pl.lit("Female").alias("sex"),
+                    pl.exclude(Id.YEAR, "crime", "sex").sum(),
+                ),
+            ]).sort(
+                "data_year", "crime", "sex"
+            )
+        else:
+            frame = frame.with_columns(
+                # Normalize numeric columns: Null out empty or dashed calls
+                pl.exclude(Id.YEAR, "crime", "sex").replace({"-": None, " ": None}),
+            ).with_columns(
+                # Normalize numeric columns: Cast to Integer
+                pl.exclude(Id.YEAR, "crime", "sex").cast(pl.Int64),
+            )
+
+        outcomes.append(frame)
+
+    all_outcomes = pl.concat(outcomes)
+
+    # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+    # Validate that larger populations are the sum of constituent populations
+
+    def assert_total_equals_sum_of_parts(prefix: Literal["adjudicated", "convicted"]):
+        sum_of_parts = all_outcomes.select(
+            pl.col(f"{prefix}_adults").add(
+                pl.col(f"{prefix}_as_adults")
+            ).add(
+                pl.col(f"{prefix}_as_juveniles")
+            ).add(
+                pl.col(f"{prefix}_juveniles")
+            ).alias("sum")
+        ).get_column("sum")
+
+        if not all_outcomes.select(
+            pl.col(prefix).eq(sum_of_parts).all()
+        ).item():
+            faulty = all_outcomes.with_row_index().filter(
+                pl.col(prefix).ne(sum_of_parts)
+            )
+            raise AssertionError(
+                f"{prefix.capitalize()} total does not equal sum of parts: {faulty}"
+            )
+
+    assert_total_equals_sum_of_parts("adjudicated")
+    assert_total_equals_sum_of_parts("convicted")
+
+    # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+    # Validate that rows with data on men have the correct crime labels and
+    # that each label appears the exact number of times
+
+    outcomes_for_men = all_outcomes.filter(
+        pl.col("sex").eq("Male")
+    )
+
+    assert outcomes_for_men.select(
+        pl.col("crime").eq("184b").or_(pl.col("crime").eq("184c")).all()
+    ).item()
+
+    assert outcomes_for_men.select(
+        pl.col("crime").eq("184b").sum().alias("child"),
+        pl.col("crime").eq("184c").sum().alias("juvenile"),
+    ).select(
+        pl.col("child").eq(pl.col("juvenile")).all()
+    ).item()
+
+    # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+    # Validate that male and female detail rows ("F" and "M") add up to
+    # total rows ("I"). Alas, the source data does not always observe that
+    # rule. We patch total rows, since we don't know whether the row with
+    # female or male detail is inacurate.
+
+    outcome_totals = all_outcomes.filter(
+        pl.col("sex").eq("*")
+    ).select(
+        pl.exclude("sex"),
+    ).join(
+        pl.DataFrame({
+            "data_year": [2024],
+            "crime": ["184b"],
+            "Δ_adjudicated": [-1],
+            "Δ_adjudicated_as_adults": [-1],
+        }),
+        on=["data_year", "crime"],
+        how="left",
+    ).with_columns(
+        pl.col("Δ_adjudicated", "Δ_adjudicated_as_adults").fill_null(0),
+    ).with_columns(
+        pl.col("adjudicated").add(
+            pl.col("Δ_adjudicated")
+        ),
+        pl.col("adjudicated_as_adults").add(
+            pl.col("Δ_adjudicated_as_adults")
+        ),
+    ).select(
+        pl.exclude("Δ_adjudicated", "Δ_adjudicated_as_adults")
+    )
+
+    outcome_sums = all_outcomes.filter(
+        pl.col("sex").ne("*")
+    ).select(
+        pl.exclude("sex"),
+    ).group_by(
+        pl.col("data_year", "crime"),
+        maintain_order=True,
+    ).agg(
+        pl.selectors.integer().sum()
+    )
+
+    for column in OUTCOME_COLUMNS:
+        c1 = outcome_sums.get_column(column)
+        c2 = outcome_totals.get_column(column)
+        if c1.ne(c2).any():
+            raise AssertionError(f"values for column {column} diverge:\n{c1}\n{c2}")
+
+    return all_outcomes
+
+
+def combine_offenders_and_outcomes(
+    offenders: pl.DataFrame,
+    outcomes: pl.DataFrame,
+) -> pl.DataFrame:
+    # Reduce offenders to one row per age_group and sex
+    offenders = offenders.filter(
+        pl.col("metric").eq("Germany CSAM Offenders")
+    ).group_by(
+        "data_year", "age_group", "sex"
+    ).agg(
+        pl.col("count").sum().round().cast(pl.Int64)
+    )
+
+    # Normalize outcome data, incl. reducing it to one row per age_group and sex
+    adjudicated = _normalize_outcomes(outcomes, "Adjudication")
+    convicted = _normalize_outcomes(outcomes, "Conviction")
+
+    no_sanction = offenders.join(
+        adjudicated.select(
+            pl.exclude("outcome")
+        ),
+        on=["data_year", "age_group", "sex"],
+        how="left",
+        nulls_equal=True,
+    ).select(
+        pl.col("data_year", "age_group", "sex"),
+        pl.lit("No Sanction", dtype=pl.Enum(OUTCOMES)).alias("outcome"),
+        pl.col("count").sub(pl.col("count_right").fill_null(0)),
+    )
+
+    adjudicated = adjudicated.join(
+        convicted.select(
+            pl.exclude("outcome")
+        ),
+        on=["data_year", "age_group", "sex"],
+        how="left",
+        nulls_equal=True,
+    ).select(
+        pl.col("data_year", "age_group", "sex", "outcome"),
+        pl.col("count").sub(pl.col("count_right").fill_null(0)),
+    )
+
+    result = pl.concat([no_sanction, adjudicated, convicted]).select(
+        pl.lit("Germany", dtype=pl.Enum(COUNTRIES)).alias("country"),
+        pl.lit("CSAM", dtype=pl.Enum(MATERIALS)).alias("material"),
+        pl.lit("Offender", dtype=pl.Enum(ROLES)).alias("role"),
+        pl.lit("Germany CSAM Offenders", dtype=pl.Enum(METRICS)).alias("metric"),
+        pl.lit(METRIC_ORDER["Germany CSAM Offenders"], dtype=pl.Int8)
+        .alias("metric_order"),
+        pl.col("data_year", "age_group"),
+        pl.col("age_group").replace_strict(
+            AGE_GROUP_ORDER,
+            return_dtype=pl.Int8,
+        ).alias("age_group_order"),
+        pl.col("sex"),
+        pl.col("sex").replace_strict(
+            SEX_ORDER,
+            return_dtype=pl.Int8,
+        ).alias("sex_order"),
+        pl.col("outcome"),
+        pl.col("outcome").replace_strict(
+            OUTCOME_ORDER,
+            return_dtype=pl.Int8,
+        ).alias("outcome_order"),
+        pl.col("count"),
+    ).sort(
+        "data_year", "age_group_order", "sex_order", "outcome_order"
+    )
+
+    assert result.select(
+        pl.col("count").ge(0).all()
+    ).item()
+
+    return result
+
+
+def _normalize_outcomes(
+    data: pl.DataFrame,
+    outcome: Literal["Adjudication", "Conviction"],
+) -> pl.DataFrame:
+    prefix = "adjudicated" if outcome == "Adjudication" else "convicted"
+
+    # The outcome data has two rows per data_year, age_group, and sex, one for
+    # child and one juvenile pornography. We need to reduce the data to one row
+    # before returning the result.
+    return data.filter(
+        pl.col("sex").ne("*")
+    ).select(
+        pl.col("data_year", "sex"),
+        pl.lit(0, dtype=pl.Int64).alias("Child"),
+        pl.col(f"{prefix}_juveniles").alias("Juvenile"),
+        pl.col(f"{prefix}_adults").add(
+            pl.col(f"{prefix}_as_adults")
+        ).add(
+            pl.col(f"{prefix}_as_juveniles")
+        ).alias(f"Adult"),
+    ).unpivot(
+        on=["Child", "Juvenile", "Adult"],
+        index=["data_year", "sex"],
+        variable_name="age_group",
+        value_name="count",
+    ).group_by(
+        "data_year", "age_group", "sex"
+    ).agg(
+        pl.col("count").sum()
+    ).select(
+        pl.col("data_year", "age_group", "sex"),
+        pl.lit(outcome, dtype=pl.Enum(OUTCOMES)).alias("outcome"),
+        pl.col("count"),
+    )
+
+
 if __name__ == "__main__":
-    pl.Config.set_tbl_cols(10)
+    pl.Config.set_tbl_cols(20)
     pl.Config.set_tbl_rows(200)
     pl.Config.set_thousands_separator(",")
 
-    data = Data.ingest()
-    incidents = data.incidents.filter(
-        pl.col("activity").is_not_null(),
-    ).group_by(
-        Id.YEAR,
-    ).agg(
-        pl.col("incidents", "solved", "suspects").sum()
-    ).with_columns(
-        pl.col("suspects").truediv(pl.col("solved")).alias("suspects_per_incident"),
-        pl.col("solved").truediv(pl.col("suspects")).alias("incidents_per_suspect"),
-    )
+    # data = Data.ingest()
+    # incidents = data.incidents.filter(
+    #     pl.col("activity").is_not_null(),
+    # ).group_by(
+    #     Id.YEAR,
+    # ).agg(
+    #     pl.col("incidents", "solved", "suspects").sum()
+    # ).with_columns(
+    #     pl.col("suspects").truediv(pl.col("solved")).alias("suspects_per_incident"),
+    #     pl.col("solved").truediv(pl.col("suspects")).alias("incidents_per_suspect"),
+    # )
 
-    print(incidents)
-    print(data.age_distribution().collect())
+    # print(incidents)
+    # print(data.age_distribution().collect())
+
+    baseline = Data.ingest()
+    offenders = baseline.age_distribution().collect()
+    outcomes = ingest_outcomes()
+
+    data = combine_offenders_and_outcomes(offenders, outcomes)
+    print(data)
