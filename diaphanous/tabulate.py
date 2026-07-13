@@ -387,7 +387,7 @@ class Analyzer:
         if self._with_crimes:
             self.h2("Crime Statistics About CSAM")
             self.html(f"""
-                <p>The following <strong>13 countries</strong> and <strong>ond
+                <p>The following <strong>13 countries</strong> and <strong>one
                 supranational organization</strong> do not appear to publish
                 crime statistics that are sufficiently granular to relate
                 particular offenses to age and sex of offenders:</p>
@@ -423,8 +423,10 @@ class Analyzer:
                 <li>United States
                 </ul>
 
-                <p>Beyond offense, offender age, and offender sex, all but
-                Australia and Spain capture additional information:</p>
+                <p>Yearly coverage and age-group resolution differ substantially
+                amongst countries. At the same time, all but Australia and Spain
+                capture additional information beyond offense, offender age, and
+                offender sex:</p>
 
                 <ul>
                 <li>Finland: coarse nationality of offenders
@@ -1405,6 +1407,26 @@ printr()
         fig.save(path)
         self.svg(path)
 
+        fig = plot_mosaic_grid(
+            de_frame,
+            x_label="Age Group",
+            y_label="Outcome",
+            narrow_rows=True,
+        )
+        path = "figure/de-age-outcome-mosaics-narrow.svg"
+        fig.save(path)
+        self.svg(path)
+
+        fig = plot_mosaic_grid(
+            us_frame,
+            x_label="Age Group",
+            y_label="Outcome",
+            narrow_rows=True,
+        )
+        path = "figure/us-age-outcome-mosaics-narrow.svg"
+        fig.save(path)
+        self.svg(path)
+
         self.emit_contingency_tables(
             de_outcomes,
             x_axis="age_group",
@@ -1467,42 +1489,51 @@ printr()
         <p>The per-country data sources are:</p>
         <ul>
 
-        <li><a href="https://www.aic.gov.au">Australian Institute of
-        Criminology</a>, notably <a
-        href="https://www.aic.gov.au/publications/sr/sr51">sr 51</a>
+        <li><strong>Australia</strong>: <a
+        href="https://www.aic.gov.au">Australian Institute of Criminology</a>,
+        notably <a href="https://www.aic.gov.au/publications/sr/sr51">sr 51</a>
 
-        <li>The Bundeskriminalamt's <a
-        href="https://www.bka.de/DE/AktuelleInformationen/StatistikenLagebilder/PolizeilicheKriminalstatistik/pks_node.html">polizeiliche
-        Kriminalstatistik</a>, notably tables on suspects and incidents — good
-        luck accessing any material on that website from outside of Germany,
-        since most requests simply time out
-
-        <li>Statistics Finland's <a
+        <li><strong>Finland</strong>: Statistics Finland's <a
         href="https://pxdata.stat.fi/PxWeb/pxweb/en/StatFin/StatFin__rpk/statfin_rpk_pxt_13kr.px/">StatFin
         table 13kr</a> with the "Persons suspected of solved offences by the
         International Classification of Crime for Statistical Purposes (ICCS),
         year of solving, age, sex and nationality, 2006-2024."
 
-        <li>Istat's table on <a
+        <li><strong>Germany</strong>: The Bundeskriminalamt's <a
+        href="https://www.bka.de/DE/AktuelleInformationen/StatistikenLagebilder/PolizeilicheKriminalstatistik/pks_node.html">polizeiliche
+        Kriminalstatistik</a>, notably tables on suspects and incidents. Those
+        statistics are supplemented with statistics about prosecutions covering
+        <a
+        href="https://www.statistischebibliothek.de/mir/receive/DESerie_mods_00000107">years
+        up to and including 2021</a> and <a
+        href="https://www.statistischebibliothek.de/mir/receive/DESerie_mods_00008081">years
+        from 2022 onward</a>, released by Germany's federal
+        statistics agency.
+
+        <li><strong>Italy</strong>: Istat's table on <a
         href="https://esploradati.istat.it/databrowser/#/en/dw/categories/IT1,Z0840JUS,1.0/JUS_CRIMINAL/DCCV_AUTVITTPS/IT1,73_230_DF_DCCV_AUTVITTPS_1,1.0">alleged
         offenders reported by the police forces to the judicial authority</a>
         organized by gender, age, and citizenship.
 
-        <li><a
+        <li><strong>New Zealand</strong>: <a
         href="https://www.police.govt.nz/about-us/publications-statistics/data-and-statistics/policedatanz">policedata.nz</a>,
         notably <a
         href="https://www.police.govt.nz/about-us/publications-statistics/data-and-statistics/policedatanz/proceedings-offender-demographics">proceedings
         (offender demographics)</a>
 
-        <li>The Ministerio del Interior's <a
+        <li><strong>Spain</strong>: The Ministerio del Interior's <a
         href="https://estadisticasdecriminalidad.ses.mir.es/publico/portalestadistico/en/datos.html?type=jaxi&title=Arrests%20/%20Investigated&path=/Datos3/">annual
         series on crime</a>, arrests/investigated
 
-        <li>The FBI's <a
+        <li><strong>United States</strong>: The FBI's <a
         href="https://cde.ucr.cjis.gov/LATEST/webapp/#/pages/downloads#nibrs-downloads">National
         Incident-Based Reporting System (NIBRS)</a>
 
         </ul>
+
+        <p>It may be nearly impossible to access Germany's police statistics
+        from outside the EU, with requests simply timing out due to a likely
+        network misconfiguration by that country's federal police agency.
 
         <p>US statisticstics are <em>not</em> representative of the entire
         country, with NIBRS' coverage of the US population growing from 35.6% in
@@ -2133,7 +2164,8 @@ table.contingency tbody .row4 .col4 { background-color: var(--row4-col4); }
 </head>
 <body>
 <main>
-<h1>Diaphanous: Statistics on Child Sexual Exploitation</h1>
+<h1>Statistics on Online Child Sexual Exploitation</h1>
+<p style="font-size: 1.4em; font-weight: bold;">Robert Grimm, Charles University</p>
 """
 
 

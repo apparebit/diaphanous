@@ -737,6 +737,7 @@ def plot_mosaic_grid(
     cell_height: float = 320,
     row_gap: float = 20,
     column_gap: float = 20,
+    narrow_rows: bool = False,
 ) -> alt.VConcatChart:
     """
     Plot a mosaic grid. This function creates a grid of mosaic plots, using
@@ -771,8 +772,7 @@ def plot_mosaic_grid(
     ).item()
 
     # Prepare text of numeric labels and χ² test results
-    rows = []
-    for metric, group in frame.group_by("metric", maintain_order=True):
+    def make_row(metric, group):
         base = alt.Chart(group)
 
         labels = []
@@ -800,7 +800,7 @@ def plot_mosaic_grid(
             ))
 
         # Chart an entire row of per-country data over the years
-        row = alt.layer(
+        return alt.layer(
             base.mark_rect(
                 stroke="black",
                 strokeWidth=3,
@@ -845,11 +845,22 @@ def plot_mosaic_grid(
             spacing=column_gap,
         )
 
-        rows.append(row)
+    rows = []
+    for metric, group in frame.group_by("metric", maintain_order=True):
+        if narrow_rows:
+            rows.append(make_row(metric, group.filter(
+                pl.col("data_year").le(2019)
+            )))
+            rows.append(make_row(metric, group.filter(
+                pl.col("data_year").gt(2019)
+            )))
+        else:
+            rows.append(make_row(metric, group))
 
     # Combine rows into grid
+    factor = 5 if narrow_rows else 10
     grid = alt.vconcat(
-        hrule(10, 10 * cell_width + 11 * column_gap),
+        hrule(10, factor * cell_width + (factor + 1) * column_gap),
         *rows,
         spacing=row_gap + (20 if show_percent else 0),
     ).resolve_scale(
