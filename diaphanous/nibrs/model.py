@@ -41,6 +41,11 @@ class Table(enum.StrEnum):
         return "agencies.csv" if self == self.AGENCIES else f"nibrs_{self}.csv"
 
     @property
+    def parquet_file(self) -> str:
+        """Get the parquet file name for this table."""
+        return f"{self.value}.parquet"
+
+    @property
     def has_demographics(self) -> bool:
         """
         Determine whether the table contains demographic information. If that is
