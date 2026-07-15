@@ -1,8 +1,9 @@
+from collections import defaultdict
 from collections.abc import Mapping
 import dataclasses
 from pathlib import Path
 import shutil
-from typing import Callable, Literal
+from typing import Callable, ClassVar, Literal
 import zipfile
 
 import polars as pl
@@ -24,6 +25,13 @@ _new_frame = pl.DataFrame
 @dataclasses.dataclass
 class Reader:
     """Ingest CSV files contained in a state-specific archive."""
+
+    MATERIALIZED_TABLES: ClassVar[tuple[Table, ...]] = (
+        Table.ARRESTEE,
+        Table.INCIDENT,
+        Table.OFFENDER,
+        Table.VICTIM,
+    )
 
     archive: Path
     tmp: Path
@@ -281,6 +289,7 @@ class Reader:
             )
 
         # ------------------------------------------------------------------------------
+        # When changing this dictionary, also change MATERIALIZED_TABLES!
         return {
             Table.ARRESTEE: arrestees,
             Table.INCIDENT: incidents,
@@ -355,8 +364,38 @@ def done_ingestion() -> None:
 
 
 _DATA_ROOT = Path(__file__).parent.parent.parent / "data" / "nibrs"
+_TABLE_DIR = _DATA_ROOT / "tables"
 
 def ingest_tables(
+    step: None | Callable[[int, str], None] = None,
+) -> Mapping[Table, FrameType]:
+    """
+    Build data frames with the un-accumulated case data for arrestees,
+    incidents, offenders, and victims involving porn. The data frames are cached
+    in parquet files.
+    """
+    if _TABLE_DIR.exists() and all(
+        (_TABLE_DIR / tab.parquet_file).exists() for tab in Reader.MATERIALIZED_TABLES
+    ):
+        # Read tables
+        tables = {
+            tab: pl.read_parquet(
+                _TABLE_DIR / tab.parquet_file
+            ) for tab in Reader.MATERIALIZED_TABLES
+        }
+    else:
+        # Actually ingest tables
+        tables = _do_ingest_tables(step)
+
+        # Write tables
+        _TABLE_DIR.mkdir(exist_ok=True)
+        for tab in Reader.MATERIALIZED_TABLES:
+            tables[tab].write_parquet(_TABLE_DIR / tab.parquet_file)
+
+    return tables
+
+
+def _do_ingest_tables(
     step: None | Callable[[int, str], None] = None,
 ) -> Mapping[Table, FrameType]:
     """
@@ -365,84 +404,62 @@ def ingest_tables(
     """
     do_step = step or (lambda year, state: None)
 
-    all_arrestees = []
-    all_incidents = []
-    all_offenders = []
-    all_victims = []
-
+    all_tables = defaultdict(list)
     for year in range(2015, 2025):
         path = _DATA_ROOT / f"{year}"
         for archive in sorted(path.glob("??-????.zip")):
             do_step(year, archive.name[:2])
             reader = Reader(archive)
             tables = reader.ingest_all()
-            all_arrestees.append(tables[Table.ARRESTEE])
-            all_incidents.append(tables[Table.INCIDENT])
-            all_offenders.append(tables[Table.OFFENDER])
-            all_victims.append(tables[Table.VICTIM])
+            for tab, table in tables.items():
+                all_tables[tab].append(table)
 
-    return {
-        Table.ARRESTEE: pl.concat(all_arrestees),
-        Table.INCIDENT: pl.concat(all_incidents),
-        Table.OFFENDER: pl.concat(all_offenders),
-        Table.VICTIM: pl.concat(all_victims)
-    }
+    return {tab: pl.concat(tables) for tab, tables in all_tables.items()}
 
 
-def analyze_porn_incidents(
+def _normalize_name(name: str) -> str:
+    parts = name.split()
+    state = parts[-1]
+
+    new_parts = []
+    for part in parts[:-1]:
+        has_comma = part.endswith(",")
+        if has_comma:
+            part = part[:-1]
+
+        if not part in ("PD",):
+            part = part.title()
+
+        if has_comma:
+            part = part + ","
+        new_parts.append(part)
+
+    new_parts.append(state)
+    return " ".join(new_parts)
+
+
+def analyze_offender_anomalies(
     step: None | Callable[[int, str], None] = None,
-) -> Mapping[str, int]:
-    tables = ingest_tables(step)
-
-    incidents = tables[Table.INCIDENT]
-    porn_incidents = incidents.filter(
-        pl.col(Id.MATERIAL).eq("Porn")
-    )
-
-    def restrict(table, selection) -> pl.DataFrame:
-        return table.join(
-            selection.select(pl.col(Id.YEAR, Id.INCIDENT)),
-            on=(Id.YEAR, Id.INCIDENT),
-            how="inner",
+) -> pl.DataFrame:
+    return ingest_tables(step)[Table.OFFENDER].filter(
+        pl.col("material").eq("CSAM").and_(
+            pl.col(Id.YEAR).ge(2021)
+        ).and_(
+            pl.col("age").eq(58)
+        ).and_(
+            pl.col("sex_code").is_in([Sex.UNKNOWN, Sex.NOT_SPECIFIED])
         )
-
-    victims= tables[Table.VICTIM]
-    porn_victims = restrict(victims, porn_incidents)
-    unknown_age_victims = porn_victims.filter(
-        pl.col("age").is_null()
+    ).select(
+        pl.format(
+            "{}, {}", pl.col("ncic_agency_name"), pl.col("state_abbr")
+        ).value_counts(sort=True)
+    ).unnest("ncic_agency_name").with_columns(
+        pl.col("ncic_agency_name").map_elements(
+            _normalize_name,
+            return_dtype=pl.String
+        ),
+        pl.col("count").truediv(pl.col("count").sum()).alias("fraction"),
     )
-    child_victims = porn_victims.filter(
-        pl.col("age").lt(18)
-    )
-
-    unknown_age_incidents = restrict(porn_incidents, unknown_age_victims)
-
-    child_porn_incidents = restrict(porn_incidents, child_victims)
-    offenders = tables[Table.OFFENDER]
-    porn_offenders = restrict(offenders, porn_incidents)
-    juvenile_offenders = porn_offenders.filter(
-        pl.col("age").lt(18)
-    )
-    juvenile_incidents = restrict(porn_incidents, juvenile_offenders)
-    juvenile_victims = restrict(porn_victims, juvenile_incidents)
-    juvenile_child_victims = juvenile_victims.filter(
-        pl.col("age").lt(18)
-    )
-
-    return {
-        "Incidents": len(incidents),
-        "Incidents involving porn": len(porn_incidents),
-        "Victims": len(porn_victims),
-        "Victims witbout age": len(unknown_age_victims),
-        "Child victims": len(child_victims),
-        "Unknown age incidents": len(unknown_age_incidents),
-        "Child porn incidents": len(child_porn_incidents),
-        "Offenders": len(porn_offenders),
-        "Juvenile offenders": len(juvenile_offenders),
-        "Juvenile incidents": len(juvenile_incidents),
-        "Juvenile incident victims": len(juvenile_victims),
-        "Juvenile incident child victims": len(juvenile_child_victims),
-    }
 
 
 def ingest_age_distributions(
@@ -666,52 +683,3 @@ def combine_offenders_and_arrestees(
     ).item()
 
     return result
-
-
-if __name__ == "__main__":
-    print()
-    frame = us_age_distributions(step_ingestion, done_ingestion)
-
-    for metric in (
-        "United States CSAM Offenders",
-        "United States Porn Offenders",
-        "United States CSAM Arrestees",
-        "United States Porn Arrestees",
-    ):
-        count = frame.filter(
-            pl.col("metric").eq(metric)
-        ).select(
-            pl.col("count").sum()
-        ).item()
-
-        counti = int(count)
-        assert count == counti
-
-        print(f"{metric}: {counti:7,}")
-
-    pl.Config.set_tbl_cols(15)
-    pl.Config.set_tbl_rows(2_000)
-    pl.Config.set_thousands_separator(True)
-    pl.Config.set_float_precision(1)
-    pl.Config.set_tbl_cell_numeric_alignment("RIGHT")
-
-    print(frame.filter(
-        pl.col("metric").eq("United States CSAM Offenders").and_(
-            pl.col("data_year").eq(2024)
-        )
-    ).select(
-        pl.exclude(
-            "country", "material", "role",
-            "metric_order",
-            "age_group_order",
-            "sex_order"
-        )
-    ))
-
-    print()
-    stats = analyze_porn_incidents(step_ingestion)
-    print()
-
-    label_size = max(len(label) for label in stats)
-    for k, v in stats.items():
-        print(f"{k.ljust(label_size)}: {v:11,}")
