@@ -22,7 +22,7 @@ from .mosaic import (
     plot_odds_ratio_grid, test_chi2_independence,
 )
 from .nibrs.model import Id
-from .nibrs.reader import combine_offenders_and_arrestees
+from .nibrs.reader import analyze_offender_anomalies, combine_offenders_and_arrestees
 from .platform.data import REPORTS_PER_PLATFORM
 from .util import compute_age_cdfs
 
@@ -1110,6 +1110,60 @@ printr()
         path = "figure/us-age-sex-detail.svg"
         fig.save(path)
         self.svg(path)
+
+        agencies = analyze_offender_anomalies()
+
+        agency_count = agencies.select(
+            pl.col("count").sum()
+        ).item()
+        top_agency = agencies.select(
+            pl.col("ncic_agency_name").first()
+        ).item()
+        top_share = agencies.select(
+            pl.col("fraction").first().mul(100)
+        ).item()
+
+        top_ten = gt.GT(agencies.head(10)).tab_header(
+            title="Top Ten Police Departments Reporting 58-Year-Old Offenders w/o Sex"
+        ).cols_label(
+            ncic_agency_name="Agency",
+            count="Offenders",
+            fraction="Fraction",
+        ).fmt_integer(
+            columns=["count"],
+            sep_mark=",",
+        ).fmt_percent(
+            columns="fraction",
+            decimals=1,
+        ).tab_style(
+            style=gt.style.text(size="small"),
+            locations=gt.loc.body(),
+        ).tab_style(
+            style=gt.style.text(size="small", weight="bold"),
+            locations=gt.loc.column_labels(),
+        ).tab_style(
+            style=gt.style.text(size="medium"),
+            locations=gt.loc.title(),
+        ).opt_vertical_padding(
+            scale=0.8,
+        )
+
+        self.html(f"""
+            </div>
+
+            <p>In the above, larger age distributions for CSAM offenders in the
+            United States, the number of 58-year-old offenders with unknown sex
+            stands out. Over a span of four years, there are {agency_count:,} of
+            them. When looking at the reporting police departments, the agency
+            recording the most is {top_agency} with {top_share:.1f}%. As so
+            often, the distribution is heavy-tailed, with a total of
+            {len(agencies):,} different departments and the top ten listed
+            below.</p>
+
+            {top_ten.as_raw_html()}
+
+            <div class=extra-wide>
+        """)
 
         # Mosaics I: Highlight minors
         frame = make_mosaic_frame(
@@ -2441,7 +2495,7 @@ def format_juxtaposition(frame: pl.DataFrame, with_highlights: bool = False) -> 
     ).opt_table_font(
         stack="neo-grotesque",
     ).opt_all_caps(
-        locations=gt.loc.row_group,
+        locations="row_group",
     ).opt_vertical_padding(
         scale=0.8,
     )
