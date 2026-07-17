@@ -60,6 +60,27 @@ _READ_OPTIONS_OLD_SUSPECTS = dict(
     column_names=_COLUMN_NAMES_OLD_SUSPECTS,
 )
 
+_USE_COLUMNS_POPULATION = "B:G,I,J,L,N,O,Q:U"
+
+_COLUMN_NAMES_POPULATION = [
+    "report_year",
+    "year",
+    "total",
+    "8-10",
+    "10-12",
+    "12-14",
+    "14-16",
+    "16-18",
+    "18-21",
+    "21-23",
+    "23-25",
+    "25-30",
+    "30-40",
+    "40-50",
+    "50-60",
+    ">=60",
+]
+
 
 @dataclass(frozen=True)
 class Data:
@@ -764,6 +785,66 @@ def combine_offenders_and_outcomes(
     return result
 
 
+def ingest_population_sizes() -> pl.DataFrame:
+    parts = []
+    for sex, skip_rows, n_rows in (
+        ("*", 10, 18),
+        ("Male", 39, 18),
+        ("Female", 69, 18),
+    ):
+        parts.append(
+            pl.read_excel(
+                _ROOT / "data" / "germany" / "population-sizes-2025.xlsx",
+                sheet_name="WBVab8_insg_männl_weibl_Bund",
+                read_options=dict(
+                    header_row=None,
+                    skip_rows=skip_rows,
+                    n_rows=n_rows,
+                    use_columns=_USE_COLUMNS_POPULATION,
+                    column_names=_COLUMN_NAMES_POPULATION,
+                )
+            ).with_columns(
+                pl.lit(sex).alias("sex"),
+            )
+        )
+
+    data = pl.concat(parts).sort(
+        pl.col("report_year", "sex")
+    ).filter(
+        pl.col("year").is_in([
+            "2009", "2010", "2011", "2012 vZ", "2023 Z22"
+        ]).not_()
+    ).with_columns(
+        pl.col("report_year").replace({
+            "2013 nZ": "2013",
+            "2024 Z11": "2024",
+        }),
+        pl.col("year").replace({
+            "2012 nZ": "2012",
+            "2023 Z11": "2023",
+        }),
+    ).with_columns(
+        pl.col("report_year", "year").cast(pl.Int64),
+    ).with_columns(
+        pl.col("total").eq(
+            pl.sum_horizontal(
+                pl.exclude("report_year", "year", "total", "sex")
+            )
+        ).alias("total_equals_sum")
+    )
+
+    # The breakdown for everyone and for women in 2019 does not compute!
+    assert data.filter(
+        pl.col("year").ne(2019).or_(
+            pl.col("sex").eq("Male")
+        ).all()
+    ).select(
+        pl.col("total_equals_sum").all()
+    ).item()
+
+    return data
+
+
 def _normalize_outcomes(
     data: pl.DataFrame,
     outcome: Literal["Adjudication", "Conviction"],
@@ -826,3 +907,6 @@ if __name__ == "__main__":
 
     data = combine_offenders_and_outcomes(offenders, outcomes)
     print(data)
+
+    population = ingest_population_sizes()
+    print(population)
