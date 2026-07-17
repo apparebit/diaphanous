@@ -1090,6 +1090,8 @@ printr()
 
     def emit_age_distributions(self, with_chi2: bool = False) -> None:
         self.h3("Perpetrators by Country, Year, Sex, and Age")
+        self.h4("The Age Distributions")
+
         distributions = crimestat.load_all_age_distributions(verbose=True)
         full_data = pl.concat(
             self.filter_years(distributions, *self.THUMB_YEARS).values()
@@ -1102,7 +1104,10 @@ printr()
         fig.save(path)
         self.svg(path)
 
-        # US detail
+        # Understanding the surprisingly high prevalence of 58-year-old
+        # offenders without a known sex
+        self.h4("58-Year-Old CSAM Offenders Without Known Sex in the US")
+
         detail_data = self.filter_years(distributions, *self.DETAIL_YEARS)
         fig = plot_sex_by_age_detailed(
             detail_data["us_csam_offenders"], "US", "CSAM", "Offender"
@@ -1111,31 +1116,20 @@ printr()
         fig.save(path)
         self.svg(path)
 
-        agencies = analyze_offender_anomalies()
+        agencies, age_ranges = analyze_offender_anomalies()
 
         agency_count = agencies.select(
             pl.col("count").sum()
         ).item()
         top_agency = agencies.select(
-            pl.col("ncic_agency_name").first()
+            pl.col("agency").first()
         ).item()
         top_share = agencies.select(
             pl.col("fraction").first().mul(100)
         ).item()
 
-        top_ten = gt.GT(agencies.head(10)).tab_header(
-            title="Top Ten Police Departments Reporting 58-Year-Old Offenders w/o Sex"
-        ).cols_label(
-            ncic_agency_name="Agency",
-            count="Offenders",
-            fraction="Fraction",
-        ).fmt_integer(
-            columns=["count"],
-            sep_mark=",",
-        ).fmt_percent(
-            columns="fraction",
-            decimals=1,
-        ).tab_style(
+        def apply_style(table: gt.GT) -> gt.GT:
+            return table.tab_style(
             style=gt.style.text(size="small"),
             locations=gt.loc.body(),
         ).tab_style(
@@ -1147,6 +1141,36 @@ printr()
         ).opt_vertical_padding(
             scale=0.8,
         )
+
+        agencies_display = apply_style(gt.GT(agencies.head(10)).tab_header(
+            title="Top Ten Police Departments Reporting 58-Year-Old Offenders w/o Sex"
+        ).cols_label(
+            agency="Agency",
+            count="Offenders",
+            fraction="Fraction",
+        ).fmt_integer(
+            columns=["count"],
+            sep_mark=",",
+        ).fmt_percent(
+            columns="fraction",
+            decimals=1,
+        ))
+
+        age_ranges_display = apply_style(gt.GT(age_ranges).tab_header(
+            title="Age Ranges Contributing to Anomaly of 58-Year-Olds",
+        ).cols_label(
+            min_age="Min Age",
+            max_age="Max Age",
+            trunc_mean_age="Truncated Mean Age",
+            count="Count",
+        ).fmt_integer(
+            columns=[
+                "min_age",
+                "max_age",
+                "trunc_mean_age",
+                "count"],
+            sep_mark=",",
+        ))
 
         self.html(f"""
             </div>
@@ -1160,12 +1184,21 @@ printr()
             {len(agencies):,} different departments and the top ten listed
             below.</p>
 
-            {top_ten.as_raw_html()}
+            {agencies_display.as_raw_html()}
+
+            <p>A closer look at the complete offender table reveals that these
+            agencies did not code the age of an unknown offender as unavailable.
+            Instead, they abused an age range covering (almost) all adult years,
+            even though age ranges should cover at most 10 years. The different
+            ranges are shown below.</p>
+
+            {age_ranges_display.as_raw_html()}
 
             <div class=extra-wide>
         """)
 
         # Mosaics I: Highlight minors
+        self.h4("Sex Ratios Amongst Juveniles and Adults")
         frame = make_mosaic_frame(
             full_data,
             x_axis="age_group",

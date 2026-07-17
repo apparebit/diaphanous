@@ -417,12 +417,23 @@ def _do_ingest_tables(
     return {tab: pl.concat(tables) for tab, tables in all_tables.items()}
 
 
-def _normalize_name(name: str) -> str:
-    parts = name.split()
-    state = parts[-1]
+def normalize_agency_name(agency: str) -> str:
+    """
+    Turn an all-caps agency name into a more readable titled-cased name. The
+    provided agency name can be a ncic_agency_name or a ncic_agency_name
+    followed by a comma, space, and two-letter state code.
+    """
+    old_parts = agency.split()
+
+    if len(old_parts[-1]) == 2:
+        name_parts = old_parts[:-1]
+        state = old_parts[-1]
+    else:
+        name_parts = old_parts
+        state = None
 
     new_parts = []
-    for part in parts[:-1]:
+    for part in name_parts:
         has_comma = part.endswith(",")
         if has_comma:
             part = part[:-1]
@@ -434,14 +445,16 @@ def _normalize_name(name: str) -> str:
             part = part + ","
         new_parts.append(part)
 
-    new_parts.append(state)
+    if state is not None:
+        new_parts.append(state)
+
     return " ".join(new_parts)
 
 
 def analyze_offender_anomalies(
     step: None | Callable[[int, str], None] = None,
-) -> pl.DataFrame:
-    return ingest_tables(step)[Table.OFFENDER].filter(
+) -> tuple[pl.DataFrame, pl.DataFrame]:
+    offenders = ingest_tables(step)[Table.OFFENDER].filter(
         pl.col("material").eq("CSAM").and_(
             pl.col(Id.YEAR).ge(2021)
         ).and_(
@@ -449,18 +462,37 @@ def analyze_offender_anomalies(
         ).and_(
             pl.col("sex_code").is_in([Sex.UNKNOWN, Sex.NOT_SPECIFIED])
         )
-    ).select(
+    ).with_columns(
         pl.format(
             "{}, {}", pl.col("ncic_agency_name"), pl.col("state_abbr")
-        ).value_counts(sort=True)
-    ).unnest("ncic_agency_name").with_columns(
-        pl.col("ncic_agency_name").map_elements(
-            _normalize_name,
-            return_dtype=pl.String
-        ),
+        ).map_elements(
+            normalize_agency_name, return_dtype=pl.String
+        ).alias("agency"),
+    )
+
+    agencies = offenders.select(
+        pl.col("agency").value_counts(sort=True),
+    ).unnest("agency").with_columns(
         pl.col("count").truediv(pl.col("count").sum()).alias("fraction"),
     )
 
+    age_ranges = offenders.select(
+        pl.concat_arr(
+            pl.col("age_range_low_num"),
+            pl.col("age_range_high_num"),
+        ).alias("age_range"),
+    ).select(
+        pl.col("age_range").value_counts(sort=True),
+    ).unnest("age_range").with_columns(
+        pl.col("age_range").arr.sum().truediv(2).truncate().alias("trunc_mean_age"),
+    ).select(
+        pl.col("age_range").arr.get(0).alias("min_age"),
+        pl.col("age_range").arr.get(1).alias("max_age"),
+        pl.col("trunc_mean_age"),
+        pl.col("count"),
+    )
+
+    return agencies, age_ranges
 
 def ingest_age_distributions(
     step: None | Callable[[int, str], None] = None,
