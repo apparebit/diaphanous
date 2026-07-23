@@ -757,7 +757,7 @@ def plot_mosaic_grid(
     title = alt.Title(
         title_text,
         fontSize=50,
-        fontWeight="bold",
+        fontWeight="normal",
         anchor="start",
         frame="group",
         dx=0,
@@ -860,7 +860,7 @@ def plot_mosaic_grid(
     # Combine rows into grid
     factor = 5 if narrow_rows else 10
     grid = alt.vconcat(
-        hrule(10, factor * cell_width + (factor + 1) * column_gap),
+        hrule(4, factor * cell_width + (factor + 1) * column_gap),
         *rows,
         spacing=row_gap + (20 if show_percent else 0),
     ).resolve_scale(
@@ -1081,7 +1081,7 @@ def plot_odds_ratio_grid(
         grid[-1].append(chart)
 
     return alt.vconcat(
-        hrule(7.5, column_count * cell_width + (column_count + 1) * gap),
+        hrule(3, column_count * cell_width + (column_count + 1) * gap),
         *(
             alt.hconcat(*row, spacing=gap) for row in grid
         ),
@@ -1090,7 +1090,7 @@ def plot_odds_ratio_grid(
         title=alt.Title(
             f"Odds Ratios by Country, Year, {second_variable}, and Age Group",
             fontSize=25,
-            fontWeight="bold",
+            fontWeight="normal",
             anchor="start",
             frame="group",
             dx=0,

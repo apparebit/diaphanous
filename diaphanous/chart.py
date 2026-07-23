@@ -406,7 +406,7 @@ def plot_cdf_grid(
     ]
 
     return alt.vconcat(
-        hrule(7.5, column_count * cell_width + (column_count + 1) * gap),
+        hrule(3, column_count * cell_width + (column_count + 1) * gap),
         *rows,
         spacing=small_gap
     ).resolve_scale(
@@ -416,7 +416,7 @@ def plot_cdf_grid(
             "Per-Country Ten-Year Spread of Cumulative Distributions "
             "for Female and Male Perpetrators",
             fontSize=40,
-            fontWeight="bold",
+            fontWeight="normal",
             anchor="start",
             frame="group",
             dx=0,

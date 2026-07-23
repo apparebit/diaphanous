@@ -1142,20 +1142,6 @@ printr()
             scale=0.8,
         )
 
-        agencies_display = apply_style(gt.GT(agencies.head(10)).tab_header(
-            title="Top Ten Police Departments Reporting 58-Year-Old Offenders w/o Sex"
-        ).cols_label(
-            agency="Agency",
-            count="Offenders",
-            fraction="Fraction",
-        ).fmt_integer(
-            columns=["count"],
-            sep_mark=",",
-        ).fmt_percent(
-            columns="fraction",
-            decimals=1,
-        ))
-
         age_ranges_display = apply_style(gt.GT(age_ranges).tab_header(
             title="Age Ranges Contributing to Anomaly of 58-Year-Olds",
         ).cols_label(
@@ -1175,16 +1161,14 @@ printr()
         self.html(f"""
             </div>
 
-            <p>In the above, larger age distributions for CSAM offenders in the
-            United States, the number of 58-year-old offenders with unknown sex
-            stands out. Over a span of four years, there are {agency_count:,} of
-            them. When looking at the reporting police departments, the agency
-            recording the most is {top_agency} with {top_share:.1f}%. As so
-            often, the distribution is heavy-tailed, with a total of
-            {len(agencies):,} different departments and the top ten listed
-            below.</p>
-
-            {agencies_display.as_raw_html()}
+            <p>In the above, enlarged age distributions for CSAM offenders in
+            the United States, the number of 58-year-old offenders with unknown
+            sex is rather noticeable. Over a span of four years, there are
+            {agency_count:,} of them. When looking at the reporting police
+            departments, the agency recording the most is {top_agency} with
+            {top_share:.1f}%. Besides that one agency, the distribution is
+            heavy-tailed, with a total of {len(agencies):,} different
+            departments.</p>
 
             <p>A closer look at the complete offender table reveals that these
             agencies did not code the age of an unknown offender as unavailable.
@@ -1493,6 +1477,8 @@ printr()
         path = "figure/us-age-outcome-mosaics.svg"
         fig.save(path)
         self.svg(path)
+
+        self.html("</div>\n<div>\n")
 
         fig = plot_mosaic_grid(
             de_frame,
