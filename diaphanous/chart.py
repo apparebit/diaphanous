@@ -370,11 +370,51 @@ def plot_sex_by_age(
     )
 
 
+def plot_crime_rate_by_age(
+    frame: pl.DataFrame,
+    country: str,
+    large_font_size = 30,
+    font_size: int = 20,
+) -> alt.FacetChart:
+    return alt.Chart(frame).mark_line(
+        strokeWidth=3
+    ).encode(
+        alt.X("age:Q")
+            .scale(domain=(0, 100))
+            .axis(labelFontSize=font_size)
+            .title(None),
+        alt.Y("rate:Q")
+            .axis(orient="right", labelFontSize=font_size)
+            .title(None),
+        alt.Color("sex:N")
+            .scale(domain=["Female", "Male"], range=[Palette.RED, Palette.BLUE])
+            .legend(None),
+    ).facet(
+        facet=alt.Facet(
+            "data_year:N",
+            title=None,
+            header=alt.Header(
+                labelFontSize=font_size,
+            )
+        ),
+        title=alt.Title(
+            country,
+            anchor="middle",
+            orient="left",
+            angle=270,
+            fontSize=large_font_size,
+            fontWeight="normal",
+            dy=-large_font_size,
+        ),
+        columns=5,
+        spacing=large_font_size,
+    )
+
+
 def plot_cdf_grid(
     frame: pl.DataFrame,
     cell_width: float = 500,
     cell_height: float = 350,
-    cell_small_height: float = 250,
     column_count: int = 5,
     gap: float = 20,
     small_gap: float = 5,

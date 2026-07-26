@@ -14,7 +14,7 @@ import great_tables as gt
 import polars as pl
 
 from .chart import (
-    plot_sex_by_age_grid, plot_sex_by_age_detailed, plot_cdf_grid
+    plot_cdf_grid, plot_crime_rate_by_age, plot_sex_by_age_grid, plot_sex_by_age_detailed
 )
 from .color import Palette
 from .mosaic import (
@@ -461,7 +461,7 @@ class Analyzer:
 
             self.h3("Backfilling Suspects for Unsolved Incidents")
 
-            stats = de.Data.ingest().incidents.filter(
+            stats = de.ingest_incidents().filter(
                 pl.col("activity").is_not_null(),
             ).group_by(
                 Id.YEAR,
@@ -1090,7 +1090,7 @@ printr()
 
     def emit_age_distributions(self, with_chi2: bool = False) -> None:
         self.h3("Perpetrators by Country, Year, Sex, and Age")
-        self.h4("The Age Distributions")
+        self.h4("Suspect Age Distributions")
 
         distributions = crimestat.load_all_age_distributions(verbose=True)
         full_data = pl.concat(
@@ -1182,7 +1182,7 @@ printr()
         """)
 
         # Mosaics I: Highlight minors
-        self.h4("Sex Ratios Amongst Juveniles and Adults")
+        self.h4("Sex Ratios Amongst Minors and Adults")
         frame = make_mosaic_frame(
             full_data,
             x_axis="age_group",
@@ -1521,6 +1521,26 @@ printr()
             },
             include_null=True,
         )
+
+        self.html("</div>\n")
+
+        # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+        self.h3("Age Crime Curves by Country, Year, and Sex")
+
+        self.html("""
+            <p>The age crime curves for Germany show crime rates for men and
+            women based on the "<a
+            href="https://www.bka.de/SharedDocs/Downloads/DE/Publikationen/PolizeilicheKriminalstatistik/2025/Sonst_Tabellen/01-BU-BV-TVBZ-ins-ab-2009_xls.xlsx?__blob=publicationFile&v=4">Wohnbevölkerung
+            insgesamt</a>," that is, total resident population, as published by
+            federal police based on census statistics.</p>
+        """)
+
+        self.html("<div class=wide>\n")
+
+        fig = plot_crime_rate_by_age(de.age_crime_curves(), "Germany (All Offenders)")
+        path = "figure/age-crime-curves.svg"
+        fig.save(path)
+        self.svg(path)
 
         self.html("</div>\n")
 
