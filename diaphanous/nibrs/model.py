@@ -781,27 +781,6 @@ class Id(enum.StrEnum):
             return None
 
 
-def humanize_values(column: str) -> pl.Expr:
-    try:
-        ident = Id(column)
-    except:
-        return pl.col(column).alias(column.title())
-
-    replacements = ident.humanized_values()
-    if replacements is None:
-        return pl.col(column).alias(ident.name.title())
-
-    return pl.col(column).cast(pl.String).replace(
-        replacements
-    ).alias(ident.name.title())
-
-
-def humanize_frame(frame: pl.DataFrame) -> pl.DataFrame:
-    return frame.select(
-        *(humanize_values(c) for c in frame.columns)
-    )
-
-
 class JuvenileDisposition(enum.StrEnum):
     """The letter codes for the juvenile disposition."""
     HANDLED_WITH_DEPARTMENT = "H"

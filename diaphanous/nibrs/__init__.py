@@ -1,7 +1,7 @@
 from .model import (
-    Activity, Clearance, Column, CriminalAct, Entry, Ethnicity, Group, humanize_frame,
-    humanize_values, Id, JuvenileDisposition, Location, OffenseCode, Race,
-    SchemaExtension, Sex, Table, Using
+    Activity, Clearance, Column, CriminalAct, Entry, Ethnicity, Group, Id,
+    JuvenileDisposition, Location, OffenseCode, Race, SchemaExtension, Sex, Table,
+    Using
 )
 
 from .reader import (
@@ -22,8 +22,6 @@ __all__ = (
     "Entry",
     "Ethnicity",
     "Group",
-    "humanize_frame",
-    "humanize_values",
     "Id",
     "ingest_age_distributions",
     "ingest_tables",
