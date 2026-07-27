@@ -1,13 +1,12 @@
-from collections.abc import Sequence
 from typing import Literal
 
 import altair as alt
 import polars as pl
 
-from .color import Palette, Scale
+from .color import Palette
 from .nibrs.model import Id
 from .util import (
-    compute_age_sex_cdf_extrema, get_year_range, hrule, to_axis_range
+    compute_age_sex_cdf_extrema, hrule, to_axis_range
 )
 
 
@@ -375,8 +374,8 @@ def plot_crime_rate_by_age(
     country: str,
     large_font_size = 30,
     font_size: int = 20,
-) -> alt.FacetChart:
-    return alt.Chart(frame).mark_line(
+) -> alt.VConcatChart:
+    curves = alt.Chart(frame).mark_line(
         strokeWidth=3
     ).encode(
         alt.X("age:Q")
@@ -408,6 +407,21 @@ def plot_crime_rate_by_age(
         ),
         columns=5,
         spacing=large_font_size,
+    )
+
+    return alt.vconcat(
+        hrule(5, 5 * 300 + 6 * 20),
+        curves,
+        spacing=30,
+    ).properties(
+        title=alt.Title(
+            "Offenders per 100,000 Capita by Year and Sex",
+            fontSize=1.2 * large_font_size,
+            fontWeight="normal",
+            anchor="start",
+            frame="group",
+            dy=-10,
+        )
     )
 
 
@@ -462,50 +476,6 @@ def plot_cdf_grid(
             dx=0,
             dy=-10,
         )
-    )
-
-
-def _plot_age_sex_cdfs(
-    frame: pl.DataFrame, country: str, material_role: str
-) -> alt.FacetChart | alt.LayerChart:
-    if country == "Australia":
-        male_colors = Scale.BLUE.value[4]
-        female_colors = Scale.PINK.value[4]
-    else:
-        male_colors = [f"{c}a0" for c in Scale.BLUE.value]
-        female_colors = [f"{c}a0" for c in Scale.PINK.value]
-
-
-    return alt.layer(
-        _plot_cdf(frame, column="male_cdf", colors=male_colors),
-        _plot_cdf(frame, column="female_cdf", colors=female_colors),
-        alt.Chart().mark_rule(
-            color=Palette.BLACK,
-            strokeWidth=4,
-            strokeDash=(10, 5),
-        ).encode(
-            alt.XDatum(20 if country == "New Zealand" else 18)
-        ),
-    ).resolve_scale(
-        color="independent",
-    )
-
-
-def _plot_cdf(
-    frame: pl.DataFrame,
-    column: str,
-    colors: str | Sequence[str],
-) -> alt.Chart:
-    year_min, year_max = get_year_range(frame)
-    if isinstance(colors, str):
-        colors = [colors] * (year_max - year_min)
-
-    return alt.Chart(frame).mark_line(strokeWidth=3).encode(
-        alt.X("age:Q", axis=alt.Axis(labels=False)).title(None),
-        alt.Y(f"{column}:Q", axis=alt.Axis(labels=False)).title(None),
-        alt.Color("data_year:N", legend=None).scale(
-            domain=[y for y in range(year_min, year_max)], range=colors
-        ),
     )
 
 

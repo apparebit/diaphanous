@@ -1106,7 +1106,7 @@ printr()
 
         # Understanding the surprisingly high prevalence of 58-year-old
         # offenders without a known sex
-        self.h4("58-Year-Old CSAM Offenders Without Known Sex in the US")
+        self.h4("United States: 58-Year-Old CSAM Offenders Without Known Sex")
 
         detail_data = self.filter_years(distributions, *self.DETAIL_YEARS)
         fig = plot_sex_by_age_detailed(
@@ -1143,7 +1143,7 @@ printr()
         )
 
         age_ranges_display = apply_style(gt.GT(age_ranges).tab_header(
-            title="Age Ranges Contributing to Anomaly of 58-Year-Olds",
+            title="Age Ranges Reducing to 58-Years-Old",
         ).cols_label(
             min_age="Min Age",
             max_age="Max Age",
@@ -1458,27 +1458,27 @@ printr()
             include_null=True,
         )
 
-        self.html("<div class=extra-wide>\n")
+        # self.html("<div class=extra-wide>\n")
 
-        fig = plot_mosaic_grid(
-            de_frame,
-            x_label="Age Group",
-            y_label="Outcome",
-        )
-        path = "figure/de-age-outcome-mosaics.svg"
-        fig.save(path)
-        self.svg(path)
+        # fig = plot_mosaic_grid(
+        #     de_frame,
+        #     x_label="Age Group",
+        #     y_label="Outcome",
+        # )
+        # path = "figure/de-age-outcome-mosaics.svg"
+        # fig.save(path)
+        # self.svg(path)
 
-        fig = plot_mosaic_grid(
-            us_frame,
-            x_label="Age Group",
-            y_label="Outcome",
-        )
-        path = "figure/us-age-outcome-mosaics.svg"
-        fig.save(path)
-        self.svg(path)
+        # fig = plot_mosaic_grid(
+        #     us_frame,
+        #     x_label="Age Group",
+        #     y_label="Outcome",
+        # )
+        # path = "figure/us-age-outcome-mosaics.svg"
+        # fig.save(path)
+        # self.svg(path)
 
-        self.html("</div>\n<div>\n")
+        # self.html("</div>\n")
 
         fig = plot_mosaic_grid(
             de_frame,
@@ -1500,6 +1500,7 @@ printr()
         fig.save(path)
         self.svg(path)
 
+        self.html("<div class=wide>\n")
         self.emit_contingency_tables(
             de_outcomes,
             x_axis="age_group",
@@ -1510,7 +1511,6 @@ printr()
             },
             include_null=True,
         )
-
         self.emit_contingency_tables(
             us_outcomes,
             x_axis="age_group",
@@ -1521,28 +1521,54 @@ printr()
             },
             include_null=True,
         )
-
         self.html("</div>\n")
 
         # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-        self.h3("Age Crime Curves by Country, Year, and Sex")
-
+        self.h3("Cross-Sectional Age-Crime-Curves by Country, Year, and Sex")
         self.html("""
-            <p>The age crime curves for Germany show crime rates for men and
-            women based on the "<a
+            <p>The age-crime-curves for Germany show offenders per 100,000
+            capita for men and women based on the "<a
             href="https://www.bka.de/SharedDocs/Downloads/DE/Publikationen/PolizeilicheKriminalstatistik/2025/Sonst_Tabellen/01-BU-BV-TVBZ-ins-ab-2009_xls.xlsx?__blob=publicationFile&v=4">Wohnbevölkerung
-            insgesamt</a>," that is, total resident population, as published by
-            federal police based on census statistics.</p>
+            insgesamt</a>," that is, total resident population, as republished
+            by federal police. Since these statistics start at age 8, the
+            corresponding age-crime-curves also omit ages 0 through 7. By
+            definition, they also omit unresolved incidents and their
+            offenders.</p>
         """)
 
         self.html("<div class=wide>\n")
 
-        fig = plot_crime_rate_by_age(de.age_crime_curves(), "Germany (All Offenders)")
-        path = "figure/age-crime-curves.svg"
+        de_curves = de.age_crime_curves()
+        fig = plot_crime_rate_by_age(de_curves, "Germany (All Offenders)")
+        path = "figure/de-age-crime-curves.svg"
         fig.save(path)
         self.svg(path)
 
         self.html("</div>\n")
+
+        self.html("""
+            <p>Somewhat surprisingly, the age-crime-curves for German men in
+            2020, 2023, and 2024 are bimodal, with a minor second peak starting
+            at age 60. More generally, the normalized age distributions
+            corresponding to the age-crime-curves have the following
+            characteristics:</p>
+        """)
+
+        self.emit_age_crime_curve_statistics(
+            de_curves,
+            "Germany: Normalized Age Distributions (All Offenders)"
+        )
+
+        self.h4("German Age-Crime-Curves After Accounting for Minors Who Might Sext")
+        self.html("""
+            <p>Since German law distinguishes between child and youth
+            pornography, we can use the combination of offender age and violated
+            law to approximately exclude minors who might be sexting from the
+            offender counts. More specifically, we exclude all minors below 14
+            as well as minors between 14 and 18, as long as they are suspected
+            of <em>youth</em> pornography (which has the same age constraints).
+            The adjusted age-crime-curves for Germany follow.</p>
+        """)
 
         # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         self.h3("Notes")
@@ -1741,6 +1767,101 @@ printr()
 
         markup.append("</div>\n")
         self.html("".join(markup))
+
+    def emit_age_crime_curve_statistics(
+        self,
+        data: pl.DataFrame,
+        title: str,
+    ) -> None:
+        def extract(value) -> None | float:
+            if isinstance(value, pl.Series):
+                length = len(value)
+                if length == 1:
+                    return value.item()
+                elif length == 2:
+                    return cast(None | float, value.mean())
+                else:
+                    raise ValueError(f"too many values: {value}")
+
+            return value
+
+        raw_stats = {
+            "data_year": [],
+            "sex": [],
+            "variable": [],
+            "value": [],
+        }
+
+        def record(variable: str, value: None | float) -> None:
+            raw_stats["data_year"].append(year)
+            raw_stats["sex"].append(sex)
+            raw_stats["variable"].append(variable)
+            raw_stats["value"].append(value)
+
+        for (year, sex), group in data.group_by(
+            pl.col(Id.YEAR, "sex"),
+            maintain_order=True
+        ):
+            ages = group.select(
+                pl.col("age").repeat_by(
+                    pl.col("rate").round()
+                ).explode()
+            ).to_series()
+
+            mode = extract(ages.mode())
+            record("Peak Age", mode)
+
+            if mode is None:
+                rate = None
+            else:
+                rate = group.get_column("rate")[
+                    group.select(
+                        pl.col("age").index_of(round(mode))
+                    ).item()
+                ]
+            record("Rate at Peak", rate)
+
+            # TODO: Add 25th and 75th percentile, age at half peaks
+            record("Median Age", cast(None | float, ages.median()))
+            record("Mean Age", cast(None | float, ages.mean()))
+            record("Stdev", cast(None | float, ages.std()))
+            record("Skew", ages.skew())
+            record("Kurtosis", ages.kurtosis())
+
+        stats = pl.DataFrame(raw_stats).pivot(
+            on=Id.YEAR,
+            index=["sex", "variable"],
+            values=["value"],
+        )
+
+        years = [str(y) for y in data.select(
+            pl.col(Id.YEAR).unique()
+        ).to_series()]
+
+        self.html(
+            gt.GT(
+                stats
+            ).tab_header(
+                title=title,
+            ).tab_stub(
+                rowname_col="variable",
+                groupname_col="sex",
+            ).tab_style(
+                style=gt.style.text(weight="bold"),
+                locations=gt.loc.column_header(),
+            ).sub_missing(
+                missing_text="",
+            ).fmt_number(
+                columns=years,
+                decimals=1,
+            ).opt_table_font(
+                stack="neo-grotesque",
+            ).opt_all_caps(
+                locations=gt.loc.row_groups,
+            ).opt_vertical_padding(
+                scale=0.8,
+            ).as_raw_html()
+        )
 
     def emit_age_buckets(self) -> None:
         data = pl.read_csv("data/age-groupings.csv")
@@ -2034,6 +2155,15 @@ hr {
 
 .years li::before {
     content: counter(list-item) ": "
+}
+
+dt {
+    font-style: italic;
+}
+
+dt::after {
+    content: ": "
+    font-style: normal;
 }
 
 /* ----------------------------------- Table ----------------------------------- */
@@ -2534,7 +2664,7 @@ def format_juxtaposition(frame: pl.DataFrame, with_highlights: bool = False) -> 
     ).opt_table_font(
         stack="neo-grotesque",
     ).opt_all_caps(
-        locations="row_group",
+        locations=gt.loc.row_groups,
     ).opt_vertical_padding(
         scale=0.8,
     )
