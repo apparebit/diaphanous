@@ -2237,7 +2237,7 @@ dt {
 }
 
 dt::after {
-    content: ": "
+    content: ": ";
     font-style: normal;
 }
 
