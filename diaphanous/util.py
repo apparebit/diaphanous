@@ -7,6 +7,10 @@ import numpy as np
 import polars as pl
 import great_tables as gt
 
+ACTIVITIES = [
+    "Consumer",
+    "Producer",
+]
 
 COUNTRIES = [
     "Australia",
@@ -20,6 +24,7 @@ COUNTRIES = [
 
 MATERIALS = [
     "CSAM",
+    "Youth Porn",
     "Porn",
 ]
 
@@ -27,6 +32,7 @@ METRICS = [
     "Australia CSAM Offenders",
     "Finland CSAM Offenders",
     "Germany CSAM Offenders",
+    "Germany Youth Porn Offenders",
     "Italy CSAM Offenders",
     "New Zealand CSAM Offenders",
     "Spain CSAM Offenders",
@@ -93,8 +99,8 @@ AGE_GROUP_ORDER = {
     "Adult": 4,
 }
 
+MATERIAL_ORDER = {material: index + 1 for index, material in enumerate(MATERIALS)}
 METRIC_ORDER = {metric: index + 1 for index, metric in enumerate(METRICS)}
-
 OUTCOME_ORDER = {outcome: index + 1 for index, outcome in enumerate(OUTCOMES)}
 
 SEX_ORDER = {
@@ -213,7 +219,7 @@ def finish_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](
     frame: F,
     *,
     country: str,
-    material: None | Literal["CSAM", "Porn"],
+    material: None | Literal["CSAM", "Youth Porn", "Porn"],
     role: None | Literal["Offender", "Arrestee"],
     juvenile_min: int,
     juvenile_max: int,
@@ -295,13 +301,13 @@ def sort_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](frame: F) -> F:
         "metric_order", "data_year", "age", "sex_order", "ethnicity", "activity_order"
     ).with_columns(
         pl.col("country").cast(pl.Enum(COUNTRIES)),
-        pl.col("material").cast(pl.Enum(["CSAM", "Porn"])),
-        pl.col("role").cast(pl.Enum(["Offender", "Arrestee"])),
+        pl.col("material").cast(pl.Enum(MATERIALS)),
+        pl.col("role").cast(pl.Enum(ROLES)),
         pl.col("metric").cast(pl.Enum(METRICS)),
         pl.col("metric_order").cast(pl.Int8),
         pl.col("data_year").cast(pl.Int16),
         pl.col("age").cast(pl.Int8),
-        pl.col("activity").cast(pl.Enum(["Consumer", "Producer"])),
+        pl.col("activity").cast(pl.Enum(ACTIVITIES)),
     )
 
 
@@ -382,8 +388,8 @@ def _compute_age_cdf(
     # Build CDF from counts shifted by one row: (age, cdf): (0, 0.0) -> (100, 1.0)
     return pl.DataFrame(table, schema={
         "country": pl.Enum(COUNTRIES),
-        "material": pl.Enum(["CSAM", "Porn"]),
-        "role": pl.Enum(["Offender", "Arrestee"]),
+        "material": pl.Enum(MATERIALS),
+        "role": pl.Enum(ROLES),
         "metric": pl.Enum(METRICS),
         "data_year": pl.Int16,
         "age": pl.Int8,

@@ -12,7 +12,7 @@ from .model import (
     CriminalAct, Ethnicity, Id, OffenseCode, Race, Sex, SOURCE_FILES, Table
 )
 from ..util import (
-    AGE_GROUP_ORDER, COUNTRIES, finish_age_distribution, MATERIALS, METRICS,
+    ACTIVITIES, AGE_GROUP_ORDER, COUNTRIES, finish_age_distribution, MATERIALS, METRICS,
     METRIC_ORDER, OUTCOME_ORDER, OUTCOMES, ROLES
 )
 
@@ -210,9 +210,9 @@ class Reader:
         # ------------------------------------------------------------------------------
         # Extract AGENCY NAMES and eliminate duplicates
         agencies = agencies.select(
-            "agency_id", "data_year", "ncic_agency_name", "state_abbr"
+            "agency_id", Id.YEAR, "ncic_agency_name", "state_abbr"
         ).group_by(
-            "agency_id", "data_year"
+            "agency_id", Id.YEAR
         ).agg(
             pl.col("ncic_agency_name").first(),
             pl.col("state_abbr").first(),
@@ -350,7 +350,7 @@ def _prepare_criminal_acts[F: (pl.DataFrame, pl.LazyFrame)](frame: F) -> F:
         ).otherwise(
             pl.lit(None)
         ).cast(
-            pl.Enum(["Consumer", "Producer"])
+            pl.Enum(ACTIVITIES)
         ).alias(Id.ACTIVITY)
     )
 
@@ -521,8 +521,6 @@ def ingest_age_distributions(
         ),
     ])
 
-    print(len(distribution.filter(pl.col(Id.ROLE).is_null())), "out of", len(distribution))
-
     distribution = finish_age_distribution(
         distribution,
         country="United States",
@@ -633,16 +631,16 @@ def combine_offenders_and_arrestees(
                 pl.col("age").gt(17)
             ).then(
                 pl.lit("Adult", dtype=pl.String)
-            ).alias("age_group"),
+            ).alias(Id.GROUP),
         ).with_columns(
-            pl.col("age_group").replace_strict(
+            pl.col(Id.GROUP).replace_strict(
                 AGE_GROUP_ORDER,
                 return_dtype=pl.Int8,
             ).alias("age_group_order"),
         ).group_by(
             pl.col(
-                "data_year",
-                "age_group", "age_group_order",
+                Id.YEAR,
+                Id.GROUP, "age_group_order",
                 "sex", "sex_order"
             ),
         ).agg(
@@ -656,8 +654,8 @@ def combine_offenders_and_arrestees(
     no_sanctions = offenders.join(
         arrestees,
         on=[
-            "data_year",
-            "age_group", "age_group_order",
+            Id.YEAR,
+            Id.GROUP, "age_group_order",
             "sex", "sex_order",
         ],
         how="left",
@@ -686,14 +684,14 @@ def combine_offenders_and_arrestees(
         pl.lit(offender_metric, dtype=pl.Enum(METRICS)).alias("metric"),
         pl.lit(METRIC_ORDER[offender_metric], dtype=pl.Int8).alias("metric_order"),
         pl.col(
-            "data_year",
-            "age_group", "age_group_order",
+            Id.YEAR,
+            Id.GROUP, "age_group_order",
             "sex", "sex_order",
             "outcome", "outcome_order",
             "count",
         ),
     ).sort(
-        "data_year", "age_group_order", "sex_order", "outcome_order"
+        Id.YEAR, "age_group_order", "sex_order", "outcome_order"
     )
 
     assert result.select(
@@ -701,14 +699,14 @@ def combine_offenders_and_arrestees(
     ).item()
 
     assert offenders.select(
-        pl.col("data_year"),
-        pl.col("count").sum().over("data_year").alias("old_totals"),
+        pl.col(Id.YEAR),
+        pl.col("count").sum().over(Id.YEAR).alias("old_totals"),
     ).join(
         result.select(
-            pl.col("data_year"),
-            pl.col("count").sum().over("data_year").alias("new_totals"),
+            pl.col(Id.YEAR),
+            pl.col("count").sum().over(Id.YEAR).alias("new_totals"),
         ),
-        on="data_year",
+        on=Id.YEAR,
         how="inner",
     ).select(
         pl.col("new_totals").eq(pl.col("old_totals")).all()

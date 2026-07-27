@@ -774,7 +774,7 @@ class Id(enum.StrEnum):
 
         try:
             return {
-                str(v.value): to_title(k)
+                v.value: to_title(k)
                 for k, v in value_model.__members__.items()
             }
         except:
