@@ -6,8 +6,9 @@ import polars as pl
 
 from .nibrs.model import Id
 from .util import (
-    AGE_GROUP_ORDER, COUNTRIES, finish_age_distribution, MATERIALS,
-    METRICS, METRIC_ORDER, OUTCOME_COLUMNS, OUTCOME_ORDER, OUTCOMES, ROLES, SEX_ORDER,
+    AGE_GROUP_ORDER, COUNTRIES, finish_age_distribution, MATERIALS, METRICS,
+    METRIC_ORDER, OUTCOME_COLUMNS, OUTCOME_ORDER, OUTCOMES, ROLES, SEX_ORDER,
+    sort_age_distribution
 )
 
 _LATEST_YEAR = 2024
@@ -24,8 +25,13 @@ _AGE_RANGES = [*_CHILD_RANGES, *_JUVENILE_RANGES, *_ADULT_RANGES, *_OLD_ADULT_RA
 # §§ 184b, 184c StGB
 _PRODUCER_IDS_V1 = ["143200", "143400", "143500", "143700"]
 _CONSUMER_IDS_V1 = ["143300", "143600"]
+_CHILD_PORN_IDS_V1 = ["143200", "143300", "143400"]
+_YOUTH_PORN_IDS_V1 = ["143500", "143600", "143700"]
+
 _PRODUCER_IDS_V2 = ["143210", "143220", "143510", "143520"]
 _CONSUMER_IDS_V2 = ["143230", "143530"]
+_CHILD_PORN_IDS_V2 = ["143210", "143220", "143230"]
+_YOUTH_PORN_IDS_V2 = ["143510", "143520", "143530"]
 
 _READ_OPTIONS_SUSPECTS = dict(
     skip_rows=9,
@@ -107,12 +113,16 @@ def ingest_suspects() -> pl.DataFrame:
             )
             producers = _PRODUCER_IDS_V1
             consumers = _CONSUMER_IDS_V1
+            child_porn = _CHILD_PORN_IDS_V1
+            youth_porn = _YOUTH_PORN_IDS_V1
         else:
             filter = pl.col("id").str.starts_with("1432").or_(
                 pl.col("id").str.starts_with("1435")
             )
             producers = _PRODUCER_IDS_V2
             consumers = _CONSUMER_IDS_V2
+            child_porn = _CHILD_PORN_IDS_V2
+            youth_porn = _YOUTH_PORN_IDS_V2
 
         suspects.append(frame.filter(
             filter
@@ -120,6 +130,15 @@ def ingest_suspects() -> pl.DataFrame:
             0,
             pl.lit(year, dtype=pl.Int16).alias(Id.YEAR)
         ).with_columns(
+            pl.when(
+                pl.col("id").is_in(child_porn)
+            ).then(
+                pl.lit("CSAM"),
+            ).when(
+                pl.col("id").is_in(youth_porn)
+            ).then(
+                pl.lit("Youth Porn"),
+            ).alias(Id.MATERIAL),
             pl.col("18-21").add(pl.col(">=21")).alias("adult"),
             pl.when(
                 pl.col("id").is_in(producers)
@@ -129,7 +148,7 @@ def ingest_suspects() -> pl.DataFrame:
                 pl.col("id").is_in(consumers)
             ).then(
                 pl.lit("Consumer"),
-            ).alias("activity"),
+            ).alias(Id.ACTIVITY),
         ))
 
     all_suspects = pl.concat(suspects)
@@ -242,12 +261,16 @@ def ingest_incidents() -> pl.DataFrame:
             )
             producers = _PRODUCER_IDS_V1
             consumers = _CONSUMER_IDS_V1
+            child_porn = _CHILD_PORN_IDS_V1
+            youth_porn = _YOUTH_PORN_IDS_V1
         else:
             filter = pl.col("id").str.starts_with("1432").or_(
                 pl.col("id").str.starts_with("1435")
             )
             producers = _PRODUCER_IDS_V2
             consumers = _CONSUMER_IDS_V2
+            child_porn = _CHILD_PORN_IDS_V2
+            youth_porn = _YOUTH_PORN_IDS_V2
 
         incidents.append(pl.read_excel(
             _ROOT / "data" / "germany" / f"incidents-{year}.xlsx",
@@ -290,6 +313,15 @@ def ingest_incidents() -> pl.DataFrame:
             pl.lit(year, dtype=pl.Int16).alias(Id.YEAR)
         ).with_columns(
             pl.when(
+                pl.col("id").is_in(child_porn)
+            ).then(
+                pl.lit("CSAM"),
+            ).when(
+                pl.col("id").is_in(youth_porn)
+            ).then(
+                pl.lit("Youth Porn"),
+            ).alias(Id.MATERIAL),
+            pl.when(
                 pl.col("id").is_in(producers)
             ).then(
                 pl.lit("Producer"),
@@ -297,10 +329,10 @@ def ingest_incidents() -> pl.DataFrame:
                 pl.col("id").is_in(consumers)
             ).then(
                 pl.lit("Consumer"),
-            ).alias("activity"),
+            ).alias(Id.ACTIVITY),
         ).select(
             pl.col(
-                Id.YEAR, "id", "description", "activity",
+                Id.YEAR, "id", "description", Id.ACTIVITY, Id.MATERIAL,
                 "incidents", "attempted", "solved",
                 "suspects", "male_suspects", "female_suspects",
             )
@@ -309,19 +341,20 @@ def ingest_incidents() -> pl.DataFrame:
     return pl.concat(incidents)
 
 
-def de_age_distribution() -> pl.LazyFrame:
-    suspects = ingest_suspects()
-    incidents = ingest_incidents()
-
+def compute_age_distribution(
+    suspects: pl.DataFrame,
+    incidents: pl.DataFrame,
+    with_material: bool = False
+) -> pl.LazyFrame:
     # Validate that incidents and suspects tables agree on numbers of suspects
     # ------------------------------------------------------------------------
     assert suspects.filter(
-        pl.col("activity").is_not_null().and_(pl.col("sex").eq("X"))
+        pl.col(Id.ACTIVITY).is_not_null().and_(pl.col("sex").eq("X"))
     ).select(
         pl.col(Id.YEAR, "id", "total")
     ).join(
         incidents.filter(
-            pl.col("activity").is_not_null(),
+            pl.col(Id.ACTIVITY).is_not_null(),
         ).select(
             pl.col(Id.YEAR, "id", "suspects")
         ),
@@ -331,15 +364,24 @@ def de_age_distribution() -> pl.LazyFrame:
         pl.col("total").eq(pl.col("suspects")).all()
     ).item()
 
+    if not with_material:
+        # Override material so that group_by()'s below effectively ignore it
+        suspects = suspects.with_columns(
+            pl.lit("CSAM").alias(Id.MATERIAL)
+        )
+        incidents = incidents.with_columns(
+            pl.lit("CSAM").alias(Id.MATERIAL)
+        )
+
     # Build actual age distribution
     known_suspects = suspects.lazy().filter(
-        pl.col("activity").is_not_null().and_(pl.col("sex").ne("X"))
+        pl.col(Id.ACTIVITY).is_not_null().and_(pl.col("sex").ne("X"))
     ).with_columns(
         pl.col("sex").replace({"M": "Male", "W": "Female"}),
         pl.col(">=80").is_null().alias("requires_sixty_plus"),
     ).unpivot(
         on=_AGE_RANGES,
-        index=[Id.YEAR, "sex", "activity", "requires_sixty_plus"],
+        index=[Id.YEAR, "sex", Id.ACTIVITY, Id.MATERIAL, "requires_sixty_plus"],
         variable_name="age_range",
         value_name="count",
     ).filter(
@@ -347,7 +389,7 @@ def de_age_distribution() -> pl.LazyFrame:
             pl.col("age_range").ne(">=60")
         )
     ).group_by(
-        pl.col(Id.YEAR, "age_range", "sex", "activity"),
+        pl.col(Id.YEAR, "age_range", "sex", Id.ACTIVITY, Id.MATERIAL),
     ).agg(
         pl.col("count").sum(),
     ).with_columns(
@@ -382,7 +424,7 @@ def de_age_distribution() -> pl.LazyFrame:
         pl.int_ranges("age_first", "age_last", dtype=pl.Int8).alias("age"),
         pl.col("sex"),
         pl.lit(None, dtype=pl.String).alias("ethnicity"),
-        pl.col("activity", "count"),
+        pl.col(Id.ACTIVITY, Id.MATERIAL, "count"),
     ).explode("age")
 
     # Between 2015 and 2025 (inclusive), the number of suspects per solved
@@ -392,9 +434,9 @@ def de_age_distribution() -> pl.LazyFrame:
     # suspects. We assume that this relationship also holds for unresolved
     # incidents and extend the age distribution with these counts.
     unknown_suspects = incidents.lazy().filter(
-        pl.col("activity").is_not_null(),
+        pl.col(Id.ACTIVITY).is_not_null(),
     ).group_by(
-        Id.YEAR, "activity",
+        Id.YEAR, Id.ACTIVITY, Id.MATERIAL
     ).agg(
         pl.col("incidents", "solved").sum(),
     ).select(
@@ -402,18 +444,61 @@ def de_age_distribution() -> pl.LazyFrame:
         pl.lit(None).cast(pl.Int8).alias("age"),
         pl.lit(None).cast(pl.String).alias("sex"),
         pl.lit(None).cast(pl.String).alias("ethnicity"),
-        pl.col("activity"),
+        pl.col(Id.ACTIVITY, Id.MATERIAL),
         pl.col("incidents").sub(pl.col("solved")).cast(pl.Float64).alias("count"),
     )
 
     return finish_age_distribution(
         pl.concat([known_suspects, unknown_suspects]),
         country="Germany",
-        material="CSAM",
+        material=None,
         role="Offender",
         juvenile_min=14,
         juvenile_max=17,
     )
+
+
+def de_age_distribution(with_material: bool = False) -> pl.LazyFrame:
+    return compute_age_distribution(
+        ingest_suspects(),
+        ingest_incidents(),
+        with_material=with_material,
+    )
+
+
+def restrict_offenders[F: (pl.DataFrame, pl.LazyFrame)](frame: F) -> F:
+    frame = frame.filter(
+        pl.col("age").ge(18).or_(
+            pl.col(Id.MATERIAL).eq("Youth Porn")
+        )
+        # pl.when(
+        #     pl.col("age").lt(14)
+        # ).then(
+        #     pl.col(Id.MATERIAL).eq("CSAM")
+        # ).when(
+        #     pl.col("age").lt(18)
+        # ).then(
+        #     pl.col(Id.MATERIAL).eq("Youth Porn")
+        # ).otherwise(
+        #     True
+        # )
+    ).with_columns(
+        pl.lit("CSAM", dtype=pl.Enum(MATERIALS)).alias(Id.MATERIAL),
+        pl.lit("Germany CSAM Offenders", dtype=pl.Enum(METRICS)).alias("metric"),
+    ).group_by(
+        pl.col(
+            "country", "material", "role", "metric", "metric_order",
+            Id.YEAR,
+            "age", "age_group", "age_group_order",
+            "sex", "sex_order",
+            "ethnicity",
+            Id.ACTIVITY, "activity_order"
+        )
+    ).agg(
+        pl.col("count").sum()
+    )
+
+    return sort_age_distribution(frame)
 
 
 def ingest_outcomes() -> pl.DataFrame:
@@ -507,16 +592,16 @@ def ingest_outcomes() -> pl.DataFrame:
                     frame.filter(
                         pl.col("sex").eq("Male")
                     ).with_columns(
-                        pl.exclude("data_year", "crime", "sex").mul(-1),
+                        pl.exclude(Id.YEAR, "crime", "sex").mul(-1),
                     )
                 ]).group_by(
-                    "data_year", "crime"
+                    Id.YEAR, "crime"
                 ).agg(
                     pl.lit("Female").alias("sex"),
                     pl.exclude(Id.YEAR, "crime", "sex").sum(),
                 ),
             ]).sort(
-                "data_year", "crime", "sex"
+                Id.YEAR, "crime", "sex"
             )
         else:
             frame = frame.with_columns(
@@ -589,12 +674,12 @@ def ingest_outcomes() -> pl.DataFrame:
         pl.exclude("sex"),
     ).join(
         pl.DataFrame({
-            "data_year": [2024],
+            Id.YEAR: [2024],
             "crime": ["184b"],
             "Δ_adjudicated": [-1],
             "Δ_adjudicated_as_adults": [-1],
         }),
-        on=["data_year", "crime"],
+        on=[Id.YEAR, "crime"],
         how="left",
     ).with_columns(
         pl.col("Δ_adjudicated", "Δ_adjudicated_as_adults").fill_null(0),
@@ -614,7 +699,7 @@ def ingest_outcomes() -> pl.DataFrame:
     ).select(
         pl.exclude("sex"),
     ).group_by(
-        pl.col("data_year", "crime"),
+        pl.col(Id.YEAR, "crime"),
         maintain_order=True,
     ).agg(
         pl.selectors.integer().sum()
@@ -633,11 +718,18 @@ def combine_offenders_and_outcomes(
     offenders: pl.DataFrame,
     outcomes: pl.DataFrame,
 ) -> pl.DataFrame:
+    if offenders.select(
+        pl.col("metric").eq("German Youth Porn Offenders").any()
+    ).item():
+        raise ValueError(
+            "unable to process German offenders with granular material attribute"
+        )
+
     # Reduce offenders to one row per age_group and sex
     offenders = offenders.filter(
         pl.col("metric").eq("Germany CSAM Offenders")
     ).group_by(
-        "data_year", "age_group", "sex"
+        Id.YEAR, Id.GROUP, "sex"
     ).agg(
         pl.col("count").sum().round().cast(pl.Int64)
     )
@@ -650,11 +742,11 @@ def combine_offenders_and_outcomes(
         adjudicated.select(
             pl.exclude("outcome")
         ),
-        on=["data_year", "age_group", "sex"],
+        on=[Id.YEAR, Id.GROUP, "sex"],
         how="left",
         nulls_equal=True,
     ).select(
-        pl.col("data_year", "age_group", "sex"),
+        pl.col(Id.YEAR, Id.GROUP, "sex"),
         pl.lit("No Sanction", dtype=pl.Enum(OUTCOMES)).alias("outcome"),
         pl.col("count").sub(pl.col("count_right").fill_null(0)),
     )
@@ -663,11 +755,11 @@ def combine_offenders_and_outcomes(
         convicted.select(
             pl.exclude("outcome")
         ),
-        on=["data_year", "age_group", "sex"],
+        on=[Id.YEAR, Id.GROUP, "sex"],
         how="left",
         nulls_equal=True,
     ).select(
-        pl.col("data_year", "age_group", "sex", "outcome"),
+        pl.col(Id.YEAR, Id.GROUP, "sex", "outcome"),
         pl.col("count").sub(pl.col("count_right").fill_null(0)),
     )
 
@@ -678,8 +770,8 @@ def combine_offenders_and_outcomes(
         pl.lit("Germany CSAM Offenders", dtype=pl.Enum(METRICS)).alias("metric"),
         pl.lit(METRIC_ORDER["Germany CSAM Offenders"], dtype=pl.Int8)
         .alias("metric_order"),
-        pl.col("data_year", "age_group"),
-        pl.col("age_group").replace_strict(
+        pl.col(Id.YEAR, Id.GROUP),
+        pl.col(Id.GROUP).replace_strict(
             AGE_GROUP_ORDER,
             return_dtype=pl.Int8,
         ).alias("age_group_order"),
@@ -695,7 +787,7 @@ def combine_offenders_and_outcomes(
         ).alias("outcome_order"),
         pl.col("count"),
     ).sort(
-        "data_year", "age_group_order", "sex_order", "outcome_order"
+        Id.YEAR, "age_group_order", "sex_order", "outcome_order"
     )
 
     assert result.select(
@@ -777,7 +869,7 @@ def _normalize_outcomes(
     return data.filter(
         pl.col("sex").ne("*")
     ).select(
-        pl.col("data_year", "sex"),
+        pl.col(Id.YEAR, "sex"),
         pl.lit(0, dtype=pl.Int64).alias("Child"),
         pl.col(f"{prefix}_juveniles").alias("Juvenile"),
         pl.col(f"{prefix}_adults").add(
@@ -787,23 +879,25 @@ def _normalize_outcomes(
         ).alias(f"Adult"),
     ).unpivot(
         on=["Child", "Juvenile", "Adult"],
-        index=["data_year", "sex"],
-        variable_name="age_group",
+        index=[Id.YEAR, "sex"],
+        variable_name=Id.GROUP,
         value_name="count",
     ).group_by(
-        "data_year", "age_group", "sex"
+        Id.YEAR, Id.GROUP, "sex"
     ).agg(
         pl.col("count").sum()
     ).select(
-        pl.col("data_year", "age_group", "sex"),
+        pl.col(Id.YEAR, Id.GROUP, "sex"),
         pl.lit(outcome, dtype=pl.Enum(OUTCOMES)).alias("outcome"),
         pl.col("count"),
     )
 
 
-def age_crime_curves() -> pl.DataFrame:
-    frame = de_age_distribution().group_by(
-        pl.col("data_year", "age", "sex"),
+def age_crime_curves(age_distribution: pl.DataFrame) -> pl.DataFrame:
+    frame = age_distribution.lazy().filter(
+        pl.col("country").eq("Germany")
+    ).group_by(
+        pl.col(Id.YEAR, "age", "sex"),
         maintain_order=True,
     ).agg(
         pl.col("count").sum()
@@ -839,20 +933,20 @@ def age_crime_curves() -> pl.DataFrame:
             pl.col("age_last").sub(pl.col("age_first"))
         )
     ).select(
-        pl.col("year").alias("data_year"),
+        pl.col("year").alias(Id.YEAR),
         pl.int_ranges("age_first", "age_last", dtype=pl.Int8).alias("age"),
         pl.col("sex", "capita"),
     ).explode("age")
 
     return frame.join(
         pop,
-        on=["data_year", "age", "sex"],
+        on=[Id.YEAR, "age", "sex"],
         how="left",
     ).select(
-        pl.col("data_year", "age", "sex"),
-        pl.col("count").truediv(pl.col("capita")).mul(100_000).alias("rate")
+        pl.col(Id.YEAR, "age", "sex"),
+        pl.col("count").truediv(pl.col("capita")).mul(100_000).alias("rate"),
     ).sort(
-        "data_year", "age", "sex"
+        Id.YEAR, "age", "sex"
     ).collect()
 
 
@@ -881,5 +975,17 @@ if __name__ == "__main__":
     print(population)
 
     section("Age Crime Curves")
-    curve = age_crime_curves()
+    curve = age_crime_curves(offenders)
     print(curve)
+
+    section("Age Distributions With Material")
+    offenders_with_material = de_age_distribution(with_material=True).collect()
+    print(offenders_with_material)
+
+    assert offenders_with_material.select(
+        pl.col(Id.MATERIAL).is_not_null().all()
+    ).item()
+
+    section("Age Distributions Restricted by Age and Material")
+    restricted_offenders = restrict_offenders(offenders_with_material)
+    print(restricted_offenders)

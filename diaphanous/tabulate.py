@@ -1524,7 +1524,7 @@ printr()
         self.html("</div>\n")
 
         # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-        self.h3("Cross-Sectional Age-Crime-Curves by Country, Year, and Sex")
+        self.h3("Cross-Sectional Age-Crime-Curves for Germany and the U.S.")
         self.html("""
             <p>The age-crime-curves for Germany show offenders per 100,000
             capita for men and women based on the "<a
@@ -1538,7 +1538,7 @@ printr()
 
         self.html("<div class=wide>\n")
 
-        de_curves = de.age_crime_curves()
+        de_curves = de.age_crime_curves(full_data)
         fig = plot_crime_rate_by_age(de_curves, "Germany (All Offenders)")
         path = "figure/de-age-crime-curves.svg"
         fig.save(path)
@@ -1559,16 +1559,65 @@ printr()
             "Germany: Normalized Age Distributions (All Offenders)"
         )
 
-        self.h4("German Age-Crime-Curves After Accounting for Minors Who Might Sext")
         self.html("""
-            <p>Since German law distinguishes between child and youth
-            pornography, we can use the combination of offender age and violated
-            law to approximately exclude minors who might be sexting from the
-            offender counts. More specifically, we exclude all minors below 14
-            as well as minors between 14 and 18, as long as they are suspected
-            of <em>youth</em> pornography (which has the same age constraints).
-            The adjusted age-crime-curves for Germany follow.</p>
+            <p><strong>TODO: Compute age-crime-curves based on offenders in
+            counties, where all police agencies have been reporting statistics
+            to NIBRS for entire years, and the corresponding per-county census
+            estimates for population broken down by age and sex.</strong></p>
         """)
+
+        # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+        self.h3("German Age-Crime-Curves After Restricting Offenders")
+        self.html("""
+            <p>German law and crime statistics alike distinguish between child
+            (0–13) and youth (14–17) pornography. We can leverage this
+            distinction as a coarse indicator for victim age and combine it with
+            offender age to identify two offender subgroups whose conduct may
+            not rise to the same level of exploitation as for other
+            offenders:</p>
+
+            <ul>
+
+            <li>The first subgroup are children (0–13) suspected of youth
+            (14–17) pornography, since differences in age and maturity favor the
+            presumed victims and get in the way of their exploitation.</li>
+
+            <li>The second subgroup are youth (14–17) suspected of youth (14–17)
+            pornography, since they come close to being peers in terms of
+            age/maturity and may very well be sexting.</li>
+
+            </ul>
+
+            <p>The potentially huge age and maturity range of zero to thirteen
+            year-olds argues against treating children (0–13) suspected of child
+            (0–13) pornography as peers with their victims. Furthermore, any
+            sexualization of prepubescent children seems highly
+            inappropriate.</p>
+
+            <p>When <em>omitting</em> the above two groups from offender counts
+            for Germany, the age-crime-curves change substantially:</p>
+        """)
+
+        restricted_curves = de.age_crime_curves(
+            de.restrict_offenders(
+                de.de_age_distribution(with_material=True).collect()
+            )
+        )
+
+        self.html("<div class=wide>\n")
+        fig = plot_crime_rate_by_age(
+            restricted_curves,
+            "Germany (Restricted Offenders)"
+        )
+        path = "figure/de-restricted-curves.svg"
+        fig.save(path)
+        self.svg(path)
+        self.html("</div>\n")
+
+        self.emit_age_crime_curve_statistics(
+            restricted_curves,
+            "Germany: Normalized Age Distributions (Restricted Offenders)"
+        )
 
         # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         self.h3("Notes")
@@ -1773,18 +1822,6 @@ printr()
         data: pl.DataFrame,
         title: str,
     ) -> None:
-        def extract(value) -> None | float:
-            if isinstance(value, pl.Series):
-                length = len(value)
-                if length == 1:
-                    return value.item()
-                elif length == 2:
-                    return cast(None | float, value.mean())
-                else:
-                    raise ValueError(f"too many values: {value}")
-
-            return value
-
         raw_stats = {
             "data_year": [],
             "sex": [],
@@ -1792,34 +1829,64 @@ printr()
             "value": [],
         }
 
-        def record(variable: str, value: None | float) -> None:
+        def record(variable: str, value: None | float | str) -> None:
+            if value is None:
+                v = ""
+            elif isinstance(value, float):
+                v = f"{value:.1f}"
+            else:
+                v = str(value)
+
             raw_stats["data_year"].append(year)
             raw_stats["sex"].append(sex)
             raw_stats["variable"].append(variable)
-            raw_stats["value"].append(value)
+            raw_stats["value"].append(v)
 
         for (year, sex), group in data.group_by(
             pl.col(Id.YEAR, "sex"),
             maintain_order=True
         ):
+            rate = group.select(
+                pl.col("rate").max()
+            ).item()
+
+            age_column = group.get_column("age")
+            first_peak = age_column[
+                group.select(
+                    pl.col("rate").index_of(rate)
+                ).item()
+            ]
+
+            last_peak = age_column[
+                group.select(
+                    pl.col("rate").len().sub(
+                        pl.col("rate").reverse().index_of(rate)
+                    ).sub(1)
+                ).item()
+            ]
+
+            if first_peak == last_peak:
+                record("Peak Age", first_peak)
+            else:
+                record("Peak Age", f"{first_peak}–{last_peak}")
+            record("Rate at Peak", rate)
+
+            at_least_half_peak_rate = pl.col("rate").gt(rate / 2).arg_true()
+            first_half_peak = age_column[
+                group.select(at_least_half_peak_rate.first()).item()
+            ]
+            last_half_peak = age_column[
+                group.select(at_least_half_peak_rate.last()).item()
+            ]
+
+            record("First Age ≥ ½ Peak Rate", first_half_peak)
+            record("Last Age ≥ ½ Peak Rate", last_half_peak)
+
             ages = group.select(
                 pl.col("age").repeat_by(
                     pl.col("rate").round()
                 ).explode()
             ).to_series()
-
-            mode = extract(ages.mode())
-            record("Peak Age", mode)
-
-            if mode is None:
-                rate = None
-            else:
-                rate = group.get_column("rate")[
-                    group.select(
-                        pl.col("age").index_of(round(mode))
-                    ).item()
-                ]
-            record("Rate at Peak", rate)
 
             # TODO: Add 25th and 75th percentile, age at half peaks
             record("Median Age", cast(None | float, ages.median()))
@@ -1828,7 +1895,15 @@ printr()
             record("Skew", ages.skew())
             record("Kurtosis", ages.kurtosis())
 
-        stats = pl.DataFrame(raw_stats).pivot(
+        stats = pl.DataFrame(
+            raw_stats,
+            schema={
+                "data_year": pl.Int16,
+                "sex": pl.String,
+                "variable": pl.String,
+                "value": pl.String,
+            }
+        ).pivot(
             on=Id.YEAR,
             index=["sex", "variable"],
             values=["value"],
@@ -1851,9 +1926,9 @@ printr()
                 locations=gt.loc.column_header(),
             ).sub_missing(
                 missing_text="",
-            ).fmt_number(
+            ).cols_align(
+                align="right",
                 columns=years,
-                decimals=1,
             ).opt_table_font(
                 stack="neo-grotesque",
             ).opt_all_caps(
