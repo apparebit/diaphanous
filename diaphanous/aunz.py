@@ -56,9 +56,11 @@ def au_age_distribution() -> pl.LazyFrame:
         "data_year", "age", "sex", "ethnicity", "activity", "count"
     )
 
-    frame = pl.concat([*(
-        make_empty_year_lazily(y) for y in range(2014, 2024)
-    ), frame, make_empty_year_lazily(2024)])
+    frame = pl.concat([
+        *(make_empty_year_lazily(y) for y in range(2014, 2023)),
+        frame,
+        *(make_empty_year_lazily(y) for y in range(2024, 2026)),
+    ])
 
     return finish_age_distribution(
         frame,
@@ -72,15 +74,13 @@ def au_age_distribution() -> pl.LazyFrame:
 
 # ======================================================================================
 
-
 POLICEDATA = (
-    Path(__file__).parent.parent / Path("data/new-zealand/nz-up-to-2025-08.csv")
+    Path(__file__).parent.parent / Path("data/new-zealand/nz-2026-05.csv")
+
 )
 
 def nz_load() -> pl.LazyFrame:
-    # UTF-16? That's just plain nuts. Also, Pola.rs does not support lazily
-    # reading CSV with that encoding.
-    return pl.read_csv(POLICEDATA, encoding="utf16", separator="\t").lazy().select(
+    return pl.scan_csv(POLICEDATA).select(
         pl.col("Year Month").alias("year_month"),
         pl.col("Proceedings").alias("proceedings"),
         pl.col("SEX").alias("sex"),

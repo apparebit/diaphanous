@@ -1045,7 +1045,7 @@ printr()
         self.end_col()
 
     DETAIL_YEARS = (2021, 2024)
-    THUMB_YEARS = (2015, 2024)
+    THUMB_YEARS = (2015, 2025)
     THUMB_GAP = 20
     THUMB_WIDTH = 3_000
 
@@ -1413,6 +1413,9 @@ printr()
         de_outcomes = de.ingest_outcomes()
         de_outcomes = de.combine_offenders_and_outcomes(
             full_data, de_outcomes
+        ).filter(
+            # TODO: Remove when outcomes data for 2025 in Germany becomes available
+            pl.col("data_year").le(2024)
         )
         de_highlights: dict[str | None, str] = {
             "No Sanction": Palette.GREEN,
@@ -1850,37 +1853,43 @@ printr()
                 pl.col("rate").max()
             ).item()
 
-            age_column = group.get_column("age")
-            first_peak = age_column[
-                group.select(
-                    pl.col("rate").index_of(rate)
-                ).item()
-            ]
-
-            last_peak = age_column[
-                group.select(
-                    pl.col("rate").len().sub(
-                        pl.col("rate").reverse().index_of(rate)
-                    ).sub(1)
-                ).item()
-            ]
-
-            if first_peak == last_peak:
-                record("Peak Age", first_peak)
+            if rate is None:
+                record("Peak Age", None)
+                record("Rate at Peak", None)
+                record("First Age ≥ ½ Peak Rate", None)
+                record("Last Age ≥ ½ Peak Rate", None)
             else:
-                record("Peak Age", f"{first_peak}–{last_peak}")
-            record("Rate at Peak", rate)
+                age_column = group.get_column("age")
+                first_peak = age_column[
+                    group.select(
+                        pl.col("rate").index_of(rate)
+                    ).item()
+                ]
 
-            at_least_half_peak_rate = pl.col("rate").gt(rate / 2).arg_true()
-            first_half_peak = age_column[
-                group.select(at_least_half_peak_rate.first()).item()
-            ]
-            last_half_peak = age_column[
-                group.select(at_least_half_peak_rate.last()).item()
-            ]
+                last_peak = age_column[
+                    group.select(
+                        pl.col("rate").len().sub(
+                            pl.col("rate").reverse().index_of(rate)
+                        ).sub(1)
+                    ).item()
+                ]
 
-            record("First Age ≥ ½ Peak Rate", first_half_peak)
-            record("Last Age ≥ ½ Peak Rate", last_half_peak)
+                if first_peak == last_peak:
+                    record("Peak Age", first_peak)
+                else:
+                    record("Peak Age", f"{first_peak}–{last_peak}")
+                record("Rate at Peak", rate)
+
+                at_least_half_peak_rate = pl.col("rate").gt(rate / 2).arg_true()
+                first_half_peak = age_column[
+                    group.select(at_least_half_peak_rate.first()).item()
+                ]
+                last_half_peak = age_column[
+                    group.select(at_least_half_peak_rate.last()).item()
+                ]
+
+                record("First Age ≥ ½ Peak Rate", first_half_peak)
+                record("Last Age ≥ ½ Peak Rate", last_half_peak)
 
             ages = group.select(
                 pl.col("age").repeat_by(

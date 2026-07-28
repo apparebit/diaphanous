@@ -4,7 +4,7 @@ import polars as pl
 
 from .aunz import au_age_distribution, nz_age_distribution
 from .de import de_age_distribution
-from .nibrs import done_ingestion, step_ingestion, us_age_distributions
+from .nibrs import done_ingestion, Id, step_ingestion, us_age_distributions
 from .util import add_empty_year, finish_age_distribution, to_minor_adult
 
 
@@ -17,14 +17,14 @@ def es_age_distribution() -> pl.LazyFrame:
     ).rename({
         "Age group": "age",
         "Sex": "sex",
-        "period": "data_year",
+        "period": Id.YEAR,
         "Total": "count"
     }).filter(
         pl.col("age").ne("TOTAL").and_(
             pl.col("sex").ne("Total")
         )
     ).with_columns(
-        pl.col("data_year").cast(pl.Int16),
+        pl.col(Id.YEAR).cast(pl.Int16),
         pl.when(
             pl.col("age").eq("Over 64 years")
         ).then(
@@ -45,12 +45,15 @@ def es_age_distribution() -> pl.LazyFrame:
         ),
         pl.int_ranges("age_first", "age_last", dtype=pl.Int8).alias("age"),
     ).explode("age").sort(
-        "data_year", "age", "sex"
+        Id.YEAR, "age", "sex"
     ).with_columns(
         pl.lit(None, dtype=pl.String).alias("ethnicity"),
         pl.lit(None, dtype=pl.String).alias("activity"),
+    ).select(
+        Id.YEAR, "age", "sex", "ethnicity", "activity", "count"
     )
 
+    frame = add_empty_year(frame, 2025)
     return finish_age_distribution(
         frame,
         country="Spain",
@@ -59,7 +62,6 @@ def es_age_distribution() -> pl.LazyFrame:
         juvenile_min=14,
         juvenile_max=17,
     )
-
 
 
 def fi_age_distribution() -> pl.LazyFrame:
@@ -71,7 +73,7 @@ def fi_age_distribution() -> pl.LazyFrame:
             "Number of offence headings for suspects of solved offences",
         )
     ).rename({
-        "Year": "data_year",
+        "Year": Id.YEAR,
         "Suspect's sex": "sex",
         "Suspect's age": "age",
         "Persons suspected of solved offences": "count",
@@ -80,7 +82,7 @@ def fi_age_distribution() -> pl.LazyFrame:
             pl.col("age").is_in(["Total", "18 -"]).not_()
         )
     ).select(
-        pl.col("data_year").cast(pl.Int16),
+        pl.col(Id.YEAR).cast(pl.Int16),
         pl.col("sex").replace({
             "Males": "Male",
             "Females": "Female",
@@ -99,17 +101,17 @@ def fi_age_distribution() -> pl.LazyFrame:
         frame.filter(
             pl.col("age").eq("0 - 17")
         ).select(
-            "data_year", "sex", "count",
+            Id.YEAR, "sex", "count",
         ).join(
             frame.filter(
                 pl.col("age").eq("0 - 14")
             ).select(
-                "data_year", "sex", "count",
+                Id.YEAR, "sex", "count",
             ),
-            on=["data_year", "sex"],
+            on=[Id.YEAR, "sex"],
             how="inner",
         ).select(
-            pl.col("data_year", "sex"),
+            pl.col(Id.YEAR, "sex"),
             pl.lit("15 - 17").alias("age"),
             pl.col("count").sub(pl.col("count_right")),
         ),
@@ -128,7 +130,7 @@ def fi_age_distribution() -> pl.LazyFrame:
         ),
         pl.int_ranges("age_first", "age_last", dtype=pl.Int8).alias("age"),
     ).explode("age").sort(
-        "data_year", "age", "sex"
+        Id.YEAR, "age", "sex"
     ).with_columns(
         pl.lit(None, dtype=pl.String).alias("ethnicity"),
         pl.lit(None, dtype=pl.String).alias("activity"),
@@ -155,10 +157,10 @@ def it_age_distribution() -> pl.LazyFrame:
         "AGE": "age",
         "Sex (DESC)": "sex",
         "CITIZENSHIP": "ethnicity",
-        "TIME_PERIOD": "data_year",
+        "TIME_PERIOD": Id.YEAR,
         "Observation": "count",
     }).with_columns(
-        pl.col("data_year").cast(pl.Int16),
+        pl.col(Id.YEAR).cast(pl.Int16),
         pl.when(
             pl.col("age").eq("Y_UN13")
         ).then(
@@ -189,14 +191,15 @@ def it_age_distribution() -> pl.LazyFrame:
         ),
         pl.int_ranges("age_first", "age_last", dtype=pl.Int8).alias("age"),
     ).explode("age").sort(
-        "data_year", "age", "sex", "ethnicity"
+        Id.YEAR, "age", "sex", "ethnicity"
     ).with_columns(
         pl.lit(None, dtype=pl.String).alias("activity"),
     ).select(
-        "data_year", "age", "sex", "ethnicity", "activity", "count"
+        Id.YEAR, "age", "sex", "ethnicity", "activity", "count"
     )
 
     frame = add_empty_year(frame, 2024)
+    frame = add_empty_year(frame, 2025)
     return finish_age_distribution(
         frame,
         country="Italy",
@@ -254,13 +257,13 @@ def load_all_age_distributions(
 
 def summarize_totals(distributions: pl.DataFrame) -> pl.DataFrame:
     return distributions.group_by(
-        "country", "material", "role", "data_year", maintain_order=True
+        "country", "material", "role", Id.YEAR, maintain_order=True
     ).agg(
         pl.col("count").sum().round(0).cast(pl.Int64)
     ).select(
-        "metric", "data_year", "count"
+        "metric", Id.YEAR, "count"
     ).pivot(
-        on="data_year",
+        on=Id.YEAR,
         index="metric",
         values="count",
     )
@@ -272,18 +275,18 @@ def summarize_age_and_sex(
 ) -> pl.DataFrame:
     frame = frame.filter(
         pl.col("country").ne("Australia").and_(
-            pl.col("data_year").is_between(*year_range, closed="left")
+            pl.col(Id.YEAR).is_between(*year_range, closed="left")
         ).and_(
-            pl.col("age_group").is_not_null()
+            pl.col(Id.GROUP).is_not_null()
         ).and_(
             pl.col("sex").is_not_null()
         )
     )
 
     return to_minor_adult(frame).select(
-        "metric", "data_year", "age_group", "sex", "count"
+        "metric", Id.YEAR, Id.GROUP, "sex", "count"
     ).group_by(
-        "metric", "data_year", "age_group", "sex", maintain_order=True
+        "metric", Id.YEAR, Id.GROUP, "sex", maintain_order=True
     ).agg(
         pl.col("count").sum().round().cast(pl.Int64)
     )

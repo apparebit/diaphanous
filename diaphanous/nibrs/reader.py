@@ -12,8 +12,8 @@ from .model import (
     CriminalAct, Ethnicity, Id, OffenseCode, Race, Sex, SOURCE_FILES, Table
 )
 from ..util import (
-    ACTIVITIES, AGE_GROUP_ORDER, COUNTRIES, finish_age_distribution, MATERIALS, METRICS,
-    METRIC_ORDER, OUTCOME_ORDER, OUTCOMES, ROLES
+    ACTIVITIES, AGE_GROUP_ORDER, COUNTRIES, finish_age_distribution, make_empty_year,
+    MATERIALS, METRICS, METRIC_ORDER, OUTCOME_ORDER, OUTCOMES, ROLES
 )
 
 
@@ -521,6 +521,14 @@ def ingest_age_distributions(
         ),
     ])
 
+    distribution = pl.concat([
+        distribution,
+        _make_empty_us_year(2025, "CSAM", "Offender"),
+        _make_empty_us_year(2025, "Porn", "Offender"),
+        _make_empty_us_year(2025, "CSAM", "Arrestee"),
+        _make_empty_us_year(2025, "Porn", "Arrestee"),
+    ])
+
     distribution = finish_age_distribution(
         distribution,
         country="United States",
@@ -533,6 +541,25 @@ def ingest_age_distributions(
     if isinstance(distribution, pl.LazyFrame):
         distribution = distribution.collect()
     return distribution
+
+
+def _make_empty_us_year(
+    year: int,
+    material: Literal["CSAM", "Porn"],
+    role: Literal["Offender", "Arrestee"],
+) -> pl.DataFrame:
+    return make_empty_year(year, lazy=False).with_columns(
+        pl.lit(material, dtype=pl.Enum(MATERIALS)).alias("material"),
+        pl.lit(role, dtype=pl.Enum(ROLES)).alias("role"),
+        pl.col(Id.ACTIVITY).cast(pl.Enum(ACTIVITIES)),
+    ).select(
+        pl.col(
+            "material", "role",
+            Id.YEAR,
+            "age", "sex", "ethnicity", "activity",
+            "count"
+        )
+    )
 
 
 def us_age_distributions(
@@ -562,6 +589,11 @@ def _prepare_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](
 ) -> F:
     # Simplify the frame
     frame = frame.with_columns(
+        pl.col("age").cast(pl.Int8),
+        pl.col(Id.SEX).replace({
+            Sex.NOT_SPECIFIED: None,
+            Sex.UNKNOWN: None,
+        }),
         pl.col(Id.RACE).replace({
             Race.NOT_SPECIFIED: None,
             Race.UNKNOWN: None,
@@ -570,10 +602,7 @@ def _prepare_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](
             Race.HAWAIIAN: Race.OTHER.value,
             Race.MULTIPLE: Race.OTHER.value,
         }),
-        pl.col(Id.SEX).replace({
-            Sex.NOT_SPECIFIED: None,
-            Sex.UNKNOWN: None,
-        }),
+        pl.col(Id.ACTIVITY).cast(pl.Enum(ACTIVITIES)),
     ).with_columns(
         pl.when(
             pl.col(Id.ETHNICITY).eq(Ethnicity.HISPANIC)

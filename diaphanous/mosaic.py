@@ -858,7 +858,7 @@ def plot_mosaic_grid(
             rows.append(make_row(metric, group))
 
     # Combine rows into grid
-    factor = 5 if narrow_rows else 10
+    factor = 5 if narrow_rows else 11
     grid = alt.vconcat(
         hrule(4, factor * cell_width + (factor + 1) * column_gap),
         *rows,
@@ -911,9 +911,7 @@ def compute_odds_ratios(
 
         if table is None or not np.all(table > 0):
             odds_ratios.append(None)
-            odds_labels.append(
-                "N/A" if label[0] != "Australia" and label[0] != "Italy" else ""
-            )
+            odds_labels.append("N/A")
             lower_cis.append(None)
             upper_cis.append(None)
             continue

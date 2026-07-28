@@ -11,7 +11,7 @@ from .util import (
     sort_age_distribution
 )
 
-_LATEST_YEAR = 2024
+_LATEST_YEAR = 2025
 
 _ROOT = Path(__file__).parent.parent
 
@@ -67,7 +67,7 @@ _USE_COLUMNS_POPULATION = "B:G,I,J,L,N,O,Q:U"
 
 _COLUMN_NAMES_POPULATION = [
     "report_year",
-    "year",
+    "census_year",
     "total",
     "8-10",
     "10-12",
@@ -471,17 +471,6 @@ def restrict_offenders[F: (pl.DataFrame, pl.LazyFrame)](frame: F) -> F:
         pl.col("age").ge(18).or_(
             pl.col(Id.MATERIAL).eq("Youth Porn")
         )
-        # pl.when(
-        #     pl.col("age").lt(14)
-        # ).then(
-        #     pl.col(Id.MATERIAL).eq("CSAM")
-        # ).when(
-        #     pl.col("age").lt(18)
-        # ).then(
-        #     pl.col(Id.MATERIAL).eq("Youth Porn")
-        # ).otherwise(
-        #     True
-        # )
     ).with_columns(
         pl.lit("CSAM", dtype=pl.Enum(MATERIALS)).alias(Id.MATERIAL),
         pl.lit("Germany CSAM Offenders", dtype=pl.Enum(METRICS)).alias("metric"),
@@ -508,7 +497,8 @@ def ingest_outcomes() -> pl.DataFrame:
 
     outcomes = []
 
-    for year in range(2015, _LATEST_YEAR + 1):
+    # TODO: Read file for 2025 when it becomes available
+    for year in range(2015, _LATEST_YEAR):
         if year < 2022:
             height = 4
             frame = pl.read_excel(
@@ -823,7 +813,7 @@ def ingest_population_sizes() -> pl.DataFrame:
     data = pl.concat(parts).sort(
         pl.col("report_year", "sex")
     ).filter(
-        pl.col("year").is_in([
+        pl.col("census_year").is_in([
             "2009", "2010", "2011", "2012 vZ", "2023 Z22"
         ]).not_()
     ).with_columns(
@@ -831,23 +821,23 @@ def ingest_population_sizes() -> pl.DataFrame:
             "2013 nZ": "2013",
             "2024 Z11": "2024",
         }),
-        pl.col("year").replace({
+        pl.col("census_year").replace({
             "2012 nZ": "2012",
             "2023 Z11": "2023",
         }),
     ).with_columns(
-        pl.col("report_year", "year").cast(pl.Int64),
+        pl.col("report_year", "census_year").cast(pl.Int64),
     ).with_columns(
         pl.col("total").eq(
             pl.sum_horizontal(
-                pl.exclude("report_year", "year", "total", "sex")
+                pl.exclude("report_year", "census_year", "total", "sex")
             )
         ).alias("total_equals_sum")
     )
 
     # The breakdown for everyone and for women in 2019 does not compute!
     assert data.filter(
-        pl.col("year").ne(2019).or_(
+        pl.col("census_year").ne(2019).or_(
             pl.col("sex").eq("Male")
         ).all()
     ).select(
@@ -906,11 +896,11 @@ def age_crime_curves(age_distribution: pl.DataFrame) -> pl.DataFrame:
     )
 
     pop = ingest_population_sizes().lazy().select(
-        pl.exclude("report_year", "total", "total_equals_sum")
+        pl.exclude("census_year", "total", "total_equals_sum")
     ).filter(
         pl.col("sex").ne("*")
     ).unpivot(
-        index=["year", "sex"],
+        index=["report_year", "sex"],
         variable_name="age_range",
         value_name="capita",
     ).with_columns(
@@ -933,7 +923,7 @@ def age_crime_curves(age_distribution: pl.DataFrame) -> pl.DataFrame:
             pl.col("age_last").sub(pl.col("age_first"))
         )
     ).select(
-        pl.col("year").alias(Id.YEAR),
+        pl.col("report_year").alias(Id.YEAR),
         pl.int_ranges("age_first", "age_last", dtype=pl.Int8).alias("age"),
         pl.col("sex", "capita"),
     ).explode("age")

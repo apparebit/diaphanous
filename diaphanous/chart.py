@@ -187,7 +187,7 @@ def plot_sex_by_age_grid(frame: pl.DataFrame) -> alt.VConcatChart:
         )
 
     return alt.vconcat(
-        hrule(7.5, 10 * 300 + 11 * 20),
+        hrule(7.5, 11 * 300 + 12 * 20),
         *rows,
         spacing=30,
     ).resolve_scale(
@@ -405,12 +405,12 @@ def plot_crime_rate_by_age(
             fontWeight="normal",
             dy=-large_font_size,
         ),
-        columns=5,
+        columns=4,
         spacing=large_font_size,
     )
 
     return alt.vconcat(
-        hrule(5, 5 * 300 + 6 * 20),
+        hrule(5, 4 * 300 + 5 * 20),
         curves,
         spacing=30,
     ).properties(
