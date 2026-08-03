@@ -265,7 +265,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "columns": ("accounts", "reports"),
         "rows": (
             # fmt: off
-            #{"2025": (16, 6)},
+            {"2025": (57, 14)},
             {"2024": (5, 16)},
             {"2023": (3, 37)},
             {"2022": (1, 6)},
@@ -418,7 +418,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "columns": ("pieces",),
         "rows": (
             # fmt: off
-            #{"2025 H1": (311,)},
+            {"2025 H2": (122,)},
+            {"2025 H1": (311,)},
             {"2024 H2": (112,)},
             {"2024 H1": (65,)},
             {"2023 H2": (210,)},
@@ -536,6 +537,11 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "reinstated accounts": "float",
         }),
         "rows": (
+            # fmt: off
+            {"2025": (645_118, 99.38, None, None, None)},
+            {"2025": (237_391, 99.73, 23_549, 14.50, None)},
+            {"2025": (None, None, None, None, 111_931)},
+
             {"2024 H2": (226_811, 99.82, None, None, None)},
             {"2024 H2": (53_982, 99.64, 9_269, 4.49, None)},
             {"2024 H2": (None, None, None, None, 49_617)},
@@ -575,6 +581,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2020 H1": (718_908, 99.8, None, None, None)},
             {"2020 H1": (84_581, 99.8, 15_935, 0.01, None)},
             {"2020 H1": (None, None, None, None, 32_622)},
+            # fmt: on
         ),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -601,7 +608,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "quantities": "counts",
             "granularity": "H",
             "frequency": "H",
-            "coverage": "2025 H2",
+            "coverage": "2023 H1",
             "social_media": False,
         }),
         "columns": (
@@ -609,7 +616,14 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "pieces",
         ),
         "rows": (
+            # fmt: off
             {"2025 H2": (107_817, 107_667)},
+            {"2025 H1": ( 75_027,  74_559)},
+            {"2024 H2": ( 31_132,  31_510)},
+            {"2024 H1": (    947,   3_252)},
+            {"2023 H2": (    249,     955)},
+            {"2023 H1": (     79,     295)},
+            # fmt: on
         ),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -835,6 +849,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     "Snap": frozen({
         "sources": (
             "https://values.snap.com/privacy/transparency",
+            "https://values.snap.com/privacy/transparency-h2-2025",
+            "https://values.snap.com/privacy/transparency-h1-2025",
             "https://values.snap.com/privacy/transparency-h2-2024",
             "https://values.snap.com/privacy/transparency-h1-2024",
             "https://values.snap.com/privacy/transparency-h2-2023",
@@ -861,7 +877,8 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "schema": frozen({"accounts": "float"}),
         "rows": (
             # fmt: off
-            {"2025 H1": (  994_337, 187_387, 321_587)},
+            {"2025 H2": (1_644_877, 245_643, 397_402)},
+            {"2025 H1": (1_099_170, 187_387, 354_396)},
             {"2024 H2": (1_228_929, 242_306, 417_842)},
             {"2024 H1": (1_737_563, 385_864, 632_436)},
             {"2023 H2": (1_046_296, 343_865, 398_736)},

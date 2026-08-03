@@ -346,15 +346,15 @@ class Analyzer:
             """)
 
             comparison = juxtapose(self._data)
-            self.html(
-                format_juxtaposition(comparison, with_highlights=True).as_raw_html()
-            )
-            self._see_path()
+            table = format_juxtaposition(comparison, with_highlights=True)
+            self.html(table.as_raw_html())
 
+            self.html("<div class=extra-wide>\n")
             fig = plot_reports_per_provider()
             path = "figure/reports-per-provider.svg"
             fig.save(path)
             self.svg(path)
+            self.html("</div>\n")
 
             self.h3("A Histogram of Percent Differences")
             self.chart(
@@ -369,7 +369,6 @@ class Analyzer:
                     width=500,
                 )
             )
-            self._see_path()
 
             self.h3("Mean Difference Plots")
             self.emit_mean_difference_plots()
@@ -611,13 +610,14 @@ plots[[length(platforms) + 1]] <- plot_pct_diff_over_mean(
     all.platforms = TRUE
 )
 
-design <- "AABBCCDDEE
-           FFGGHHIIJJ
-           #KKKKKKKK#"
+design <- "AABBCCDD
+           EEFFGGHH
+           #IIJJKK#
+           #LLLLLL#"
 
 plot.grid <- wrap_plots(
     plots,
-    ncol=10,
+    ncol=8,
     guides="collect",
     design=design,
     axis_titles = "collect"
@@ -631,13 +631,23 @@ printr()
         )
 
     def emit_icc(self) -> None:
+        self.html("""
+            <p>Omitting the two entries with the biggest percent differences,
+            since Aylo and Amazon have provided reasonable explanations for the
+            (substantial) discrepancies.</p>
+        """)
+
         print("This may take a while...")
-        frame = self._diffs.select(
+        diffs = self._diffs.sort(
+            "pct_diff", descending=True
+        ).tail(-2)
+
+        frame = diffs.select(
             pl.col("provider").alias("y"),
             pl.format("{}{}", pl.col("platform"), pl.col("year")).alias("id"),
             pl.lit("platform", dtype=pl.String).alias("observer"),
         ).vstack(
-            self._diffs.select(
+            diffs.select(
                 pl.col("ncmec").alias("y"),
                 pl.format("{}{}", pl.col("platform"), pl.col("year")).alias("id"),
                 pl.lit("ncmec", dtype=pl.String).alias("observer"),
@@ -2047,25 +2057,19 @@ printr()
         fragments = _runr(frame, template)
 
         skip_hr = not _IS_DEBUG
-        printed = False
         for fragment in fragments:
             if fragment.strip() == "":
                 continue
 
             if not skip_hr:
                 _print_heading(weight="light")
-                printed = True
             skip_hr = False
             print(fragment)
-            printed = True
 
             if is_html:
                 self.html(fragment)
             else:
                 self.html(f"<pre><code>\n{fragment}\n</code></pre>\n")
-
-        if not printed:
-            self._see_path()
 
     def html(self, html: str) -> None:
         self._file.write(html)
@@ -2107,9 +2111,6 @@ printr()
         if caption is not None:
             self._file.write(f"<figcaption>{caption}</figcaption>\n")
         self._file.write("</figure>\n")
-
-    def _see_path(self) -> None:
-        print(f'See "{self._path.name}"')
 
 
 def _distill_differences(pieces_and_reports: pl.DataFrame) -> pl.DataFrame:
@@ -2794,7 +2795,7 @@ def plot_reports_per_provider() -> alt.VConcatChart:
             .scale(range=_COLORS).legend(orient="right"),
         ).properties(
             height=200,
-            width=200,
+            width=300,
         )
 
         if "X.AI" in providers:
@@ -2814,6 +2815,8 @@ def plot_reports_per_provider() -> alt.VConcatChart:
     return alt.vconcat(
         alt.hconcat(*charts[:3]).resolve_scale(x="shared", color="independent"),
         alt.hconcat(*charts[3:]).resolve_scale(x="shared", color="independent"),
+    ).resolve_scale(
+        x="shared", color="independent"
     ).properties(
         title="Reports (Millions) per Year per Service Provider"
     )
