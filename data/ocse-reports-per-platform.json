@@ -16,6 +16,7 @@
     "Amazon": {
         "brands": ["Twitch"],
         "sources": [
+            "https://www.aboutamazon.com/news/policy-news-views/amazon-csam-transparency-report-2025",
             "https://www.aboutamazon.com/news/policy-news-views/amazon-csam-transparency-report-2024",
             "https://www.aboutamazon.com/news/policy-news-views/amazon-csam-transparency-report-2023",
             "https://www.aboutamazon.com/news/policy-news-views/amazon-csam-transparency-report-2022",
@@ -46,6 +47,7 @@
             ]
         },
         "rows": [
+            {"2025": [26500, 21437, null, 676, 3069]},
             {"2024": [64195, 30778, 337, 752, 3959]},
             {"2023": [31281, 24653, 103, 611, 4111]},
             {"2022": [67073, 52633, 23, 398, 7322]},
@@ -79,6 +81,23 @@
             "social_media": false
         }
     },
+    "Bluesky": {
+        "sources": [
+            "https://bsky.social/about/blog/01-29-2026-transparency-report-2025",
+            "https://bsky.social/about/blog/01-17-2025-moderation-2024"
+        ],
+        "features": {
+            "social_media": true
+        },
+        "columns": [
+            "pieces",
+            "reports"
+        ],
+        "rows": [
+            {"2025": [12647, 5238]},
+            {"2024": [null, 1154]}
+        ]
+    },
     "Discord": {
         "sources": [
             "https://discord.com/blog/discord-transparency-report-july-dec-2020",
@@ -91,7 +110,12 @@
             "https://discord.com/safety-transparency-reports/2023-q1",
             "https://discord.com/safety-transparency-reports/2023-q2",
             "https://discord.com/safety-transparency-reports/2023-q3",
-            "https://discord.com/safety-transparency-reports/2023-q4"
+            "https://discord.com/safety-transparency-reports/2023-q4",
+            "https://discord.com/safety-transparency-reports/2024-h1"
+        ],
+        "comments": [
+            "As of mid-February 2026, Discord has not released a transparency",
+            "report for H2 2024."
         ],
         "features": {
             "data": "csv",
@@ -168,6 +192,9 @@
             ]
         },
         "rows": [
+            {"2025 Q4": [null, null, 2500000, 9900000, null, 213600, 691600, null, 75000, 263300, null, 44000, 84400]},
+            {"2025 Q3": [null, null, 3700000, 6000000, null, 230100, 501400, null, 48800, 155900, null, 224700, 432900]},
+            {"2025 Q2": [null, null, 2500000, 5000000, null, 202000, 567100, null, 40200, 150000, null, 472600, 605700]},
             {"2025 Q1": [null, null, 1500000, 4600000, null, 163000, 398100, null, 32000, 127000, null, 42700, 287400]},
             {"2024 Q4": [null, null, 2500000, 6200000, null, 199300, 378700, null, 55700, 108400, null, 11900, 134000]},
             {"2024 Q3": [null, null, 1400000, 7100000, null, 136200, 722000, null, 38000, 174400, null, 10600, 106000]},
@@ -214,6 +241,7 @@
             "reports"
         ],
         "rows": [
+            {"2025": [57, 14]},
             {"2024": [5, 16]},
             {"2023": [3, 37]},
             {"2022": [1, 6]},
@@ -244,6 +272,8 @@
             "urls"
         ],
         "rows": [
+            {"2025 H2": [5406758, 561820, 365597, 264371]},
+            {"2025 H1": [2779166, 273052, 341670, 293493]},
             {"2024 H2": [2286288, 353503, 282584, 882941]},
             {"2024 H1": [2508680, 318568, 360375, 402839]},
             {"2023 H2": [3450886, 496105, 249924, 381103]},
@@ -254,6 +284,16 @@
             {"2021 H1": [3280632, 287368, 129174, 596710]},
             {"2020 H2": [2804726, 246325, 97958, 210756]},
             {"2020 H1": [1461582, 112595, 77940, 331865]}
+        ]
+    },
+    "Grindr": {
+        "features": {
+            "social_media": true
+        },
+        "comments": [
+            "Grindr adheres to the European Union's Digital Services Act and",
+            "publishes transparency reports about its content moderation.",
+            "Alas, they are limited to the EU member countries only."
         ]
     },
     "Imgur": {
@@ -298,6 +338,9 @@
             ]
         },
         "rows": [
+            {"2025 Q4": [null, null, 799000, 3400000, null, 48000, 414500, null, 16700, 151700, null, 13600, 56800]},
+            {"2025 Q3": [null, null, 786100, 4200000, null, 46600, 240500, null, 8300, 80100, null, 2700, 2319900]},
+            {"2025 Q2": [null, null, 579600, 1900000, null, 48000, 171600, null, 10400, 41200, null, 4900, 38100]},
             {"2025 Q1": [null, null, 616000, 1500000, null, 58800, 93200, null, 23500, 28900, null, 7200, 32500]},
             {"2024 Q4": [null, null, 946400, 2000000, null, 138700, 67000, null, 60400, 16300, null, 9400, 4900]},
             {"2024 Q3": [null, null, 1000000, 5600000, null, 150700, 122400, null, 68500, 25600, null, 9000, 6700]},
@@ -344,6 +387,8 @@
         "comments": ["numbers disclosed under 'content removed', hence pieces"],
         "columns": ["pieces"],
         "rows": [
+            {"2025 H2": [122]},
+            {"2025 H1": [311]},
             {"2024 H2": [112]},
             {"2024 H1": [65]},
             {"2023 H2": [210]},
@@ -365,7 +410,7 @@
         }
     },
     "Meta": {
-        "brands": ["Facebook", "Instagram", "Threads", "WhatsApp"],
+        "brands": ["Facebook", "Instagram", "Meta AI", "Threads", "WhatsApp"],
         "features": {
             "social_media": true
         },
@@ -377,7 +422,10 @@
             "https://transparency.meta.com/integrity-reports-q2-2024",
             "https://transparency.meta.com/integrity-reports-q3-2024",
             "https://transparency.meta.com/integrity-reports-q4-2024",
-            "https://transparency.meta.com/integrity-reports-q1-2025"
+            "https://transparency.meta.com/integrity-reports-q1-2025",
+            "https://transparency.meta.com/integrity-reports-q2-2025",
+            "https://transparency.meta.com/reports/integrity-reports-q3-2025/",
+            "https://transparency.meta.com/reports/integrity-reports-h1-2026/"
         ],
         "columns": [
             "reports",
@@ -401,6 +449,9 @@
             ]
         },
         "rows": [
+            {"2025 Q4": [2600000, null, null, null, null, null, null, null, null, null, null, null, null]},
+            {"2025 Q3": [2000000, null, null, null, null, null, null, null, null, null, null, null, null]},
+            {"2025 Q2": [2000000, null, null, null, null, null, null, null, null, null, null, null, null]},
             {"2025 Q1": [1700000, null, null, null, null, null, null, null, null, null, null, null, null]},
             {"2024 Q4": [2000000, null, null, null, null, null, null, null, null, null, null, null, null]},
             {"2024 Q3": [1600000, null, null, null, null, null, null, null, null, null, null, null, null]},
@@ -410,6 +461,11 @@
             {"2023 Q3": [7600000, null, null, null, null, null, null, null, null, null, null, null, null]},
             {"2023 Q2": [3700000, null, null, null, null, null, null, null, null, null, null, null, null]}
         ]
+    },
+    "Meta AI": {
+        "features": {
+            "social_media": false
+        }
     },
     "Microsoft": {
         "sources": ["https://www.microsoft.com/en-us/corporate-responsibility/digital-safety-content-report"],
@@ -440,6 +496,9 @@
             "reinstated accounts": "float"
         },
         "rows": [
+            {"2025": [645118, 99.380, null, null, null]},
+            {"2025": [237391, 99.730, 23549, 14.500, null]},
+            {"2025": [null, null, null, null, 111931]},
             {"2024 H2": [226811, 99.820, null, null, null]},
             {"2024 H2": [53982, 99.640, 9269, 4.490, null]},
             {"2024 H2": [null, null, null, null, 49617]},
@@ -483,6 +542,31 @@
             "social_media": true
         }
     },
+    "OpenAI": {
+        "sources": ["https://openai.com/trust-and-transparency/"],
+        "features": {
+            "data": null,
+            "history": null,
+            "terms": ["child safety"],
+            "quantities": "counts",
+            "granularity": "H",
+            "frequency": "H",
+            "coverage": "2023 H1",
+            "social_media": false
+        },
+        "columns": [
+            "reports",
+            "pieces"
+        ],
+        "rows": [
+            {"2025 H2": [107817, 107667]},
+            {"2025 H1": [75027, 74559]},
+            {"2024 H2": [31132, 31510]},
+            {"2024 H1": [947, 3252]},
+            {"2023 H2": [249, 955]},
+            {"2023 H1": [79, 295]}
+        ]
+    },
     "Pinterest": {
         "sources": [
             "https://help.pinterest.com/en/guide/transparency-report-archive",
@@ -492,6 +576,9 @@
             "https://policy.pinterest.com/en/transparency-report-h1-2023",
             "https://policy.pinterest.com/en/transparency-report-h2-2023",
             "https://policy.pinterest.com/en/transparency-report-h1-2024",
+            "https://policy.pinterest.com/en/transparency-report-h2-2024",
+            "https://policy.pinterest.com/en/transparency-report-h1-2025",
+            "https://policy.pinterest.com/en/transparency-report-h2-2025",
             "https://policy.pinterest.com/en/transparency-report"
         ],
         "features": {
@@ -509,13 +596,8 @@
             "social_media": true
         },
         "comments": [
-            "Pin is lingo for a media card with picture, hence pin with CSAM is piece.",
-            "Pinterest's disclosure language explains 2nd through 5th columns:",
-            "`We deactivated N1 distinct images, which comprised N2 Pins, for violating",
-            "our CSE policy. Of these, we determined that N3 distinct images, which",
-            "comprised N4 Pins, were illegal CSAM, and we reported them to NCMEC.`",
-            "The percent of pins deactivated for child safety seen by 10-100 users ",
-            "in Q3 2024 and seen by >100 users in Q2 and Q3 2024 actually is <1%"
+            "Pin is Pinterest lingo for a media card with an image, hence a pin",
+            "with CSAM is a piece."
         ],
         "columns": [
             "reports",
@@ -538,8 +620,14 @@
             "% pins reached >100"
         ],
         "rows": [
-            {"2024 Q4": [null, 27692, 5591489, 1087, 21, 786, 3111, 542, 0, 0, 134105, 8197, 5377, 13094, 59, 37, 2, 1]},
-            {"2024 Q3": [null, 40223, 4269964, 332, 25, 1992, 8517, 1068, 0, 0, 78233, 15623, 7249, 9624, 79, 20, 1, 1]},
+            {"2025 Q4": [null, 16109, 10075038, 20871, 5480, 1807, 91156, 953, 4, 0, 50042, 8768, 2684, 16636, 66, 31, 2, 1]},
+            {"2025 Q3": [null, 20026, 13519577, 27182, 2743, 1003, 184587, 1000, 7, 0, 127577, 21534, 6665, 20353, 78, 20, 1, 1]},
+            {"2025 H2": [235769, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+            {"2025 Q2": [null, 659426, 16966208, 22356, 992, 1434, 202866, 868, 8, 1, 615313, 91348, 6883, 121560, 63, 34, 2, 1]},
+            {"2025 Q1": [null, 12083, 8003405, 8350, 360, 506, 23310, 1144, 3, 3, 340942, 39979, 12157, 37394, 61, 35, 2, 1]},
+            {"2025 H1": [171999, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+            {"2024 Q4": [null, 27692, 5591489, 1087, 21, 786, 3111, 542, 0, 0, 134105, 15623, 7249, 13094, 59, 37, 2, 1]},
+            {"2024 Q3": [null, 40223, 4269964, 332, 25, 1992, 8517, 1068, 0, 0, 78233, 8197, 5377, 9624, 79, 20, 1, 1]},
             {"2024 H2": [8989, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
             {"2024 Q2": [null, 7180, 4533695, 99, 1, 1384, 4123, 705, 1, 1, 55814, 5429, 4016, 5349, 82, 15, 2, 1]},
             {"2024 Q1": [null, 5575, 3322789, 13, 0, 894, 3770, 3100, 0, 0, 68230, 8424, 5191, 8370, 78, 19, 3, 1]},
@@ -566,13 +654,16 @@
     },
     "Pornhub": {
         "sources": [
-            "https://help.pornhub.com/hc/en-us/articles/38743689517715-2024-Transparency-Report-Second-Half",
-            "https://help.pornhub.com/hc/en-us/articles/33098088051475-2024-Transparency-Report-First-Half",
-            "https://help.pornhub.com/hc/en-us/articles/27610703413267-2023-Transparency-Report-Second-Half",
-            "https://help.pornhub.com/hc/en-us/articles/19464887586579-2023-Transparency-Report-First-Half",
-            "https://help.pornhub.com/hc/en-us/articles/14666334117267-2022-Transparency-Report",
-            "https://help.pornhub.com/hc/en-us/articles/5357457259155-2021-Transparency-Report",
-            "https://help.pornhub.com/hc/en-us/articles/4419860718483-2020-Transparency-Report"
+            "https://help.pornhub.com/hc/en-us/articles/50069808248339-2025-Transparency-Report-Second-Half",
+            "https://help.pornhub.com/hc/en-us/articles/46213095031827-2025-Transparency-Report-First-Half",
+            "https://help.pornhub.com/hc/en-us/articles/46213396642195-2024-Transparency-Report-Second-Half",
+            "https://help.pornhub.com/hc/en-us/articles/46213097399315-2024-Transparency-Report-First-Half",
+            "https://help.pornhub.com/hc/en-us/articles/46213147539347-2023-Transparency-Report-Second-Half",
+            "https://help.pornhub.com/hc/en-us/articles/46213033364371-2023-Transparency-Report-First-Half",
+            "https://help.pornhub.com/hc/en-us/articles/46213052959123-2022-Transparency-Report",
+            "https://help.pornhub.com/hc/en-us/articles/46213008134419-2021-Transparency-Report",
+            "https://help.pornhub.com/hc/en-us/articles/46213042243475-2020-Transparency-Report",
+            "https://help.pornhub.com/hc/en-us/categories/4419836212499"
         ],
         "comments": [
             "In March 2023, the Ottawa-based private equity firm ECP (Ethical Capital",
@@ -606,6 +697,8 @@
             ]
         },
         "rows": [
+            {"2025 H2": [2716, 4355, 1853]},
+            {"2025 H1": [975, 1451, 293]},
             {"2024 H2": [4037, 5707, 1057]},
             {"2024 H1": [1471, 3089, 670]},
             {"2023 H2": [1289, 2344, 1018]},
@@ -624,6 +717,8 @@
     },
     "Reddit": {
         "sources": [
+            "https://redditinc.com/policies/transparency-report-july-to-december-2025-reddit",
+            "https://redditinc.com/policies/transparency-report-january-to-june-2025-reddit",
             "https://redditinc.com/policies/transparency-report-july-to-december-2024",
             "https://redditinc.com/policies/transparency-report-january-to-june-2024",
             "https://www.redditinc.com/policies/transparency-report-july-to-december-2023",
@@ -649,37 +744,49 @@
             "coverage": "2021",
             "social_media": true
         },
-        "comments": ["pieces includes posts and comments but not private messages"],
+        "comments": [
+            "`pieces (minor sexualization)` covers posts and comments only.",
+            "Private messages are one-on-one, whereas chat messages are group-based."
+        ],
         "columns": [
             "pieces",
             "reports",
             "pieces (minor sexualization)",
             "private messages (minor sexualization)",
+            "chat messages (minor sexualization)",
             "subreddits (minor sexualization)",
+            "content appeals (minor sexualization)",
+            "content reversals percent (minor sexualization)",
             "temporary account suspensions (minor sexualization)",
             "accounts (minor sexualization)",
             "account appeals (minor sexualization)",
             "account reversals percent (minor sexualization)"
         ],
         "schema": {
+            "content reversals percent (minor sexualization)": "float",
             "account reversals percent (minor sexualization)": "float"
         },
         "rows": [
-            {"2024 H2": [null, 113568, 139948, 171, 388, 18425, 65098, 11466, 13.200]},
-            {"2024 H1": [null, 221029, 323150, 304, 1110, 15150, 176679, 10892, 15.100]},
-            {"2023 H2": [null, 133588, 349189, 263, 1536, 15744, 128513, 5801, 8.600]},
-            {"2023 H1": [149084, 156533, 181083, 296, 987, 27219, 68900, 2924, 7.800]},
-            {"2022 H2": [31574, 40243, null, null, null, null, null, null, null], "redundant": true},
-            {"2022 H1": [null, 12349, null, null, null, null, null, null, null], "redundant": true},
-            {"2022": [80888, 52592, 266473, 390, 5149, 70201, 93997, 7513, 9.500]},
-            {"2021": [9258, 10059, 117093, 243, 1914, 0, 4659, null, null]},
-            {"2020": [null, 2233, null, null, null, 15940, 21946, null, null]},
-            {"2019": [null, 724, 38410, null, 280, null, 10781, null, null]}
+            {"2025 H2": [55048, 32747, 72981, 7, 96264, 267, 11454, 17.400, 12615, 48660, 10741, 10.100]},
+            {"2025 H1": [46414, 32759, 84916, 124, 133866, 266, 4752, 10.900, 10086, 42541, 8167, 14.900]},
+            {"2024 H2": [195605, 113568, 139948, 171, 158280, 388, 14603, 12.000, 18425, 65098, 11466, 13.200]},
+            {"2024 H1": [null, 221029, 323150, 304, 85447, 1110, 12425, 15.400, 15150, 176679, 10892, 15.100]},
+            {"2023 H2": [null, 133588, 349189, 263, null, 1536, null, null, 15744, 128513, 5801, 8.600]},
+            {"2023 H1": [149084, 156533, 181083, 296, null, 987, null, null, 27219, 68900, 2924, 7.800]},
+            {"2022 H2": [31574, 40243, null, null, null, null, null, null, null, null, null, null], "redundant": true},
+            {"2022 H1": [null, 12349, null, null, null, null, null, null, null, null, null, null], "redundant": true},
+            {"2022": [80888, 52592, 266473, 390, null, 5149, null, null, 70201, 93997, 7513, 9.500]},
+            {"2021": [9258, 10059, 117093, 243, null, 1914, null, null, 0, 4659, null, null]},
+            {"2020": [null, 2233, null, null, null, null, null, null, 15940, 21946, null, null]},
+            {"2019": [null, 724, 38410, null, null, 280, null, null, null, 10781, null, null]}
         ]
     },
     "Snap": {
         "sources": [
             "https://values.snap.com/privacy/transparency",
+            "https://values.snap.com/privacy/transparency-h2-2025",
+            "https://values.snap.com/privacy/transparency-h1-2025",
+            "https://values.snap.com/privacy/transparency-h2-2024",
             "https://values.snap.com/privacy/transparency-h1-2024",
             "https://values.snap.com/privacy/transparency-h2-2023",
             "https://values.snap.com/privacy/transparency-h1-2023",
@@ -710,6 +817,8 @@
             "accounts": "float"
         },
         "rows": [
+            {"2025 H2": [1644877, 245643, 397402]},
+            {"2025 H1": [1099170, 187387, 354396]},
             {"2024 H2": [1228929, 242306, 417842]},
             {"2024 H1": [1737563, 385864, 632436]},
             {"2023 H2": [1046296, 343865, 398736]},
@@ -827,6 +936,8 @@
     },
     "Twitch": {
         "sources": [
+            "https://safety.twitch.tv/s/article/H2-2025-Transparency-Report",
+            "https://safety.twitch.tv/s/article/H1-2025-Transparency-Report",
             "https://safety.twitch.tv/s/article/H2-2024-Transparency-Report",
             "https://safety.twitch.tv/s/article/H1-2024-Transparency-Report",
             "https://safety.twitch.tv/s/article/H2-2023-Transparency-Report",
@@ -854,10 +965,13 @@
             "Twitch's data are marked as redundant because their report counts are",
             "included with Amazon's yearly disclosures. For years where NCMEC breaks",
             "out Twitch from Amazon, Twitch's report counts appear to be more accurate",
-            "than those of Amazon."
+            "than those of Amazon. For 2025 H2, Twitch reported an increase of 46.92%",
+            "over H2, but left out the absolute count."
         ],
         "columns": ["reports"],
         "rows": [
+            {"2025 H2": [450], "redundant": true},
+            {"2025 H1": [959], "redundant": true},
             {"2024 H2": [759], "redundant": true},
             {"2024 H1": [1523], "redundant": true},
             {"2023 H2": [3272], "redundant": true},
@@ -962,7 +1076,7 @@
             "quantities": "counts",
             "granularity": "H",
             "frequency": "H",
-            "coverage": "2024 H1",
+            "coverage": "2024 H1 - 2024 H2",
             "social_media": true
         },
         "columns": [
@@ -1012,6 +1126,8 @@
             "reports"
         ],
         "rows": [
+            {"2025 H2": [300804, 300464]},
+            {"2025 H1": [344941, 321868]},
             {"2024 H2": [242121, 223477]},
             {"2024 H1": [320498, 280478]},
             {"2023 H2": [265371, 225440]},
@@ -1078,6 +1194,7 @@
             {"2019": ["Facebook", null, null, null]},
             {"2019": ["GitHub", 2, null, null]},
             {"2019": ["Google", null, null, null]},
+            {"2019": ["Grindr", 13, null, null]},
             {"2019": ["Imgur", 73929, null, null]},
             {"2019": ["Instagram", null, null, null]},
             {"2019": ["Kik", null, null, null]},
@@ -1115,6 +1232,7 @@
             {"2020": ["Facebook", null, null, null]},
             {"2020": ["GitHub", 2, null, null]},
             {"2020": ["Google", null, null, null]},
+            {"2020": ["Grindr", 302, null, null]},
             {"2020": ["Imgur", 31571, null, null]},
             {"2020": ["Instagram", null, null, null]},
             {"2020": ["Kik", 14515, null, null]},
@@ -1154,6 +1272,7 @@
             {"2021": ["Facebook", 22118952, 28, 7.270]},
             {"2021": ["GitHub", 4, null, null]},
             {"2021": ["Google", null, 975, 6.770]},
+            {"2021": ["Grindr", 10671, null, null]},
             {"2021": ["Imgur", 47274, null, null]},
             {"2021": ["Instagram", 3393654, 22, 4.450]},
             {"2021": ["Kik", 33619, null, null]},
@@ -1198,6 +1317,7 @@
             {"2022": ["Facebook", 21165208, 10, 4.400]},
             {"2022": ["GitHub", 6, null, null]},
             {"2022": ["Google", null, 916, 4.200]},
+            {"2022": ["Grindr", 22819, null, null]},
             {"2022": ["Imgur", 64211, null, null]},
             {"2022": ["Instagram", 5007902, 13, 3.700]},
             {"2022": ["Kik", 36801, null, null]},
@@ -1241,9 +1361,11 @@
             {"2023": ["Aylo", 29, null, null]},
             {"2023": ["Aylo", 4, null, null]},
             {"2023": ["Aylo", 8, null, null]},
+            {"2023": ["Bluesky", 1, null, null]},
             {"2023": ["Discord", 339412, null, null]},
             {"2023": ["Facebook", 17838422, null, null]},
             {"2023": ["Google", null, null, null]},
+            {"2023": ["Grindr", 45073, null, null]},
             {"2023": ["GitHub", 1, null, null]},
             {"2023": ["Imgur", 58957, null, null]},
             {"2023": ["Instagram", 11430007, null, null]},
@@ -1258,6 +1380,7 @@
             {"2023": ["Microsoft", 1537, null, null]},
             {"2023": ["Microsoft", 225, null, null]},
             {"2023": ["Omegle", 188102, null, null]},
+            {"2023": ["OpenAI", 329, null, null]},
             {"2023": ["Pinterest", 52356, null, null]},
             {"2023": ["Pornhub", 16, null, null]},
             {"2023": ["Pornhub", 2487, null, null]},
@@ -1289,10 +1412,12 @@
             {"2024": ["Aylo", 1, null, null]},
             {"2024": ["Aylo", 2, null, null]},
             {"2024": ["Aylo", 23, null, null]},
+            {"2024": ["Bluesky", 1156, null, null]},
             {"2024": ["Discord", 241354, null, null]},
             {"2024": ["Facebook", 8590357, null, null]},
             {"2024": ["GitHub", null, null, null]},
             {"2024": ["Google", 1175084, null, null]},
+            {"2024": ["Grindr", 78886, null, null]},
             {"2024": ["Imgur", 554710, null, null]},
             {"2024": ["Instagram", 3320008, null, null]},
             {"2024": ["Kik", 114155, null, null]},
@@ -1304,6 +1429,7 @@
             {"2024": ["Microsoft", 1324, null, null]},
             {"2024": ["Microsoft", 324, null, null]},
             {"2024": ["Omegle", 12, null, null]},
+            {"2024": ["OpenAI", 32079, null, null]},
             {"2024": ["Pinterest", 65810, null, null]},
             {"2024": ["Pornhub", null, null, null]},
             {"2024": ["Quora", 8778, null, null]},
@@ -1321,7 +1447,56 @@
             {"2024": ["X", 686176, null, null]},
             {"2024": ["YouTube", null, null, null]},
             {"2024": ["ESP Total", 20348306, null, null]},
-            {"2024": ["Total", 20512803, null, null]}
+            {"2024": ["Total", 20512803, null, null]},
+            {"2025": ["Alphabet", null, null, null]},
+            {"2025": ["Amazon", 435, null, null]},
+            {"2025": ["Amazon", 1105405, null, null]},
+            {"2025": ["Amazon", 21360, null, null]},
+            {"2025": ["Amino", 62, null, null]},
+            {"2025": ["Apple", 296, null, null]},
+            {"2025": ["Automattic", null, null, null]},
+            {"2025": ["Aylo", 3534, null, null]},
+            {"2025": ["Aylo", 3, null, null]},
+            {"2025": ["Aylo", 2, null, null]},
+            {"2025": ["Aylo", 17, null, null]},
+            {"2025": ["Bluesky", 5264, null, null]},
+            {"2025": ["Discord", 489782, null, null]},
+            {"2025": ["Facebook", 4907710, null, null]},
+            {"2025": ["GitHub", null, null, null]},
+            {"2025": ["Google", 1461378, null, null]},
+            {"2025": ["Grindr", 111334, null, null]},
+            {"2025": ["Imgur", 22459, null, null]},
+            {"2025": ["Instagram", 3673045, null, null]},
+            {"2025": ["Kik", 111394, null, null]},
+            {"2025": ["LinkedIn", 182, null, null]},
+            {"2025": ["MediaLab", null, null, null]},
+            {"2025": ["Meta", null, null, null]},
+            {"2025": ["Meta AI", 582, null, null]},
+            {"2025": ["MindGeek", 30, null, null]},
+            {"2025": ["Microsoft", 111093, null, null]},
+            {"2025": ["Microsoft", 1652, null, null]},
+            {"2025": ["Microsoft", 8477, null, null]},
+            {"2025": ["Omegle", 11, null, null]},
+            {"2025": ["OpenAI", 182844, null, null]},
+            {"2025": ["Pinterest", 418394, null, null]},
+            {"2025": ["Pornhub", null, null, null]},
+            {"2025": ["Quora", 5646, null, null]},
+            {"2025": ["Reddit", 65381, null, null]},
+            {"2025": ["Snap", 752031, null, null]},
+            {"2025": ["Telegram", null, null, null]},
+            {"2025": ["Threads", 56094, null, null]},
+            {"2025": ["TikTok", 3623177, null, null]},
+            {"2025": ["Tumblr", 2881, null, null]},
+            {"2025": ["Twitch", 2390, null, null]},
+            {"2025": ["Twitter", null, null, null]},
+            {"2025": ["WhatsApp", 2355302, null, null]},
+            {"2025": ["Wikimedia", 60, null, null]},
+            {"2025": ["Wordpress", 176, null, null]},
+            {"2025": ["X", 816611, null, null]},
+            {"2025": ["X.AI", 135373, null, null]},
+            {"2025": ["YouTube", null, null, null]},
+            {"2025": ["ESP Total", 21181300, null, null]},
+            {"2025": ["Total", 21351493, null, null]}
         ]
     }
 }

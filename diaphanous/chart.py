@@ -1,5 +1,4 @@
 from typing import Literal
-
 import altair as alt
 import polars as pl
 
@@ -8,6 +7,91 @@ from .nibrs.model import Id
 from .util import (
     compute_age_sex_cdf_extrema, hrule, to_axis_range
 )
+
+def plot_yearly_reports(
+    frame: pl.DataFrame,
+    detailed: bool = False,
+) -> alt.VConcatChart:
+    charts = [
+        alt.Chart(
+            frame.filter(
+                pl.col("variable").is_in(["All Reports", "Meta’s Reports"])
+            ).with_columns(
+                pl.col("value").truediv(1_000_000),
+            )
+        ).mark_line().encode(
+            alt.X("year:Q").axis(
+                title=None,
+                labels=False,
+            ),
+            alt.Y("value:Q").axis(
+                labelFontSize=15,
+                title="Reports (Millions)",
+                titleFontSize=15,
+                titlePadding=20,
+            ),
+            alt.Color("variable:N").title(None).legend(
+                orient="top-left",
+                labelFontSize=15,
+            ),
+        ).properties(
+            height=250,
+            width=500,
+        ),
+        alt.Chart(
+            frame.filter(
+                pl.col("variable").is_in(["People", "Internet Users", "Social Accounts"])
+            ).with_columns(
+                pl.col("value").truediv(1_000_000_000),
+            )
+        ).mark_line().encode(
+            alt.X("year:Q").axis(
+                title=None,
+                labels=False,
+            ),
+            alt.Y("value:Q").axis(
+                labelFontSize=15,
+                title="Population Size (Billions)",
+                titleFontSize=15,
+                titlePadding=20,
+            ),
+            alt.Color("variable:N").title(None).legend(
+                orient="top-left",
+                labelFontSize=15,
+            ),
+        ).properties(
+            height=250,
+            width=500,
+        ),
+    ]
+
+    if detailed:
+        charts.append(
+            alt.Chart(
+                frame.filter(
+                    pl.col("variable").eq("Reports per 1k Social Accounts")
+                )
+            ).mark_line().encode(
+                alt.X("year:Q").axis(
+                    labelAngle=-45,
+                    labelFontSize=15,
+                    format="d",
+                    title="Year",
+                    titleFontSize=14,
+                ),
+                alt.Y("value:Q").axis(
+                    labelFontSize=15,
+                    title="Reports per 1,000 Social Accounts",
+                    titleFontSize=15,
+                    titlePadding=20,
+                ),
+            ),
+        )
+
+    return alt.vconcat(*charts).resolve_scale(
+        x="shared",
+        color="independent",
+    )
 
 
 def _prep_sex_by_age(frame: pl.DataFrame) -> pl.DataFrame:

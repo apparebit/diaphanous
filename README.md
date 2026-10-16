@@ -61,8 +61,9 @@ inception in March 1998, largely based on the table included in Appendix A of
 its
 [2022](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf),
 [2023](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency-CY-2023-Report.pdf),
+[2024](https://www.missingkids.org/content/dam/missingkids/pdfs/cybertiplinedata2024/OJJDP-NCMEC-Transparency-CY-2024.pdf),
 and
-[2024](https://www.missingkids.org/content/dam/missingkids/pdfs/cybertiplinedata2024/OJJDP-NCMEC-Transparency-CY-2024.pdf)
+[2025](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency-CY-2025.pdf)
 transparency reports to the Office for Juvenile Justice and Delinquency
 Prevention at the Department of Justice.
 
@@ -98,8 +99,8 @@ attachments and "similar" for perceptually hashed ones. The dataset combines
 several tables from NCMEC's
 [2022](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency_2022-Calendar-Year.pdf),
 [2023](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency-CY-2023-Report.pdf),
-and
-[2024](https://www.missingkids.org/content/dam/missingkids/pdfs/cybertiplinedata2024/OJJDP-NCMEC-Transparency-CY-2024.pdf)
+[2024](https://www.missingkids.org/content/dam/missingkids/pdfs/cybertiplinedata2024/OJJDP-NCMEC-Transparency-CY-2024.pdf),
+and [2025](https://www.missingkids.org/content/dam/missingkids/pdfs/OJJDP-NCMEC-Transparency-CY-2025.pdf)
 transparency reports to the Office for Juvenile Justice and Delinquency
 Prevention at the Department of Justice.
 
@@ -159,7 +160,7 @@ organizations and their platforms:
   * X (née Twitter)
   * X.AI
 
-Surveyed organizations fall into at least one of the following categories:
+Surveyed organizations fall into at least one of the following three categories:
 
   * Social media based on Buffer's list of [top social media
     sites](https://buffer.com/library/social-media-sites/),
@@ -216,10 +217,17 @@ NCMEC's per-country breakdown of CyberTipline reports for
 [2021](https://www.missingkids.org/content/dam/missingkids/pdfs/2021-reports-by-country.pdf),
 [2022](https://www.missingkids.org/content/dam/missingkids/pdfs/2022-reports-by-country.pdf),
 [2023](https://www.missingkids.org/content/dam/missingkids/pdfs/2023-reports-by-country.pdf),
-and [2024](https://ncmec.org/content/dam/missingkids/pdfs/cybertiplinedata2024/2024-reports-by-country.pdf)
-in machine-readable form. The CSV table is mostly straightforward: Its first two
-columns comprise the country name and ISO three-letter code, followed by a
-column per year from 2019 through 2022.
+[2024](https://ncmec.org/content/dam/missingkids/pdfs/cybertiplinedata2024/2024-reports-by-country.pdf),
+and
+[2025](https://www.missingkids.org/content/dam/missingkids/pdfs/2025-reports-by-country.pdf)
+in machine-readable form. The CSV table is organized as follows: Its first two
+columns comprise the country name and ISO three-letter code. They are followed
+by one column per year from 2019 through 2023 and two columns per year from 2024
+onwards. In the former case, the single yearly column captures the total number
+of reports that can be traced back to that country. In the latter case, the
+column prefixed with `ref` captures referrals and the column prefixed with
+`info` captures informational reports, i.e., reports that are too limited to be
+actionable.
 
 To preserve all information from NCMEC's disclosures, the table includes rows
 for the Netherlands Antilles (ANT), "Europe" (EEE), Bouvet Island (BVT), and "No
@@ -241,8 +249,8 @@ following data:
     Data](https://ourworldindata.org/internet) from statistics released by the
     International Telecommunication Union via WorldBank as well as the United
     Nations;
-  * Per-country ratios of [social accounts per
-    capita](data/social-accounts-per-country.csv) based on:
+  * [Per-country social accounts](data/social-accounts-per-country.csv) as
+    absolute counts and per capita based on:
 
       * [We Are Social & Hootsuite's Digital 2021 Local Country Headlines
     Report](https://datareportal.com/reports/digital-2021-local-country-headlines)
@@ -254,10 +262,14 @@ following data:
     Report](https://datareportal.com/reports/digital-2024-local-country-headlines)
       * [We Are Social & Meltwater's Digital 2025 Local Country Headlines
     Report](https://datareportal.com/reports/digital-2025-local-country-headlines)
+      * [We Are Social & Meltwater's Digital 2026 Local Country Headlines
+        Report](https://datareportal.com/reports/digital-2026-local-country-headlines)
 
-    By dividing the reports per capita by social accounts per capita, we can
-    determine per-country reports per social accounts, i.e., report counts
-    normalized by likely population size.
+    By dividing the per country number of CyberTipline reports per capita by the
+    number of social accounts per capita, we can determine the number of
+    CyberTipline reports per social accounts, i.e., which normalizes the
+    absolute number of CyberTipline reports per country by the size of its
+    likely population.
 
   * Administrative boundaries for countries by [Natural Earth, version
     5.1.1](https://www.naturalearthdata.com/downloads/110m-cultural-vectors/);

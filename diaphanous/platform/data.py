@@ -211,6 +211,12 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
                 "pieces (Child Nudity & Sexual Exploitation)",
                 "pieces (Child Endangerment: Sexual Exploitation)",
             ),
+            "reversals": (
+                "reversals (Child Nudity & Sexual Exploitation)",
+                "reversals (Child Endangerment: Sexual Exploitation)",
+                "reversals w/o appeal (Child Nudity & Sexual Exploitation)",
+                "reversals w/o appeal (Child Endangerment: Sexual Exploitation)",
+            ),
         }),
         "rows": (
             # fmt: off
@@ -358,10 +364,16 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             #"proactive rate",  TODO!
         ),
         "sums": frozen({
-            "pieces": [
+            "pieces": (
                 "pieces (Child Nudity & Sexual Exploitation)",
                 "pieces (Child Endangerment: Sexual Exploitation)",
-            ],
+            ),
+            "reversals": (
+                "reversals (Child Nudity & Sexual Exploitation)",
+                "reversals (Child Endangerment: Sexual Exploitation)",
+                "reversals w/o appeal (Child Nudity & Sexual Exploitation)",
+                "reversals w/o appeal (Child Endangerment: Sexual Exploitation)",
+            ),
         }),
         "rows": (
             # fmt: off
@@ -1260,6 +1272,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2019": ("LinkedIn", 88, None, None)},
             {"2019": ("MediaLab", 38, None, None)},
             {"2019": ("Meta", 15_884_511, None, None)},
+            {"2019": ("Meta AI", None, None, None)},
             {"2019": ("Microsoft", 123_839, None, None)},
             {"2019": ("MindGeek", None, None, None)},
             {"2019": ("Omegle", 3_470, None, None)},
@@ -1299,6 +1312,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2020": ("LinkedIn", 60, None, None)},
             {"2020": ("MediaLab", None, None, None)},
             {"2020": ("Meta", 20_307_216, None, None)},
+            {"2020": ("Meta AI", None, None, None)},
             {"2020": ("Microsoft", 96_776, None, None)},
             {"2020": ("MindGeek", 13_229, None, None)},
             {"2020": ("Omegle", 20_265, None, None)},
@@ -1340,6 +1354,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2021": ("LinkedIn", 110, None, None)},
             {"2021": ("MediaLab", None, None, None)},
             {"2021": ("Meta", None, None, None)},
+            {"2021": ("Meta AI", None, None, None)},
             {"2021": ("MindGeek", 16, None, None)},
             {"2021": ("MindGeek", 21, None, None)},  # Redtube
             {"2021": ("MindGeek", 6, None, None)},  # Tube8
@@ -1386,6 +1401,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2022": ("LinkedIn", 201, None, None)},
             {"2022": ("MediaLab", None, None, None)},
             {"2022": ("Meta", None, None, None)},
+            {"2022": ("Meta AI", None, None, None)},
             {"2022": ("MindGeek", 91, None, None)},
             {"2022": ("MindGeek", 6, None, None)},  # Redtube
             {"2022": ("MindGeek", 2, None, None)},  # YouPorn
@@ -1436,6 +1452,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2023": ("LinkedIn", 209, None, None)},
             {"2023": ("MediaLab", None, None, None)},
             {"2023": ("Meta", None, None, None)},
+            {"2023": ("Meta AI", None, None, None)},
             {"2023": ("MindGeek", 44, None, None)},
             {"2023": ("MindGeek", 7, None, None)},  # Redtube
             {"2023": ("MindGeek", 1, None, None)},  # Tube8
@@ -1488,6 +1505,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2024": ("LinkedIn", 127, None, None)},
             {"2024": ("MediaLab", None, None, None)},
             {"2024": ("Meta", None, None, None)},
+            {"2024": ("Meta AI", None, None, None)},
             {"2024": ("MindGeek", 30, None, None)}, # Pornhub
             {"2024": ("Microsoft", 101_009, None, None)}, # Online Operations
             {"2024": ("Microsoft", 1_324, None, None)}, # Xbox

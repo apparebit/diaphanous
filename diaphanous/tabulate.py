@@ -2,6 +2,7 @@ from argparse import ArgumentParser
 from collections.abc import Iterator, Sequence
 import datetime as dt
 from io import StringIO
+import itertools
 import os
 from pathlib import Path
 import re
@@ -14,7 +15,8 @@ import great_tables as gt
 import polars as pl
 
 from .chart import (
-    plot_cdf_grid, plot_crime_rate_by_age, plot_sex_by_age_grid, plot_sex_by_age_detailed
+    plot_cdf_grid, plot_crime_rate_by_age, plot_sex_by_age_grid,
+    plot_sex_by_age_detailed, plot_yearly_reports
 )
 from .color import Palette
 from .mosaic import (
@@ -36,19 +38,23 @@ _INDEX = ("source", "target", "year")
 _METRICS = ("pieces", "reports")
 
 
-def tabulate() -> pl.DataFrame:
+def tabulate(
+    metrics: None | Sequence[str] = None,
+    preserve_brands: bool = False,
+) -> pl.DataFrame:
     """
     Ingest the platform data from the `diaphanous.platform.data` module into a
     single tidy data frame.
 
     The frame has columns for the `source` organization, the  `target`
-    organization, and the `year`, which serve as index, as well as `variable`
-    and `value`, which contain the counts of `pieces` and `reports`. It
-    aggregates the two metrics by corporation and year, including an observation
-    only if at least one brand has disclosed the metric for the full year
-    through any combination of yearly, semiannual, or quarterly disclosures.
-    Rows marked as redundant are ignored.
+    organization, and the `year`, which serve as index. It also has `variable`
+    and `value` columns with the desired metrics, which are `pieces` and
+    `reports` by default. It aggregates metrics by corporation and year,
+    including an observation only if any brand has disclosed the metric for the
+    full year through any combination of yearly, semiannual, or quarterly
+    disclosures. Rows marked as redundant are ignored.
     """
+    metrics = _METRICS if metrics is None else metrics
     frames = []
 
     for platform, data in cast(Iterator[tuple[str, Any]], REPORTS_PER_PLATFORM.items()):
@@ -56,11 +62,23 @@ def tabulate() -> pl.DataFrame:
             continue
 
         frame = _ingest_frame(platform, data["rows"], data["columns"])
-        frame = _extract_pieces_and_reports(frame, data.get("sums", {}))
-        if not _is_empty(frame):
+        frame = _extract_metrics(frame, metrics, data.get("sums", {}))
+        if not _is_empty(frame, metrics):
             frames.append(frame)
 
-    return _merge_frames(frames)
+    aggregated_frame = _merge_frames(frames, metrics, with_replacements=True)
+    if not preserve_brands:
+        return aggregated_frame
+
+    detail_frame = _merge_frames(frames, metrics, with_replacements=False)
+    return pl.concat([
+        aggregated_frame,
+        detail_frame.join(
+            aggregated_frame,
+            on=_INDEX,
+            how="anti",
+        )
+    ])
 
 
 def _ingest_frame(
@@ -121,19 +139,20 @@ def _to_year_and_period(label: str) -> tuple[int, _Period]:
     return int(label[:4]), cast(_Period, label[5:])
 
 
-def _extract_pieces_and_reports(
-    frame: pl.DataFrame,
-    sums: dict[str, Sequence[str]]
-) -> pl.DataFrame:
+def _extract_metrics[F: (pl.DataFrame, pl.LazyFrame)](
+    frame: F,
+    metrics: Sequence[str],
+    sums: dict[str, Sequence[str]],
+) -> F:
     """
     Convert the data frame with the row and column data into a data frame with
     just the pieces and reports.
     """
     exprs = []
 
-    for metric in _METRICS:
+    for metric in metrics:
         if metric in sums:
-            exprs.append(_add_if_non_null(sums[metric]).alias(metric))
+            exprs.append(_add_all_non_null(sums[metric]).alias(metric))
         elif metric in frame.columns:
             exprs.append(pl.col(metric).cast(pl.Int64))
         else:
@@ -144,7 +163,7 @@ def _extract_pieces_and_reports(
     return frame.select(pl.col(*_INDEX, "period"), *exprs)
 
 
-def _add_if_non_null(columns: Sequence[str]) -> pl.Expr:
+def _add_all_non_null(columns: Sequence[str]) -> pl.Expr:
     """
     Build a Pola.rs expression that, for each row, adds the non-null values in
     the given columns. A row's result is null only if all values in the row also
@@ -159,34 +178,43 @@ def _add_if_non_null(columns: Sequence[str]) -> pl.Expr:
     ).then(
         pl.lit(None, dtype=pl.Int64)
     ).otherwise(
-        pl.sum_horizontal(*columns).cast(pl.Int64)
+        pl.sum_horizontal(*columns, ignore_nulls=True).cast(pl.Int64)
     )
 
 
-def _is_empty(frame: pl.DataFrame) -> bool:
+def _is_empty(frame: pl.DataFrame, metrics: Sequence[str]) -> bool:
     """
-    Determine whether the data frame contains any non-null values for pieces or
-    reports.
+    Determine whether the data frame contains any non-null values for the
+    selected metrics.
     """
-    piece_count, report_count = frame.select(
-        *(pl.col(metric).is_not_null().sum() for metric in _METRICS),
-    ).row(0)
-    return piece_count + report_count == 0
+    return frame.select(
+        *(pl.col(metric).is_not_null().sum() for metric in metrics),
+    ).select(
+        pl.sum_horizontal(*metrics)
+    ).item() == 0
 
 
-def _merge_frames(frames: Sequence[pl.DataFrame]) -> pl.DataFrame:
+def _merge_frames(
+    frames: Sequence[pl.DataFrame],
+    metrics: Sequence[str],
+    with_replacements: bool = True,
+) -> pl.DataFrame:
     """Merge per-platform frames and aggregate full years."""
-    replacements = _extract_replacements()
+    frame = pl.concat(frames).lazy()
 
-    return pl.concat(frames).lazy().with_columns(
-        pl.col("source").replace(replacements),
-        pl.col("target").replace(replacements),
-    ).group_by(
+    if with_replacements:
+        replacements = _extract_replacements()
+        frame= frame.with_columns(
+            pl.col("source").replace(replacements),
+            pl.col("target").replace(replacements),
+        )
+
+    return frame.group_by(
         pl.col(*_INDEX)
     ).agg(
-        *(_sum_if_whole_year(metric) for metric in _METRICS)
+        *(_sum_if_whole_year(metric) for metric in metrics)
     ).unpivot(
-        on=_METRICS,
+        on=metrics,
         index=_INDEX,
     ).sort(
         *_INDEX, "variable"
@@ -243,6 +271,20 @@ def _sum_if_whole_year(metric: str) -> pl.Expr:
 
 # ======================================================================================
 
+def apply_table_style(table: gt.GT) -> gt.GT:
+    return table.tab_style(
+        style=gt.style.text(weight="bold"),
+        locations=gt.loc.column_labels(),
+    ).sub_missing(
+        missing_text="",
+    ).opt_table_font(
+        stack="neo-grotesque",
+    ).opt_vertical_padding(
+        scale=0.8,
+    )
+
+# ======================================================================================
+
 HEIGHT_ATTR = re.compile(r'height="\d+[a-z]*"')
 WIDTH_ATTR = re.compile(r'width="\d+[a-z]*"')
 XML_DECL = '<?xml version="1.0" encoding="UTF-8"?>'
@@ -288,8 +330,53 @@ class Analyzer:
             raise ValueError("invoke `run()` in `with Analyzer():` block only")
 
         if self._with_reports:
-            self.h2("A Decade of Seemingly Linear Growth")
+            self.h2("CyberTipline: Yearly Report Counts")
+            wide_frame = self.assemble_report_counts()
+
+            long_frame = wide_frame.unpivot(
+                on=[
+                    "reports", "meta_reports",
+                    "people", "internet_users", "social_accounts",
+                    "reports_per_social"
+                ],
+                index="year",
+            ).with_columns(
+                pl.col("variable").replace_strict({
+                    "reports": "All Reports",
+                    "meta_reports": "Meta’s Reports",
+                    "people": "People",
+                    "internet_users": "Internet Users",
+                    "social_accounts": "Social Accounts",
+                    "reports_per_social": "Reports per 1k Social Accounts",
+                })
+            )
+
+            self.chart(plot_yearly_reports(long_frame))
+
+            self.h3("A Decade of Mostly Linear Growth")
+            coefficients = self.emit_growth_models(wide_frame)
+
+            self.table("linear-coefficients", apply_table_style(
+                gt.GT(coefficients).tab_header(
+                    title="Linear Coefficients",
+                    subtitle="For Decade of Growth",
+                ).fmt_number(
+                    columns=["Intercept"],
+                    decimals=1,
+                    use_seps=True,
+                    sep_mark=",",
+                ).fmt_number(
+                    columns=["Slope"],
+                    decimals=4,
+                    use_seps=True,
+                    sep_mark=",",
+                )
+            ))
+
             self.emit_regression_models()
+
+            self.h3("Reports per Social Accounts")
+            self.html("<p><strong>TODO</strong></p>")
 
         if self._with_platforms:
             self.h2("Platforms' vs NCMEC's Disclosures")
@@ -346,8 +433,10 @@ class Analyzer:
             """)
 
             comparison = juxtapose(self._data)
-            table = format_juxtaposition(comparison, with_highlights=True)
-            self.html(table.as_raw_html())
+            self.table(
+                "cybertipline-reports-by-platform",
+                format_juxtaposition(comparison, with_highlights=True)
+            )
 
             self.html("<div class=extra-wide>\n")
             fig = plot_reports_per_provider()
@@ -382,6 +471,98 @@ class Analyzer:
 
             self.h3("Reddit vs Other Platforms")
             self.emit_reddit_vs_others()
+
+            self.h3("Other Measures of Accuracy")
+            self.html(""""
+            <p>We use Meta's self-reported number of reversals to provide a
+            measure of accuracy, despite the fact that the firm states that
+            ”restoring a post doesn't necessarily mean a mistake was made.” As
+            Meta notes, the content pointed to by links may change, making the
+            link acceptable again, and reversals are recorded during the
+            reporting period the content was restored, not the period the
+            content was actioned. Furthermore, Meta uses pieces as the
+            underlying unit for actioning and restoring content; but pieces and
+            CyberTipline reports are only loosely related to each other.</p>
+
+            <p>Having said all that, Meta is responsible for the majority of all
+            CyberTipline reports, only dropping below 80% in 2024, and its data
+            is the best available data. Hence we use it as a potentially
+            approximation.</p>
+            """)
+
+            frame = tabulate(["pieces", "reversals"]).filter(
+                pl.col("source").eq("Meta")
+            ).pivot(
+                on="variable",
+                index=_INDEX,
+            ).select(
+                pl.col("year", "reversals", "pieces"),
+                pl.col("reversals").truediv(pl.col("pieces")).alias("pct_reversals")
+            )
+
+            self.table("meta-reversals", apply_table_style(
+                gt.GT(
+                    frame
+                ).tab_header(
+                    title="Meta’s Rate of Reversal",
+                ).cols_label(
+                    year="Year",
+                    reversals="Reversals",
+                    pieces="Pieces",
+                    pct_reversals="Rate",
+                ).fmt_integer(
+                    columns=["reversals", "pieces"],
+                ).fmt_percent(
+                    columns=["pct_reversals"],
+                    decimals=2,
+                )
+            ))
+
+            frame = tabulate(["reports"], preserve_brands=True).filter(
+                pl.col("source").eq("NCMEC").and_(
+                    pl.col("target").is_in([
+                        "Meta",
+                        "Facebook", "Instagram", "Meta AI", "Threads", "WhatsApp",
+                        "Total",
+                    ])
+                )
+            ).select(
+                pl.col("year", "target", "value")
+            ).pivot(
+                on="target",
+                index="year",
+            ).select(
+                pl.col("year").alias("Year"),
+                pl.col("Total"),
+                pl.col("Meta").truediv(pl.col("Total")).alias("meta_pct_total"),
+                pl.col("Meta", "Facebook", "Instagram", "Threads"),
+                pl.col("Meta AI").alias("meta_ai"),
+                pl.col("WhatsApp"),
+                pl.col("WhatsApp").truediv(pl.col("Meta")).alias("whatsapp_pct_meta"),
+            )
+
+            self.table("meta-reports", apply_table_style(
+                gt.GT(frame).tab_header(
+                    title="Meta’s Reports",
+                ).cols_label(
+                    meta_pct_total=gt.html("Meta/<br>Total"),
+                    meta_ai=gt.html("Meta<br>AI"),
+                    whatsapp_pct_meta=gt.html("WhatsApp/<br>Meta"),
+                ).tab_style(
+                    style=gt.style.fill(color="#ffffb3"),
+                    locations=gt.loc.body(columns=[
+                        "meta_pct_total", "whatsapp_pct_meta"
+                    ]),
+                ).fmt_percent(
+                    columns=["meta_pct_total", "whatsapp_pct_meta"],
+                    decimals=1,
+                ).fmt_integer(
+                    columns=[
+                        "Total", "Meta",
+                        "Facebook", "Instagram", "Threads", "meta_ai", "WhatsApp"
+                    ],
+                )
+            ))
 
         if self._with_crimes:
             self.h2("Crime Statistics About CSAM")
@@ -505,6 +686,104 @@ class Analyzer:
             f' on {date} at {time} UTC.</i></p>'
         )
 
+    def assemble_report_counts(self) -> pl.DataFrame:
+        return pl.read_csv("data/ocse-reports-per-year.csv").join(
+            self._data.filter(
+                pl.col("source").eq("NCMEC").and_(pl.col("target").eq("Meta"))
+            ).select(
+                pl.col("year"),
+                pl.col("value").alias("meta_reports"),
+            ),
+            on="year",
+            how="left",
+        ).join(
+            pl.read_csv("data/populations-simple.csv").select(
+                pl.col("year"),
+                pl.col("population").alias("people"),
+            ),
+            on="year",
+            how="left",
+        ).join(
+            pl.read_csv("data/internet-users-un.csv"),
+            on="year",
+            how="left",
+        ).join(
+            pl.read_csv("data/social-accounts.csv").select(
+                pl.col("year"),
+                pl.col("million_accounts").mul(1_000_000).alias("social_accounts"),
+            ),
+            on="year",
+            how="left",
+        ).select(
+            pl.col("year", "reports", "meta_reports", "people"),
+            pl.col("internet_users_pct").mul(
+                pl.col("people")
+            ).truediv(100).alias("internet_users"),
+            pl.col("social_accounts"),
+            pl.col("reports").mul(1_000).truediv(
+                pl.col("social_accounts")
+            ).alias("reports_per_social"),
+        )
+
+    def emit_growth_models(self, wide_frame: pl.DataFrame) -> pl.DataFrame:
+        decade = wide_frame.filter(
+            pl.col("year").is_between(2014, 2023)
+        ).select(
+            pl.exclude("meta_reports")
+        )
+
+        self.html("""
+            <p>Determine suitable model and its independent variable. First, try
+            exponential model. Second, try linear model with year, people,
+            internet users, social accounts, and social accounts + year as
+            candidates for independent variable.</p>
+        """)
+
+        coefficients = self._runr(decade, """
+library(tidyverse)
+data <- read.csv(text = "{CSV_DATA}")
+
+emit_rule()
+data.year.em <- lm(log(reports) ~ year, data=data)
+emit_text(summary(data.year.em))
+
+emit_rule()
+data.year.lm <- lm(reports ~ year, data=data)
+emit_text(summary(data.year.lm))
+
+emit_rule()
+data.people.lm <- lm(reports ~ people, data=data)
+emit_text(summary(data.people.lm))
+
+emit_rule()
+data.inet.lm <- lm(reports ~ internet_users, data=data)
+emit_text(summary(data.inet.lm))
+
+emit_rule()
+data.social.lm <- lm(reports ~ social_accounts, data=data)
+emit_text(summary(data.social.lm))
+
+emit_rule()
+data.year.social.lm <- lm(reports ~ social_accounts + year, data=data)
+emit_text(summary(data.year.social.lm))
+
+emit_rule()
+data.reports.social.lm <- lm(reports_per_social ~ year, data=data)
+emit_text(summary(data.reports.social.lm))
+
+emit_data(
+    c("Independent Variable", "Dependent Variable", "Intercept", "Slope"),
+    c("Year", "Reports", data.year.lm$coefficients[1:2]),
+    c("Social Accounts", "Reports", data.social.lm$coefficients[1:2]),
+    c("Year", "Reports per Social Accounts", data.reports.social.lm$coefficients[1:2])
+)
+""")
+
+        assert len(coefficients) == 1
+        return coefficients[0].with_columns(
+            pl.col("Slope").cast(pl.Float64)
+        )
+
     def emit_mean_difference_plots(self) -> None:
         self._runr(self._diffs.with_columns(
             pl.col("pct_diff").mul(100)
@@ -623,7 +902,7 @@ plot.grid <- wrap_plots(
     axis_titles = "collect"
 )
 ggsave("figure/comparable-reports.svg", plot.grid, width=11, height=7)
-printr()
+emit_text()
         """)
         self.svg(
             Path("figure/comparable-reports.svg"),
@@ -634,7 +913,7 @@ printr()
         self.html("""
             <p>Omitting the two entries with the biggest percent differences,
             since Aylo and Amazon have provided reasonable explanations for the
-            (substantial) discrepancies.</p>
+            (substantial) discrepancies. At the same time, Pinterest has not.</p>
         """)
 
         print("This may take a while...")
@@ -667,11 +946,11 @@ data.icc <- icc_counts(
     type="con",
     fam="nbinom2"
 )
-printr(ICC(data.icc))
-printr(VarComp(data.icc))
+emit_text(ICC(data.icc))
+emit_text(VarComp(data.icc))
 
 data.gof <- GOF_check(data.icc)
-printr(DispersionTest(data.gof))
+emit_text(DispersionTest(data.gof))
 
 data.plot <- data.gof$plot_env + geom_point(size=2) + theme_linedraw()
 ggsave("figure/comparable-reports-icc-gof.svg", data.plot)
@@ -683,6 +962,13 @@ ggsave("figure/comparable-reports-icc-gof.svg", data.plot)
         )
 
     def emit_reddit_vs_others(self) -> None:
+        self.html("""
+            <p>October 2026: We have seven years of transparency data for
+            Reddit. Hence, the expected counts for Reddit are less than five and
+            we cannot use Pearson's chi-square test. Instead, we utilize
+            Fisher's exact test.</p>
+        """)
+
         counts = self._diffs.select(
             pl.when(
                 pl.col("diff").eq(0)
@@ -708,42 +994,43 @@ ggsave("figure/comparable-reports-icc-gof.svg", data.plot)
             pl.col("count")
         )
 
-        self._runr(counts, """
+        self.html(counts._repr_html_())
+
+        def with_contab(test, extra = None):
+            extra = "" if extra is None else f", {extra}"
+            return f"""
 dt.ftable <- data.frame(
     platform = c("Reddit", "Reddit", "Other", "Other"),
     has_match = c("yes", "no", "yes", "no"),
-    freq = c({VECTOR_DATA})
+    freq = c({{VECTOR_DATA}})
 )
 dt.contab <- xtabs(freq ~ platform + has_match, data = dt.ftable)
-printr(fisher.test(dt.contab))
+
+emit_text({test}(dt.contab{extra}))
+"""
+
+        self._runr(counts, with_contab("fisher.test"))
+        self.html("""
+        <hr>
+        <p>See above for why Pearson's chi-squared test is
+        <strong>the wrong test</strong> for the data.</p>
         """)
+        self._runr(counts, with_contab("chisq.test", "correct=TRUE"))
 
     def emit_sign_test(self) -> None:
-        counts = self._diffs.select(
-            pl.col("diff").sign()
-        ).group_by(
-            pl.col("diff")
-        ).agg(
-            pl.len()
-        ).filter(
-            pl.col("diff").ne(0)
-        ).select(
-            pl.col("diff").alias("sign"),
-            pl.col("len").alias("count"),
-        ).sort(
-            pl.col("sign"), descending=True
-        ).select(
-            pl.col("count")
-        )
+        self._runr(self._diffs.unpivot(
+            on=["provider", "ncmec"],
+            variable_name="source",
+            value_name="reports",
+        ), """
+library(tidyverse)
+library(rstatix)
+tested <- read.csv(text="{CSV_DATA}") |>
+    sign_test(reports ~ source) |>
+    add_significance()
 
-        self._runr(counts, """
-result <- binom.test(
-    c({VECTOR_DATA}),
-    p = 0.5,
-    alternative = "two.sided",
-)
-printr(result)
-        """)
+emit_text(tested)
+""")
 
     def emit_regression_models(self) -> None:
         frame = pl.read_csv("data/ocse-reports-per-year.csv").filter(
@@ -759,9 +1046,9 @@ printr(result)
 data <- read.csv(text="{CSV_DATA}")
 
 data.poisson <- glm(reports ~ year, family = "poisson", data = data)
-printr(data.poisson)
-printr(confint(data.poisson))
-printr(exp(confint(data.poisson)))
+emit_text(data.poisson)
+emit_text(confint(data.poisson))
+emit_text(exp(confint(data.poisson)))
 
 svg("figure/mod-poisson.svg")
 par(mfrow = c(3, 2))
@@ -777,9 +1064,9 @@ library(MASS)
 data <- read.csv(text="{CSV_DATA}")
 data.nbinom <- glm.nb(reports ~ year, data = data)
 
-printr(data.nbinom)
-printr(confint(data.nbinom))
-printr(exp(confint(data.nbinom)))
+emit_text(data.nbinom)
+emit_text(confint(data.nbinom))
+emit_text(exp(confint(data.nbinom)))
 
 svg("figure/mod-nbinom.svg")
 par(mfrow = c(3, 2))
@@ -815,7 +1102,7 @@ vcd::mosaic(
     main = paste0("Offenders by Sex and Age (Australia, 2022/23)")
 )
 dev.off()
-printr()
+emit_text()
         """)
         self.col(2)
         self.svg("figure/au-age-sex-2022-23.svg")
@@ -862,7 +1149,7 @@ for (year in 2023:2024) {{
     )
     dev.off()
 }}
-printr()
+emit_text()
         """)
         self.col(2)
         self.svg("figure/de-age-sex-2023.svg")
@@ -919,7 +1206,7 @@ for (year in 2023:2024) {{
     )
     dev.off()
 }}
-printr()
+emit_text()
         """)
         self.col(2)
         self.svg("figure/nz-age-sex-2023.svg")
@@ -961,7 +1248,7 @@ for (year in 2023:2024) {{
     )
     dev.off()
 }}
-printr()
+emit_text()
         """)
         self.col(2)
         self.svg("figure/es-age-sex-2023.svg")
@@ -1033,7 +1320,7 @@ for (year in 2023:2024) {{
     )
     dev.off()
 }}
-printr()
+emit_text()
         """)
         self.col(2)
         self.svg("figure/us-age-sex-2023.svg")
@@ -1138,36 +1425,6 @@ printr()
             pl.col("fraction").first().mul(100)
         ).item()
 
-        def apply_style(table: gt.GT) -> gt.GT:
-            return table.tab_style(
-            style=gt.style.text(size="small"),
-            locations=gt.loc.body(),
-        ).tab_style(
-            style=gt.style.text(size="small", weight="bold"),
-            locations=gt.loc.column_labels(),
-        ).tab_style(
-            style=gt.style.text(size="medium"),
-            locations=gt.loc.title(),
-        ).opt_vertical_padding(
-            scale=0.8,
-        )
-
-        age_ranges_display = apply_style(gt.GT(age_ranges).tab_header(
-            title="Age Ranges Reducing to 58-Years-Old",
-        ).cols_label(
-            min_age="Min Age",
-            max_age="Max Age",
-            trunc_mean_age="Truncated Mean Age",
-            count="Count",
-        ).fmt_integer(
-            columns=[
-                "min_age",
-                "max_age",
-                "trunc_mean_age",
-                "count"],
-            sep_mark=",",
-        ))
-
         self.html(f"""
             </div>
 
@@ -1185,11 +1442,20 @@ printr()
             Instead, they abused an age range covering (almost) all adult years,
             even though age ranges should cover at most 10 years. The different
             ranges are shown below.</p>
-
-            {age_ranges_display.as_raw_html()}
-
-            <div class=extra-wide>
         """)
+
+        self.table("age-ranges", apply_table_style(gt.GT(age_ranges).tab_header(
+            title="Age Ranges Reducing to 58-Years-Old",
+        ).cols_label(
+            min_age="Min Age",
+            max_age="Max Age",
+            trunc_mean_age="Truncated Mean Age",
+            count="Count",
+        ).fmt_integer(
+            columns=["min_age", "max_age", "trunc_mean_age", "count"],
+        )))
+
+        self.html("<div class=extra-wide>")
 
         # Mosaics I: Highlight minors
         self.h4("Sex Ratios Amongst Minors and Adults")
@@ -1286,7 +1552,7 @@ printr()
         self.html("</div>\n")
 
         self.html("<div class=wide>\n")
-        self.emit_contingency_tables(
+        latex = self.emit_contingency_tables(
             full_data,
             x_axis="age_group",
             y_axis="sex",
@@ -1297,7 +1563,10 @@ printr()
             include_null=True,
             use_minor=True,
         )
+
         self.html("</div>\n")
+
+        Path("figure/age-sex-data.tex").write_text(latex, encoding="utf8")
 
         # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         self.h3("Perpetrators by Country, Year, Activity, and Age Group")
@@ -1568,6 +1837,7 @@ printr()
         """)
 
         self.emit_age_crime_curve_statistics(
+            "de-age-crime-curve",
             de_curves,
             "Germany: Normalized Age Distributions (All Offenders)"
         )
@@ -1628,8 +1898,9 @@ printr()
         self.html("</div>\n")
 
         self.emit_age_crime_curve_statistics(
+            "de-age-crime-curve-filtered",
             restricted_curves,
-            "Germany: Normalized Age Distributions (Restricted Offenders)"
+            "Germany: Normalized Age Distributions (Filtered Offenders)"
         )
 
         # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
@@ -1678,7 +1949,7 @@ printr()
         href="https://pxdata.stat.fi/PxWeb/pxweb/en/StatFin/StatFin__rpk/statfin_rpk_pxt_13kr.px/">StatFin
         table 13kr</a> with the "Persons suspected of solved offences by the
         International Classification of Crime for Statistical Purposes (ICCS),
-        year of solving, age, sex and nationality, 2006-2024."
+        year of solving, age, sex and nationality, 2006-2025."
 
         <li><strong>Germany</strong>: The Bundeskriminalamt's <a
         href="https://www.bka.de/DE/AktuelleInformationen/StatistikenLagebilder/PolizeilicheKriminalstatistik/pks_node.html">polizeiliche
@@ -1731,7 +2002,7 @@ printr()
         index: None | dict[str, Sequence[None | str]] = None,
         include_null: bool = False,
         use_minor: bool = False,
-    ) -> None:
+    ) -> str:
         # Prepare index
         x_class = x_axis.lower().replace("_", "-")
         y_class = y_axis.lower().replace("_", "-")
@@ -1744,6 +2015,16 @@ printr()
             use_minor=use_minor,
             index=index,
         )
+
+        latex = []
+        latex_row_cache = [[], []]
+
+        def finish_latex_rows():
+            nonlocal latex_row_cache
+            for row in latex_row_cache:
+                latex.extend(row)
+                latex.append("\\\\\n")
+            latex_row_cache = [[], []]
 
         markup = []
         metric = None
@@ -1766,6 +2047,7 @@ printr()
                 if current_row != previous_row:
                     if previous_row is not None:
                         markup.append("  </tr>\n")
+                        finish_latex_rows()
                     markup.append(f"  <tr class=row{current_row}>\n")
                     previous_row = current_row
 
@@ -1775,7 +2057,15 @@ printr()
                     f"<span class=fraction>{fraction}</span>"
                     "</td>\n"
                 )
+
+                if index % row_size != 0:
+                    latex_row_cache[0].append(" & ")
+                    latex_row_cache[1].append(" & ")
+                latex_row_cache[0].append(" " if count == "&nbsp;" else count)
+                latex_row_cache[1].append(" " if fraction == "&nbsp;" else fraction[:-2] + "\\%)")
+
             markup.append("  </tr>\n")
+            finish_latex_rows()
 
         for selectors, group in contingencies.group_by(
             "country", "material", "role", "metric", "metric_order", "data_year",
@@ -1790,11 +2080,15 @@ printr()
             if metric != selectors[3]:
                 if metric is not None:
                     markup.append("</div>\n")
+                    latex.append("\\end{table}\n\n")
+
                     self.html("".join(markup))
                     markup = []
 
                 metric = selectors[3]
                 self.h4(f"Contingency Tables for {metric}")
+                latex.append("\\begin{table}\n")
+                latex.append(f"\\caption{{Contingency Tables for {metric}}}\n")
 
                 classes = f"{y_class}-vs-{x_class}"
                 if y_class == "outcome":
@@ -1812,8 +2106,17 @@ printr()
             markup.append("<table class=contingency>\n")
             markup.append(f"<caption>{selectors[5]}: N={total:,d}</caption>\n")
             markup.append("<tbody>\n")
+
+            latex.append("\\begin{minipage}{6.2em}\n")
+            latex.append(f"\\caption{{{selectors[5]}: N={total:,d}}}\n")
+            # Assumes \newcolumntype{R}{>{\raggedright}p{2em}}
+            latex.append(f"\\begin{{tabular}}{{{"R" * row_size}}}\n")
+            latex.append("\\toprule\n")
+
             do_emit_cells(group)
+
             markup.append("</tbody>\n")
+            latex.append("\\midrule\n")
 
             x_group = group.group_by(
                 x_axis, maintain_order=True
@@ -1827,11 +2130,19 @@ printr()
 
             markup.append("</table>\n")
 
+            latex.append("\\bottomrule\n")
+            latex.append("\\end{tabular}\n")
+            latex.append("\\end{minipage}\n")
+
         markup.append("</div>\n")
+        latex.append("\\end{table}\n\n")
+
         self.html("".join(markup))
+        return "".join(latex)
 
     def emit_age_crime_curve_statistics(
         self,
+        name: str,
         data: pl.DataFrame,
         title: str,
     ) -> None:
@@ -1932,7 +2243,8 @@ printr()
             pl.col(Id.YEAR).unique()
         ).to_series()]
 
-        self.html(
+        self.table(
+            name,
             gt.GT(
                 stats
             ).tab_header(
@@ -1954,7 +2266,7 @@ printr()
                 locations=gt.loc.row_groups,
             ).opt_vertical_padding(
                 scale=0.8,
-            ).as_raw_html()
+            )
         )
 
     def emit_age_buckets(self) -> None:
@@ -2053,23 +2365,32 @@ printr()
     def end_col(self) -> None:
         self.html("</div>\n")
 
-    def _runr(self, frame: pl.DataFrame, template: str, is_html: bool = False) -> None:
-        fragments = _runr(frame, template)
+    def _runr(
+        self, frame: pl.DataFrame, template: str, is_html: bool = False
+    ) -> list[pl.DataFrame]:
+        text_sections, data_sections = _runr(frame, template)
 
         skip_hr = not _IS_DEBUG
-        for fragment in fragments:
-            if fragment.strip() == "":
+        for text_section in text_sections:
+            if text_section.strip() == "":
                 continue
 
             if not skip_hr:
                 _print_heading(weight="light")
             skip_hr = False
-            print(fragment)
+            print(text_section)
 
             if is_html:
-                self.html(fragment)
+                self.html(text_section)
             else:
-                self.html(f"<pre><code>\n{fragment}\n</code></pre>\n")
+                self.html(f"<pre><code>\n{text_section}\n</code></pre>\n")
+
+        return data_sections
+
+    def table(self, name: str, table: gt.GT) -> None:
+        self.html(table.as_raw_html())
+        path = Path("table") / f"{name}.tex"
+        path.write_text(table.as_latex(), encoding="utf8")
 
     def html(self, html: str) -> None:
         self._file.write(html)
@@ -2477,40 +2798,56 @@ table.contingency tbody .row4 .col4 { background-color: var(--row4-col4); }
 """
 
 
-_MARKER_BEGIN = "### BEGIN-RESULT ###"
-_MARKER_END = "### END-RESULT ###"
+# The minimal R library for emitting results that need to be communicated back
+# to the Python process. It supports text, horizontal rules, and data frames.
+# The source code of the library breaks apart the result markers to avoid
+# unintended matches in the output. The markers are printed before formatting
+# the result to avoid missing any output.
+_LIBR = """
+emit_text <- function(value = NULL, section = "TEXT") {
+    cat("#", "#", "#", " BEGIN-SECTION ", section, " #", "#", "#", "\\n", sep="")
 
-_PRINTR = f"""
-printr <- function(value = NULL) {{
-    cat2 <- function(...) cat(paste0(c(...), collapse = ""))
-
-    # Split markers to avoid spurious matches. Print marker before
-    # capturing the output to avoid missed output.
-    cat2("#", "#", "#", " BEGIN-RESULT ", "#", "#", "#", "\\n")
-
-    if (is.null(value)) {{
-        lines <- c()
-    }} else if (is.character(value)) {{
-        lines <- strsplit(value, "\n")
-    }} else {{
+    if (is.null(value)) {
+        cat()
+    } else if (is.character(value)) {
+        cat(value, "\\n", sep="")
+    } else {
         lines <- capture.output(print(value))
-        lines <- gsub("\t", "    ", lines)
-    }}
+        lines <- gsub("\\t", "    ", lines)
+        for (line in lines) {
+            cat(line, "\\n", sep="")
+        }
+    }
 
-    for (line in lines) {{
-        cat2(line, "\\n")
-    }}
+    cat("#", "#", "#", " END-SECTION ", section, " #", "#", "#", "\\n", sep="")
+}
 
-    cat2("#", "#", "#", " END-RESULT ", "#", "#", "#", "\\n")
-}}
+emit_rule <- function() {
+    emit_text("────────────────────────────────────────────────────────────────────────────────")
+}
+
+emit_data <- function(...) {
+    emit_text(
+        paste0(
+            map(
+                list(...),
+                \\(row) paste0(format(row, trim=TRUE, justify="none"), collapse=",")
+            ),
+            collapse="\\n"
+        ),
+        section = "DATA"
+    )
+}
 """
 
-_RESULT_REGEX = re.compile(fr"{_MARKER_BEGIN}(.*?){_MARKER_END}", re.DOTALL)
-_TRIM_WS = re.compile(r"^(?:[ \t]*\n)*(.*?)(?:\n*)$", re.DOTALL)
+_MARKER_REGEX = re.compile(
+    r"### BEGIN-SECTION ([A-Z]+) ###(.*?)### END-SECTION ([A-Z]+) ###",
+    re.DOTALL,
+)
 _WIDTH, _ = shutil.get_terminal_size()
 _IS_DEBUG = bool(os.getenv("DEBUG"))
 
-def _runr(data: pl.DataFrame, template: str) -> list[str]:
+def _runr(data: pl.DataFrame, template: str) -> tuple[list[str], list[pl.DataFrame]]:
     if len(data) == 1:
         values = data.row(0)
     elif len(data.columns) == 1:
@@ -2519,20 +2856,18 @@ def _runr(data: pl.DataFrame, template: str) -> list[str]:
         values = None
 
     if values is not None:
-        code = template.format(VECTOR_DATA=", ".join((str(v) for v in values)))
+        input = template.format(VECTOR_DATA=", ".join((str(v) for v in values)))
     else:
         buffer = StringIO()
         data.write_csv(buffer)
-        code = template.format(CSV_DATA=buffer.getvalue())
-
-    input = _PRINTR + code
+        input = template.format(CSV_DATA=buffer.getvalue())
 
     if _IS_DEBUG:
         _print_heading("R Input", weight = "light")
         print(input)
 
     completion = subprocess.run(["R", "--vanilla"],
-        input=input,
+        input=_LIBR + input,
         encoding="utf8",
         stderr=subprocess.STDOUT,
         stdout=subprocess.PIPE,
@@ -2546,16 +2881,27 @@ def _runr(data: pl.DataFrame, template: str) -> list[str]:
     if completion.returncode != 0:
         raise ValueError(f"R exited due to error:\n{output}")
 
-    results = _RESULT_REGEX.findall(output)
-    if not results:
-        raise ValueError(f"R did not produce result:\n{output}")
+    sections = _MARKER_REGEX.findall(output)
+    if not sections:
+        raise ValueError(f"R did not produce an output section: {output}")
 
-    trimmed_results = []
-    for result in results:
-        match = _TRIM_WS.match(result)
-        assert match is not None
-        trimmed_results.append(match.group(1))
-    return trimmed_results
+    text_sections = []
+    data_sections = []
+    for (label, fragment, label_too) in sections:
+        if label != label_too:
+            raise ValueError(
+                f"output section starts with {label} but ends with {label_too}"
+            )
+
+        fragment = fragment.strip() + "\n"
+        if label == "TEXT":
+            text_sections.append(fragment)
+        elif label == "DATA":
+            data_sections.append(pl.read_csv(StringIO(fragment)))
+        else:
+            raise ValueError(f"unknown output section {label}")
+
+    return text_sections, data_sections
 
 
 def _print_heading(
@@ -2606,7 +2952,15 @@ def juxtapose(frame: pl.DataFrame) -> pl.DataFrame:
         pl.col("reports").list.first(),
         pl.col("NCMEC").list.first(),
     ).with_columns(
-        pl.col("pieces").truediv(pl.col("reports")).alias("pieces_factor"),
+        pl.col("pieces").truediv(
+            pl.when(
+                pl.col("reports").is_not_null()
+            ).then(
+                pl.col("reports")
+            ).otherwise(
+                pl.col("NCMEC")
+            )
+        ).alias("pieces_factor"),
         pl.col("NCMEC").add(pl.col("reports")).truediv(2).alias("mean_reports")
     ).with_columns(
         pl.col("NCMEC").sub(pl.col("reports")).truediv("mean_reports").alias("pct_diff"),
@@ -2729,7 +3083,6 @@ def format_juxtaposition(frame: pl.DataFrame, with_highlights: bool = False) -> 
 
     return table.fmt_integer(
         columns=["pieces", "reports", "NCMEC", "total"],
-        sep_mark=","
     ).fmt_number(
         columns=["pieces_factor"],
         decimals=2,
@@ -2757,7 +3110,7 @@ def format_juxtaposition(frame: pl.DataFrame, with_highlights: bool = False) -> 
 # --------------------------------------------------------------------------------------
 
 _PROVIDERS = [
-    ["Meta"],
+    ["(Total)", "Meta"],
     ["Amazon", "Google", "Snap", "TikTok", "X"],
     ["Discord", "MediaLab", "Omegle", "Reddit", "Pinterest"],
     ["Automattic", "Grindr", "Microsoft", "OpenAI", "X.AI"],
@@ -2777,11 +3130,11 @@ def plot_reports_per_provider() -> alt.VConcatChart:
         pl.col("source").eq("NCMEC").and_(
             pl.col("variable").eq("reports")
         ).and_(
-            pl.col("target").is_in(["Total", "ESP Total"]).not_()
+            pl.col("target").ne("ESP Total")
         )
     ).select(
         pl.col("year"),
-        pl.col("target").alias("provider"),
+        pl.col("target").replace("Total", "(Total)").alias("provider"),
         pl.col("value").truediv(1_000_000).alias("reports"),
     )
 
@@ -2802,8 +3155,8 @@ def plot_reports_per_provider() -> alt.VConcatChart:
             chart = chart + alt.Chart(data.filter(
                 pl.col("provider").eq("X.AI")
             )).mark_point(
-                shape="triangle",
-                size=50,
+                shape="M-1,-1L1,1M-1,1L1,-1",
+                size=40,
             ).encode(
                 alt.X("year:O"),
                 alt.Y("reports:Q"),
@@ -2813,8 +3166,10 @@ def plot_reports_per_provider() -> alt.VConcatChart:
         charts.append(chart)
 
     return alt.vconcat(
-        alt.hconcat(*charts[:3]).resolve_scale(x="shared", color="independent"),
-        alt.hconcat(*charts[3:]).resolve_scale(x="shared", color="independent"),
+        *(
+            alt.hconcat(*b).resolve_scale(x="shared", color="independent")
+            for b in itertools.batched(charts, 2)
+        )
     ).resolve_scale(
         x="shared", color="independent"
     ).properties(
