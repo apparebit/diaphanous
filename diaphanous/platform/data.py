@@ -136,6 +136,15 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             "https://discord.com/safety-transparency-reports/2023-q3",
             "https://discord.com/safety-transparency-reports/2023-q4",
             "https://discord.com/safety-transparency-reports/2024-h1",
+            "https://cdn.discordapp.com/assets/transparency-reports/Discord-Transparency-Report-Q1-2022.zip",
+            "https://cdn.discordapp.com/assets/transparency-reports/Discord-Transparency-Report-Q2-2022.zip",
+            "https://cdn.discordapp.com/assets/transparency-reports/Discord-Transparency-Report-Q3-2022.zip",
+            "https://cdn.discordapp.com/assets/transparency-reports/Discord-Transparency-Report-Q1-2023.zip",
+            "https://cdn.discordapp.com/assets/transparency-reports/Discord-Transparency-Report-Q2-2023.zip",
+            "https://cdn.discordapp.com/assets/transparency-reports/Discord-Transparency-Report-Q3-2023.zip",
+            "https://cdn.discordapp.com/assets/transparency-reports/Discord-Transparency-Report-Q4-2023.zip",
+            "https://cdn.discordapp.com/assets/transparency-reports/Discord-Transparency-Report-H1-2024.zip",
+            "https://cdn.discordapp.com/assets/transparency-reports/Discord-Transparency-Report-2026-Updated.pdf",
         ),
         "comments": [
             "As of mid-February 2026, Discord has not released a transparency",
@@ -322,6 +331,9 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
         "features": frozen({
             "social_media": True,
         }),
+        "sources": [
+            "https://help.grindr.com/hc/en-us/articles/38555862683795-Grindr-EU-Digital-Services-Act-Transparency-Reports",
+        ],
         "comments": (
             "Grindr adheres to the European Union's Digital Services Act and",
             "publishes transparency reports about its content moderation.",
@@ -928,6 +940,37 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "TikTok": frozen({
+        "sources": (
+            "https://www.tiktok.com/safety/en/transparency/child-exploitation"
+        ),
+        "features": frozen({
+            "data": "CSV",
+            "history": "same page dropdown",
+            "terms": ("child sexual exploitation", "CSEA"),
+            "quantities": "counts",
+            "granularity": "H",
+            "frequency": "H",
+            "coverage": "2023 H1",
+            "social_media": True,
+        }),
+        "columns": [
+            "reports",
+            "pieces",
+            "accounts"
+        ],
+        "rows": [
+            # fmt: off
+            {"2025 H2": (1_497_003, 1_795_565,   918_659)},
+            {"2025 H1": (2_103_055, 2_331_712, 1_026_570)},
+            {"2024 H2": (  730_518, 1_012_026,   557_885)},
+            {"2024 H1": (  661_632,   742_724,   444_705)},
+            {"2023 H2": (  362_108,   595_709,   312_517)},
+            {"2023 H1": (  226_821,   252_909,   209_788)},
+            # fmt: on
+        ],
+    }),
+    # ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    "TikTok (formerly)": frozen({
         "sources": (
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-4/",
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-3/",
