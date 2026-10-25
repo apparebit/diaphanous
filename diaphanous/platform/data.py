@@ -941,7 +941,7 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "TikTok": frozen({
         "sources": (
-            "https://www.tiktok.com/safety/en/transparency/child-exploitation"
+            "https://www.tiktok.com/safety/en/transparency/child-exploitation",
         ),
         "features": frozen({
             "data": "CSV",
@@ -1181,7 +1181,6 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "X": frozen({
-        "aka": ("Twitter",),
         "sources": (
             "https://transparency.x.com/content/dam/transparency-twitter/2024/x-global-transparency-report-h1.pdf",
             "https://transparency.x.com/en/reports/global-reports/2025-transparency-report",
@@ -1218,6 +1217,10 @@ REPORTS_PER_PLATFORM: DisclosureCollectionType = frozen({
             {"2024 H1": (None, None, None, 1_645, 12_926, 35_176, 335_412, 2_388_683, 392_951)},
             # fmt: on
         ),
+    }),
+    # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    "X.AI": frozen({
+        "brands": ("Twitter", "X"),
     }),
     # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     "YouTube": frozen({

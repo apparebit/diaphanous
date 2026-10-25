@@ -15,52 +15,54 @@ def plot_yearly_reports(
     charts = [
         alt.Chart(
             frame.filter(
-                pl.col("variable").is_in(["All Reports", "Meta’s Reports"])
+                pl.col("variable").eq("All Reports").and_(
+                    pl.col("year").ge(2005)
+                )
             ).with_columns(
                 pl.col("value").truediv(1_000_000),
             )
         ).mark_line().encode(
-            alt.X("year:Q").axis(
+            alt.X("year:O").axis(
                 title=None,
                 labels=False,
             ),
             alt.Y("value:Q").axis(
-                labelFontSize=15,
-                title="Reports (Millions)",
-                titleFontSize=15,
+                labelFontSize=14,
+                title="CyberTipline Reports (Millions)",
+                titleFontSize=14,
                 titlePadding=20,
             ),
-            alt.Color("variable:N").title(None).legend(
-                orient="top-left",
-                labelFontSize=15,
-            ),
         ).properties(
-            height=250,
+            height=200,
             width=500,
         ),
         alt.Chart(
             frame.filter(
-                pl.col("variable").is_in(["People", "Internet Users", "Social Accounts"])
+                pl.col("variable").is_in(["People", "Internet Users", "Social Accounts"]).and_(
+                    pl.col("year").ge(2005)
+                )
             ).with_columns(
                 pl.col("value").truediv(1_000_000_000),
             )
         ).mark_line().encode(
-            alt.X("year:Q").axis(
-                title=None,
-                labels=False,
+            alt.X("year:O").axis(
+                labelAngle=-45,
+                labelFontSize=14,
+                title="Year",
+                titleFontSize=14,
             ),
             alt.Y("value:Q").axis(
-                labelFontSize=15,
+                labelFontSize=14,
                 title="Population Size (Billions)",
-                titleFontSize=15,
+                titleFontSize=14,
                 titlePadding=20,
             ),
             alt.Color("variable:N").title(None).legend(
                 orient="top-left",
-                labelFontSize=15,
+                labelFontSize=14,
             ),
         ).properties(
-            height=250,
+            height=200,
             width=500,
         ),
     ]
@@ -257,29 +259,42 @@ def plot_sex_by_age_detailed(
     )
 
 
-def plot_sex_by_age_grid(frame: pl.DataFrame) -> alt.VConcatChart:
+def plot_sex_by_age_grid(frame: pl.DataFrame, with_title: bool = True) -> alt.VConcatChart:
     group_iter = frame.group_by("country", "material", "role", maintain_order=True)
     rows = []
+
+    has_arrestees = 0 < frame.select(
+        pl.col("role").eq("Arrestee").sum()
+    ).item()
 
     for labels, group in group_iter:
         country, material, role = labels
         with_label = (
-            country == "United States" and material == "Porn" and role == "Arrestee"
+            country == "United States" and material == "Porn" and (
+                not has_arrestees or role == "Arrestee"
+            )
         )
         rows.append(
             plot_sex_by_age(group, country, material, role, facet_labels=with_label)
         )
 
-    return alt.vconcat(
-        hrule(7.5, 11 * 300 + 12 * 20),
+    result = alt.vconcat(
+        *(
+            [hrule(7.5, 11 * 300 + 12 * 20)] if with_title else []
+        ),
         *rows,
-        spacing=30,
+        spacing=30
     ).resolve_scale(
         x="shared"
     ).configure_axis(
         labelFontSize=35,
         titleFontSize=40,
-    ).properties(
+    )
+
+    if with_title:
+        return result
+
+    return result.properties(
         title=alt.Title(
             "Perpetrators by Country, Year (2015⇒2024), Sex (Female↓, Male↑), "
             " and Age (0→100)",
@@ -373,12 +388,29 @@ def plot_sex_by_age(
     ymin, ystep, ymax = to_axis_range(actual_min, actual_max)
     #print(f">>>>> {actual_min}| from {ymin:,} by {ystep:,} to {ymax:,} | {actual_max}")
 
-    data = data.select(
-        "data_year",
-        "age", "age_group",
-        "range_start", "range_stop",
-        "total_shown", "not_shown",
-    )
+    # We don't need to repeat the labels for every row of range data. Instead we
+    # add a few targeted rows with empty range data.
+    data = pl.concat([
+        data.select(
+            pl.col("data_year", "age", "age_group", "range_start", "range_stop"),
+            pl.lit("", dtype=pl.String).alias("total_shown"),
+            pl.lit("", dtype=pl.String).alias("not_shown"),
+        ),
+        data.group_by(
+            "data_year",
+        ).agg(
+            pl.col("total_shown", "not_shown").first()
+        ).select(
+            pl.col("data_year"),
+            pl.lit(None, dtype=pl.Int8).alias("age"),
+            pl.lit(None, dtype=pl.String).alias("age_group"),
+            pl.lit(None, dtype=pl.Float64).alias("range_start"),
+            pl.lit(None, dtype=pl.Float64).alias("range_stop"),
+            pl.col("total_shown", "not_shown"),
+        )
+    ])
+
+    base = alt.Chart(data)
 
     yaxis = alt.Axis(
         labelExpr=(
@@ -388,8 +420,6 @@ def plot_sex_by_age(
         tickMinStep=ystep,
         orient="right",
     )
-
-    base = alt.Chart(data)
 
     return alt.layer(
         base.mark_bar().encode(

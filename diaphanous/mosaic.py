@@ -954,7 +954,8 @@ def plot_odds_ratio_grid(
     cell_height: float = 300,
     column_count: int = 5,
     gap: float = 20,
-    second_variable: str = "Sex"
+    second_variable: str = "Sex",
+    with_title: bool = True,
 ) -> alt.VConcatChart:
     group_iter = frame.group_by("country", "material", "role", maintain_order=True)
     grid = []
@@ -1003,7 +1004,7 @@ def plot_odds_ratio_grid(
                 fontSize=15,
                 x=cell_width,
                 dx=-17,
-                y=4 * cell_height / 10 + cell_height / 10 / 2,
+                y=4 * cell_height / 11 + cell_height / 11 / 2,
                 align="right",
                 baseline="middle",
             ).encode(
@@ -1078,13 +1079,20 @@ def plot_odds_ratio_grid(
 
         grid[-1].append(chart)
 
-    return alt.vconcat(
-        hrule(3, column_count * cell_width + (column_count + 1) * gap),
+    result = alt.vconcat(
+        *(
+            [hrule(3, column_count * cell_width + (column_count + 1) * gap)] if with_title else []
+        ),
         *(
             alt.hconcat(*row, spacing=gap) for row in grid
         ),
         spacing=gap,
-    ).properties(
+    )
+
+    if not with_title:
+        return result
+
+    return result.properties(
         title=alt.Title(
             f"Odds Ratios by Country, Year, {second_variable}, and Age Group",
             fontSize=25,

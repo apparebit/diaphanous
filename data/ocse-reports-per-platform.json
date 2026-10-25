@@ -111,7 +111,16 @@
             "https://discord.com/safety-transparency-reports/2023-q2",
             "https://discord.com/safety-transparency-reports/2023-q3",
             "https://discord.com/safety-transparency-reports/2023-q4",
-            "https://discord.com/safety-transparency-reports/2024-h1"
+            "https://discord.com/safety-transparency-reports/2024-h1",
+            "https://cdn.discordapp.com/assets/transparency-reports/Discord-Transparency-Report-Q1-2022.zip",
+            "https://cdn.discordapp.com/assets/transparency-reports/Discord-Transparency-Report-Q2-2022.zip",
+            "https://cdn.discordapp.com/assets/transparency-reports/Discord-Transparency-Report-Q3-2022.zip",
+            "https://cdn.discordapp.com/assets/transparency-reports/Discord-Transparency-Report-Q1-2023.zip",
+            "https://cdn.discordapp.com/assets/transparency-reports/Discord-Transparency-Report-Q2-2023.zip",
+            "https://cdn.discordapp.com/assets/transparency-reports/Discord-Transparency-Report-Q3-2023.zip",
+            "https://cdn.discordapp.com/assets/transparency-reports/Discord-Transparency-Report-Q4-2023.zip",
+            "https://cdn.discordapp.com/assets/transparency-reports/Discord-Transparency-Report-H1-2024.zip",
+            "https://cdn.discordapp.com/assets/transparency-reports/Discord-Transparency-Report-2026-Updated.pdf"
         ],
         "comments": [
             "As of mid-February 2026, Discord has not released a transparency",
@@ -189,6 +198,12 @@
             "pieces": [
                 "pieces (Child Nudity & Sexual Exploitation)",
                 "pieces (Child Endangerment: Sexual Exploitation)"
+            ],
+            "reversals": [
+                "reversals (Child Nudity & Sexual Exploitation)",
+                "reversals (Child Endangerment: Sexual Exploitation)",
+                "reversals w/o appeal (Child Nudity & Sexual Exploitation)",
+                "reversals w/o appeal (Child Endangerment: Sexual Exploitation)"
             ]
         },
         "rows": [
@@ -290,6 +305,7 @@
         "features": {
             "social_media": true
         },
+        "sources": ["https://help.grindr.com/hc/en-us/articles/38555862683795-Grindr-EU-Digital-Services-Act-Transparency-Reports"],
         "comments": [
             "Grindr adheres to the European Union's Digital Services Act and",
             "publishes transparency reports about its content moderation.",
@@ -335,6 +351,12 @@
             "pieces": [
                 "pieces (Child Nudity & Sexual Exploitation)",
                 "pieces (Child Endangerment: Sexual Exploitation)"
+            ],
+            "reversals": [
+                "reversals (Child Nudity & Sexual Exploitation)",
+                "reversals (Child Endangerment: Sexual Exploitation)",
+                "reversals w/o appeal (Child Nudity & Sexual Exploitation)",
+                "reversals w/o appeal (Child Endangerment: Sexual Exploitation)"
             ]
         },
         "rows": [
@@ -852,6 +874,35 @@
         }
     },
     "TikTok": {
+        "sources": ["https://www.tiktok.com/safety/en/transparency/child-exploitation"],
+        "features": {
+            "data": "CSV",
+            "history": "same page dropdown",
+            "terms": [
+                "child sexual exploitation",
+                "CSEA"
+            ],
+            "quantities": "counts",
+            "granularity": "H",
+            "frequency": "H",
+            "coverage": "2023 H1",
+            "social_media": true
+        },
+        "columns": [
+            "reports",
+            "pieces",
+            "accounts"
+        ],
+        "rows": [
+            {"2025 H2": [1497003, 1795565, 918659]},
+            {"2025 H1": [2103055, 2331712, 1026570]},
+            {"2024 H2": [730518, 1012026, 557885]},
+            {"2024 H1": [661632, 742724, 444705]},
+            {"2023 H2": [362108, 595709, 312517]},
+            {"2023 H1": [226821, 252909, 209788]}
+        ]
+    },
+    "TikTok (formerly)": {
         "sources": [
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-4/",
             "https://www.tiktok.com/transparency/en/community-guidelines-enforcement-2023-3/",
@@ -1061,7 +1112,6 @@
         }
     },
     "X": {
-        "aka": ["Twitter"],
         "sources": [
             "https://transparency.x.com/content/dam/transparency-twitter/2024/x-global-transparency-report-h1.pdf",
             "https://transparency.x.com/en/reports/global-reports/2025-transparency-report"
@@ -1108,6 +1158,9 @@
             {"2024 H2": [null, null, null, 1398, 1383, 45616, 268301, 1732324, 58528]},
             {"2024 H1": [null, null, null, 1645, 12926, 35176, 335412, 2388683, 392951]}
         ]
+    },
+    "X.AI": {
+        "brands": ["Twitter", "X"]
     },
     "YouTube": {
         "sources": ["https://transparencyreport.google.com/child-sexual-abuse-material/"],
@@ -1201,6 +1254,7 @@
             {"2019": ["LinkedIn", 88, null, null]},
             {"2019": ["MediaLab", 38, null, null]},
             {"2019": ["Meta", 15884511, null, null]},
+            {"2019": ["Meta AI", null, null, null]},
             {"2019": ["Microsoft", 123839, null, null]},
             {"2019": ["MindGeek", null, null, null]},
             {"2019": ["Omegle", 3470, null, null]},
@@ -1239,6 +1293,7 @@
             {"2020": ["LinkedIn", 60, null, null]},
             {"2020": ["MediaLab", null, null, null]},
             {"2020": ["Meta", 20307216, null, null]},
+            {"2020": ["Meta AI", null, null, null]},
             {"2020": ["Microsoft", 96776, null, null]},
             {"2020": ["MindGeek", 13229, null, null]},
             {"2020": ["Omegle", 20265, null, null]},
@@ -1279,6 +1334,7 @@
             {"2021": ["LinkedIn", 110, null, null]},
             {"2021": ["MediaLab", null, null, null]},
             {"2021": ["Meta", null, null, null]},
+            {"2021": ["Meta AI", null, null, null]},
             {"2021": ["MindGeek", 16, null, null]},
             {"2021": ["MindGeek", 21, null, null]},
             {"2021": ["MindGeek", 6, null, null]},
@@ -1324,6 +1380,7 @@
             {"2022": ["LinkedIn", 201, null, null]},
             {"2022": ["MediaLab", null, null, null]},
             {"2022": ["Meta", null, null, null]},
+            {"2022": ["Meta AI", null, null, null]},
             {"2022": ["MindGeek", 91, null, null]},
             {"2022": ["MindGeek", 6, null, null]},
             {"2022": ["MindGeek", 2, null, null]},
@@ -1373,6 +1430,7 @@
             {"2023": ["LinkedIn", 209, null, null]},
             {"2023": ["MediaLab", null, null, null]},
             {"2023": ["Meta", null, null, null]},
+            {"2023": ["Meta AI", null, null, null]},
             {"2023": ["MindGeek", 44, null, null]},
             {"2023": ["MindGeek", 7, null, null]},
             {"2023": ["MindGeek", 1, null, null]},
@@ -1424,6 +1482,7 @@
             {"2024": ["LinkedIn", 127, null, null]},
             {"2024": ["MediaLab", null, null, null]},
             {"2024": ["Meta", null, null, null]},
+            {"2024": ["Meta AI", null, null, null]},
             {"2024": ["MindGeek", 30, null, null]},
             {"2024": ["Microsoft", 101009, null, null]},
             {"2024": ["Microsoft", 1324, null, null]},

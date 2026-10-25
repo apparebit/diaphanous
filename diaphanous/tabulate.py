@@ -58,7 +58,11 @@ def tabulate(
     frames = []
 
     for platform, data in cast(Iterator[tuple[str, Any]], REPORTS_PER_PLATFORM.items()):
-        if platform == "@" or data is None or data.get("rows") is None:
+        if (
+            platform in ("@", "TikTok (formerly)")
+            or data is None
+            or data.get("rows") is None
+        ):
             continue
 
         frame = _ingest_frame(platform, data["rows"], data["columns"])
@@ -348,7 +352,7 @@ class Analyzer:
                     "internet_users": "Internet Users",
                     "social_accounts": "Social Accounts",
                     "reports_per_social": "Reports per 1k Social Accounts",
-                })
+                }),
             )
 
             self.chart(plot_yearly_reports(long_frame))
@@ -374,6 +378,125 @@ class Analyzer:
             ))
 
             self.emit_regression_models()
+
+            self.h3("Breaking Down Report Counts")
+
+            report_contents = pl.read_csv("data/ocse-report-contents.csv").with_columns(
+                pl.col("quantity").str.replace_all(",", "").cast(pl.Int64),
+            )
+
+            prohibitions = report_contents.filter(
+                pl.col("category").eq("kind of exploitation"),
+            ).pivot(
+                on="label",
+                index="year",
+                values="quantity",
+            ).rename({
+                "year": "Year",
+                "child pornography": "CSAM",
+                "misleading words/images online": "Misleading Content",
+                "online enticement of children": "Entice­ment",
+                "child sex trafficking": "Traf­ficking",
+                "obscene material sent to a child": "Obscene Material",
+                "misleading domain name": "Domain Names",
+                "child sexual molestation": "Moles­tation",
+                "child sex tourism": "Sex Tourism",
+            }).with_columns(
+                pl.sum_horizontal(
+                    pl.exclude("Year")
+                ).alias("Total"),
+            ).with_columns(
+                pl.exclude("Year", "Total").truediv(
+                    pl.col("Total")
+                ),
+            )
+
+            self.table("reports-by-prohibition", apply_table_style(
+                gt.GT(prohibitions).tab_header(
+                    title="Reports by Prohibition",
+                ).fmt_integer(
+                    columns="Total",
+                ).fmt_percent(
+                    columns=pl.exclude("Year", "Total", "CSAM"),
+                    decimals=3,
+                ).fmt_percent(
+                    columns="CSAM",
+                    decimals=1,
+                )
+            ))
+
+            unique_or_similar = report_contents.filter(
+                pl.col("category").eq("reports"),
+            ).pivot(
+                on="label",
+                index="year",
+                values="quantity",
+            ).rename({
+                "year": "Year",
+                "total": "Filed",
+                "with unique photos/videos": "Unique",
+                "with similar photos/videos": "Similar",
+            }).with_columns(
+                pl.col("Unique", "Similar").truediv("Filed"),
+            )
+
+            self.table("unique-and-similar-pieces", apply_table_style(
+                gt.GT(unique_or_similar).tab_header(
+                    title="Reports by Attachments",
+                    subtitle="Accounting for Deduplication",
+                ).fmt_integer(
+                    columns="Filed",
+                ).fmt_percent(
+                    columns=["Unique", "Similar"],
+                    decimals=1,
+                )
+            ))
+
+            frame = pl.read_csv("data/ocse-report-recipients.csv").with_columns(
+                pl.col("reports").str.replace_all(",", "").cast(pl.Int64),
+            ).group_by(
+                pl.col("year", "level_of_detail"),
+            ).agg(
+                pl.col("reports").sum(),
+            ).pivot(
+                on="level_of_detail",
+                index="year",
+                values="reports",
+            ).with_columns(
+                pl.sum_horizontal(
+                    pl.col("actionable", "informational")
+                ).alias("Counted"),
+            ).select(
+                pl.col("year").alias("Year"),
+                pl.col("actionable", "informational").truediv(
+                    pl.col("Counted")
+                ),
+                pl.col("Counted"),
+            ).join(
+                unique_or_similar.select(pl.col("Year", "Filed")),
+                on="Year",
+            ).sort(
+                "Year",
+            ).with_columns(
+                pl.col("Counted").truediv("Filed").alias("Inflationary Factor"),
+            )
+
+            self.table("report-quality", apply_table_style(
+                gt.GT(frame).tab_header(
+                    title="Report Quality",
+                ).cols_label(
+                    actionable="Actionable",
+                    informational="Informational",
+                ).fmt_integer(
+                    columns=["Counted", "Filed"],
+                ).fmt_percent(
+                    columns=["actionable", "informational"],
+                    decimals=1,
+                ).fmt_number(
+                    columns="Inflationary Factor",
+                    decimals=3,
+                )
+            ))
 
             self.h3("Reports per Social Accounts")
             self.html("<p><strong>TODO</strong></p>")
@@ -638,6 +761,7 @@ class Analyzer:
             """)
 
             self.emit_age_buckets()
+            self.emit_reports_per_country()
 
             self.h3("Backfilling Suspects for Unsolved Incidents")
 
@@ -855,7 +979,9 @@ plot_pct_diff_over_mean <- function(platform, data, all.platforms = FALSE) {{
         limits = xlimits,
     )
 
-    graph <- graph + theme_light() + theme(
+    graph <- graph + theme_light(
+        base_size = 13
+    ) + theme(
         axis.title.y = element_text(
             face = "italic",
             margin = margin(t = 0, r = 10, b = 0, l = 0)
@@ -864,6 +990,8 @@ plot_pct_diff_over_mean <- function(platform, data, all.platforms = FALSE) {{
             face = "italic",
             margin = margin(t = 10, r = 0, b = 0, l = 0)
         )
+        # legend.title = element_text(size=13)
+        # legend.text = element_text(size=13)
     )
     return(graph)
 }}
@@ -883,16 +1011,24 @@ for (platform.name in platforms) {{
     )
 }}
 
+exclusions <- data.frame(
+    platform = c("Amazon", "Aylo", "Pinterest"),
+    year = c(2025, 2020, 2024)
+)
+
 plots[[length(platforms) + 1]] <- plot_pct_diff_over_mean(
-    "All Platforms",
-    difference.data |> mutate(year = as.character(year)),
+    "All Service Providers (w/o Top-Three Outliers)",
+    difference.data |>
+        anti_join(exclusions, by = c("platform", "year")) |>
+        mutate(year = as.character(year)),
     all.platforms = TRUE
 )
 
 design <- "AABBCCDD
            EEFFGGHH
-           #IIJJKK#
-           #LLLLLL#"
+           IIJJKKLL
+           MMMMMMMM
+           MMMMMMMM"
 
 plot.grid <- wrap_plots(
     plots,
@@ -901,7 +1037,7 @@ plot.grid <- wrap_plots(
     design=design,
     axis_titles = "collect"
 )
-ggsave("figure/comparable-reports.svg", plot.grid, width=11, height=7)
+ggsave("figure/comparable-reports.svg", plot.grid, width=11, height=8)
 emit_text()
         """)
         self.svg(
@@ -938,28 +1074,28 @@ library(iccCounts)
 library(ggplot2)
 
 data <- read.csv(text="{CSV_DATA}")
-data.icc <- icc_counts(
-    data,
-    y="y",
-    id="id",
-    met="observer",
-    type="con",
-    fam="nbinom2"
-)
-emit_text(ICC(data.icc))
-emit_text(VarComp(data.icc))
+for (family in c("nbinom1", "nbinom2")) {{
+    data.icc <- icc_counts(
+        data,
+        y="y",
+        id="id",
+        met="observer",
+        type="con",
+        fam=family
+    )
+    emit_text(ICC(data.icc))
+    emit_text(VarComp(data.icc))
 
-data.gof <- GOF_check(data.icc)
-emit_text(DispersionTest(data.gof))
+    data.gof <- GOF_check(data.icc)
+    emit_text(DispersionTest(data.gof))
 
-data.plot <- data.gof$plot_env + geom_point(size=2) + theme_linedraw()
-ggsave("figure/comparable-reports-icc-gof.svg", data.plot)
+    data.plot <- data.gof$plot_env + geom_point(size=2) + theme_linedraw()
+    ggsave(paste0("figure/icc-", family, "-gof.svg"), data.plot)
+}}
         """)
 
-        self.svg(
-            "figure/comparable-reports-icc-gof.svg",
-            caption="Goodness of Fit"
-        )
+        self.svg("figure/icc-nbinom1-gof.svg", caption="nbinom1: Goodness of Fit")
+        self.svg("figure/icc-nbinom2-gof.svg", caption="nbinom2: Goodness of Fit")
 
     def emit_reddit_vs_others(self) -> None:
         self.html("""
@@ -1396,7 +1532,10 @@ emit_text()
 
         # All distributions
         self.html("<div class=extra-wide>\n")
-        fig = plot_sex_by_age_grid(full_data)
+        fig = plot_sex_by_age_grid(
+            full_data.filter(pl.col("role").ne("Arrestee")),
+            with_title=False,
+        )
         path = "figure/age-sex-pyramids.svg"
         fig.save(path)
         self.svg(path)
@@ -1530,18 +1669,24 @@ emit_text()
 
         fig = plot_odds_ratio_grid(
             compute_odds_ratios(
-                full_data.with_columns(
+                full_data.filter(
+                    pl.col("role").ne("Arrestee")
+                ).with_columns(
                     pl.col("sex_order").mul(-1)
                 ),
                 "age_group",
                 "sex",
                 x_order="age_group_order",
                 y_order="sex_order",
-                use_minor=True
-            )
+                use_minor=True,
+            ),
+            column_count=4,
+            with_title=False,
         )
         path = "figure/age-sex-odds-ratios.svg"
         fig.save(path)
+
+        self.h4("Odds Ratios by Country, Year, Sex, and Age Group")
         self.svg(path)
 
         cdfs = compute_age_cdfs(full_data)
@@ -2320,6 +2465,79 @@ emit_text()
         fig.save(path)
         self.svg(path)
         self.html("</div>\n")
+
+    def emit_reports_per_country(self) -> None:
+        frame = pl.read_csv("data/ocse-reports-per-country.csv").with_columns(
+            pl.exclude("country", "iso3").str.replace_all(",", "").cast(pl.Int64)
+        ).filter(
+            pl.col("country").is_in([
+                "Australia",
+                "Finland",
+                "Germany",
+                "Italy",
+                "New Zealand",
+                "Spain",
+                "United States",
+                "No Country Listed",
+                "Total",
+            ])
+        )
+
+        full_years = pl.selectors.expand_selector(
+            frame, pl.selectors.matches(r"^20\d\d$")
+        )
+        split_years = [c[3:] for c in pl.selectors.expand_selector(
+            frame, pl.selectors.starts_with("ref")
+        )]
+
+        frame = frame.with_columns(
+            pl.col(f"ref{y}").add(pl.col(f"info{y}")).alias(y) for y in split_years
+        ).select(
+            pl.col("country", *full_years, *split_years)
+        ).transpose(
+            include_header=True,
+            header_name="Year",
+            column_names="country",
+        )
+
+        frame = frame.select(
+            pl.col("Year"),
+            pl.col("Germany").truediv(pl.col("Total")).alias("DE"),
+            pl.col("United States").truediv(pl.col("Total")).alias("US"),
+            pl.col("Germany").add(
+                pl.col("United States")
+            ).truediv(pl.col("Total")).alias("DE+US"),
+            pl.col("Australia").add(
+                pl.col("Finland")
+            ).add(
+                pl.col("Germany")
+            ).add(
+                pl.col("New Zealand")
+            ).add(
+                pl.col("United States")
+            ).truediv(pl.col("Total")).alias("AU+DE+FI+NZ+US"),
+            pl.col("Australia").add(
+                pl.col("Finland")
+            ).add(
+                pl.col("Germany")
+            ).add(
+                pl.col("Italy")
+            ).add(
+                pl.col("New Zealand")
+            ).add(
+                pl.col("Spain")
+            ).add(
+                pl.col("United States")
+            ).truediv(pl.col("Total")).alias("AU+DE+ES+FI+IT+NZ+US"),
+        )
+
+        self.table("per-country-report-share", apply_table_style(
+            gt.GT(frame).tab_header(
+                title="Share of CyberTipline Reports",
+            ).fmt_percent(
+                columns=["DE", "US", "DE+US", "AU+DE+FI+NZ+US", "AU+DE+ES+FI+IT+NZ+US"]
+            )
+        ))
 
     # ==================================================================================
 
@@ -3111,9 +3329,9 @@ def format_juxtaposition(frame: pl.DataFrame, with_highlights: bool = False) -> 
 
 _PROVIDERS = [
     ["(Total)", "Meta"],
-    ["Amazon", "Google", "Snap", "TikTok", "X"],
+    ["Amazon", "Google", "Snap", "TikTok", "X.AI"],
     ["Discord", "MediaLab", "Omegle", "Reddit", "Pinterest"],
-    ["Automattic", "Grindr", "Microsoft", "OpenAI", "X.AI"],
+    ["Automattic", "Grindr", "Microsoft", "OpenAI"],
     ["Apple", "Aylo", "Bluesky",  "Quora", "Wikimedia"],
 ]
 
@@ -3145,23 +3363,11 @@ def plot_reports_per_provider() -> alt.VConcatChart:
             alt.X("year:O").title(None).axis(labelAngle=-45),
             alt.Y("reports:Q").title(None),
             alt.Color("provider:N").title(None)
-            .scale(range=_COLORS).legend(orient="right"),
+            .scale(range=_COLORS).legend(orient="top-left"),
         ).properties(
             height=200,
             width=300,
         )
-
-        if "X.AI" in providers:
-            chart = chart + alt.Chart(data.filter(
-                pl.col("provider").eq("X.AI")
-            )).mark_point(
-                shape="M-1,-1L1,1M-1,1L1,-1",
-                size=40,
-            ).encode(
-                alt.X("year:O"),
-                alt.Y("reports:Q"),
-                alt.Color("provider:N").scale(range=_COLORS).legend(None)
-            )
 
         charts.append(chart)
 
@@ -3172,8 +3378,8 @@ def plot_reports_per_provider() -> alt.VConcatChart:
         )
     ).resolve_scale(
         x="shared", color="independent"
-    ).properties(
-        title="Reports (Millions) per Year per Service Provider"
+    ).configure_axisY(
+        minExtent=40,
     )
 
 # --------------------------------------------------------------------------------------
@@ -3203,7 +3409,20 @@ def get_options() -> Any:
         dest="with_crimes",
         help="analyze crime statistics",
     )
-    return parser.parse_args()
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        dest="with_all_options",
+        help="activate all other options",
+    )
+
+    options = parser.parse_args()
+    if options.with_all_options:
+        options.with_reports = True
+        options.with_platforms = True
+        options.with_crimes = True
+    delattr(options, "with_all_options")
+    return options
 
 
 if __name__ == "__main__":
