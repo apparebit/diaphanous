@@ -291,7 +291,7 @@ def plot_sex_by_age_grid(frame: pl.DataFrame, with_title: bool = True) -> alt.VC
         titleFontSize=40,
     )
 
-    if with_title:
+    if not with_title:
         return result
 
     return result.properties(
@@ -485,10 +485,11 @@ def plot_sex_by_age(
 
 def plot_crime_rate_by_age(
     frame: pl.DataFrame,
-    country: str,
+    country: None | str = None,
     large_font_size = 30,
     font_size: int = 20,
-) -> alt.VConcatChart:
+    with_title: bool = True,
+) -> alt.FacetChart | alt.VConcatChart:
     curves = alt.Chart(frame).mark_line(
         strokeWidth=3
     ).encode(
@@ -510,18 +511,16 @@ def plot_crime_rate_by_age(
                 labelFontSize=font_size,
             )
         ),
-        title=alt.Title(
-            country,
-            anchor="middle",
-            orient="left",
-            angle=270,
-            fontSize=large_font_size,
-            fontWeight="normal",
-            dy=-large_font_size,
-        ),
         columns=4,
         spacing=large_font_size,
     )
+
+    if not with_title:
+        return curves
+
+    title = "Offenders per 100,000 Capita by Year and Sex"
+    if country is not None:
+        title = f"{country}: {title}"
 
     return alt.vconcat(
         hrule(5, 4 * 300 + 5 * 20),
@@ -529,7 +528,7 @@ def plot_crime_rate_by_age(
         spacing=30,
     ).properties(
         title=alt.Title(
-            "Offenders per 100,000 Capita by Year and Sex",
+            title,
             fontSize=1.2 * large_font_size,
             fontWeight="normal",
             anchor="start",
