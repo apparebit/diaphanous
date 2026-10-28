@@ -934,7 +934,7 @@ def age_crime_curves(age_distribution: pl.DataFrame) -> pl.DataFrame:
         how="left",
     ).select(
         pl.col(Id.YEAR, "age", "sex"),
-        pl.col("count").truediv(pl.col("capita")).mul(100_000).alias("rate"),
+        pl.col("count").truediv(pl.col("capita")).mul(1_000).alias("rate"),
     ).sort(
         Id.YEAR, "age", "sex"
     ).collect()

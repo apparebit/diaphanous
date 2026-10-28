@@ -738,6 +738,7 @@ def plot_mosaic_grid(
     row_gap: float = 20,
     column_gap: float = 20,
     narrow_rows: bool = False,
+    with_title: bool = True,
 ) -> alt.VConcatChart:
     """
     Plot a mosaic grid. This function creates a grid of mosaic plots, using
@@ -860,7 +861,7 @@ def plot_mosaic_grid(
     # Combine rows into grid
     factor = 5 if narrow_rows else 11
     grid = alt.vconcat(
-        hrule(4, factor * cell_width + (factor + 1) * column_gap),
+        *([hrule(4, factor * cell_width + (factor + 1) * column_gap)] if with_title else []),
         *rows,
         spacing=row_gap + (20 if show_percent else 0),
     ).resolve_scale(
@@ -871,9 +872,12 @@ def plot_mosaic_grid(
         titleFontSize=40,
     ).configure_view(
         stroke=None,
-    ).properties(
-        title=title,
     )
+
+    if with_title:
+        grid = grid.properties(
+            title=title,
+        )
 
     return grid
 

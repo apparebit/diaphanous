@@ -339,7 +339,7 @@ class Analyzer:
 
             long_frame = wide_frame.unpivot(
                 on=[
-                    "reports", "meta_reports",
+                    "reports",
                     "people", "internet_users", "social_accounts",
                     "reports_per_social"
                 ],
@@ -405,14 +405,16 @@ class Analyzer:
                 pl.sum_horizontal(
                     pl.exclude("Year")
                 ).alias("Total"),
-            ).with_columns(
+            )
+
+            prohibitions_pct = prohibitions.with_columns(
                 pl.exclude("Year", "Total").truediv(
                     pl.col("Total")
                 ),
             )
 
             self.table("reports-by-prohibition", apply_table_style(
-                gt.GT(prohibitions).tab_header(
+                gt.GT(prohibitions_pct).tab_header(
                     title="Reports by Prohibition",
                 ).fmt_integer(
                     columns="Total",
@@ -424,6 +426,76 @@ class Analyzer:
                     decimals=1,
                 )
             ))
+
+            frame = prohibitions.select(
+                "Year", "Total", "CSAM"
+            ).join(
+                self._data.filter(
+                    pl.col("source").eq("NCMEC").and_(
+                        pl.col("target").eq("Meta")
+                    )
+                ).select(
+                    pl.col("year").alias("Year"),
+                    pl.col("value").alias("Meta"),
+                ),
+                on="Year",
+                how="left",
+            )
+
+            self.table("dominant-shares", apply_table_style(
+                gt.GT(frame.with_columns(
+                    pl.exclude("Year", "Total").truediv(
+                        pl.col("Total")
+                    ),
+                )).tab_header(
+                    title="Dominant Shares",
+                ).fmt_integer(
+                    columns="Total",
+                ).fmt_percent(
+                    columns=pl.exclude("Year", "Total"),
+                    decimals=1,
+                )
+            ))
+
+            ymin, ymax = frame.select(
+                pl.col("Year").min().alias("min"),
+                pl.col("Year").max().alias("max"),
+            ).row(0)
+
+            fig = alt.Chart(
+                frame.unpivot(
+                    index="Year",
+                    variable_name="variable",
+                    value_name="reports"
+                ).with_columns(
+                    pl.col("Year").cast(pl.String),
+                )
+            ).mark_bar().encode(
+                alt.X("Year:T").title("Year").axis(
+                    labelAngle=45,
+                    titleFontWeight="normal",
+                    titleFontStyle="italic",
+                    tickCount=ymax - ymin + 1,
+                ),
+                alt.Y("reports:Q").title("Reports").stack(None).axis(
+                    titleFontWeight="normal",
+                    titleFontStyle="italic",
+                ),
+                alt.Color("variable:N").title(None)
+                .scale(
+                    range=[Palette.RED, Palette.DARK_GRAY, Palette.GRAY],
+                    domain=["Total", "CSAM", "Meta"],
+                ),
+            ).configure_bar(
+                continuousBandSize=15,
+            ).properties(
+                height=100,
+                width=160,
+            )
+
+            path = "figure/dominant-shares.svg"
+            fig.save(path)
+            self.svg(path)
 
             unique_or_similar = report_contents.filter(
                 pl.col("category").eq("reports"),
@@ -812,15 +884,6 @@ class Analyzer:
 
     def assemble_report_counts(self) -> pl.DataFrame:
         return pl.read_csv("data/ocse-reports-per-year.csv").join(
-            self._data.filter(
-                pl.col("source").eq("NCMEC").and_(pl.col("target").eq("Meta"))
-            ).select(
-                pl.col("year"),
-                pl.col("value").alias("meta_reports"),
-            ),
-            on="year",
-            how="left",
-        ).join(
             pl.read_csv("data/populations-simple.csv").select(
                 pl.col("year"),
                 pl.col("population").alias("people"),
@@ -839,7 +902,7 @@ class Analyzer:
             on="year",
             how="left",
         ).select(
-            pl.col("year", "reports", "meta_reports", "people"),
+            pl.col("year", "reports", "people"),
             pl.col("internet_users_pct").mul(
                 pl.col("people")
             ).truediv(100).alias("internet_users"),
@@ -885,7 +948,13 @@ emit_text(summary(data.inet.lm))
 
 emit_rule()
 data.social.lm <- lm(reports ~ social_accounts, data=data)
+data.social.resid <- rstandard(data.social.lm)
 emit_text(summary(data.social.lm))
+emit_text(data.social.resid)
+emit_data(
+    c("year", "residuals"),
+
+)
 
 emit_rule()
 data.year.social.lm <- lm(reports ~ social_accounts + year, data=data)
@@ -1599,7 +1668,9 @@ emit_text()
         # Mosaics I: Highlight minors
         self.h4("Sex Ratios Amongst Minors and Adults")
         frame = make_mosaic_frame(
-            full_data,
+            full_data.filter(
+                pl.col("role").ne("Arrestee")
+            ),
             x_axis="age_group",
             y_axis="sex",
             index={
@@ -1622,11 +1693,7 @@ emit_text()
             frame,
             x_label="Age Group",
             y_label="Sex",
-            # subtitle=(
-            #     "Male and female minors are shown in blue and red (respectively), "
-            #     "people with unknown age or sex in light gray, and those with unknown "
-            #     "sex and age in white."
-            # ),
+            with_title=False,
         )
         path = "figure/age-sex-mosaics.svg"
         fig.save(path)
@@ -1966,7 +2033,7 @@ emit_text()
         self.html("<div class=wide>\n")
 
         de_curves = de.age_crime_curves(full_data)
-        fig = plot_crime_rate_by_age(de_curves, "Germany (All Offenders)")
+        fig = plot_crime_rate_by_age(de_curves, with_title=False)
         path = "figure/de-age-crime-curves.svg"
         fig.save(path)
         self.svg(path)
@@ -2033,10 +2100,7 @@ emit_text()
         )
 
         self.html("<div class=wide>\n")
-        fig = plot_crime_rate_by_age(
-            restricted_curves,
-            "Germany (Restricted Offenders)"
-        )
+        fig = plot_crime_rate_by_age(restricted_curves, with_title=False)
         path = "figure/de-restricted-curves.svg"
         fig.save(path)
         self.svg(path)
@@ -2431,13 +2495,18 @@ emit_text()
             pl.col("start_age").lt(100)
         )
 
-        x = alt.X("start_age:Q").scale(domain=(0, 100)).axis(tickCount=11).title("Age")
-        y = alt.Y("country:N").axis(
-            ticks=False, domain=False, labelPadding=5,
-        ).title(None)
+        x = alt.X("start_age:Q").scale(domain=(0, 100)).axis(
+            tickCount=11,
+            title="Age",
+            titleFontWeight="normal",
+            titleFontStyle="italic",
+            titleFontSize=11,
+            titlePadding=5,
+        )
+        y = alt.Y("country:N").axis(ticks=False, domain=False, labelPadding=5).title(None)
         color = alt.Color("liability:N").scale(
             domain=("none", "limited", "full-or-limited", "full"),
-            range=(Palette.ORANGE, Palette.RED, Palette.PURPLE, Palette.GRAY),
+            range=(Palette.RED, Palette.GREEN, Palette.BLUE, Palette.GRAY),
         ).legend(None)
 
         fig = (
@@ -2586,7 +2655,7 @@ emit_text()
     def _runr(
         self, frame: pl.DataFrame, template: str, is_html: bool = False
     ) -> list[pl.DataFrame]:
-        text_sections, data_sections = _runr(frame, template)
+        text_sections, data_sections = _do_run_r(frame, template)
 
         skip_hr = not _IS_DEBUG
         for text_section in text_sections:
@@ -3065,7 +3134,7 @@ _MARKER_REGEX = re.compile(
 _WIDTH, _ = shutil.get_terminal_size()
 _IS_DEBUG = bool(os.getenv("DEBUG"))
 
-def _runr(data: pl.DataFrame, template: str) -> tuple[list[str], list[pl.DataFrame]]:
+def _do_run_r(data: pl.DataFrame, template: str) -> tuple[list[str], list[pl.DataFrame]]:
     if len(data) == 1:
         values = data.row(0)
     elif len(data.columns) == 1:
@@ -3358,9 +3427,12 @@ def plot_reports_per_provider() -> alt.VConcatChart:
 
     charts = []
     for providers in _PROVIDERS:
-        data = table.filter(pl.col("provider").is_in(providers))
+        data = table.filter(
+            pl.col("provider").is_in(providers)
+        )
+
         chart = alt.Chart(data).mark_line().encode(
-            alt.X("year:O").title(None).axis(labelAngle=-45),
+            alt.X("year:Q").title(None).axis(format="d"),
             alt.Y("reports:Q").title(None),
             alt.Color("provider:N").title(None)
             .scale(range=_COLORS).legend(orient="top-left"),

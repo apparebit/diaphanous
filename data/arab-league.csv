@@ -1,23 +1,23 @@
-country,iso3
-"Algeria","DZA"
-"Bahrain","BHR"
-"Comoros","COM"
-"Djibouti","DJI"
-"Egypt","EGY"
-"Iraq","IRQ"
-"Jordan","JOR"
-"Kuwait","KWT"
-"Lebanon","LBN"
-"Libya","LBY"
-"Mauritania","MRT"
-"Morocco","MAR"
-"Oman","OMN"
-"Palestine","PSE"
-"Qatar","QAT"
-"Saudi Arabia","SAU"
-"Somalia","SOM"
-"Sudan","SDN"
-"Syrian Arab Republic","SYR"
-"Tunisia","TUN"
-"United Arab Emirates","ARE"
-"Yemen","YEM"
+country,iso3,csam_possession_illegal
+"Algeria","DZA",yes
+"Bahrain","BHR",yes
+"Comoros","COM",yes
+"Djibouti","DJI",no
+"Egypt","EGY",yes
+"Iraq","IRQ",no
+"Jordan","JOR",no
+"Kuwait","KWT",no
+"Lebanon","LBN",no
+"Libya","LBY",no
+"Mauritania","MRT",yes
+"Morocco","MAR",yes
+"Oman","OMN",yes
+"Palestine","PSE",
+"Qatar","QAT",yes
+"Saudi Arabia","SAU",yes
+"Somalia","SOM",no
+"Sudan","SDN",yes
+"Syrian Arab Republic","SYR",yes
+"Tunisia","TUN",no
+"United Arab Emirates","ARE",yes
+"Yemen","YEM",no

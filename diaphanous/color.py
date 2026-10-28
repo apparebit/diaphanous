@@ -20,6 +20,7 @@ class Palette(enum.StrEnum):
     LIGHT_BLUE = "#97bbf5"
     BROWN = "#a57356"
     GRAY = "#9498a0"
+    DARK_GRAY = "#60636a"
     LIGHT_GRAY = "#aaaeb6"
     BLACK = "#1f2228"
 
