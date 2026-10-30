@@ -45,6 +45,7 @@ dependencies = [
     "great_tables",       #         -- better tables
     "selenium",           #         -- save to PDF from great_tables
     "scipy",              #         -- χ² and Monte-Carlo p-values
+    "statsmodels",        #         -- standardized Pearson's residuals
     "prettypretty",       #         -- color science
     "playwright",         #         -- scrape
 ]

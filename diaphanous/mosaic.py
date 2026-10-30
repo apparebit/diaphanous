@@ -1,5 +1,5 @@
 from collections.abc import Iterable, Sequence
-from typing import Literal
+from typing import cast
 
 import altair as alt
 import itertools
@@ -7,6 +7,8 @@ import numpy as np
 import polars as pl
 from polars.expr.whenthen import ChainedThen, Then
 from scipy import stats
+from statsmodels.stats.contingency_tables import Table as SmTable
+from statsmodels.stats.contingency_tables import Table2x2 as SmTable2x2
 
 from .color import Palette, PlusMinus
 from .util import (
@@ -254,8 +256,14 @@ def _compute_residuals(
     y_axis: str,
     x_order: None | str = None,
     y_order: None | str = None,
-) -> pl.DataFrame:
-    data = []
+) -> tuple[pl.DataFrame, pl.DataFrame]:
+    """
+    Compute standardized Pearson residuals as well as odds ratios with
+    confidence intervals.
+    """
+    residuals = []
+    odds_ratios = []
+
     for (metric, year), group in frame.group_by(
         "metric", "data_year",
         maintain_order=True
@@ -267,16 +275,15 @@ def _compute_residuals(
         )
 
         if observed is None:
+            odds_ratios.append([metric, year, None, "N/A", None, None])
             continue
 
-        expected = stats.contingency.expected_freq(observed)
-        if np.any(expected == 0):
-            continue
+        # A better solution to computing (standardized) Pearson's residuals
+        table = SmTable(observed)
+        std_residuals = cast(np.typing.NDArray, table.standardized_resids)
+        column = np.reshape(std_residuals, shape=std_residuals.size)
 
-        residuals = (observed - expected) / np.sqrt(expected)
-        column = np.reshape(residuals, shape=residuals.size)
-
-        data.append(group.filter(
+        residuals.append(group.filter(
             pl.col(x_axis).is_not_null().and_(pl.col(y_axis).is_not_null())
         ).select(
             pl.lit(metric, dtype=pl.Enum(METRICS)).alias("metric"),
@@ -286,7 +293,21 @@ def _compute_residuals(
             pl.lit(column, dtype=pl.List(pl.Float64)).alias("residual")
         ).explode("residual"))
 
-    return pl.concat(data)
+        if observed.shape != (2, 2):
+            odds_ratios.append([metric, year, None, "N/A", None, None])
+            continue
+
+        t2x2 = SmTable2x2(observed)
+        odds_ratios.append([metric, year, t2x2.oddsratio, "", *t2x2.oddsratio_confint()])
+
+    odds_ratio_frame = pl.DataFrame({
+        name: data for name, data in zip(
+            ["metric", "data_year", "odds_ratio", "odds_label", "lower_ci", "upper_ci"],
+            zip(*odds_ratios), # convert row major to column major format
+        )
+    })
+
+    return pl.concat(residuals), odds_ratio_frame
 
 
 def _make_fill_expr(
@@ -420,7 +441,14 @@ def make_mosaic_frame(
     use_minor: bool = False,
     show_counts: bool = False,
     show_percent: bool = False,
-) -> pl.DataFrame:
+) -> tuple[pl.DataFrame, None | pl.DataFrame]:
+    """
+    Prepare the data for visualization as a mosaic chart. If `use_residuals` is
+    enabled, this function includes the standardized Pearson's residuals in the
+    resulting data frame. It also computes the odds ratios with confidence
+    intervals, returning them in a second data frame. Otherwise, this function
+    returns `None` for the second data frame.
+    """
     # Prepare data frame and index
     frame, index = _make_index(
         frame,
@@ -640,8 +668,9 @@ def make_mosaic_frame(
     )
 
     # Compute Pearson residuals
+    odds_ratios = None
     if use_residuals:
-        residuals = _compute_residuals(mosaic_frame, x_axis, y_axis, "x_order", "y_order")
+        residuals, odds_ratios = _compute_residuals(mosaic_frame, x_axis, y_axis, "x_order", "y_order")
         mosaic_frame = mosaic_frame.join(
             residuals,
             on=["metric", "data_year", x_axis, y_axis],
@@ -660,7 +689,7 @@ def make_mosaic_frame(
     return mosaic_frame.with_columns(
         stroke_expr,
         fill_expr,
-    )
+    ), odds_ratios
 
 
 def test_chi2_independence(
@@ -692,13 +721,15 @@ def test_chi2_independence(
             y_order=y_order,
         )
 
-        if table is None or not np.all(table >= 5):
+        #if table is None or not np.all(table >= 5):
+        if table is None or np.any(table == 0):
             chi2s.append(None)
             p_values.append(None)
             ratings.append("" if table is None else "N/A")
             continue
 
-        # Perform Monte Carlo version of χ² test
+        # Perform Monte Carlo version of χ² test, since contingency table
+        # entries may be very small.
         result = stats.chi2_contingency(
             table,
             correction=False,
@@ -961,6 +992,46 @@ def plot_odds_ratio_grid(
     second_variable: str = "Sex",
     with_title: bool = True,
 ) -> alt.VConcatChart:
+    if "country" not in frame.columns:
+        # There are two data flows ending with this function. Te first uses
+        # compute_odds_ratios() and delivers a data frame with `role`,
+        # `material`, and `country` columns. The second uses make_mosaic_frame()
+        # and delivers a data frame with a `metric` column. The code below
+        # harmonizes the second case with the first.
+        #
+        # However, since Pola.rs lacks string operations that process from the
+        # back, we need to reverse all strings twice, once before splitting and
+        # once after splitting. For the `role` column, we also need to slice off
+        # the trailing `s` character.
+        #
+        # However, since Pola.rs slice() requires an offset and a length, it is
+        # (again) not very suitable to slicing off the end. Instead we slice
+        # first and reverse thereafter.
+        frame = frame.with_columns(
+            pl.col("metric").str.reverse()
+                .str.splitn(" ", 3)
+                .struct.rename_fields([
+                    "role", "material", "country"
+                ]),
+        ).unnest(
+            "metric",
+        ).with_columns(
+            pl.col("country", "material").str.reverse(),
+            pl.col("role").str.slice(1).str.reverse(),
+        )
+
+    frame = frame.with_columns(
+        pl.when(
+            pl.col("lower_ci").lt(1.0).and_(
+                pl.col("upper_ci").gt(1.0)
+            )
+        ).then(
+            pl.lit(Palette.BLACK, dtype=pl.String)
+        ).otherwise(
+            pl.lit(Palette.PURPLE, dtype=pl.String)
+        ).alias("color")
+    )
+
     group_iter = frame.group_by("country", "material", "role", maintain_order=True)
     grid = []
 
@@ -972,27 +1043,6 @@ def plot_odds_ratio_grid(
         country, material, role = labels
         material_role = f"{material} {role}s"
 
-        outlier = None
-        if country == "Finland":
-            outlier = group.filter(
-                pl.col("data_year").eq(2019)
-            ).select(
-                "lower_ci", "odds_ratio", "upper_ci"
-            ).row(0)
-
-            group = group.with_columns(
-                *(
-                    pl.when(
-                        pl.col("data_year").eq(2019)
-                    ).then(
-                        pl.lit(None)
-                    ).otherwise(
-                        pl.col(c)
-                    ).alias(c)
-                    for c in ("lower_ci", "odds_ratio", "upper_ci")
-                )
-            )
-
         min_ci, max_ci = group.select(
             pl.col("lower_ci").min().alias("min_ci"),
             pl.col("upper_ci").max().alias("max_ci"),
@@ -1000,24 +1050,7 @@ def plot_odds_ratio_grid(
 
         base = alt.Chart(group)
 
-        if country == "Finland":
-            assert outlier is not None
-            label = f"{outlier[1]:.1f}, 95% CI [{outlier[0]:.1f}, {outlier[2]:.1f}]"
-
-            outlier_text = [base.mark_text(
-                fontSize=15,
-                x=cell_width,
-                dx=-17,
-                y=4 * cell_height / 11 + cell_height / 11 / 2,
-                align="right",
-                baseline="middle",
-            ).encode(
-                alt.TextDatum(label),
-            )]
-        else:
-            outlier_text = []
-
-        if 1.0 < max_ci:
+        if min_ci < 1.0 < max_ci:
             independence_rule = [base.mark_rule(
                 strokeWidth=2.5,
                 strokeDash=(8, 4),
@@ -1030,8 +1063,7 @@ def plot_odds_ratio_grid(
         chart = alt.layer(
             base.mark_point(
                 filled=True,
-                size=45,
-                color=Palette.BLACK,
+                size=60,
             ).encode(
                 alt.X("odds_ratio:Q", axis=alt.Axis(
                     labelFontSize=18,
@@ -1042,21 +1074,15 @@ def plot_odds_ratio_grid(
                     labelFontSize=18,
                     title=None,
                 )),
-            ),
-            base.mark_point(
-                size=1,
-                color="transparent",
-            ).encode(
-                alt.XDatum(0),
-                alt.Y("data_year:N"),
+                alt.Color("color:N").scale(None),
             ),
             base.mark_rule(
                 strokeWidth=2,
-                color=Palette.BLACK,
             ).encode(
                 alt.X("lower_ci:Q"),
                 alt.X2("upper_ci:Q"),
                 alt.Y("data_year:N"),
+                alt.Color("color:N").scale(None),
             ),
             base.mark_text(
                 fontSize=15,
@@ -1064,7 +1090,6 @@ def plot_odds_ratio_grid(
                 alt.Y("data_year:N"),
                 alt.Text("odds_label:N"),
             ),
-            *outlier_text,
             *independence_rule,
             title=alt.Title(
                 country,

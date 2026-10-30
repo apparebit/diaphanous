@@ -33,10 +33,10 @@ _COLORS = [c for c in Palette.__members__.values() if c is not Palette.GRAY]
 
 
 class PlusMinus(enum.StrEnum):
-    PLUS_PLUS = "#3ca951"
-    PLUS = "#3ca95180"
+    PLUS_PLUS = "#4269d0"
+    PLUS = "#4269d090"
     NEUTRAL = "#aaaeb6"
-    MINUS = "#ff725c80"
+    MINUS = "#ff725c90"
     MINUS_MINUS = "#ff725c"
 
 

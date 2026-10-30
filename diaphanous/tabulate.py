@@ -302,6 +302,7 @@ class Analyzer:
         with_reports: bool = False,
         with_platforms: bool = False,
         with_crimes: bool = False,
+        with_chi2: bool = False,
     ) -> None:
         self._path = Path(path)
         self._file: Any = None
@@ -313,6 +314,7 @@ class Analyzer:
         self._with_reports = with_reports
         self._with_platforms = with_platforms
         self._with_crimes = with_crimes
+        self._with_chi2 = with_chi2
 
     def has_content(self) -> bool:
         return self._with_reports or self._with_platforms or self._with_crimes
@@ -358,7 +360,7 @@ class Analyzer:
             self.chart(plot_yearly_reports(long_frame))
 
             self.h3("A Decade of Mostly Linear Growth")
-            coefficients = self.emit_growth_models(wide_frame)
+            residuals, coefficients = self.emit_growth_models(wide_frame)
 
             self.table("linear-coefficients", apply_table_style(
                 gt.GT(coefficients).tab_header(
@@ -374,6 +376,16 @@ class Analyzer:
                     decimals=4,
                     use_seps=True,
                     sep_mark=",",
+                )
+            ))
+
+            self.table("residuals", apply_table_style(
+                gt.GT(residuals).tab_header(
+                    title="Standard Residuals",
+                    subtitle="For Decade of Growth",
+                ).fmt_number(
+                    columns="residuals",
+                    decimals=2,
                 )
             ))
 
@@ -872,7 +884,7 @@ class Analyzer:
                 consumers and producers.</p>
             """)
 
-            self.emit_age_distributions()
+            self.emit_age_distributions(with_chi2=self._with_chi2)
 
         now = dt.datetime.now(dt.UTC)
         date = now.date().isoformat()
@@ -912,7 +924,7 @@ class Analyzer:
             ).alias("reports_per_social"),
         )
 
-    def emit_growth_models(self, wide_frame: pl.DataFrame) -> pl.DataFrame:
+    def emit_growth_models(self, wide_frame: pl.DataFrame) -> tuple[pl.DataFrame, pl.DataFrame]:
         decade = wide_frame.filter(
             pl.col("year").is_between(2014, 2023)
         ).select(
@@ -926,11 +938,10 @@ class Analyzer:
             candidates for independent variable.</p>
         """)
 
-        coefficients = self._runr(decade, """
+        residuals, coefficients = self._runr(decade, """
 library(tidyverse)
 data <- read.csv(text = "{CSV_DATA}")
 
-emit_rule()
 data.year.em <- lm(log(reports) ~ year, data=data)
 emit_text(summary(data.year.em))
 
@@ -950,11 +961,11 @@ emit_rule()
 data.social.lm <- lm(reports ~ social_accounts, data=data)
 data.social.resid <- rstandard(data.social.lm)
 emit_text(summary(data.social.lm))
-emit_text(data.social.resid)
-emit_data(
-    c("year", "residuals"),
 
-)
+emit_rule(0)
+emit_text(data.social.resid)
+data$residuals <- data.social.resid
+emit_data(data[c("year", "residuals")])
 
 emit_rule()
 data.year.social.lm <- lm(reports ~ social_accounts + year, data=data)
@@ -972,8 +983,7 @@ emit_data(
 )
 """)
 
-        assert len(coefficients) == 1
-        return coefficients[0].with_columns(
+        return residuals, coefficients.with_columns(
             pl.col("Slope").cast(pl.Float64)
         )
 
@@ -1234,7 +1244,7 @@ tested <- read.csv(text="{CSV_DATA}") |>
     sign_test(reports ~ source) |>
     add_significance()
 
-emit_text(tested)
+emit_text(summary(tested))
 """)
 
     def emit_regression_models(self) -> None:
@@ -1667,7 +1677,7 @@ emit_text()
 
         # Mosaics I: Highlight minors
         self.h4("Sex Ratios Amongst Minors and Adults")
-        frame = make_mosaic_frame(
+        frame, _ = make_mosaic_frame(
             full_data.filter(
                 pl.col("role").ne("Arrestee")
             ),
@@ -1701,8 +1711,10 @@ emit_text()
 
         # Mosaics II: Highlight large residuals
         if with_chi2:
-            frame = make_mosaic_frame(
-                full_data,
+            frame, odds_ratios = make_mosaic_frame(
+                full_data.filter(
+                    pl.col("role").ne("Arrestee")
+                ),
                 x_axis="age_group",
                 y_axis="sex",
                 index={"age_group": ["Minor", None, "Adult"]},
@@ -1724,33 +1736,41 @@ emit_text()
                 frame,
                 x_label="Age Group",
                 y_label="Sex",
-                # subtitle=(
-                #     "Male and female minors are shown in blue and red (respectively), "
-                #     "people with unknown age or sex in light gray, and those with unknown "
-                #     "sex and age in white."
-                # ),
+                with_title=False,
             )
             path = "figure/age-sex-residual-mosaics.svg"
             fig.save(path)
             self.svg(path)
 
-        fig = plot_odds_ratio_grid(
-            compute_odds_ratios(
-                full_data.filter(
-                    pl.col("role").ne("Arrestee")
-                ).with_columns(
-                    pl.col("sex_order").mul(-1)
-                ),
-                "age_group",
-                "sex",
-                x_order="age_group_order",
-                y_order="sex_order",
-                use_minor=True,
+            assert odds_ratios is not None
+            fig = plot_odds_ratio_grid(
+                odds_ratios,
+                column_count=4,
+                with_title=False,
+            )
+            path = "figure/age-sex-odds-ratios-v2.svg"
+            fig.save(path)
+            self.svg(path)
+
+        odds_ratios = compute_odds_ratios(
+            full_data.filter(
+                pl.col("role").ne("Arrestee")
+            ).with_columns(
+                pl.col("sex_order").mul(-1)
             ),
+            "age_group",
+            "sex",
+            x_order="age_group_order",
+            y_order="sex_order",
+            use_minor=True,
+        )
+
+        fig = plot_odds_ratio_grid(
+            odds_ratios,
             column_count=4,
             with_title=False,
         )
-        path = "figure/age-sex-odds-ratios.svg"
+        path = "figure/age-sex-odds-ratios-v1.svg"
         fig.save(path)
 
         self.h4("Odds Ratios by Country, Year, Sex, and Age Group")
@@ -1793,7 +1813,7 @@ emit_text()
             ])
         )
 
-        frame = make_mosaic_frame(
+        frame, _ = make_mosaic_frame(
             activity_data,
             x_axis="age_group",
             y_axis="activity",
@@ -1913,7 +1933,7 @@ emit_text()
             "Adjudication": Palette.ORANGE,
             "Conviction": Palette.RED,
         }
-        de_frame = make_mosaic_frame(
+        de_frame, _ = make_mosaic_frame(
             de_outcomes,
             x_axis="age_group",
             y_axis="outcome",
@@ -1935,7 +1955,7 @@ emit_text()
             "No Sanction": Palette.GREEN,
             "Arrest": Palette.ORANGE,
         }
-        us_frame = make_mosaic_frame(
+        us_frame, _ = make_mosaic_frame(
             us_outcomes,
             x_axis="age_group",
             y_axis="outcome",
@@ -3098,6 +3118,8 @@ emit_text <- function(value = NULL, section = "TEXT") {
         cat()
     } else if (is.character(value)) {
         cat(value, "\\n", sep="")
+    } else if (is.data.frame(value)) {
+        write.csv(value, file="", row.names=FALSE)
     } else {
         lines <- capture.output(print(value))
         lines <- gsub("\\t", "    ", lines)
@@ -3109,21 +3131,34 @@ emit_text <- function(value = NULL, section = "TEXT") {
     cat("#", "#", "#", " END-SECTION ", section, " #", "#", "#", "\\n", sep="")
 }
 
-emit_rule <- function() {
-    emit_text("────────────────────────────────────────────────────────────────────────────────")
+emit_rule <- function(weight = 1) {
+    if (weight == 0) {
+        emit_text("────────────────────────────────────────────────────────────────────────────────")
+    } else if (weight == 1) {
+        emit_text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    } else if (weight == 2) {
+        emit_test("════════════════════════════════════════════════════════════════════════════════")
+    }
 }
 
+# Return a data table provided either as a data frame or as vectors with the row data
 emit_data <- function(...) {
-    emit_text(
-        paste0(
-            map(
-                list(...),
-                \\(row) paste0(format(row, trim=TRUE, justify="none"), collapse=",")
+    args <- list(...)
+
+    if (length(args) == 1 && do.call(is.data.frame, args)) {
+        emit_text(args[[1]], section = "DATA")
+    } else {
+        emit_text(
+            paste0(
+                map(
+                    list(...),
+                    \\(row) paste0(format(row, trim=TRUE, justify="none"), collapse=",")
+                ),
+                collapse="\\n"
             ),
-            collapse="\\n"
-        ),
-        section = "DATA"
-    )
+            section = "DATA"
+        )
+    }
 }
 """
 
@@ -3482,10 +3517,15 @@ def get_options() -> Any:
         help="analyze crime statistics",
     )
     parser.add_argument(
+        "--with-chi2",
+        action="store_true",
+        help="perform χ² test of independence for age and sex",
+    )
+    parser.add_argument(
         "--all",
         action="store_true",
         dest="with_all_options",
-        help="activate all other options",
+        help="activate all other options besides ICC computation",
     )
 
     options = parser.parse_args()
@@ -3493,6 +3533,7 @@ def get_options() -> Any:
         options.with_reports = True
         options.with_platforms = True
         options.with_crimes = True
+        options.with_chi2 = True
     delattr(options, "with_all_options")
     return options
 

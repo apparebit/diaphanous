@@ -490,19 +490,32 @@ def plot_crime_rate_by_age(
     font_size: int = 20,
     with_title: bool = True,
 ) -> alt.FacetChart | alt.VConcatChart:
-    curves = alt.Chart(frame).mark_line(
-        strokeWidth=3
-    ).encode(
-        alt.X("age:Q")
-            .scale(domain=(0, 100))
-            .axis(labelFontSize=font_size)
-            .title(None),
-        alt.Y("rate:Q")
-            .axis(orient="right", labelFontSize=font_size)
-            .title(None),
-        alt.Color("sex:N")
-            .scale(domain=["Female", "Male"], range=[Palette.RED, Palette.BLUE])
-            .legend(None),
+    base = alt.Chart(frame)
+    curves = alt.layer(
+        base.mark_line(
+            strokeWidth=3
+        ).encode(
+            alt.X("age:Q")
+                .scale(domain=(0, 100))
+                .axis(labelFontSize=font_size)
+                .title(None),
+            alt.Y("rate:Q")
+                .axis(orient="right", labelFontSize=font_size)
+                .title(None),
+            alt.Color("sex:N")
+                .scale(domain=["Female", "Male"], range=[Palette.RED, Palette.BLUE])
+                .legend(None),
+        ),
+        base.mark_rule(
+            color=Palette.BLACK,
+            strokeWidth=2,
+            strokeDash=(24, 12),
+        ).encode(
+            alt.XDatum(18),
+        ),
+    ).properties(
+        width=400,
+        height=300,
     ).facet(
         facet=alt.Facet(
             "data_year:N",
@@ -518,7 +531,7 @@ def plot_crime_rate_by_age(
     if not with_title:
         return curves
 
-    title = "Offenders per 100,000 Capita by Year and Sex"
+    title = "Offenders per 1,000 Capita by Year and Sex"
     if country is not None:
         title = f"{country}: {title}"
 
