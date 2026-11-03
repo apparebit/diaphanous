@@ -1,0 +1,88 @@
+// SankeyMATIC diagram inputs - Saved: 11/2/2026, 9:18:03 PM
+// https://sankeymatic.com/build/
+
+// === Nodes and Flows ===
+
+// Enter Flows between Nodes, like this:
+//         Source [AMOUNT] Target
+
+Sent by NCMEC [192590] Received by BKA
+Discrepancy [13138] Received by BKA
+Received by BKA [106353] Illegal
+Illegal [59952] Actionable
+Reported\nAnother Way [10425] Actionable
+
+:Child Pornography #ff725c <<
+:Youth Pornography #ff8ab7 <<
+
+Actionable [16354] Sexual Abuse of Children
+Actionable [1191] Sexual Abuse of Youths
+Actionable [42854] Child Pornography
+Actionable [9601] Youth Pornography
+Actionable [377] Sexual Exploitation
+
+// === Settings ===
+
+size w 900
+  h 360
+margin l 0
+  r 0
+  t 0
+  b 0
+bg color #ffffff
+  transparent N
+node w 12
+  h 50
+  spacing 75
+  border 0
+  theme none
+  color #888888
+  opacity 1
+flow curvature 0.5
+  inheritfrom none
+  color #aaaaaa
+  opacity 0.45
+layout order automatic
+  justifyorigins N
+  justifyends N
+  reversegraph N
+  attachincompletesto nearest
+labels color #000000
+  hide N
+  highlight 0.9
+  fontface sans-serif
+  linespacing 0.3
+  relativesize 101
+  magnify 100
+labelname appears Y
+  size 15
+  weight 400
+labelvalue appears Y
+  fullprecision Y
+  position below
+  weight 400
+labelposition autoalign 0
+  scheme auto
+  first before
+  breakpoint 6
+value format ',.'
+  prefix ''
+  suffix ' Reports'
+themeoffset a 6
+  b 0
+  c 0
+  d 0
+meta mentionsankeymatic N
+  listimbalances Y
+
+// === Moved Nodes ===
+
+move Child Pornography -0.00216, -0.1757
+move Sexual Exploitation 0, 0.07507
+move Discrepancy 0.08626, -0.03493
+move Reported\nAnother Way 0, 0.0636
+move Actionable 0, -0.02365
+move Sexual Abuse of Children 0, -0.06513
+move Received by BKA 0.00172, -0.02254
+move Illegal 0, -0.00508
+move Youth Pornography 0, -0.12164

@@ -182,11 +182,15 @@ def format_table(frame: pl.DataFrame, title: None | str = None) -> gt.GT:
 
 
 @overload
-def make_empty_year(year: int, lazy: Literal[False]) -> pl.DataFrame: ...
+def make_empty_year(year: int, with_material: bool, lazy: Literal[False]) -> pl.DataFrame: ...
 @overload
-def make_empty_year(year: int, lazy: Literal[True]) -> pl.LazyFrame: ...
+def make_empty_year(year: int, with_material: bool, lazy: Literal[True]) -> pl.LazyFrame: ...
 
-def make_empty_year(year: int, lazy: bool = False) -> pl.DataFrame | pl.LazyFrame:
+def make_empty_year(
+    year: int,
+    with_material: bool = False,
+    lazy: bool = False,
+) -> pl.DataFrame | pl.LazyFrame:
     """Create a new data frame for the given year without providing an actual
     age distribution."""
     return (pl.LazyFrame() if lazy else pl.DataFrame()).with_columns(
@@ -195,24 +199,31 @@ def make_empty_year(year: int, lazy: bool = False) -> pl.DataFrame | pl.LazyFram
         pl.lit(None, dtype=pl.String).alias("sex"),
         pl.lit(None, dtype=pl.String).alias("ethnicity"),
         pl.lit(None, dtype=pl.String).alias("activity"),
+        *(
+            [pl.lit(None, dtype=pl.String).alias("material")] if with_material else []
+        ),
         pl.lit(None, dtype=pl.Float64).alias("count"),
     )
 
 
-def make_empty_year_eagerly(year: int) -> pl.DataFrame:
-    return make_empty_year(year, lazy=False)
+def make_empty_year_eagerly(year: int, with_material: bool = False) -> pl.DataFrame:
+    return make_empty_year(year, with_material, lazy=False)
 
 
-def make_empty_year_lazily(year: int) -> pl.LazyFrame:
-    return make_empty_year(year, lazy=True)
+def make_empty_year_lazily(year: int, with_material: bool = False) -> pl.LazyFrame:
+    return make_empty_year(year, with_material, lazy=True)
 
 
-def add_empty_year[F: (pl.DataFrame, pl.LazyFrame)](frame: F, year: int) -> F:
+def add_empty_year[F: (pl.DataFrame, pl.LazyFrame)](
+    frame: F,
+    year: int,
+    with_material: bool = False,
+) -> F:
     """Append a data frame for an empty year."""
     if isinstance(frame, pl.LazyFrame):
-        return pl.concat([frame, make_empty_year_lazily(year)])
+        return pl.concat([frame, make_empty_year_lazily(year, with_material)])
     else:
-        return pl.concat([frame, make_empty_year_eagerly(year)])
+        return pl.concat([frame, make_empty_year_eagerly(year, with_material)])
 
 
 def finish_age_distribution[F: (pl.DataFrame, pl.LazyFrame)](

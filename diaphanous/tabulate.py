@@ -36,6 +36,15 @@ import diaphanous.nibrs as nibrs
 
 _INDEX = ("source", "target", "year")
 _METRICS = ("pieces", "reports")
+_COUNTRIES = (
+    "Australia",
+    "Finland",
+    "Germany",
+    "Italy",
+    "New Zealand",
+    "Spain",
+    "United States",
+)
 
 
 def tabulate(
@@ -383,11 +392,35 @@ class Analyzer:
                 gt.GT(residuals).tab_header(
                     title="Standard Residuals",
                     subtitle="For Decade of Growth",
+                ).tab_spanner(
+                    label="Social Accounts",
+                    columns=["social_predicted", "social_residuals"],
+                ).tab_spanner(
+                    label="Year",
+                    columns=["year_predicted", "year_residuals"],
+                ).cols_label({
+                    "year": "Year",
+                    "social_predicted": "Predicted",
+                    "social_residuals": "Residuals",
+                    "year_predicted": "Predicted",
+                    "year_residuals": "Residuals",
+                }).fmt_number(
+                    columns=["social_predicted", "year_predicted"],
+                    decimals=1,
                 ).fmt_number(
-                    columns="residuals",
+                    columns=["social_residuals", "year_residuals"],
                     decimals=2,
+                    force_sign=True,
                 )
             ))
+
+            self.emit_reports_over_years(
+                wide_frame.join(
+                    residuals,
+                    on="year",
+                    how="left",
+                )
+            )
 
             self.emit_regression_models()
 
@@ -481,6 +514,7 @@ class Analyzer:
                     value_name="reports"
                 ).with_columns(
                     pl.col("Year").cast(pl.String),
+                    pl.col("reports").truediv(1_000_000)
                 )
             ).mark_bar().encode(
                 alt.X("Year:T").title("Year").axis(
@@ -489,7 +523,7 @@ class Analyzer:
                     titleFontStyle="italic",
                     tickCount=ymax - ymin + 1,
                 ),
-                alt.Y("reports:Q").title("Reports").stack(None).axis(
+                alt.Y("reports:Q").title("Reports (Millions)").stack(None).axis(
                     titleFontWeight="normal",
                     titleFontStyle="italic",
                 ),
@@ -849,9 +883,11 @@ class Analyzer:
 
             self.h3("Backfilling Suspects for Unsolved Incidents")
 
-            stats = de.ingest_incidents().filter(
-                pl.col("activity").is_not_null(),
-            ).group_by(
+            incidents = de.ingest_incidents().filter(
+                pl.col("id").is_in(de.PORN_IDS)
+            )
+
+            min_yearly, max_yearly = incidents.group_by(
                 Id.YEAR,
             ).agg(
                 pl.col("incidents", "solved", "suspects").sum()
@@ -859,9 +895,14 @@ class Analyzer:
                 pl.col("suspects").truediv(pl.col("solved")).alias("suspects_per_incident"),
             ).select(
                 pl.col("suspects_per_incident").min().alias("minimum"),
-                pl.col("suspects_per_incident").mean().alias("mean"),
                 pl.col("suspects_per_incident").max().alias("maximum"),
             ).row(0)
+
+            global_mean = incidents.select(
+                pl.col("incidents", "solved", "suspects").sum()
+            ).select(
+                pl.col("suspects").truediv("solved")
+            ).item()
 
             self.html(f"""
                 <p>The offender statistics for Germany (and very likely also
@@ -871,17 +912,16 @@ class Analyzer:
                 demographics are representative.</p>
 
                 <p>For <strong>Germany</strong>, the number of suspects per
-                solved incident ranges from {stats[0]:.3f} to {stats[2]:.3f},
-                with a mean of {stats[1]:.3f}. The reciprocal incidents per
-                suspect ranges from {1/stats[2]:.3f} to {1/stats[0]:.3f}, with a
-                mean of {1/stats[1]:.3f}. Assuming that this relationship also
-                holds for unsolved incidents, we then backfill the suspects
-                table for Germany by counting one suspect for each unsolved
-                incident. Since these suspects are unknown, their age and sex
-                must remain <code>null</code>. However, since Germany publishes
-                incident data, just like suspect data, broken down by law, we
-                can still backfill the activity, i.e., distinguish between
-                consumers and producers.</p>
+                solved incident ranges from {min_yearly:.3f} to
+                {max_yearly:.3f}, with a global mean of {global_mean:.3f}.
+                Assuming that this relationship also holds for unsolved
+                incidents, we then backfill the suspects table for Germany by
+                counting one suspect for each unsolved incident. Since these
+                suspects are unknown, their age and sex must remain
+                <code>null</code>. However, since Germany publishes incident
+                data, just like suspect data, broken down by law, we can still
+                backfill the activity, i.e., distinguish between consumers and
+                producers.</p>
             """)
 
             self.emit_age_distributions(with_chi2=self._with_chi2)
@@ -947,6 +987,8 @@ emit_text(summary(data.year.em))
 
 emit_rule()
 data.year.lm <- lm(reports ~ year, data=data)
+data$year_residuals <- rstandard(data.year.lm)
+data$year_predicted <- predict(data.year.lm)
 emit_text(summary(data.year.lm))
 
 emit_rule()
@@ -959,13 +1001,13 @@ emit_text(summary(data.inet.lm))
 
 emit_rule()
 data.social.lm <- lm(reports ~ social_accounts, data=data)
-data.social.resid <- rstandard(data.social.lm)
-emit_text(summary(data.social.lm))
+data$social_residuals <- rstandard(data.social.lm)
+data$social_predicted <- predict(data.social.lm)
 
+emit_text(summary(data.social.lm))
 emit_rule(0)
-emit_text(data.social.resid)
-data$residuals <- data.social.resid
-emit_data(data[c("year", "residuals")])
+emit_text(data$social_residuals)
+emit_data(data[c("year", "social_residuals", "social_predicted", "year_residuals", "year_predicted")])
 
 emit_rule()
 data.year.social.lm <- lm(reports ~ social_accounts + year, data=data)
@@ -1246,6 +1288,97 @@ tested <- read.csv(text="{CSV_DATA}") |>
 
 emit_text(summary(tested))
 """)
+
+    def emit_reports_over_years(self, frame: pl.DataFrame) -> None:
+        base = alt.Chart(frame.with_columns(
+            pl.col("year").cast(pl.String),
+            pl.col("reports", "year_predicted").truediv(1_000_000),
+        ))
+
+        upperX = alt.X("year:T").axis(labels=False).title(None)
+        colors = [Palette.BLUE, Palette.RED, Palette.PINK]
+
+        upper = alt.layer(
+            base.mark_line(color=Palette.GRAY).encode(
+                upperX,
+                alt.Y("year_predicted:Q").axis(None).title(None).scale(domain=(0, 40)),
+            ),
+            base.mark_line(color=colors[0]).encode(
+                upperX,
+                alt.Y("reports:Q").axis(
+                    grid=True,
+                    orient="right",
+                    titleColor=colors[0],
+                    titleFontSize=16,
+                    titleFontWeight="normal",
+                    titleFontStyle="italic",
+                    titleAngle=270,
+                    titlePadding=25,
+                    labelColor=colors[0],
+                    labelFontSize=14,
+                ).title(
+                    "Reports in Millions"
+                ),
+            ),
+            base.mark_line(color=colors[1]).encode(
+                upperX,
+                alt.Y("reports_per_social:Q").axis(
+                    titleColor=colors[1],
+                    titleFontSize=16,
+                    titleFontWeight="normal",
+                    titleFontStyle="italic",
+                    titlePadding=10,
+                    labelColor=colors[1],
+                    labelFontSize=14,
+                ).title(
+                    "Reports per 1k Social Accounts"
+                ),
+            ),
+        ).properties(
+            width=500,
+        ).resolve_scale(
+            x="shared",
+            y="independent",
+        )
+
+        lower = base.mark_bar(size=15, color=colors[2]).encode(
+            alt.X("year:T").axis(
+                titleFontSize=16,
+                titleFontWeight="normal",
+                titleFontStyle="italic",
+                titlePadding=5,
+                labelFontSize=14,
+                labelAngle=-45,
+            ).title(
+                "Year"
+            ),
+            alt.Y("social_residuals:Q").axis(
+                orient="right",
+                titleColor=colors[2],
+                titleFontSize=16,
+                titleFontWeight="normal",
+                titleFontStyle="italic",
+                titleAngle=270,
+                labelColor=colors[2],
+                labelFontSize=14,
+            ).scale(
+                domain=[-2, 2],
+            ).title(
+                ["Standard", "Residuals"]
+            ),
+        ).properties(
+            width=500,
+            height=100,
+        )
+
+        fig = alt.vconcat(upper, lower, spacing=0).resolve_scale(
+            x="shared",
+            y="independent",
+        )
+
+        path = "figure/all-reports.svg"
+        fig.save(path)
+        self.svg(path)
 
     def emit_regression_models(self) -> None:
         frame = pl.read_csv("data/ocse-reports-per-year.csv").filter(
@@ -1604,7 +1737,7 @@ emit_text()
         self.h3("Perpetrators by Country, Year, Sex, and Age")
         self.h4("Suspect Age Distributions")
 
-        distributions = crimestat.load_all_age_distributions(verbose=True)
+        distributions = crimestat.load_all_age_distributions(with_activity=False, verbose=True)
         full_data = pl.concat(
             self.filter_years(distributions, *self.THUMB_YEARS).values()
         )
@@ -1752,26 +1885,27 @@ emit_text()
             fig.save(path)
             self.svg(path)
 
-        odds_ratios = compute_odds_ratios(
-            full_data.filter(
-                pl.col("role").ne("Arrestee")
-            ).with_columns(
-                pl.col("sex_order").mul(-1)
-            ),
-            "age_group",
-            "sex",
-            x_order="age_group_order",
-            y_order="sex_order",
-            use_minor=True,
-        )
+        if False:
+            odds_ratios = compute_odds_ratios(
+                full_data.filter(
+                    pl.col("role").ne("Arrestee")
+                ).with_columns(
+                    pl.col("sex_order").mul(-1)
+                ),
+                "age_group",
+                "sex",
+                x_order="age_group_order",
+                y_order="sex_order",
+                use_minor=True,
+            )
 
-        fig = plot_odds_ratio_grid(
-            odds_ratios,
-            column_count=4,
-            with_title=False,
-        )
-        path = "figure/age-sex-odds-ratios-v1.svg"
-        fig.save(path)
+            fig = plot_odds_ratio_grid(
+                odds_ratios,
+                column_count=4,
+                with_title=False,
+            )
+            path = "figure/age-sex-odds-ratios-v1.svg"
+            fig.save(path)
 
         self.h4("Odds Ratios by Country, Year, Sex, and Age Group")
         self.svg(path)
@@ -1804,7 +1938,12 @@ emit_text()
         self.h3("Perpetrators by Country, Year, Activity, and Age Group")
         self.html("<div class=extra-wide>\n")
 
-        activity_data = full_data.filter(
+        activity_data = pl.concat(
+            self.filter_years(
+                 crimestat.load_all_age_distributions(with_activity=True, verbose=True),
+                *self.THUMB_YEARS
+            ).values()
+        ).filter(
             pl.col("metric").is_in([
                 "Germany CSAM Offenders",
                 "New Zealand CSAM Offenders",
@@ -1839,6 +1978,40 @@ emit_text()
             y_label="Activity",
         )
         path = "figure/age-activity-mosaics.svg"
+        fig.save(path)
+        self.svg(path)
+
+        frame, _ = make_mosaic_frame(
+            activity_data.filter(
+                pl.col("role").eq("Offender"),
+            ),
+            x_axis="age_group",
+            y_axis="activity",
+            index={
+                "age_group": ["Minor", None, "Adult"],
+                "activity": ["Producer", None, "Consumer"],
+            },
+            use_residuals=True,
+            use_minor=True,
+            include_null=True,
+            show_counts=True,
+        )
+
+        frame = test_chi2_independence(
+            frame,
+            x_axis="age_group",
+            y_axis="activity",
+            x_order="x_order",
+            y_order="y_order",
+        )
+
+        fig = plot_mosaic_grid(
+            frame,
+            x_label="Age Group",
+            y_label="Activity",
+            with_title=False,
+        )
+        path = "figure/age-activity-residual-mosaics.svg"
         fig.save(path)
         self.svg(path)
 
@@ -1928,6 +2101,7 @@ emit_text()
             # TODO: Remove when outcomes data for 2025 in Germany becomes available
             pl.col("data_year").le(2024)
         )
+
         de_highlights: dict[str | None, str] = {
             "No Sanction": Palette.GREEN,
             "Adjudication": Palette.ORANGE,
@@ -1972,28 +2146,6 @@ emit_text()
             include_null=True,
         )
 
-        # self.html("<div class=extra-wide>\n")
-
-        # fig = plot_mosaic_grid(
-        #     de_frame,
-        #     x_label="Age Group",
-        #     y_label="Outcome",
-        # )
-        # path = "figure/de-age-outcome-mosaics.svg"
-        # fig.save(path)
-        # self.svg(path)
-
-        # fig = plot_mosaic_grid(
-        #     us_frame,
-        #     x_label="Age Group",
-        #     y_label="Outcome",
-        # )
-        # path = "figure/us-age-outcome-mosaics.svg"
-        # fig.save(path)
-        # self.svg(path)
-
-        # self.html("</div>\n")
-
         fig = plot_mosaic_grid(
             de_frame,
             x_label="Age Group",
@@ -2036,6 +2188,113 @@ emit_text()
             include_null=True,
         )
         self.html("</div>\n")
+
+        frame = de.combine_offenders_and_outcomes(
+            de.de_age_distribution().collect(),
+            de.ingest_outcomes(),
+        ).select(
+            pl.col("data_year", "age_group", "outcome", "count")
+        ).group_by(
+            "data_year", "age_group", "outcome",
+            maintain_order=True
+        ).agg(
+            pl.col("count").sum()
+        ).with_columns(
+            pl.col("outcome").replace_strict({
+                "No Sanction": "ignored",
+                "Adjudication": "adjudicated",
+                "Conviction": "convicted",
+            }),
+            pl.col("age_group").replace("Juvenile", "Youth"),
+        ).pivot(
+            on="outcome",
+            index=["data_year", "age_group"],
+            values="count",
+        ).filter(
+            pl.col("age_group").ne("Child").and_(pl.col("data_year").ne(2025)),
+        ).with_columns(
+            pl.col("adjudicated").add(pl.col("convicted")).alias("prosecuted"),
+            pl.col("ignored").add(pl.col("adjudicated")).add(pl.col("convicted")).alias("offended"),
+        ).with_columns(
+            pl.col("prosecuted").truediv("offended").alias("Prosecution"),
+            pl.col("convicted").truediv("prosecuted").alias("Conviction"),
+        ).unpivot(
+            on=["Prosecution", "Conviction"],
+            index=["data_year", "age_group"],
+            variable_name="outcome",
+            value_name="rate"
+        ).select(
+            pl.col("data_year"),
+            pl.format("{} Rate for {}s", pl.col("outcome"), pl.col("age_group")),
+            pl.col("rate"),
+        )
+
+        self.table("de-outcome-rates", apply_table_style(
+            gt.GT(
+                frame.pivot(
+                    on="outcome",
+                    index="data_year",
+                    values="rate",
+                )
+            ).tab_header(
+                "Outcome Rates"
+            ).tab_spanner(
+                label="Youths",
+                columns=[
+                    "Prosecution Rate for Youths",
+                    "Conviction Rate for Youths",
+                ],
+            ).tab_spanner(
+                label="Adults",
+                columns = [
+                    "Prosecution Rate for Adults",
+                    "Conviction Rate for Adults",
+                ],
+            ).fmt_number(
+                pl.exclude("data_year"),
+                decimals=3,
+            ).cols_label({
+                "Prosecution Rate for Youths": "Prosecution",
+                "Conviction Rate for Youths": "Conviction",
+                "Prosecution Rate for Adults": "Prosecution",
+                "Conviction Rate for Adults": "Conviction",
+            })
+        ))
+
+        fig = alt.Chart(frame).mark_line().encode(
+            alt.X("data_year:O").title(None).axis(labelAngle=-45),
+            alt.Y("rate:Q").title(None),
+            alt.Color("outcome:N").title(None).scale(
+                domain=[
+                    "Conviction Rate for Adults",
+                    "Conviction Rate for Youths",
+                    "Prosecution Rate for Adults",
+                    "Prosecution Rate for Youths",
+                ],
+                range=[
+                    Palette.PURPLE,
+                    Palette.GREEN,
+                    Palette.PINK,
+                    Palette.CYAN,
+                ],
+            ).legend(
+                orient="none",
+                legendX=10,
+                legendY=46,
+            ),
+        ).properties(
+            width=400,
+        ).configure_axis(
+            labelFontSize=14,
+        ).configure_legend(
+            labelFontSize=14,
+            symbolStrokeWidth=4,
+            labelLimit=200,
+        )
+
+        path = "figure/de-outcome-rates.svg"
+        fig.save(path)
+        self.svg(path)
 
         # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         self.h3("Cross-Sectional Age-Crime-Curves for Germany and the U.S.")
@@ -2082,7 +2341,7 @@ emit_text()
         """)
 
         # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-        self.h3("German Age-Crime-Curves After Restricting Offenders")
+        self.h3("German Age-Crime-Curves After Removing Offenders")
         self.html("""
             <p>German law and crime statistics alike distinguish between child
             (0–13) and youth (14–17) pornography. We can leverage this
@@ -2097,7 +2356,7 @@ emit_text()
             (14–17) pornography, since differences in age and maturity favor the
             presumed victims and get in the way of their exploitation.</li>
 
-            <li>The second subgroup are youth (14–17) suspected of youth (14–17)
+            <li>The second subgroup are youth (14–17) also suspected of youth (14–17)
             pornography, since they come close to being peers in terms of
             age/maturity and may very well be sexting.</li>
 
@@ -2113,14 +2372,14 @@ emit_text()
             for Germany, the age-crime-curves change substantially:</p>
         """)
 
-        restricted_curves = de.age_crime_curves(
+        de_reduced_curves = de.age_crime_curves(
             de.restrict_offenders(
                 de.de_age_distribution(with_material=True).collect()
             )
         )
 
         self.html("<div class=wide>\n")
-        fig = plot_crime_rate_by_age(restricted_curves, with_title=False)
+        fig = plot_crime_rate_by_age(de_reduced_curves, with_title=False)
         path = "figure/de-restricted-curves.svg"
         fig.save(path)
         self.svg(path)
@@ -2128,9 +2387,53 @@ emit_text()
 
         self.emit_age_crime_curve_statistics(
             "de-age-crime-curve-filtered",
-            restricted_curves,
+            de_reduced_curves,
             "Germany: Normalized Age Distributions (Filtered Offenders)"
         )
+
+        de_combined_curves = pl.concat([
+            de_curves,
+            de_reduced_curves.with_columns(
+                pl.col("sex").replace_strict({
+                    "Female": "Female (Restricted)",
+                    "Male": "Male (Restricted)",
+                })
+            ).filter(
+                pl.col("sex").is_in(["Female", "Male"]).or_(
+                    pl.col("age").le(18)
+                )
+            ),
+        ])
+
+        self.html("<div class=wide>\n")
+        fig = plot_crime_rate_by_age(
+            de_combined_curves.filter(
+                pl.col("sex").str.starts_with("Male").and_(
+                    pl.col("age").le(50)
+                )
+            ),
+            with_title=False,
+            oldest=50,
+        )
+        path = "figure/de-male-crime-curves.svg"
+        fig.save(path)
+        self.svg(path)
+        self.html("</div>\n")
+
+        self.html("<div class=wide>\n")
+        fig = plot_crime_rate_by_age(
+            de_combined_curves.filter(
+                pl.col("sex").str.starts_with("Female").and_(
+                    pl.col("age").le(50)
+                )
+            ),
+            with_title=False,
+            oldest=50,
+        )
+        path = "figure/de-female-crime-curves.svg"
+        fig.save(path)
+        self.svg(path)
+        self.html("</div>\n")
 
         # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         self.h3("Notes")
@@ -2560,13 +2863,7 @@ emit_text()
             pl.exclude("country", "iso3").str.replace_all(",", "").cast(pl.Int64)
         ).filter(
             pl.col("country").is_in([
-                "Australia",
-                "Finland",
-                "Germany",
-                "Italy",
-                "New Zealand",
-                "Spain",
-                "United States",
+                *_COUNTRIES,
                 "No Country Listed",
                 "Total",
             ])

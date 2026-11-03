@@ -213,6 +213,7 @@ def it_age_distribution() -> pl.LazyFrame:
 
 def load_all_age_distributions(
     compact: bool = False,
+    with_activity: bool = False,
     verbose: bool = False,
 ) -> dict[str, pl.DataFrame]:
     """
@@ -234,7 +235,7 @@ def load_all_age_distributions(
     distributions = {
         "au": au_age_distribution().collect(),
         "fi": fi_age_distribution().collect(),
-        "de": de_age_distribution().collect(),
+        "de": de_age_distribution(with_activity=with_activity).collect(),
         "it": it_age_distribution().collect(),
         "nz": nz_age_distribution().collect(),
         "es": es_age_distribution().collect(),

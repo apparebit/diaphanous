@@ -1,0 +1,81 @@
+<svg height="200" width="1000" xmlns="http://www.w3.org/2000/svg">
+<title>Your Diagram Title</title>
+<!-- Generated with SankeyMATIC: 11/2/2026, 9:20:13 PM -->
+<rect height="200" width="1000" fill="#ffffff"></rect>
+<g transform="translate(138.625,0)">
+<g id="sankey_flows">
+<path id="flow0" d="M12 56.66273C97.25781 56.66273 97.25781 87.332 182.51563 87.332" fill="none" stroke-width="81.65848" stroke="#ff725c" opacity="0.45"><title>Child Pornography → Investigated: 35,550 Offenders</title></path>
+<path id="flow2" d="M194.51563 74.67666C280.83203 74.67666 280.83203 37.75818 367.14843 37.75818" fill="none" stroke-width="56.3478" stroke="#aaaaaa" opacity="0.45"><title>Investigated → Adults: 24,531 Offenders</title></path>
+<path id="flow3" d="M194.51563 116.73709C279.77344 116.73709 279.77344 120.28565 365.03125 120.28565" fill="none" stroke-width="27.77307" stroke="#aaaaaa" opacity="0.45"><title>Investigated → Youths: 12,091 Offenders</title></path>
+<path id="flow1" d="M12 155.79859C97.25781 155.79859 97.25781 138.082 182.51563 138.082" fill="none" stroke-width="19.84152" stroke="#ff8ab7" opacity="0.45"><title>Youth Pornography → Investigated: 8,638 Offenders</title></path>
+<path id="flow4" d="M194.51563 139.31319C281.36132 139.31319 281.36132 179.28426 368.20702 179.28426" fill="none" stroke-width="17.37913" stroke="#aaaaaa" opacity="0.45"><title>Investigated → Children: 7,566 Offenders</title></path>
+<path id="flow5" d="M379.14843 59.84157C464.48655 59.84157 464.48655 95.75809 549.82467 95.75809" fill="none" stroke-width="12.18101" stroke="#aaaaaa" opacity="0.45"><title>Adults → Prosecuted⠀: 5,303 Offenders</title></path>
+<path id="flow6" d="M561.82467 94.79679C626.2757 94.79679 626.2757 49.13743 690.72673 49.13743" fill="none" stroke-width="10.25842" stroke="#aaaaaa" opacity="0.45"><title>Prosecuted⠀ → Convicted⠀: 4,466 Offenders</title></path>
+<path id="flow7" d="M377.03125 133.09604C463.2564 133.09604 463.2564 154.12909 549.48154 154.12909" fill="none" stroke-width="2.15229" stroke="#aaaaaa" opacity="0.45"><title>Youths → Prosecuted: 937 Offenders</title></path>
+<path id="flow8" d="M561.48154 153.587C625.98733 153.587 625.98733 122.15886 690.49311 122.15886" fill="none" stroke-width="1.06811" stroke="#aaaaaa" opacity="0.45"><title>Prosecuted → Convicted: 465 Offenders</title></path>
+</g>
+<g id="sankey_nodes">
+<g class="node">
+<rect id="r0" class="for_r0" x="0" y="27.28185" height="81.65848" width="12" fill="#ff725c" fill-opacity="1" transform="translate(0,-11.44836)"><title>Child Pornography:
+35,550 Offenders</title></rect>
+</g>
+<g class="node">
+<rect id="r1" class="for_r1" x="0" y="145.87783" height="19.84152" width="12" fill="#ff8ab7" fill-opacity="1"><title>Youth Pornography:
+8,638 Offenders</title></rect>
+</g>
+<g class="node">
+<rect id="r2" class="for_r2" x="182.51563" y="34.5025" height="101.5" width="12" fill="#888888" fill-opacity="1" transform="translate(0,12.00026)"><title>Investigated:
+44,188 Offenders</title></rect>
+</g>
+<g class="node">
+<rect id="r3" class="for_r3" x="365.03125" y="13.11382" height="56.3478" width="12" fill="#888888" fill-opacity="1" transform="translate(2.11718,-3.52953)"><title>Adults:
+24,531 Offenders</title></rect>
+</g>
+<g class="node">
+<rect id="r4" class="for_r4" x="365.03125" y="106.39911" height="27.77307" width="12" fill="#888888" fill-opacity="1"><title>Youths:
+12,091 Offenders</title></rect>
+</g>
+<g class="node">
+<rect id="r5" class="for_r5" x="365.03125" y="171.10969" height="17.37913" width="12" fill="#888888" fill-opacity="1" transform="translate(3.17577,-0.51499)"><title>Children:
+7,566 Offenders</title></rect>
+</g>
+<g class="node">
+<rect id="r6" class="for_r6" x="547.54688" y="12.07017" height="12.18101" width="12" fill="#888888" fill-opacity="1" transform="translate(2.27779,77.59742)"><title>Prosecuted⠀:
+5,303 Offenders</title></rect>
+</g>
+<g class="node">
+<rect id="r7" class="for_r7" x="730.0625" y="11.51118" height="10.25842" width="12" fill="#888888" fill-opacity="1" transform="translate(-39.33577,32.49704)"><title>Convicted⠀:
+4,466 Offenders</title></rect>
+</g>
+<g class="node">
+<rect id="r8" class="for_r8" x="547.54688" y="105.45079" height="2.15229" width="12" fill="#888888" fill-opacity="1" transform="translate(1.93467,47.60216)"><title>Prosecuted:
+937 Offenders</title></rect>
+</g>
+<g class="node">
+<rect id="r9" class="for_r9" x="730.0625" y="104.94039" height="1.06811" width="12" fill="#888888" fill-opacity="1" transform="translate(-39.56939,16.68442)"><title>Convicted:
+465 Offenders</title></rect>
+</g>
+</g>
+<g id="sankey_labels" font-family="sans-serif" font-size="15px" fill="#000000">
+<rect id="label0_bg" class="for_r0" x="-133.65625" y="47.85938" width="132.125" height="40.28125" rx="3.75" fill="#fff" fill-opacity="0.9" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(0,-11.44836)"></rect>
+<text id="label0" class="for_r0" text-anchor="end" x="-5.90625" y="68.11109" font-weight="400" font-size="14.85px" dy="-4.56391" transform="translate(0,-11.44836)">Child Pornography<tspan x="-5.90625" dy="18.84375" font-weight="400" font-size="15.15px">35,550 Offenders</tspan></text>
+<rect id="label1_bg" class="for_r1" x="-138.625" y="135.54688" width="137.09375" height="40.28125" rx="3.75" fill="#fff" fill-opacity="0.9" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
+<text id="label1" class="for_r1" text-anchor="end" x="-5.90625" y="155.79859" font-weight="400" font-size="14.85px" dy="-4.56391">Youth Pornography<tspan x="-5.90625" dy="18.84375" font-weight="400" font-size="15.15px">8,638 Offenders</tspan></text>
+<rect id="label2_bg" class="for_r2" x="54.78125" y="65" width="126.21875" height="40.28125" rx="3.75" fill="#fff" fill-opacity="0.9" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(0,12.00026)"></rect>
+<text id="label2" class="for_r2" text-anchor="end" x="176.60938" y="85.2525" font-weight="400" font-size="14.85px" dy="-4.56391" transform="translate(0,12.00026)">Investigated<tspan x="176.60938" dy="18.84375" font-weight="400" font-size="15.15px">44,188 Offenders</tspan></text>
+<rect id="label3_bg" class="for_r3" x="378.5625" y="21.03125" width="126.20313" height="40.28125" rx="3.75" fill="#fff" fill-opacity="0.9" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(2.11718,-3.52953)"></rect>
+<text id="label3" class="for_r3" text-anchor="start" x="382.9375" y="41.28771" font-weight="400" font-size="14.85px" dy="-4.56391" transform="translate(2.11718,-3.52953)">Adults<tspan x="382.9375" dy="18.84375" font-weight="400" font-size="15.15px">24,531 Offenders</tspan></text>
+<rect id="label4_bg" class="for_r4" x="378.5625" y="100.03125" width="126.20313" height="40.28125" rx="3.75" fill="#fff" fill-opacity="0.9" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
+<text id="label4" class="for_r4" text-anchor="start" x="382.9375" y="120.28565" font-weight="400" font-size="14.85px" dy="-4.56391">Youths<tspan x="382.9375" dy="18.84375" font-weight="400" font-size="15.15px">12,091 Offenders</tspan></text>
+<rect id="label5_bg" class="for_r5" x="378.5625" y="159.54688" width="117.78125" height="40.28125" rx="3.75" fill="#fff" fill-opacity="0.9" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(3.17577,-0.51499)"></rect>
+<text id="label5" class="for_r5" text-anchor="start" x="382.9375" y="179.79925" font-weight="400" font-size="14.85px" dy="-4.56391" transform="translate(3.17577,-0.51499)">Children<tspan x="382.9375" dy="18.84375" font-weight="400" font-size="15.15px">7,566 Offenders</tspan></text>
+<rect id="label6_bg" class="for_r6" x="561.07813" y="-2.09375" width="117.78125" height="40.28125" rx="3.75" fill="#fff" fill-opacity="0.9" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(2.27779,77.59742)"></rect>
+<text id="label6" class="for_r6" text-anchor="start" x="565.45313" y="18.16068" font-weight="400" font-size="14.85px" dy="-4.56391" transform="translate(2.27779,77.59742)">Prosecuted⠀<tspan x="565.45313" dy="18.84375" font-weight="400" font-size="15.15px">5,303 Offenders</tspan></text>
+<rect id="label7_bg" class="for_r7" x="743.59375" y="-3.60938" width="117.78125" height="40.26563" rx="3.75" fill="#fff" fill-opacity="0.9" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(-39.33577,32.49704)"></rect>
+<text id="label7" class="for_r7" text-anchor="start" x="747.96875" y="16.64039" font-weight="400" font-size="14.85px" dy="-4.56391" transform="translate(-39.33577,32.49704)">Convicted⠀<tspan x="747.96875" dy="18.84375" font-weight="400" font-size="15.15px">4,466 Offenders</tspan></text>
+<rect id="label8_bg" class="for_r8" x="561.07813" y="86.26563" width="105.14063" height="40.28125" rx="3.75" fill="#fff" fill-opacity="0.9" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(1.93467,47.60216)"></rect>
+<text id="label8" class="for_r8" text-anchor="start" x="565.45313" y="106.52693" font-weight="400" font-size="14.85px" dy="-4.56391" transform="translate(1.93467,47.60216)">Prosecuted<tspan x="565.45313" dy="18.84375" font-weight="400" font-size="15.15px">937 Offenders</tspan></text>
+<rect id="label9_bg" class="for_r9" x="743.59375" y="85.21875" width="105.14063" height="40.28125" rx="3.75" fill="#fff" fill-opacity="0.9" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(-39.56939,16.68442)"></rect>
+<text id="label9" class="for_r9" text-anchor="start" x="747.96875" y="105.47444" font-weight="400" font-size="14.85px" dy="-4.56391" transform="translate(-39.56939,16.68442)">Convicted<tspan x="747.96875" dy="18.84375" font-weight="400" font-size="15.15px">465 Offenders</tspan></text>
+</g>
+</g></svg>

@@ -1,0 +1,88 @@
+<svg height="360" width="900" xmlns="http://www.w3.org/2000/svg">
+<title>Your Diagram Title</title>
+<!-- Generated with SankeyMATIC: 11/2/2026, 9:18:04 PM -->
+<rect height="360" width="900" fill="#ffffff"></rect>
+<g transform="translate(122.6875,0)">
+<g id="sankey_flows">
+<path id="flow0" d="M12 5.54688v295.46887L147.77537 302.1409v-295.46887z" fill="#aaaaaa" stroke-width="0.5" stroke="#aaaaaa" opacity="0.45"><title>Sent by NCMEC → Received by BKA: 192,590 Reports</title></path>
+<path id="flow2" d="M159.77537 6.67204v163.16527L293.53125 169.91345v-163.16527z" fill="#aaaaaa" stroke-width="0.5" stroke="#aaaaaa" opacity="0.45"><title>Received by BKA → Illegal: 106,353 Reports</title></path>
+<path id="flow3" d="M305.53125 77.93593v91.97751L440.29688 169.85134v-91.97751z" fill="#aaaaaa" stroke-width="0.5" stroke="#aaaaaa" opacity="0.45"><title>Illegal → Actionable: 59,952 Reports</title></path>
+<path id="flow7" d="M452.29688 110.74683C519.04566 110.74683 519.04566 42.58286 585.79444 42.58286" fill="none" stroke-width="65.746" stroke="#ff725c" opacity="0.45"><title>Actionable → Child Pornography: 42,854 Reports</title></path>
+<path id="flow5" d="M452.29688 170.89458C519.67969 170.89458 519.67969 199.18107 587.0625 199.18107" fill="none" stroke-width="25.09008" stroke="#aaaaaa" opacity="0.45"><title>Actionable → Sexual Abuse of Children: 16,354 Reports</title></path>
+<path id="flow1" d="M62.64001 332.50431C105.20769 332.50431 105.20769 312.21897 147.77537 312.21897" fill="none" stroke-width="20.15613" stroke="#aaaaaa" opacity="0.45"><title>Discrepancy → Received by BKA: 13,138 Reports</title></path>
+<path id="flow4" d="M305.53125 234.07035C372.91406 234.07035 372.91406 177.84828 440.29688 177.84828" fill="none" stroke-width="15.99389" stroke="#aaaaaa" opacity="0.45"><title>Reported Another Way → Actionable: 10,425 Reports</title></path>
+<path id="flow8" d="M452.29688 150.98469C519.67969 150.98469 519.67969 125.8024 587.0625 125.8024" fill="none" stroke-width="14.72972" stroke="#ff8ab7" opacity="0.45"><title>Actionable → Youth Pornography: 9,601 Reports</title></path>
+<path id="flow6" d="M452.29688 184.35323C519.67969 184.35323 519.67969 267.73344 587.0625 267.73344" fill="none" stroke-width="1.82722" stroke="#aaaaaa" opacity="0.45"><title>Actionable → Sexual Abuse of Youths: 1,191 Reports</title></path>
+<path id="flow9" d="M452.29688 185.55603C519.67969 185.55603 519.67969 329.19927 587.0625 329.19927" fill="none" stroke-width="1" stroke="#aaaaaa" opacity="0.45"><title>Actionable → Sexual Exploitation: 377 Reports</title></path>
+</g>
+<g id="sankey_nodes">
+<g class="node">
+<rect id="r0" class="for_r0" x="0" y="5.54688" height="295.46887" width="12" fill="#888888" fill-opacity="1"><title>Sent by NCMEC:
+192,590 Reports</title></rect>
+</g>
+<g class="node">
+<rect id="r1" class="for_r1" x="146.76563" y="7.67225" height="315.625" width="12" fill="#888888" fill-opacity="1" transform="translate(1.00975,-1.00021)"><title>Received by BKA:
+205,728 Reports</title></rect>
+</g>
+<g class="node">
+<rect id="r2" class="for_r2" x="0" y="334.29699" height="20.15613" width="12" fill="#888888" fill-opacity="1" transform="translate(50.64001,-11.87075)"><title>Discrepancy:
+13,138 Reports</title></rect>
+</g>
+<g class="node">
+<rect id="r3" class="for_r3" x="293.53125" y="7.74809" height="163.16527" width="12" fill="#888888" fill-opacity="1" transform="translate(0,-0.99992)"><title>Illegal:
+106,353 Reports</title></rect>
+</g>
+<g class="node">
+<rect id="r4" class="for_r4" x="440.29688" y="83.8343" height="107.9714" width="12" fill="#888888" fill-opacity="1" transform="translate(0,-5.96048)"><title>Actionable:
+70,377 Reports</title></rect>
+</g>
+<g class="node">
+<rect id="r5" class="for_r5" x="293.53125" y="204.19462" height="15.99389" width="12" fill="#888888" fill-opacity="1" transform="translate(0,21.87879)"><title>Reported Another Way:
+10,425 Reports</title></rect>
+</g>
+<g class="node">
+<rect id="r6" class="for_r6" x="587.0625" y="61.41028" height="65.746" width="12" fill="#ff725c" fill-opacity="1" transform="translate(-1.26806,-51.70043)"><title>Child Pornography:
+42,854 Reports</title></rect>
+</g>
+<g class="node">
+<rect id="r7" class="for_r7" x="587.0625" y="160.43754" height="14.72972" width="12" fill="#ff8ab7" fill-opacity="1" transform="translate(0,-42)"><title>Youth Pornography:
+9,601 Reports</title></rect>
+</g>
+<g class="node">
+<rect id="r8" class="for_r8" x="587.0625" y="208.44851" height="25.09008" width="12" fill="#888888" fill-opacity="1" transform="translate(0,-21.81248)"><title>Sexual Abuse of Children:
+16,354 Reports</title></rect>
+</g>
+<g class="node">
+<rect id="r9" class="for_r9" x="587.0625" y="266.81983" height="1.82722" width="12" fill="#888888" fill-opacity="1"><title>Sexual Abuse of Youths:
+1,191 Reports</title></rect>
+</g>
+<g class="node">
+<rect id="r10" class="for_r10" x="587.0625" y="301.9283" height="0.57839" width="12" fill="#888888" fill-opacity="1" transform="translate(0,26.98178)"><title>Sexual Exploitation:
+377 Reports</title></rect>
+</g>
+</g>
+<g id="sankey_labels" font-family="sans-serif" font-size="15px" fill="#000000">
+<rect id="label0_bg" class="for_r0" x="-122.6875" y="133.03125" width="121.15625" height="40.26563" rx="3.75" fill="#fff" fill-opacity="0.9" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
+<text id="label0" class="for_r0" text-anchor="end" x="-5.90625" y="153.28131" font-weight="400" font-size="14.85px" dy="-4.56391">Sent by NCMEC<tspan x="-5.90625" dy="18.84375" font-weight="400" font-size="15.15px">192,590 Reports</tspan></text>
+<rect id="label1_bg" class="for_r1" x="90.60938" y="145.23438" width="124.6875" height="40.26563" rx="3.75" fill="#fff" fill-opacity="0.9" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(1.00975,-1.00021)"></rect>
+<text id="label1" class="for_r1" text-anchor="middle" x="152.76563" y="165.48475" font-weight="400" font-size="14.85px" dy="-4.56391" transform="translate(1.00975,-1.00021)">Received by BKA<tspan x="152.76563" dy="18.84375" font-weight="400" font-size="15.15px">205,728 Reports</tspan></text>
+<rect id="label2_bg" class="for_r2" x="-114.26563" y="324.125" width="112.73438" height="40.26563" rx="3.75" fill="#fff" fill-opacity="0.9" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(50.64001,-11.87075)"></rect>
+<text id="label2" class="for_r2" text-anchor="end" x="-5.90625" y="344.37506" font-weight="400" font-size="14.85px" dy="-4.56391" transform="translate(50.64001,-11.87075)">Discrepancy<tspan x="-5.90625" dy="18.84375" font-weight="400" font-size="15.15px">13,138 Reports</tspan></text>
+<rect id="label3_bg" class="for_r3" x="239.14063" y="69.07813" width="121.15625" height="40.28125" rx="3.75" fill="#fff" fill-opacity="0.9" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(0,-0.99992)"></rect>
+<text id="label3" class="for_r3" text-anchor="middle" x="299.53125" y="89.33073" font-weight="400" font-size="14.85px" dy="-4.56391" transform="translate(0,-0.99992)">Illegal<tspan x="299.53125" dy="18.84375" font-weight="400" font-size="15.15px">106,353 Reports</tspan></text>
+<rect id="label4_bg" class="for_r4" x="390.10938" y="117.5625" width="112.75" height="40.28125" rx="3.75" fill="#fff" fill-opacity="0.9" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(0,-5.96048)"></rect>
+<text id="label4" class="for_r4" text-anchor="middle" x="446.29688" y="137.82" font-weight="400" font-size="14.85px" dy="-4.56391" transform="translate(0,-5.96048)">Actionable<tspan x="446.29688" dy="18.84375" font-weight="400" font-size="15.15px">70,377 Reports</tspan></text>
+<rect id="label5_bg" class="for_r5" x="179.26563" y="182.65625" width="112.73438" height="58.84375" rx="3.75" fill="#fff" fill-opacity="0.9" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(0,21.87879)"></rect>
+<text id="label5" class="for_r5" text-anchor="end" x="287.625" y="212.19156" font-weight="400" font-size="14.85px" dy="-13.84516" transform="translate(0,21.87879)">Reported<tspan x="287.625" dy="18.5625" font-weight="400" font-size="14.85px">Another Way</tspan><tspan x="287.625" dy="18.84375" font-weight="400" font-size="15.15px">10,425 Reports</tspan></text>
+<rect id="label6_bg" class="for_r6" x="600.59375" y="74.03125" width="132.125" height="40.28125" rx="3.75" fill="#fff" fill-opacity="0.9" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(-1.26806,-51.70043)"></rect>
+<text id="label6" class="for_r6" text-anchor="start" x="604.96875" y="94.28329" font-weight="400" font-size="14.85px" dy="-4.56391" transform="translate(-1.26806,-51.70043)">Child Pornography<tspan x="604.96875" dy="18.84375" font-weight="400" font-size="15.15px">42,854 Reports</tspan></text>
+<rect id="label7_bg" class="for_r7" x="600.59375" y="147.54688" width="137.09375" height="40.28125" rx="3.75" fill="#fff" fill-opacity="0.9" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(0,-42)"></rect>
+<text id="label7" class="for_r7" text-anchor="start" x="604.96875" y="167.8024" font-weight="400" font-size="14.85px" dy="-4.56391" transform="translate(0,-42)">Youth Pornography<tspan x="604.96875" dy="18.84375" font-weight="400" font-size="15.15px">9,601 Reports</tspan></text>
+<rect id="label8_bg" class="for_r8" x="600.59375" y="200.73438" width="176.70313" height="40.28125" rx="3.75" fill="#fff" fill-opacity="0.9" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(0,-21.81248)"></rect>
+<text id="label8" class="for_r8" text-anchor="start" x="604.96875" y="220.99355" font-weight="400" font-size="14.85px" dy="-4.56391" transform="translate(0,-21.81248)">Sexual Abuse of Children<tspan x="604.96875" dy="18.84375" font-weight="400" font-size="15.15px">16,354 Reports</tspan></text>
+<rect id="label9_bg" class="for_r9" x="600.59375" y="247.48438" width="167.64063" height="40.26563" rx="3.75" fill="#fff" fill-opacity="0.9" stroke="none" stroke-width="0" stroke-opacity="0"></rect>
+<text id="label9" class="for_r9" text-anchor="start" x="604.96875" y="267.73344" font-weight="400" font-size="14.85px" dy="-4.56391">Sexual Abuse of Youths<tspan x="604.96875" dy="18.84375" font-weight="400" font-size="15.15px">1,191 Reports</tspan></text>
+<rect id="label10_bg" class="for_r10" x="600.59375" y="281.96875" width="135.4375" height="40.26563" rx="3.75" fill="#fff" fill-opacity="0.9" stroke="none" stroke-width="0" stroke-opacity="0" transform="translate(0,26.98178)"></rect>
+<text id="label10" class="for_r10" text-anchor="start" x="604.96875" y="302.21749" font-weight="400" font-size="14.85px" dy="-4.56391" transform="translate(0,26.98178)">Sexual Exploitation<tspan x="604.96875" dy="18.84375" font-weight="400" font-size="15.15px">377 Reports</tspan></text>
+</g>
+</g></svg>

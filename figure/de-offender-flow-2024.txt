@@ -1,0 +1,88 @@
+// SankeyMATIC diagram inputs - Saved: 11/2/2026, 9:20:12 PM
+// https://sankeymatic.com/build/
+
+// === Nodes and Flows ===
+
+// Enter Flows between Nodes, like this:
+//         Source [AMOUNT] Target
+
+:Child Pornography #ff725c >>
+:Youth Pornography #ff8ab7 >>
+
+Child Pornography [35550] Investigated
+Youth Pornography [8638] Investigated
+
+Investigated [24531] Adults
+Investigated [12091] Youths
+Investigated [7566] Children
+
+Adults [5303] Prosecuted⠀
+Prosecuted⠀ [4466] Convicted⠀
+
+Youths [937] Prosecuted
+Prosecuted [465] Convicted
+
+// === Settings ===
+
+size w 1000
+  h 200
+margin l 0
+  r 0
+  t 0
+  b 0
+bg color #ffffff
+  transparent N
+node w 12
+  h 50
+  spacing 75
+  border 0
+  theme none
+  color #888888
+  opacity 1
+flow curvature 0.5
+  inheritfrom none
+  color #aaaaaa
+  opacity 0.45
+layout order automatic
+  justifyorigins N
+  justifyends N
+  reversegraph N
+  attachincompletesto nearest
+labels color #000000
+  hide N
+  highlight 0.9
+  fontface sans-serif
+  linespacing 0.3
+  relativesize 101
+  magnify 100
+labelname appears Y
+  size 15
+  weight 400
+labelvalue appears Y
+  fullprecision Y
+  position below
+  weight 400
+labelposition autoalign 0
+  scheme per_stage
+  first before
+  breakpoint 3
+value format ',.'
+  prefix ''
+  suffix ' Offenders'
+themeoffset a 6
+  b 0
+  c 0
+  d 0
+meta mentionsankeymatic N
+  listimbalances Y
+
+// === Moved Nodes ===
+
+move Child Pornography 0, -0.09674
+move Prosecuted 0.00265, 0.2406
+move Children 0.00435, -0.00282
+move Prosecuted⠀ 0.00312, 0.41315
+move Convicted⠀ -0.05388, 0.17127
+move Convicted -0.0542, 0.08387
+move Adults 0.0029, -0.02457
+move Investigated 0, 0.12183

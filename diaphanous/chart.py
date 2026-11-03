@@ -488,30 +488,41 @@ def plot_crime_rate_by_age(
     country: None | str = None,
     large_font_size = 30,
     font_size: int = 20,
+    youngest: int = 0,
+    oldest: int = 100,
     with_title: bool = True,
 ) -> alt.FacetChart | alt.VConcatChart:
     base = alt.Chart(frame)
     curves = alt.layer(
-        base.mark_line(
-            strokeWidth=3
+        base.mark_rule(
+            color=Palette.LIGHT_GRAY,
+            strokeWidth=2,
         ).encode(
+            alt.XDatum(18),
+        ),
+        base.mark_rule(
+            color=Palette.LIGHT_GRAY,
+            strokeWidth=2,
+        ).encode(
+            alt.XDatum(14),
+        ),
+        base.mark_line(strokeWidth=3).encode(
             alt.X("age:Q")
-                .scale(domain=(0, 100))
+                .scale(domain=(youngest, oldest))
                 .axis(labelFontSize=font_size)
                 .title(None),
             alt.Y("rate:Q")
                 .axis(orient="right", labelFontSize=font_size)
                 .title(None),
             alt.Color("sex:N")
-                .scale(domain=["Female", "Male"], range=[Palette.RED, Palette.BLUE])
-                .legend(None),
-        ),
-        base.mark_rule(
-            color=Palette.BLACK,
-            strokeWidth=2,
-            strokeDash=(24, 12),
-        ).encode(
-            alt.XDatum(18),
+                .scale(
+                    domain=[
+                        "Male", "Female", "Male (Restricted)", "Female (Restricted)",
+                    ],
+                    range=[
+                        Palette.BLACK, Palette.BLACK, Palette.BLUE, Palette.RED,
+                    ],
+                ).legend(None),
         ),
     ).properties(
         width=400,
@@ -521,8 +532,8 @@ def plot_crime_rate_by_age(
             "data_year:N",
             title=None,
             header=alt.Header(
-                labelFontSize=font_size,
-            )
+                labelFontSize=large_font_size,
+            ),
         ),
         columns=4,
         spacing=large_font_size,

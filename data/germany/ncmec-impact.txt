@@ -16,3 +16,55 @@ Sexualdelikte zum Nachteil von Kindern und Jugendlichen
 106,652   Violations of German law
  57,686   Forwarded to state police agencies
           80.2% of all cases
+
+
+
+
+Flow Analysis 2024
+==================
+
+192,590  Reports received and forwarded to German law enforcement according to NCMEC
+205,728  Reports received by BKA
+106,353  Reports describe illegal activity according to BKA
+ 59,952  Forwarded to local police
+
+ 16,354  Sexual abuse of Children
+ 18,085  Victims
+ 12,368  Suspects
+  1,498  Children (Suspects)
+  2,431  Adolescents (Suspects)
+
+  1,191  Sexual abuse of Adolescents
+  1,259  Victims
+  1,018  Suspects
+     15  Children (Suspects)
+     87  Adolescents (Suspects)
+
+ 42,854  Child pornography
+ 35,550  Suspects
+  7,001  Children (Suspects)
+  8,412  Adolescents (Suspects)
+
+  9,601  Youth pornography
+  8,638  Suspects
+    565  Children (Suspects)
+  3,679  Adolescents (Suspects)
+
+    377  Sexual exploitation
+    493  Victims
+    332  Suspects
+
+ 70,377  Incidents Total
+
+ 44,188  Porn offenders in BKA report
+  7,566  Children
+ 11,171  Adolescents
+    473  Adjudicated Adolescents
+    465  Convicted Adolescents
+ 19,210  Adults
+    837  Adjudicated Adults
+  4,466  Convicted Adults
+
+106,353 : 10,425
+     10 : 1
+
