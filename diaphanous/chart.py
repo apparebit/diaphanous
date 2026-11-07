@@ -490,8 +490,20 @@ def plot_crime_rate_by_age(
     font_size: int = 20,
     youngest: int = 0,
     oldest: int = 100,
+    with_14: bool = True,
     with_title: bool = True,
+    with_colors: None | dict[str, str] = None,
 ) -> alt.FacetChart | alt.VConcatChart:
+    with_colors = {
+        "Male": Palette.BLACK,
+        "Female": Palette.BLACK,
+        "Male (Filtered)": Palette.BLUE,
+        "Female (Filtered)": Palette.RED,
+    } | (with_colors or {})
+    assert with_colors is not None
+    color_domain = [*with_colors.keys()]
+    color_range = [*with_colors.values()]
+
     base = alt.Chart(frame)
     curves = alt.layer(
         base.mark_rule(
@@ -500,11 +512,13 @@ def plot_crime_rate_by_age(
         ).encode(
             alt.XDatum(18),
         ),
-        base.mark_rule(
-            color=Palette.LIGHT_GRAY,
-            strokeWidth=2,
-        ).encode(
-            alt.XDatum(14),
+        * (
+            [base.mark_rule(
+                color=Palette.LIGHT_GRAY,
+                strokeWidth=2,
+            ).encode(
+                alt.XDatum(14),
+            )] if with_14 else []
         ),
         base.mark_line(strokeWidth=3).encode(
             alt.X("age:Q")
@@ -515,14 +529,8 @@ def plot_crime_rate_by_age(
                 .axis(orient="right", labelFontSize=font_size)
                 .title(None),
             alt.Color("sex:N")
-                .scale(
-                    domain=[
-                        "Male", "Female", "Male (Restricted)", "Female (Restricted)",
-                    ],
-                    range=[
-                        Palette.BLACK, Palette.BLACK, Palette.BLUE, Palette.RED,
-                    ],
-                ).legend(None),
+                .scale(domain=color_domain, range=color_range)
+                .legend(None),
         ),
     ).properties(
         width=400,

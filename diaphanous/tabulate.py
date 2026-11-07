@@ -1282,11 +1282,11 @@ emit_text({test}(dt.contab{extra}))
         ), """
 library(tidyverse)
 library(rstatix)
-tested <- read.csv(text="{CSV_DATA}") |>
-    sign_test(reports ~ source) |>
-    add_significance()
-
-emit_text(summary(tested))
+data <- read.csv(text="{CSV_DATA}")
+data.sign <- sign_test(data, formula = reports ~ source)
+# Just great. summary() produces one far-too-long line of unreadable text.
+# Thankfully, printing the object works.
+emit_text(data.sign)
 """)
 
     def emit_reports_over_years(self, frame: pl.DataFrame) -> None:
@@ -2312,7 +2312,12 @@ emit_text()
         self.html("<div class=wide>\n")
 
         de_curves = de.age_crime_curves(full_data)
-        fig = plot_crime_rate_by_age(de_curves, with_title=False)
+        fig = plot_crime_rate_by_age(
+            de_curves,
+            with_title=False,
+            with_colors={"Male": Palette.BLUE, "Female": Palette.RED},
+            with_14=False,
+        )
         path = "figure/de-age-crime-curves.svg"
         fig.save(path)
         self.svg(path)
@@ -2379,7 +2384,12 @@ emit_text()
         )
 
         self.html("<div class=wide>\n")
-        fig = plot_crime_rate_by_age(de_reduced_curves, with_title=False)
+        fig = plot_crime_rate_by_age(
+            de_reduced_curves,
+            with_title=False,
+            with_colors={"Male": Palette.BLUE, "Female": Palette.RED},
+            with_14=False,
+        )
         path = "figure/de-restricted-curves.svg"
         fig.save(path)
         self.svg(path)
@@ -2395,8 +2405,8 @@ emit_text()
             de_curves,
             de_reduced_curves.with_columns(
                 pl.col("sex").replace_strict({
-                    "Female": "Female (Restricted)",
-                    "Male": "Male (Restricted)",
+                    "Female": "Female (Filtered)",
+                    "Male": "Male (Filtered)",
                 })
             ).filter(
                 pl.col("sex").is_in(["Female", "Male"]).or_(
@@ -2421,6 +2431,17 @@ emit_text()
         self.html("</div>\n")
 
         self.html("<div class=wide>\n")
+        # fig = plot_crime_rate_by_age(
+        #     de_combined_curves.filter(
+        #         pl.col("sex").str.starts_with("Female")
+        #     ),
+        #     with_title=False,
+        #     with_14=False,
+        # )
+        # path = "figure/de-female-crime-curves-full.svg"
+        # fig.save(path)
+        # self.svg(path)
+
         fig = plot_crime_rate_by_age(
             de_combined_curves.filter(
                 pl.col("sex").str.starts_with("Female").and_(
