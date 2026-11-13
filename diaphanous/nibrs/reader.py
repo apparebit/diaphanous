@@ -3,7 +3,7 @@ from collections.abc import Mapping
 import dataclasses
 from pathlib import Path
 import shutil
-from typing import Callable, ClassVar, Literal
+from typing import Callable, ClassVar, Literal, NoReturn
 import zipfile
 
 import polars as pl
@@ -12,8 +12,9 @@ from .model import (
     CriminalAct, Ethnicity, Id, OffenseCode, Race, Sex, SOURCE_FILES, Table
 )
 from ..util import (
-    ACTIVITIES, AGE_GROUP_ORDER, COUNTRIES, finish_age_distribution, make_empty_year,
-    MATERIALS, METRICS, METRIC_ORDER, OUTCOME_ORDER, OUTCOMES, ROLES
+    ACTIVITIES, AGE_GROUP_ORDER, COUNTRIES, finish_age_distribution,
+    make_empty_year_eagerly, MATERIALS, METRICS, METRIC_ORDER, OUTCOME_ORDER,
+    OUTCOMES, ROLES
 )
 
 
@@ -27,6 +28,7 @@ class Reader:
     """Ingest CSV files contained in a state-specific archive."""
 
     MATERIALIZED_TABLES: ClassVar[tuple[Table, ...]] = (
+        Table.AGENCY,
         Table.ARRESTEE,
         Table.INCIDENT,
         Table.OFFENDER,
@@ -39,10 +41,11 @@ class Reader:
     is_legacy_age: bool
     offense_type: None | FrameType
 
-    def __init__(self, archive: Path) -> None:
+    def __init__(self, archive: Path, state: str, year: int) -> None:
         self.archive = archive
         self.tmp = tmp = self._unarchive(archive)
-        self.year = year = int(self.tmp.parent.name)
+        self.state = state
+        self.year = year
 
         schema = Table.AGE.fit_schema(year, tmp)
         self.is_legacy_age = _read_csv(
@@ -117,7 +120,7 @@ class Reader:
         frame = _read_csv(
             self.tmp / table.csv_file,
             schema=pl.Schema(schema.value),
-            encoding="utf8-lossy" if table is Table.AGENCIES else "utf8"
+            encoding="utf8-lossy" if table is Table.AGENCY else "utf8"
         )
 
         return schema.normalize(frame, self.offense_type, self.is_legacy_age)
@@ -127,7 +130,7 @@ class Reader:
         result = {}
 
         for table in Table:
-            if table is Table.AGENCIES:
+            if table is Table.AGENCY:
                 result[table] = (
                     _new_frame({}, schema=table.latest_schema) if self.year <= 2015
                     else self.read_csv(table)
@@ -141,9 +144,12 @@ class Reader:
 
     def ingest_all(self) -> Mapping[Table, FrameType]:
         """Ingest arrestees, incidents, offenders, and victims."""
+        def fail(msg: str) -> NoReturn:
+            raise AssertionError(f"{self.state}:{self.year}: {msg}")
+
         frames = self.read_all_csv()
 
-        agencies = frames[Table.AGENCIES]
+        agencies = frames[Table.AGENCY]
         arrestees = frames[Table.ARRESTEE]
         criminal_acts = frames[Table.CRIMINAL_ACT]
         incidents = frames[Table.INCIDENT]
@@ -160,11 +166,18 @@ class Reader:
             _prepare_criminal_acts(criminal_acts),
             on=(Id.YEAR, Id.OFFENSE),
             how="left",
-        ).with_columns(
-            pl.col(Id.MATERIAL).fill_null("Porn")
         )
 
         porn_offense_count = len(porn_offenses)
+        null_material_count = porn_offenses.select(
+            pl.col(Id.MATERIAL).is_null().sum()
+        ).item()
+        if 0 < null_material_count:
+            fail(
+                f"{null_material_count:,} out of {porn_offense_count:,} "
+                "porn offenses without material"
+            )
+
         offense_id_count = porn_offenses.select(
             pl.format("{} {}", pl.col(Id.YEAR), pl.col(Id.OFFENSE)).n_unique()
         ).item()
@@ -174,13 +187,11 @@ class Reader:
 
         # INVARIANT: Each offense involving porn should have a unique ID
         if porn_offense_count != offense_id_count:
-            raise AssertionError(
-                f"{porn_offense_count:,} porn offenses with {offense_id_count:,} IDs"
-            )
+            fail(f"{porn_offense_count:,} porn offenses with {offense_id_count:,} IDs")
 
         # INVARIANT: Each offense involving porn should reference a unique incident
         if porn_offense_count != incident_id_count:
-            raise AssertionError(
+            fail(
                 f"{porn_offense_count:,} porn offenses "
                 f"with {incident_id_count:,} incidents"
             )
@@ -202,31 +213,74 @@ class Reader:
 
         # INVARIANT: Each list of offenses not involving porn has a unique incident
         if nonporn_offense_count != incident_id_count:
-            raise AssertionError(
+            fail(
                 f"{nonporn_offense_count:,} non-porn offenses "
                 f"with {incident_id_count:,} incidents"
             )
 
         # ------------------------------------------------------------------------------
-        # Extract AGENCY NAMES and eliminate duplicates
-        agencies = agencies.select(
-            "agency_id", Id.YEAR, "ncic_agency_name", "state_abbr"
+        # Clean up AGENCY table
+        agencies = agencies.with_columns(
+            pl.col("nibrs_cert_date", "nibrs_start_date").str.to_date("%Y-%m-%d", strict=False).name.suffix("1"),
+            pl.col("nibrs_cert_date", "nibrs_start_date").str.to_date("%d-%b-%y", strict=False).name.suffix("2"),
+        ).with_columns(
+            pl.col("nibrs_cert_date1").fill_null(pl.col("nibrs_cert_date2")).alias("nibrs_cert_date"),
+            pl.col("nibrs_start_date1").fill_null(pl.col("nibrs_start_date2")).alias("nibrs_start_date"),
+            pl.when(
+                pl.col("ncic_agency_name").is_not_null().and_(
+                    pl.col("ncic_agency_name").str.len_bytes().gt(0)
+                )
+            ).then(
+                pl.col("ncic_agency_name")
+            ).when(
+                pl.col("ucr_agency_name").is_not_null().and_(
+                    pl.col("ucr_agency_name").str.len_bytes().gt(0)
+                )
+            ).then(
+                pl.col("ucr_agency_name")
+            ).otherwise(
+                pl.col("pub_agency_name")
+            ).alias("ncic_agency_name"),
         ).group_by(
-            "agency_id", Id.YEAR
+            "agency_id", Id.YEAR,
         ).agg(
-            pl.col("ncic_agency_name").first(),
-            pl.col("state_abbr").first(),
+            pl.col("ori", "ncic_agency_name", "state_abbr", "nibrs_cert_date", "nibrs_start_date").unique(),
+        ).with_columns(
+            pl.col("nibrs_cert_date", "nibrs_start_date").list.filter(pl.element().is_not_null())
+        )
+
+        if 0 != agencies.select(
+            pl.col("ori").list.len().gt(1).sum().add(
+                pl.col("ncic_agency_name").list.len().gt(1).sum()
+            ).add(
+                pl.col("state_abbr").list.len().gt(1).sum()
+            )
+        ).item():
+            fail("agency IDs with ambiguous ORI, name, or state")
+
+        agencies = agencies.with_columns(
+            pl.col("ori", "ncic_agency_name", "state_abbr").list.first()
         )
 
         agency_count = len(agencies)
         agency_id_count = agencies.select(
             pl.format("{} {}", pl.col(Id.YEAR), pl.col(Id.AGENCY)).n_unique()
         ).item()
+        ori_count = agencies.select(pl.col("ori").n_unique()).item()
 
         # INVARIANT: Each agency has a unique ID
         if agency_count != agency_id_count:
-            raise AssertionError(
-                f"{agency_count:,} agencies with {agency_id_count:,} IDs"
+            fail(f"{agency_count:,} agencies with {agency_id_count:,} IDs")
+
+        # INVARIANT: Each agency has a unique originating agency ID.
+        #
+        # Since we combine agency IDs with the year to ensure that they are
+        # actually unique primary keys, but ORIs are stable for the same law
+        # enforcement agency, this test can only succeed on a year's worth of
+        # data.
+        if agency_count != ori_count:
+            fail(
+                f"{agency_count:,} agency IDs vs {ori_count:,} originating agency IDs",
             )
 
         # ------------------------------------------------------------------------------
@@ -247,7 +301,7 @@ class Reader:
 
         # INVARIANT: The number of incidents has not changed
         if incident_count != len(incidents):
-            raise AssertionError(
+            fail(
                 f"{len(incidents):,} not {incident_count:,} incidents "
                 "after joining in non-porn offenses"
             )
@@ -261,7 +315,7 @@ class Reader:
 
         # INVARIANT: The number of incidents has not changed
         if incident_count != len(incidents):
-            raise AssertionError(
+            fail(
                 f"{len(incidents):,} not {incident_count:,} incidents "
                 "after joining agencies"
             )
@@ -284,13 +338,12 @@ class Reader:
         offender_count = len(offenders)
 
         if arrestee_count > offender_count:
-            raise AssertionError(
-                f"{arrestee_count:,} arrestees but {offender_count:,} offenders"
-            )
+            fail(f"{arrestee_count:,} arrestees but {offender_count:,} offenders")
 
         # ------------------------------------------------------------------------------
         # When changing this dictionary, also change MATERIALIZED_TABLES!
         return {
+            Table.AGENCY: agencies,
             Table.ARRESTEE: arrestees,
             Table.INCIDENT: incidents,
             Table.OFFENDER: offenders,
@@ -360,7 +413,7 @@ def step_ingestion(year: int, state: str) -> None:
 
 
 def done_ingestion() -> None:
-    print()
+    print(flush=True)
 
 
 _DATA_ROOT = Path(__file__).parent.parent.parent / "data" / "nibrs"
@@ -405,11 +458,13 @@ def _do_ingest_tables(
     do_step = step or (lambda year, state: None)
 
     all_tables = defaultdict(list)
-    for year in range(2015, 2025):
+    for year in range(2015, 2026):
         path = _DATA_ROOT / f"{year}"
         for archive in sorted(path.glob("??-????.zip")):
-            do_step(year, archive.name[:2])
-            reader = Reader(archive)
+            state = archive.name[:2]
+            do_step(year, state)
+
+            reader = Reader(archive, state, year)
             tables = reader.ingest_all()
             for tab, table in tables.items():
                 all_tables[tab].append(table)
@@ -494,6 +549,7 @@ def analyze_offender_anomalies(
 
     return agencies, age_ranges
 
+
 def ingest_age_distributions(
     step: None | Callable[[int, str], None] = None,
 ) -> pl.DataFrame:
@@ -521,13 +577,13 @@ def ingest_age_distributions(
         ),
     ])
 
-    distribution = pl.concat([
-        distribution,
-        _make_empty_us_year(2025, "CSAM", "Offender"),
-        _make_empty_us_year(2025, "Porn", "Offender"),
-        _make_empty_us_year(2025, "CSAM", "Arrestee"),
-        _make_empty_us_year(2025, "Porn", "Arrestee"),
-    ])
+    # distribution = pl.concat([
+    #     distribution,
+    #     _make_empty_us_year(2025, "CSAM", "Offender"),
+    #     _make_empty_us_year(2025, "Porn", "Offender"),
+    #     _make_empty_us_year(2025, "CSAM", "Arrestee"),
+    #     _make_empty_us_year(2025, "Porn", "Arrestee"),
+    # ])
 
     distribution = finish_age_distribution(
         distribution,
@@ -548,7 +604,7 @@ def _make_empty_us_year(
     material: Literal["CSAM", "Porn"],
     role: Literal["Offender", "Arrestee"],
 ) -> pl.DataFrame:
-    return make_empty_year(year, lazy=False).with_columns(
+    return make_empty_year_eagerly(year).with_columns(
         pl.lit(material, dtype=pl.Enum(MATERIALS)).alias("material"),
         pl.lit(role, dtype=pl.Enum(ROLES)).alias("role"),
         pl.col(Id.ACTIVITY).cast(pl.Enum(ACTIVITIES)),
@@ -742,3 +798,12 @@ def combine_offenders_and_arrestees(
     ).item()
 
     return result
+
+
+_CROSSWALK_PATH = _DATA_ROOT / "crosswalk" / "crosswalk.tsv"
+
+def ingest_crosswalk() -> pl.DataFrame:
+    return pl.read_csv(
+        _CROSSWALK_PATH,
+        separator="\t",
+    )

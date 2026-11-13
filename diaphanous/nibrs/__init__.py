@@ -6,8 +6,8 @@ from .model import (
 
 from .reader import (
     analyze_offender_anomalies, combine_offenders_and_arrestees, done_ingestion,
-    ingest_age_distributions, ingest_tables, normalize_agency_name, step_ingestion,
-    us_age_distributions,
+    ingest_age_distributions, ingest_crosswalk, ingest_tables, normalize_agency_name,
+    step_ingestion, us_age_distributions,
 )
 
 
@@ -24,6 +24,7 @@ __all__ = (
     "Group",
     "Id",
     "ingest_age_distributions",
+    "ingest_crosswalk",
     "ingest_tables",
     "JuvenileDisposition",
     "Location",

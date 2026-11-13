@@ -19,7 +19,7 @@ class Table(enum.StrEnum):
     """Supported NIBRS tables."""
 
     AGE = "age"
-    AGENCIES = "agencies"
+    AGENCY = "agency"
     ARRESTEE = "arrestee"
     CRIMINAL_ACT = "criminal_act"
     INCIDENT = "incident"
@@ -38,7 +38,7 @@ class Table(enum.StrEnum):
     @property
     def csv_file(self) -> str:
         """Get the CSV file name for this table."""
-        return "agencies.csv" if self == self.AGENCIES else f"nibrs_{self}.csv"
+        return "agencies.csv" if self == self.AGENCY else f"nibrs_{self}.csv"
 
     @property
     def parquet_file(self) -> str:
@@ -130,7 +130,7 @@ class Table(enum.StrEnum):
         property raises an error for the `AGENCIES` table, which duplicates the
         same dummy name "0".
         """
-        if self is self.AGENCIES:
+        if self is self.AGENCY:
             raise ValueError("unable to map names due to conflicting columns")
 
         return _COLUMN_NAMES_AFTER_2020.get(self, _EMPTY_MAPPING)
@@ -151,7 +151,7 @@ class Table(enum.StrEnum):
         # Compute the pre-2021 columns by restoring old names and...
         schema = {}
         for c, t in self.latest_schema.items():
-            if self is not self.AGENCIES and c in self.column_names_until_2020:
+            if self is not self.AGENCY and c in self.column_names_until_2020:
                 c = self.column_names_until_2020[c]
             elif self.has_offense_type_until_2020 and c == "offense_code":
                 # Update schema column and patch up later
@@ -202,7 +202,7 @@ _EMPTY_MAPPING = MappingProxyType({})
 
 _PRIMARY_KEY = MappingProxyType({
     Table.AGE: "age_id",
-    Table.AGENCIES: "agency_id",
+    Table.AGENCY: "agency_id",
     Table.ARRESTEE: "arrestee_id",
     Table.CRIMINAL_ACT: None,
     Table.INCIDENT: "incident_id",
@@ -252,7 +252,7 @@ _COLUMNS_UNTIL_2020: Mapping[
 
 
 _COLUMN_NAMES_UNTIL_2020 = MappingProxyType({
-    Table.AGENCIES: MappingProxyType({
+    Table.AGENCY: MappingProxyType({
         "female_officer+female_civilian":
             "ped.female_civilian+ped.female_officer",
         "male_officer+male_civilian":
@@ -279,7 +279,7 @@ _LATEST_SCHEMA: Mapping[Table, Mapping[str, Any]] = MappingProxyType({
         "age_code": pl.String,
         "age_name": pl.String,
     }),
-    Table.AGENCIES: MappingProxyType({
+    Table.AGENCY: MappingProxyType({
         "yearly_agency_id": pl.Int64,
         "agency_id": pl.Int64,
         "data_year": pl.Int32,
@@ -540,7 +540,7 @@ class EffectiveSchema:
                 reorder_columns = True
 
         if self._year <= 2020:
-            if self._table is not Table.AGENCIES:
+            if self._table is not Table.AGENCY:
                 cs = self._table.column_names_after_2020
                 if len(cs) != 0:
                     frame = frame.rename(cs)

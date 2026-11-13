@@ -182,12 +182,13 @@ def format_table(frame: pl.DataFrame, title: None | str = None) -> gt.GT:
 
 
 @overload
-def make_empty_year(year: int, with_material: bool, lazy: Literal[False]) -> pl.DataFrame: ...
+def make_empty_year(year: int, *, with_material: bool, lazy: Literal[False]) -> pl.DataFrame: ...
 @overload
-def make_empty_year(year: int, with_material: bool, lazy: Literal[True]) -> pl.LazyFrame: ...
+def make_empty_year(year: int, *, with_material: bool, lazy: Literal[True]) -> pl.LazyFrame: ...
 
 def make_empty_year(
     year: int,
+    *,
     with_material: bool = False,
     lazy: bool = False,
 ) -> pl.DataFrame | pl.LazyFrame:
@@ -207,11 +208,11 @@ def make_empty_year(
 
 
 def make_empty_year_eagerly(year: int, with_material: bool = False) -> pl.DataFrame:
-    return make_empty_year(year, with_material, lazy=False)
+    return make_empty_year(year, with_material=with_material, lazy=False)
 
 
 def make_empty_year_lazily(year: int, with_material: bool = False) -> pl.LazyFrame:
-    return make_empty_year(year, with_material, lazy=True)
+    return make_empty_year(year, with_material=with_material, lazy=True)
 
 
 def add_empty_year[F: (pl.DataFrame, pl.LazyFrame)](
