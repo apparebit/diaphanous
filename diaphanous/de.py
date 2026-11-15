@@ -1,12 +1,12 @@
 from pathlib import Path
 import shutil
-from typing import Literal\
+from typing import Literal
 
 import polars as pl
 
 from .nibrs.model import Id
 from .util import (
-    add_empty_year, AGE_GROUP_ORDER, COUNTRIES, finish_age_distribution,
+    AGE_GROUP_ORDER, COUNTRIES, finish_age_distribution,
     MATERIALS, METRICS, METRIC_ORDER, OUTCOME_COLUMNS, OUTCOME_ORDER,
     OUTCOMES, ROLES, SEX_ORDER, sort_age_distribution
 )
@@ -28,14 +28,27 @@ _CONSUMER_IDS_V1 = ["143300", "143600"]
 _CHILD_PORN_IDS_V1 = ["143200", "143300", "143400"]
 _YOUTH_PORN_IDS_V1 = ["143500", "143600", "143700"]
 
-_PRODUCER_IDS_V2 = ["143210", "143220", "143510", "143520"]
+_PRODUCER_IDS_V2 = [
+    "143210", "143211", "143212", "143213", "143214", "143220",
+    "143510", "143511", "143512", "143513", "143514", "143520",
+]
 _CONSUMER_IDS_V2 = ["143230", "143530"]
-_CHILD_PORN_IDS_V2 = ["143210", "143220", "143230"]
-_YOUTH_PORN_IDS_V2 = ["143510", "143520", "143530"]
-_CHILD_PORN_SUPER_ID_V2 = ["143200"]
-_YOUTH_PORN_SUPER_ID_V2 = ["143500"]
+
+_CHILD_PORN_IDS_V2 = [
+    "143200", "143210", "143211", "143212", "143213", "143214", "143220", "143230",
+]
+_YOUTH_PORN_IDS_V2 = [
+    "143500", "143510", "143511", "143512", "143513", "143514", "143520", "143530",
+]
 
 PORN_IDS = ["143200", "143300", "143400", "143500", "143600", "143700"]
+
+# We can use a single, version-independent list for top-level IDs, since V2
+# top-level IDs are a subset of V1 top-level IDs and the extra V1 top-level IDs
+# are not used in V2. That doesn't quite work for activity level IDs.
+_TOP_LEVEL_IDS = ["143200", "143300", "143400", "143500", "143600", "143700"]
+_ACTIVITY_LEVEL_IDS_V1 = _TOP_LEVEL_IDS
+_ACTIVITY_LEVEL_IDS_V2 = ["143210", "143220", "143230", "143510", "143520", "143530"]
 
 _READ_OPTIONS_SUSPECTS = dict(
     skip_rows=9,
@@ -89,26 +102,30 @@ _COLUMN_NAMES_POPULATION = [
 ]
 
 
-def ingest_suspects(with_activity: bool = False) -> pl.DataFrame:
+def ingest_suspects() -> pl.DataFrame:
     suspects = []
-    for year in range(2015, _LATEST_YEAR + 1):
+    for year in range(2014, _LATEST_YEAR + 1):
         # https://www.bka.de/SharedDocs/Downloads/DE/Publikationen/
         # PolizeilicheKriminalstatistik/2020/Bund/Tatverdaechtige/
         # BU-TV-01-T20-TV_xls.xlsx?__blob=publicationFile&v=4
-        try:
-            frame = pl.read_excel(
-                _ROOT / "data" / "germany" / f"suspects-{year}.xlsx",
-                sheet_name="T20",
-                read_options=_READ_OPTIONS_SUSPECTS,
-            )
-        except ValueError:
-            frame = pl.read_excel(
-                _ROOT / "data" / "germany" / f"suspects-{year}.xlsx",
-                sheet_name="BU-TV-01-T20-TV",
-                read_options=_READ_OPTIONS_SUSPECTS,
-            )
+        if year == 2014:
+            sheet = "Tabelle20"
+        elif year <= 2021:
+            sheet = "T20"
+        else:
+            sheet = "BU-TV-01-T20-TV"
 
-        if year == 2015:
+        read_options = _READ_OPTIONS_SUSPECTS
+        if year == 2014:
+            read_options |= { "skip_rows": 12 }
+
+        frame = pl.read_excel(
+            _ROOT / "data" / "germany" / f"suspects-{year}.xlsx",
+            sheet_name=sheet,
+            read_options=read_options,
+        )
+
+        if year <= 2015:
             frame = frame.select(pl.exclude("__UNNAMED__24"))
             filter = pl.col("id").str.starts_with("143").and_(
                 pl.col("id").str.starts_with("1430").not_()
@@ -125,8 +142,8 @@ def ingest_suspects(with_activity: bool = False) -> pl.DataFrame:
             )
             producers = _PRODUCER_IDS_V2
             consumers = _CONSUMER_IDS_V2
-            child_porn = _CHILD_PORN_IDS_V2 if with_activity else _CHILD_PORN_SUPER_ID_V2
-            youth_porn = _YOUTH_PORN_IDS_V2 if with_activity else _YOUTH_PORN_SUPER_ID_V2
+            child_porn = _CHILD_PORN_IDS_V2
+            youth_porn = _YOUTH_PORN_IDS_V2
 
         suspects.append(frame.filter(
             filter
@@ -152,8 +169,7 @@ def ingest_suspects(with_activity: bool = False) -> pl.DataFrame:
                 pl.col("id").is_in(consumers)
             ).then(
                 pl.lit("Consumer"),
-            ).alias(Id.ACTIVITY) if with_activity
-            else pl.lit(None, dtype=pl.String).alias(Id.ACTIVITY),
+            ).alias(Id.ACTIVITY),
         ))
 
     all_suspects = pl.concat(suspects)
@@ -255,10 +271,10 @@ def ingest_suspects(with_activity: bool = False) -> pl.DataFrame:
     return all_suspects
 
 
-def ingest_incidents(with_activity: bool = False) -> pl.DataFrame:
+def ingest_incidents() -> pl.DataFrame:
     incidents = []
-    for year in range(2015, _LATEST_YEAR + 1):
-        if year == 2015:
+    for year in range(2014, _LATEST_YEAR + 1):
+        if year <= 2015:
             filter = pl.col("id").str.starts_with("143").and_(
                 pl.col("id").str.starts_with("1430").not_()
             ).and_(
@@ -274,12 +290,12 @@ def ingest_incidents(with_activity: bool = False) -> pl.DataFrame:
             )
             producers = _PRODUCER_IDS_V2
             consumers = _CONSUMER_IDS_V2
-            child_porn = _CHILD_PORN_IDS_V2 if with_activity else _CHILD_PORN_SUPER_ID_V2
-            youth_porn = _YOUTH_PORN_IDS_V2 if with_activity else _YOUTH_PORN_SUPER_ID_V2
+            child_porn = _CHILD_PORN_IDS_V2
+            youth_porn = _YOUTH_PORN_IDS_V2
 
         incidents.append(pl.read_excel(
             _ROOT / "data" / "germany" / f"incidents-{year}.xlsx",
-            sheet_name="T01",
+            sheet_name="Tabelle01" if year == 2014 else "T01",
             read_options=dict(
                 skip_rows=8,
                 column_names=[
@@ -334,8 +350,7 @@ def ingest_incidents(with_activity: bool = False) -> pl.DataFrame:
                 pl.col("id").is_in(consumers)
             ).then(
                 pl.lit("Consumer"),
-            ).alias(Id.ACTIVITY) if with_activity
-            else pl.lit(None, dtype=pl.String).alias(Id.ACTIVITY),
+            ).alias(Id.ACTIVITY),
         ).select(
             pl.col(
                 Id.YEAR, "id", "description", Id.ACTIVITY, Id.MATERIAL,
@@ -347,28 +362,27 @@ def ingest_incidents(with_activity: bool = False) -> pl.DataFrame:
     return pl.concat(incidents)
 
 
-def compute_age_distribution(
-    suspects: pl.DataFrame,
-    incidents: pl.DataFrame,
+def de_age_distribution(
     with_activity: bool = False,
     with_material: bool = False,
 ) -> pl.LazyFrame:
-    # Validate that incidents and suspects tables agree on numbers of suspects
-    # ------------------------------------------------------------------------
+    # Ingest suspects and incidents
+    suspects = ingest_suspects()
+    incidents = ingest_incidents()
+
+    if with_activity:
+        suspects = extract_counts_with_activity(suspects)
+        incidents = extract_counts_with_activity(incidents)
+    else:
+        suspects = extract_counts_without_activity(suspects)
+        incidents = extract_counts_without_activity(incidents)
+
     assert suspects.filter(
-        (
-            pl.col(Id.ACTIVITY).is_not_null() if with_activity else pl.col("id").is_in(PORN_IDS)
-        ).and_(
-            pl.col("sex").eq("X")
-        )
+        pl.col("sex").eq("X")
     ).select(
         pl.col(Id.YEAR, "id", "total")
     ).join(
-        incidents.filter(
-            (
-                pl.col(Id.ACTIVITY).is_not_null() if with_activity else pl.col("id").is_in(PORN_IDS)
-            ),
-        ).select(
+        incidents.select(
             pl.col(Id.YEAR, "id", "suspects")
         ),
         on=[Id.YEAR, "id"],
@@ -378,21 +392,13 @@ def compute_age_distribution(
     ).item()
 
     if not with_material:
-        # Override material so that group_by()'s below effectively ignore it
-        suspects = suspects.with_columns(
-            pl.lit("CSAM").alias(Id.MATERIAL)
-        )
-        incidents = incidents.with_columns(
-            pl.lit("CSAM").alias(Id.MATERIAL)
-        )
+        # Override material only; aggregation is performed in group_by()s below
+        suspects = treat_youth_porn_as_csam(suspects)
+        incidents = treat_youth_porn_as_csam(incidents)
 
     # Build actual age distribution
     known_suspects = suspects.lazy().filter(
-        (
-            pl.col(Id.ACTIVITY).is_not_null() if with_activity else pl.col("id").is_in(PORN_IDS)
-        ).and_(
-            pl.col("sex").ne("X")
-        ),
+        pl.col("sex").ne("X")
     ).with_columns(
         pl.col("sex").replace({"M": "Male", "W": "Female"}),
         pl.col(">=80").is_null().alias("requires_sixty_plus"),
@@ -450,9 +456,7 @@ def compute_age_distribution(
     # there is an almost one-to-one correspondence between incidents and
     # suspects. We assume that this relationship also holds for unresolved
     # incidents and extend the age distribution with these counts.
-    unknown_suspects = incidents.lazy().filter(
-        pl.col(Id.ACTIVITY).is_not_null(),
-    ).group_by(
+    unknown_suspects = incidents.lazy().group_by(
         Id.YEAR, Id.ACTIVITY, Id.MATERIAL
     ).agg(
         pl.col("incidents", "solved").sum(),
@@ -466,8 +470,6 @@ def compute_age_distribution(
     )
 
     frame = pl.concat([known_suspects, unknown_suspects])
-    # Sadly, the offender breakdown by crime is too coarse for 2014.
-    frame = add_empty_year(frame, 2014, with_material=True)
 
     return finish_age_distribution(
         frame,
@@ -479,12 +481,33 @@ def compute_age_distribution(
     )
 
 
-def de_age_distribution(with_activity: bool = False, with_material: bool = False) -> pl.LazyFrame:
-    return compute_age_distribution(
-        ingest_suspects(with_activity=with_activity),
-        ingest_incidents(with_activity=with_activity),
-        with_activity=with_activity,
-        with_material=with_material,
+def treat_youth_porn_as_csam[F: (pl.DataFrame, pl.LazyFrame)](frame: F) -> F:
+    return frame.with_columns(
+        pl.col(Id.MATERIAL).replace({
+            "Youth Porn": "CSAM"
+        })
+    )
+
+
+def extract_counts_without_activity[F: (pl.DataFrame, pl.LazyFrame)](frame: F) -> F:
+    return frame.filter(
+        pl.col("id").is_in(_TOP_LEVEL_IDS)
+    ).with_columns(
+        pl.lit(None, dtype=pl.String).alias(Id.ACTIVITY),
+    )
+
+
+def extract_counts_with_activity[F: (pl.DataFrame, pl.LazyFrame)](frame: F) -> F:
+    return frame.filter(
+        (
+            pl.col(Id.YEAR).le(2015).and_(
+                pl.col("id").is_in(_ACTIVITY_LEVEL_IDS_V1)
+            )
+        ).or_(
+            pl.col(Id.YEAR).gt(2015).and_(
+                pl.col("id").is_in(_ACTIVITY_LEVEL_IDS_V2)
+            )
+        )
     )
 
 
@@ -526,7 +549,7 @@ def ingest_outcomes() -> pl.DataFrame:
     outcomes = []
 
     # TODO: Read file for 2025 when it becomes available
-    for year in range(2015, _LATEST_YEAR):
+    for year in range(2014, _LATEST_YEAR):
         if year < 2022:
             height = 4
             frame = pl.read_excel(

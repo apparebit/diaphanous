@@ -306,5 +306,5 @@ if __name__ == "__main__":
     frame.write_csv("data/age-distributions.csv")
 
     # age_dist = pl.concat(load_all_age_distributions().values())
-    # print(summarize_age_and_sex(age_dist, (2015, 2019)))
+    # print(summarize_age_and_sex(age_dist, (2014, 2019)))
     # print(summarize_age_and_sex(age_dist, (2020, 2025)))

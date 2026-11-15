@@ -458,7 +458,7 @@ def _do_ingest_tables(
     do_step = step or (lambda year, state: None)
 
     all_tables = defaultdict(list)
-    for year in range(2015, 2026):
+    for year in range(2014, 2026):
         path = _DATA_ROOT / f"{year}"
         for archive in sorted(path.glob("??-????.zip")):
             state = archive.name[:2]

@@ -261,13 +261,40 @@ def _compute_residuals(
     Compute standardized Pearson residuals as well as odds ratios with
     confidence intervals.
     """
+    first_year, last_year = frame.select(
+        pl.col("data_year").min().alias("min"),
+        pl.col("data_year").max().alias("max"),
+    ).row(0)
+
     residuals = []
     odds_ratios = []
+
+    previous_metric = None
+    previous_year = None
 
     for (metric, year), group in frame.group_by(
         "metric", "data_year",
         maintain_order=True
     ):
+        # Make sure that every metric covers every year for odds ratios. Thanks
+        # to the code generating age distributions, this is already the case
+        # when including null values along the mosaic axes. But when not
+        # including them, the critical rows got filtered upstream. So we
+        # effectively restore them here again. Sigh...
+        if metric != previous_metric:
+            if previous_year is not None and previous_year < last_year:
+                for y in range(previous_year + 1, last_year + 1):
+                    odds_ratios.append([previous_metric, y, None, "N/A", None, None])
+            previous_metric = metric
+            previous_year = first_year - 1
+
+        assert previous_year is not None
+        if previous_year + 1 != year:
+            for y in range(previous_year + 1, year):
+                odds_ratios.append([previous_metric, y, None, "N/A", None, None])
+
+        previous_year = year
+
         observed = to_contingency_table(
             group, x_axis, y_axis,
             x_order=x_order,
@@ -298,7 +325,9 @@ def _compute_residuals(
             continue
 
         t2x2 = SmTable2x2(observed)
-        odds_ratios.append([metric, year, t2x2.oddsratio, "", *t2x2.oddsratio_confint()])
+        odds_ratios.append([
+            metric, year, t2x2.oddsratio, "", *t2x2.oddsratio_confint()
+        ])
 
     odds_ratio_frame = pl.DataFrame({
         name: data for name, data in zip(
@@ -670,7 +699,10 @@ def make_mosaic_frame(
     # Compute Pearson residuals
     odds_ratios = None
     if use_residuals:
-        residuals, odds_ratios = _compute_residuals(mosaic_frame, x_axis, y_axis, "x_order", "y_order")
+        residuals, odds_ratios = _compute_residuals(
+            mosaic_frame, x_axis, y_axis, "x_order", "y_order"
+        )
+
         mosaic_frame = mosaic_frame.join(
             residuals,
             on=["metric", "data_year", x_axis, y_axis],
@@ -993,7 +1025,7 @@ def plot_odds_ratio_grid(
     with_title: bool = True,
 ) -> alt.VConcatChart:
     if "country" not in frame.columns:
-        # There are two data flows ending with this function. Te first uses
+        # There are two data flows ending with this function. The first uses
         # compute_odds_ratios() and delivers a data frame with `role`,
         # `material`, and `country` columns. The second uses make_mosaic_frame()
         # and delivers a data frame with a `metric` column. The code below
@@ -1070,7 +1102,7 @@ def plot_odds_ratio_grid(
                     title=None,
                 )),
                 alt.Y("data_year:N", axis=alt.Axis(
-                    labels=is_first_column,
+                    labels=country in ("Australia", "New Zealand"),
                     labelFontSize=18,
                     title=None,
                 )),

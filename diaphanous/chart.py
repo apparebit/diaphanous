@@ -1,3 +1,4 @@
+import math
 from typing import Literal
 import altair as alt
 import polars as pl
@@ -296,7 +297,7 @@ def plot_sex_by_age_grid(frame: pl.DataFrame, with_title: bool = True) -> alt.VC
 
     return result.properties(
         title=alt.Title(
-            "Perpetrators by Country, Year (2015⇒2024), Sex (Female↓, Male↑), "
+            "Perpetrators by Country, Year (2014⇒2024), Sex (Female↓, Male↑), "
             " and Age (0→100)",
             fontSize=50,
             fontWeight="bold",
@@ -483,44 +484,79 @@ def plot_sex_by_age(
     )
 
 
-def plot_crime_rate_by_age(
+def plot_age_crime_curves(
     frame: pl.DataFrame,
     country: None | str = None,
     large_font_size = 30,
     font_size: int = 20,
     youngest: int = 0,
     oldest: int = 100,
-    with_14: bool = True,
-    with_title: bool = True,
-    with_colors: None | dict[str, str] = None,
+    with_14: bool = False,
+    with_title: bool = False,
+    with_filling: bool = False,
+    colors: None | dict[str, str] = None,
+    band_colors: None | dict[str, str] = None,
 ) -> alt.FacetChart | alt.VConcatChart:
-    with_colors = {
-        "Male": Palette.BLACK,
-        "Female": Palette.BLACK,
+    colors = {
+        "Male": Palette.DARK_GRAY,
+        "Female": Palette.DARK_GRAY,
         "Male (Filtered)": Palette.BLUE,
         "Female (Filtered)": Palette.RED,
-    } | (with_colors or {})
-    assert with_colors is not None
-    color_domain = [*with_colors.keys()]
-    color_range = [*with_colors.values()]
+    } | (colors or {})
 
+    band_colors = {
+        "Male": Palette.FAINT_GRAY,
+        "Female": Palette.FAINT_GRAY,
+        "Male (Filtered)": Palette.FAINT_BLUE,
+        "Female (Filtered)": Palette.FAINT_RED,
+
+    } | (band_colors or {})
+    assert colors is not None
+
+    ymax = math.ceil(frame.select(
+        pl.col("rate").max()
+    ).item())
+
+    layers = []
     base = alt.Chart(frame)
-    curves = alt.layer(
-        base.mark_rule(
-            color=Palette.LIGHT_GRAY,
+
+    if with_filling:
+        layers.append(base.mark_area(strokeWidth=3, interpolate="step-after").encode(
+            alt.X("age:Q")
+                .scale(domain=(youngest, oldest))
+                .axis(labelFontSize=font_size)
+                .title(None),
+            alt.Y("rate:Q", stack=False)
+                .scale(domain=(0, ymax))
+                .axis(orient="right", labelFontSize=font_size)
+                .title(None),
+            alt.Stroke("sex:N")
+                .scale(domain=[*colors.keys()], range=[*colors.values()])
+                .legend(None),
+            alt.Fill("sex:N")
+                .scale(domain=[*band_colors.keys()], range=[*band_colors.values()])
+                .legend(None),
+        ))
+
+    layers.append(base.mark_rule(
+        color=Palette.BLACK,
+        strokeWidth=2,
+        strokeDash=(10, 10),
+    ).encode(
+        alt.XDatum(18),
+    ))
+
+    if with_14:
+        layers.append(base.mark_rule(
+            color=Palette.BLACK,
             strokeWidth=2,
+            strokeDash=(10, 10),
         ).encode(
-            alt.XDatum(18),
-        ),
-        * (
-            [base.mark_rule(
-                color=Palette.LIGHT_GRAY,
-                strokeWidth=2,
-            ).encode(
-                alt.XDatum(14),
-            )] if with_14 else []
-        ),
-        base.mark_line(strokeWidth=3).encode(
+            alt.XDatum(14),
+        ))
+
+    if not with_filling:
+        layers.append(base.mark_line(strokeWidth=3, interpolate="step-after").encode(
             alt.X("age:Q")
                 .scale(domain=(youngest, oldest))
                 .axis(labelFontSize=font_size)
@@ -529,10 +565,11 @@ def plot_crime_rate_by_age(
                 .axis(orient="right", labelFontSize=font_size)
                 .title(None),
             alt.Color("sex:N")
-                .scale(domain=color_domain, range=color_range)
+                .scale(domain=[*colors.keys()], range=[*colors.values()])
                 .legend(None),
-        ),
-    ).properties(
+        ))
+
+    curves = alt.layer(*layers).properties(
         width=400,
         height=300,
     ).facet(

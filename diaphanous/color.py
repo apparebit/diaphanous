@@ -11,8 +11,8 @@ class Palette(enum.StrEnum):
     """
 
     BLUE = "#4269d0"
-    ORANGE = "#efb118"
-    RED = "#ff725c"
+    ORANGE = "#f6ad21"
+    RED = "#d03d42" #"#ff725c"
     CYAN = "#6cc5b0"
     GREEN = "#3ca951"
     PINK = "#ff8ab7"
@@ -23,6 +23,10 @@ class Palette(enum.StrEnum):
     DARK_GRAY = "#60636a"
     LIGHT_GRAY = "#aaaeb6"
     BLACK = "#1f2228"
+
+    FAINT_GRAY = "#caced6"
+    FAINT_BLUE = "#a0c4ff"
+    FAINT_RED = "#fea49f"
 
     @classmethod
     def cycle(cls, index: int) -> str:
