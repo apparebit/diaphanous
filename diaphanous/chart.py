@@ -487,8 +487,8 @@ def plot_sex_by_age(
 def plot_age_crime_curves(
     frame: pl.DataFrame,
     country: None | str = None,
-    large_font_size = 30,
-    font_size: int = 20,
+    large_font_size = 32,
+    font_size: int = 28,
     youngest: int = 0,
     oldest: int = 100,
     with_14: bool = False,
@@ -570,7 +570,7 @@ def plot_age_crime_curves(
         ))
 
     curves = alt.layer(*layers).properties(
-        width=400,
+        width=280 if oldest <= 50 else 400,
         height=300,
     ).facet(
         facet=alt.Facet(
@@ -580,7 +580,7 @@ def plot_age_crime_curves(
                 labelFontSize=large_font_size,
             ),
         ),
-        columns=4,
+        columns=6 if oldest <= 50 else 4,
         spacing=large_font_size,
     )
 
@@ -598,7 +598,7 @@ def plot_age_crime_curves(
     ).properties(
         title=alt.Title(
             title,
-            fontSize=1.2 * large_font_size,
+            fontSize=large_font_size,
             fontWeight="normal",
             anchor="start",
             frame="group",

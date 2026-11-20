@@ -508,12 +508,12 @@ def normalize_agency_name(agency: str) -> str:
 
 def analyze_offender_anomalies(
     step: None | Callable[[int, str], None] = None,
-) -> tuple[pl.DataFrame, pl.DataFrame]:
+) -> tuple[pl.DataFrame, pl.DataFrame, pl.DataFrame]:
     offenders = ingest_tables(step)[Table.OFFENDER].filter(
         pl.col("material").eq("CSAM").and_(
-            pl.col(Id.YEAR).ge(2021)
-        ).and_(
             pl.col("age").eq(58)
+        ).and_(
+            pl.col("age_range_high_num").ne(0)
         ).and_(
             pl.col("sex_code").is_in([Sex.UNKNOWN, Sex.NOT_SPECIFIED])
         )
@@ -547,7 +547,7 @@ def analyze_offender_anomalies(
         pl.col("count"),
     )
 
-    return agencies, age_ranges
+    return offenders, agencies, age_ranges
 
 
 def ingest_age_distributions(

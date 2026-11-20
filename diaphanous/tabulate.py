@@ -311,19 +311,21 @@ class Analyzer:
         with_reports: bool = False,
         with_platforms: bool = False,
         with_crimes: bool = False,
-        with_chi2: bool = False,
     ) -> None:
         self._path = Path(path)
         self._file: Any = None
-        self._data = tabulate()
-        self._diffs = _distill_differences(self._data)
+        self._crime_distributions = crimestat.load_all_age_distributions(verbose=True)
+        self._crime_data = pl.concat(
+            self.filter_years(self._crime_distributions, *self.THUMB_YEARS).values()
+        )
+        self._platform_data = tabulate()
+        self._platform_diffs = _distill_differences(self._platform_data)
         self._with_icc = with_icc
         self._figure_count = 0
         self._secno = [0, 0, 0]
         self._with_reports = with_reports
         self._with_platforms = with_platforms
         self._with_crimes = with_crimes
-        self._with_chi2 = with_chi2
 
     def has_content(self) -> bool:
         return self._with_reports or self._with_platforms or self._with_crimes
@@ -345,688 +347,14 @@ class Analyzer:
             raise ValueError("invoke `run()` in `with Analyzer():` block only")
 
         if self._with_platforms:
-            self.h2("How Accurate Are Transparency Disclosures?")
+            self.characterize_accuracy()
 
-        if self._with_platforms:
-            self.h2("How Has CyberTipline Report Volume Changed Over Time?")
-
+        if self._with_reports:
+            self.characterize_growth()
 
         if self._with_crimes:
             self.break_down_crimes()
-
-    def break_down_crimes(self) -> None:
-        self.h2("What Is the Role of Sexting Minors?")
-
-        self.h3("Countries and Their Crime Statistics")
-        self.html(f"""
-            <p>The following <strong>13 countries</strong> and <strong>one
-            supranational organization</strong> do not appear to publish
-            the necessary statistics:</p>
-
-            <ul class=tight>
-            <li>Brazil
-            <li>Canada
-            <li>Czech Republic
-            <li>European Union
-            <li>France
-            <li>India
-            <li>Japan
-            <li>Mexico
-            <li>Phillipines
-            <li>Poland
-            <li>Singapore
-            <li>Thailand
-            <li>United Arab Emirates
-            <li>United Kingdom
-            </ul>
-
-            <p>Meanwhile the following <strong>7 countries</strong> do
-            publish simultaneous break-downs of crimes by age and sex:</p>
-
-            <ul class=tight>
-            <li>Australia (1 year only)
-            <li>Finland
-            <li>Germany
-            <li>Italy
-            <li>New Zealand
-            <li>Spain
-            <li>United States
-            </ul>
-
-            <p>In fact, several countries include additional information:</p>
-
-            <ul class=tight>
-            <li>Finland: coarse nationality of offenders
-            <li>Germany: producers v consumers
-            <li>Italy: Italians vs foreigners
-            <li>New Zealand: ethnicity, producers v consumers
-            <li>United States: ethnicity, producers v consumers
-            </ul>
-
-            <p>Of course, since it is case-based, the United States'
-            National Incident-Based Reporting System (NIBRS) goes even
-            further.</p>
-
-            <hr>
-
-            <table class=mytable>
-            <caption>Important Ages in Surveyed Countries</caption>
-            <thead>
-            <tr><th scope=col></th>
-                <th scope=col>Age of Criminal</th>
-                <th scope=col>Age of Sexual</th>
-                <th scope=col>Age of</th></tr>
-            <tr><th scope=col>Country</th>
-                <th scope=col>Responsibility</th>
-                <th scope=col>Consent</th>
-                <th scope=col>Majority</th></tr>
-            </thead>
-            <tbody>
-            <tr><th scope=row>Australia</th> <td>10 (VIC: 12, ACT: 14)</td> <td>16 (SA &amp; Tas: 17)</td> <td>18</td></tr>
-            <tr><th scope=row>Finland</th> <td>15</td> <td>16</td> <td>18</td></tr>
-            <tr><th scope=row>Germany</th> <td>14</td> <td>14</td> <td>18</td></tr>
-            <tr><th scope=row>Italy</th> <td>14</td> <td>14</td> <td>18</td></tr>
-            <tr><th scope=row>New Zealand</th> <td>10</td> <td>16</td> <td>20</td></tr>
-            <tr><th scope=row>Spain</th> <td>14</td> <td>16</td> <td>18</td></tr>
-            <tr><th scope=row>United States</th> <td>0–12 (federal: 11)</td> <td>16–18</td> <td>18</td></tr>
-            </tbody>
-            </table>
-
-            <p>24 US states do not have a minimum age of criminal
-            responsibility.</p>
-        """)
-
-        self.emit_age_buckets()
-        self.emit_report_share_per_country()
-
-        self.h3("Offenders by Age and Sex")
-        self.emit_age_distributions()
-
-        self.h3("Germany: Cross-Sectional Age-Crime Curves")
-        self.html("""
-            <p>To avoid denominator bias, here are the age-crime curves for
-            the combination of child (0–13) and youth (14–17) pornography in
-            Germany. The BKA's population statistics do not include children
-            0–7; hence, curves start at 8-years-old.</p>
-        """)
-        self.emit_age_crime_curves_de()
-
-        self.h3("Germany: Adjudication and Conviction Rates")
-        self.emit_adjudication_and_conviction_rates()
-
-        self.h3("Notes")
-        self.h4("Sources")
-        self.html("""
-            <p>The per-country data sources are:</p>
-            <ul>
-
-            <li><strong>Australia</strong>: <a
-            href="https://www.aic.gov.au">Australian Institute of Criminology</a>,
-            notably <a href="https://www.aic.gov.au/publications/sr/sr51">sr 51</a>
-
-            <li><strong>Finland</strong>: Statistics Finland's <a
-            href="https://pxdata.stat.fi/PxWeb/pxweb/en/StatFin/StatFin__rpk/statfin_rpk_pxt_13kr.px/">StatFin
-            table 13kr</a> with the "Persons suspected of solved offences by the
-            International Classification of Crime for Statistical Purposes (ICCS),
-            year of solving, age, sex and nationality, 2006-2025."
-
-            <li><strong>Germany</strong>: The Bundeskriminalamt's <a
-            href="https://www.bka.de/DE/AktuelleInformationen/StatistikenLagebilder/PolizeilicheKriminalstatistik/pks_node.html">polizeiliche
-            Kriminalstatistik</a>, notably tables on suspects and incidents. Those
-            statistics are supplemented with statistics about prosecutions covering
-            <a
-            href="https://www.statistischebibliothek.de/mir/receive/DESerie_mods_00000107">years
-            up to and including 2021</a> and <a
-            href="https://www.statistischebibliothek.de/mir/receive/DESerie_mods_00008081">years
-            from 2022 onward</a>, released by Germany's federal
-            statistics agency.
-
-            <li><strong>Italy</strong>: Istat's table on <a
-            href="https://esploradati.istat.it/databrowser/#/en/dw/categories/IT1,Z0840JUS,1.0/JUS_CRIMINAL/DCCV_AUTVITTPS/IT1,73_230_DF_DCCV_AUTVITTPS_1,1.0">alleged
-            offenders reported by the police forces to the judicial authority</a>
-            organized by gender, age, and citizenship.
-
-            <li><strong>New Zealand</strong>: <a
-            href="https://www.police.govt.nz/about-us/publications-statistics/data-and-statistics/policedatanz">policedata.nz</a>,
-            notably <a
-            href="https://www.police.govt.nz/about-us/publications-statistics/data-and-statistics/policedatanz/proceedings-offender-demographics">proceedings
-            (offender demographics)</a>
-
-            <li><strong>Spain</strong>: The Ministerio del Interior's <a
-            href="https://estadisticasdecriminalidad.ses.mir.es/publico/portalestadistico/en/datos.html?type=jaxi&title=Arrests%20/%20Investigated&path=/Datos3/">annual
-            series on crime</a>, arrests/investigated
-
-            <li><strong>United States</strong>: The FBI's <a
-            href="https://cde.ucr.cjis.gov/LATEST/webapp/#/pages/downloads#nibrs-downloads">National
-            Incident-Based Reporting System (NIBRS)</a>
-
-            </ul>
-
-            <p>It is nearly impossible to access Germany's police statistics
-            from outside the EU, with requests simply timing out due to a likely
-            network misconfiguration by that country's federal police agency.</p>
-
-            <p>US statisticstics are <em>not</em> representative of the entire
-            country, with NIBRS' coverage of the US population growing from 35.6% in
-            2014 to 86.4% in 2024 according to the FBI's <a
-            href="https://cde.ucr.cjis.gov/LATEST/webapp/#/pages/explorer/crime/crime-trend">Crime
-            Data Explorer</a>.</p>
-
-            <p>We account for unsolved incidents, by backfilling German
-            offenders at a frequency of one unknown offender per unsolved
-            incident. That effectively corresponds to NIBRS' methodology.</p>
-            """)
-
-        if self._with_reports:
-            self.h2("CyberTipline: Yearly Report Counts")
-            wide_frame = self.assemble_report_counts()
-
-            long_frame = wide_frame.unpivot(
-                on=[
-                    "reports",
-                    "people", "internet_users", "social_accounts",
-                    "reports_per_social"
-                ],
-                index="year",
-            ).with_columns(
-                pl.col("variable").replace_strict({
-                    "reports": "All Reports",
-                    "meta_reports": "Meta’s Reports",
-                    "people": "People",
-                    "internet_users": "Internet Users",
-                    "social_accounts": "Social Accounts",
-                    "reports_per_social": "Reports per 1k Social Accounts",
-                }),
-            )
-
-            self.chart(plot_yearly_reports(long_frame))
-
-            self.h3("A Decade of Mostly Linear Growth")
-            residuals, coefficients = self.emit_growth_models(wide_frame)
-
-            self.table("linear-coefficients", apply_table_style(
-                gt.GT(coefficients).tab_header(
-                    title="Linear Coefficients",
-                    subtitle="For Decade of Growth",
-                ).fmt_number(
-                    columns=["Intercept"],
-                    decimals=1,
-                    use_seps=True,
-                    sep_mark=",",
-                ).fmt_number(
-                    columns=["Slope"],
-                    decimals=4,
-                    use_seps=True,
-                    sep_mark=",",
-                )
-            ))
-
-            self.table("residuals", apply_table_style(
-                gt.GT(residuals).tab_header(
-                    title="Standard Residuals",
-                    subtitle="For Decade of Growth",
-                ).tab_spanner(
-                    label="Social Accounts",
-                    columns=["social_predicted", "social_residuals"],
-                ).tab_spanner(
-                    label="Year",
-                    columns=["year_predicted", "year_residuals"],
-                ).cols_label({
-                    "year": "Year",
-                    "social_predicted": "Predicted",
-                    "social_residuals": "Residuals",
-                    "year_predicted": "Predicted",
-                    "year_residuals": "Residuals",
-                }).fmt_number(
-                    columns=["social_predicted", "year_predicted"],
-                    decimals=1,
-                ).fmt_number(
-                    columns=["social_residuals", "year_residuals"],
-                    decimals=2,
-                    force_sign=True,
-                )
-            ))
-
-            self.emit_reports_over_years(
-                wide_frame.join(
-                    residuals,
-                    on="year",
-                    how="left",
-                )
-            )
-
-            self.emit_regression_models()
-
-            self.h3("Breaking Down Report Counts")
-
-            report_contents = pl.read_csv("data/ocse-report-contents.csv").with_columns(
-                pl.col("quantity").str.replace_all(",", "").cast(pl.Int64),
-            )
-
-            prohibitions = report_contents.filter(
-                pl.col("category").eq("kind of exploitation"),
-            ).pivot(
-                on="label",
-                index="year",
-                values="quantity",
-            ).rename({
-                "year": "Year",
-                "child pornography": "CSAM",
-                "misleading words/images online": "Misleading Content",
-                "online enticement of children": "Entice­ment",
-                "child sex trafficking": "Traf­ficking",
-                "obscene material sent to a child": "Obscene Material",
-                "misleading domain name": "Domain Names",
-                "child sexual molestation": "Moles­tation",
-                "child sex tourism": "Sex Tourism",
-            }).with_columns(
-                pl.sum_horizontal(
-                    pl.exclude("Year")
-                ).alias("Total"),
-            )
-
-            prohibitions_pct = prohibitions.with_columns(
-                pl.exclude("Year", "Total").truediv(
-                    pl.col("Total")
-                ),
-            )
-
-            self.table("reports-by-prohibition", apply_table_style(
-                gt.GT(prohibitions_pct).tab_header(
-                    title="Reports by Prohibition",
-                ).fmt_integer(
-                    columns="Total",
-                ).fmt_percent(
-                    columns=pl.exclude("Year", "Total", "CSAM"),
-                    decimals=3,
-                ).fmt_percent(
-                    columns="CSAM",
-                    decimals=1,
-                )
-            ))
-
-            frame = prohibitions.select(
-                "Year", "Total", "CSAM"
-            ).join(
-                self._data.filter(
-                    pl.col("source").eq("NCMEC").and_(
-                        pl.col("target").eq("Meta")
-                    )
-                ).select(
-                    pl.col("year").alias("Year"),
-                    pl.col("value").alias("Meta"),
-                ),
-                on="Year",
-                how="left",
-            )
-
-            self.table("dominant-shares", apply_table_style(
-                gt.GT(frame.with_columns(
-                    pl.exclude("Year", "Total").truediv(
-                        pl.col("Total")
-                    ),
-                )).tab_header(
-                    title="Dominant Shares",
-                ).fmt_integer(
-                    columns="Total",
-                ).fmt_percent(
-                    columns=pl.exclude("Year", "Total"),
-                    decimals=1,
-                )
-            ))
-
-            ymin, ymax = frame.select(
-                pl.col("Year").min().alias("min"),
-                pl.col("Year").max().alias("max"),
-            ).row(0)
-
-            fig = alt.Chart(
-                frame.unpivot(
-                    index="Year",
-                    variable_name="variable",
-                    value_name="reports"
-                ).with_columns(
-                    pl.col("Year").cast(pl.String),
-                    pl.col("reports").truediv(1_000_000)
-                )
-            ).mark_bar().encode(
-                alt.X("Year:T").title("Year").axis(
-                    labelAngle=45,
-                    titleFontWeight="normal",
-                    titleFontStyle="italic",
-                    tickCount=ymax - ymin + 1,
-                ),
-                alt.Y("reports:Q").title("Reports (Millions)").stack(None).axis(
-                    titleFontWeight="normal",
-                    titleFontStyle="italic",
-                ),
-                alt.Color("variable:N").title(None)
-                .scale(
-                    range=[Palette.RED, Palette.DARK_GRAY, Palette.GRAY],
-                    domain=["Total", "CSAM", "Meta"],
-                ),
-            ).configure_bar(
-                continuousBandSize=15,
-            ).properties(
-                height=100,
-                width=160,
-            )
-
-            path = "figure/dominant-shares.svg"
-            fig.save(path)
-            self.html("<div class=narrow>")
-            self.svg(path)
-            self.html("</div>")
-
-            unique_or_similar = report_contents.filter(
-                pl.col("category").eq("reports"),
-            ).pivot(
-                on="label",
-                index="year",
-                values="quantity",
-            ).rename({
-                "year": "Year",
-                "total": "Filed",
-                "with unique photos/videos": "Unique",
-                "with similar photos/videos": "Similar",
-            }).with_columns(
-                pl.col("Unique", "Similar").truediv("Filed"),
-            )
-
-            self.table("unique-and-similar-pieces", apply_table_style(
-                gt.GT(unique_or_similar).tab_header(
-                    title="Reports by Attachments",
-                    subtitle="Accounting for Deduplication",
-                ).fmt_integer(
-                    columns="Filed",
-                ).fmt_percent(
-                    columns=["Unique", "Similar"],
-                    decimals=1,
-                )
-            ))
-
-            frame = pl.read_csv("data/ocse-report-recipients.csv").with_columns(
-                pl.col("reports").str.replace_all(",", "").cast(pl.Int64),
-            ).group_by(
-                pl.col("year", "level_of_detail"),
-            ).agg(
-                pl.col("reports").sum(),
-            ).pivot(
-                on="level_of_detail",
-                index="year",
-                values="reports",
-            ).with_columns(
-                pl.sum_horizontal(
-                    pl.col("actionable", "informational")
-                ).alias("Counted"),
-            ).select(
-                pl.col("year").alias("Year"),
-                pl.col("actionable", "informational").truediv(
-                    pl.col("Counted")
-                ),
-                pl.col("Counted"),
-            ).join(
-                unique_or_similar.select(pl.col("Year", "Filed")),
-                on="Year",
-            ).sort(
-                "Year",
-            ).with_columns(
-                pl.col("Counted").truediv("Filed").alias("Inflationary Factor"),
-            )
-
-            self.table("report-quality", apply_table_style(
-                gt.GT(frame).tab_header(
-                    title="Report Quality",
-                ).cols_label(
-                    actionable="Actionable",
-                    informational="Informational",
-                ).fmt_integer(
-                    columns=["Counted", "Filed"],
-                ).fmt_percent(
-                    columns=["actionable", "informational"],
-                    decimals=1,
-                ).fmt_number(
-                    columns="Inflationary Factor",
-                    decimals=3,
-                )
-            ))
-
-            self.h3("Reports per Social Accounts")
-            self.html("<p><strong>TODO</strong></p>")
-
-        if self._with_platforms:
-            self.h2("Platforms' vs NCMEC's Disclosures")
-
-            self.html("""
-                <p>The analysis assumes that counting errors accumulate with the
-                magnitude of counts. Hence, for each pair of report counts
-                disclosed by a platform and NCMEC, the difference of report
-                counts is scaled by the mean of report counts, resulting in
-                Δ%.</p>
-            """)
-
-            self.h3("The Data")
-            diffs = self._diffs.sort(
-                pl.col("pct_diff"), descending=True
-            )
-
-            self.html(f"""
-                <ul>
-                <li>{len(self._diffs.select(
-                    pl.col("platform").unique()
-                ))} out of {len(self._data.select(
-                    pl.col("target").unique()
-                )) - 2} surveyed platforms make necessary disclosures
-                </li><li>{len(self._diffs)} data pairs
-                    <ul>
-                    <li>{len(self._diffs.filter(pl.col("pct_diff").abs().le(0.20)))}
-                        differ by less than 20%
-                    <li>{len(self._diffs.filter(pl.col("pct_diff").abs().le(0.10)))}
-                        differ by less than 10%
-                    </li><li>{len(self._diffs.filter(pl.col("pct_diff").abs().le(0.01)))}
-                        differ by less than 1%
-                    </li><li>{len(self._diffs.filter(pl.col("pct_diff").sign().eq(0)))}
-                        with no difference
-                    </li><li>{len(self._diffs.filter(pl.col("pct_diff").sign().gt(0)))}
-                        positive differences
-                    </li><li>{len(self._diffs.filter(pl.col("pct_diff").sign().lt(0)))}
-                        negative differences
-                    </li><li>{self._diffs.select(
-                            pl.col("pct_diff").mean()
-                        ).item() * 100:.3f}%
-                        mean difference
-                    </li><li>{diffs.tail(-1).select(
-                            pl.col("pct_diff").mean()
-                        ).item() * 100:.3f}% mean difference, discounting top 1 outlier
-                    </li><li><strong>{diffs.tail(-2).select(
-                            pl.col("pct_diff").mean()
-                        ).item() * 100:.3f}% mean difference, discounting top 2 outliers
-                    </strong></li><li>{diffs.tail(-3).select(
-                            pl.col("pct_diff").mean()
-                        ).item() * 100:.3f}% mean difference, discounting top 3 outliers
-                    </li></ul></li>
-                </ul>
-            """)
-
-            comparison = juxtapose(self._data)
-            self.table(
-                "cybertipline-reports-by-platform",
-                format_juxtaposition(comparison, with_highlights=True)
-            )
-
-            self.html("<div class=extra-wide>\n")
-            fig = plot_reports_per_provider()
-            path = "figure/reports-per-provider.svg"
-            fig.save(path)
-            self.svg(path)
-            self.html("</div>\n")
-
-            self.h3("A Histogram of Percent Differences")
-            self.chart(
-                alt.Chart(
-                    self._diffs.with_columns(
-                        pl.col("pct_diff").mul(100)
-                    )
-                ).mark_bar().encode(
-                    alt.X("pct_diff:Q", bin=alt.Bin(step=10)),
-                    alt.Y("count()"),
-                ).properties(
-                    width=500,
-                )
-            )
-
-            self.h3("Mean Difference Plots")
-            self.emit_mean_difference_plots()
-
-            if self._with_icc:
-                self.h3("Intraclass Correlation Coefficient")
-                self.emit_icc()
-
-            self.h3("Sign of Differences")
-            self.emit_sign_test()
-
-            self.h3("Reddit vs Other Platforms")
-            self.emit_reddit_vs_others()
-
-            self.h3("Other Measures of Accuracy")
-            self.html(""""
-            <p>We use Meta's self-reported number of reversals to provide a
-            measure of accuracy, despite the fact that the firm states that
-            ”restoring a post doesn't necessarily mean a mistake was made.” As
-            Meta notes, the content pointed to by links may change, making the
-            link acceptable again, and reversals are recorded during the
-            reporting period the content was restored, not the period the
-            content was actioned. Furthermore, Meta uses pieces as the
-            underlying unit for actioning and restoring content; but pieces and
-            CyberTipline reports are only loosely related to each other.</p>
-
-            <p>Having said all that, Meta is responsible for the majority of all
-            CyberTipline reports, only dropping below 80% in 2024, and its data
-            is the best available data. Hence we use it as a potentially
-            approximation.</p>
-            """)
-
-            frame = tabulate(["pieces", "reversals"]).filter(
-                pl.col("source").eq("Meta")
-            ).pivot(
-                on="variable",
-                index=_INDEX,
-            ).select(
-                pl.col("year", "reversals", "pieces"),
-                pl.col("reversals").truediv(pl.col("pieces")).alias("pct_reversals")
-            )
-
-            self.table("meta-reversals", apply_table_style(
-                gt.GT(
-                    frame
-                ).tab_header(
-                    title="Meta’s Rate of Reversal",
-                ).cols_label(
-                    year="Year",
-                    reversals="Reversals",
-                    pieces="Pieces",
-                    pct_reversals="Rate",
-                ).fmt_integer(
-                    columns=["reversals", "pieces"],
-                ).fmt_percent(
-                    columns=["pct_reversals"],
-                    decimals=2,
-                )
-            ))
-
-            frame = tabulate(["reports"], preserve_brands=True).filter(
-                pl.col("source").eq("NCMEC").and_(
-                    pl.col("target").is_in([
-                        "Meta",
-                        "Facebook", "Instagram", "Meta AI", "Threads", "WhatsApp",
-                        "Total",
-                    ])
-                )
-            ).select(
-                pl.col("year", "target", "value")
-            ).pivot(
-                on="target",
-                index="year",
-            ).select(
-                pl.col("year").alias("Year"),
-                pl.col("Total"),
-                pl.col("Meta").truediv(pl.col("Total")).alias("meta_pct_total"),
-                pl.col("Meta", "Facebook", "Instagram", "Threads"),
-                pl.col("Meta AI").alias("meta_ai"),
-                pl.col("WhatsApp"),
-                pl.col("WhatsApp").truediv(pl.col("Meta")).alias("whatsapp_pct_meta"),
-            )
-
-            self.table("meta-reports", apply_table_style(
-                gt.GT(frame).tab_header(
-                    title="Meta’s Reports",
-                ).cols_label(
-                    meta_pct_total=gt.html("Meta/<br>Total"),
-                    meta_ai=gt.html("Meta<br>AI"),
-                    whatsapp_pct_meta=gt.html("WhatsApp/<br>Meta"),
-                ).tab_style(
-                    style=gt.style.fill(color="#ffffb3"),
-                    locations=gt.loc.body(columns=[
-                        "meta_pct_total", "whatsapp_pct_meta"
-                    ]),
-                ).fmt_percent(
-                    columns=["meta_pct_total", "whatsapp_pct_meta"],
-                    decimals=1,
-                ).fmt_integer(
-                    columns=[
-                        "Total", "Meta",
-                        "Facebook", "Instagram", "Threads", "meta_ai", "WhatsApp"
-                    ],
-                )
-            ))
-
-        if self._with_crimes:
-            self.h2("Crime Statistics About CSAM")
-
-            self.h3("Backfilling Suspects for Unsolved Incidents")
-
-            incidents = de.ingest_incidents().filter(
-                pl.col("id").is_in(de.PORN_IDS)
-            )
-
-            min_yearly, max_yearly = incidents.group_by(
-                Id.YEAR,
-            ).agg(
-                pl.col("incidents", "solved", "suspects").sum()
-            ).with_columns(
-                pl.col("suspects").truediv(pl.col("solved")).alias("suspects_per_incident"),
-            ).select(
-                pl.col("suspects_per_incident").min().alias("minimum"),
-                pl.col("suspects_per_incident").max().alias("maximum"),
-            ).row(0)
-
-            global_mean = incidents.select(
-                pl.col("incidents", "solved", "suspects").sum()
-            ).select(
-                pl.col("suspects").truediv("solved")
-            ).item()
-
-            self.html(f"""
-                <p>The offender statistics for Germany (and very likely also
-                Finland, Italy, and Spain) are misleading in that they do not
-                include incidents with unknown offenders. But accounting for
-                those incidents is critical to determine to what degree offender
-                demographics are representative.</p>
-
-                <p>For <strong>Germany</strong>, the number of suspects per
-                solved incident ranges from {min_yearly:.3f} to
-                {max_yearly:.3f}, with a global mean of {global_mean:.3f}.
-                Assuming that this relationship also holds for unsolved
-                incidents, we then backfill the suspects table for Germany by
-                counting one suspect for each unsolved incident. Since these
-                suspects are unknown, their age and sex must remain
-                <code>null</code>. However, since Germany publishes incident
-                data, just like suspect data, broken down by law, we can still
-                backfill the activity, i.e., distinguish between consumers and
-                producers.</p>
-            """)
-
-            self.emit_age_distributions()
+            self.characterize_sexting_minors()
 
         now = dt.datetime.now(dt.UTC)
         date = now.date().isoformat()
@@ -1036,120 +364,107 @@ class Analyzer:
             f' on {date} at {time} UTC.</i></p>'
         )
 
-    def assemble_report_counts(self) -> pl.DataFrame:
-        return pl.read_csv("data/ocse-reports-per-year.csv").join(
-            pl.read_csv("data/populations-simple.csv").select(
-                pl.col("year"),
-                pl.col("population").alias("people"),
-            ),
-            on="year",
-            how="left",
-        ).join(
-            pl.read_csv("data/internet-users-un.csv"),
-            on="year",
-            how="left",
-        ).join(
-            pl.read_csv("data/social-accounts.csv").select(
-                pl.col("year"),
-                pl.col("million_accounts").mul(1_000_000).alias("social_accounts"),
-            ),
-            on="year",
-            how="left",
-        ).select(
-            pl.col("year", "reports", "people"),
-            pl.col("internet_users_pct").mul(
-                pl.col("people")
-            ).truediv(100).alias("internet_users"),
-            pl.col("social_accounts"),
-            pl.col("reports").mul(1_000).truediv(
-                pl.col("social_accounts")
-            ).alias("reports_per_social"),
-        )
+    # ==================================================================================
+    # Characterizing Accuracy
+    # ==================================================================================
 
-    def emit_growth_models(self, wide_frame: pl.DataFrame) -> tuple[pl.DataFrame, pl.DataFrame]:
-        decade = wide_frame.filter(
-            pl.col("year").le(2023)
-        ).select(
-            pl.exclude("meta_reports")
-        )
+    def characterize_accuracy(self) -> None:
+        self.h2("How Accurate Are Transparency Disclosures?")
 
+        self.h3("Per-Platform Disclosures")
         self.html("""
-            <p>Determine suitable model and its independent variable. First, try
-            exponential model. Second, try linear model with year, people,
-            internet users, social accounts, and social accounts + year as
-            candidates for independent variable.</p>
+            <p>We characterize the difference between platform and NCMEC
+            disclosures as Δ%, i.e., the absolute difference normalized by the
+            mean of paired counts. The mean provides an unbiased a-priori guess
+            for the true count and normalization accounts for errors increasing
+            with count magnitude.</p>
         """)
 
-        residuals, coefficients = self._runr(decade, """
-library(tidyverse)
-library(segmented)
-data <- read.csv(text = "{CSV_DATA}")
-
-emit_rule("1998-2023", weight = 2)
-
-emit_rule("Log(Reports) ~ Year")
-exp_fit <- lm(log(reports) ~ year, data = data)
-emit_text(summary(exp_fit))
-
-emit_rule("Segmented(Reports) ~ Year")
-lin_fit <- lm(reports ~ year, data = data)
-seg_fit <- segmented(lin_fit)
-emit_text(summary(seg_fit))
-emit_text(slope(seg_fit))
-
-emit_rule("2014-2023", weight = 2)
-data <- data |> filter(between(year, 2013, 2023))
-
-emit_rule("Log(Reports) ~ Year")
-data.year.em <- lm(log(reports) ~ year, data=data)
-emit_text(summary(data.year.em))
-
-emit_rule("Reports ~ Year")
-data.year.lm <- lm(reports ~ year, data=data)
-data$year_residuals <- rstandard(data.year.lm)
-data$year_predicted <- predict(data.year.lm)
-emit_text(summary(data.year.lm))
-
-emit_rule("Reports ~ People")
-data.people.lm <- lm(reports ~ people, data=data)
-emit_text(summary(data.people.lm))
-
-emit_rule("Reports ~ Internet Users")
-data.inet.lm <- lm(reports ~ internet_users, data=data)
-emit_text(summary(data.inet.lm))
-
-emit_rule("Reports ~ Social Accounts")
-data.social.lm <- lm(reports ~ social_accounts, data=data)
-data$social_residuals <- rstandard(data.social.lm)
-data$social_predicted <- predict(data.social.lm)
-
-emit_text(summary(data.social.lm))
-emit_rule(weight = 0)
-emit_text(data$social_residuals)
-emit_data(data[c("year", "social_residuals", "social_predicted", "year_residuals", "year_predicted")])
-
-emit_rule("Reports ~ Social Accounts + Year")
-data.year.social.lm <- lm(reports ~ social_accounts + year, data=data)
-emit_text(summary(data.year.social.lm))
-
-emit_rule("Reports per Social Account ~ Year")
-data.reports.social.lm <- lm(reports_per_social ~ year, data=data)
-emit_text(summary(data.reports.social.lm))
-
-emit_data(
-    c("Independent Variable", "Dependent Variable", "Intercept", "Slope"),
-    c("Year", "Reports", data.year.lm$coefficients[1:2]),
-    c("Social Accounts", "Reports", data.social.lm$coefficients[1:2]),
-    c("Year", "Reports per Social Accounts", data.reports.social.lm$coefficients[1:2])
-)
-""")
-
-        return residuals, coefficients.with_columns(
-            pl.col("Slope").cast(pl.Float64)
+        diffs = self._platform_diffs.sort(
+            pl.col("pct_diff"), descending=True
         )
 
+        self.html(f"""
+            <ul class=tight>
+            <li>{len(self._platform_diffs.select(
+                pl.col("platform").unique()
+            ))} out of {len(self._platform_data.select(
+                pl.col("target").unique()
+            )) - 2} surveyed platforms make necessary disclosures
+            </li><li>{len(self._platform_diffs)} data pairs
+                <ul class=tight>
+                <li>{len(self._platform_diffs.filter(pl.col("pct_diff").abs().le(0.20)))}
+                    differ by less than 20%
+                <li>{len(self._platform_diffs.filter(pl.col("pct_diff").abs().le(0.10)))}
+                    differ by less than 10%
+                </li><li>{len(self._platform_diffs.filter(pl.col("pct_diff").abs().le(0.01)))}
+                    differ by less than 1%
+                </li><li>{len(self._platform_diffs.filter(pl.col("pct_diff").sign().eq(0)))}
+                    with no difference
+                </li><li>{len(self._platform_diffs.filter(pl.col("pct_diff").sign().gt(0)))}
+                    positive differences
+                </li><li>{len(self._platform_diffs.filter(pl.col("pct_diff").sign().lt(0)))}
+                    negative differences
+                </li><li>{self._platform_diffs.select(
+                        pl.col("pct_diff").mean()
+                    ).item() * 100:.3f}%
+                    mean difference
+                </li><li>{diffs.tail(-1).select(
+                        pl.col("pct_diff").mean()
+                    ).item() * 100:.3f}% mean difference, discounting top 1 outlier
+                </li><li><strong>{diffs.tail(-2).select(
+                        pl.col("pct_diff").mean()
+                    ).item() * 100:.3f}% mean difference, discounting top 2 outliers
+                </strong></li><li>{diffs.tail(-3).select(
+                        pl.col("pct_diff").mean()
+                    ).item() * 100:.3f}% mean difference, discounting top 3 outliers
+                </li></ul></li>
+            </ul>
+        """)
+
+        comparison = juxtapose(self._platform_data)
+        self.table(
+            "cybertipline-reports-by-platform",
+            format_juxtaposition(comparison, with_highlights=True)
+        )
+
+        fig = plot_reports_per_provider()
+        path = "figure/reports-per-provider.svg"
+        fig.save(path)
+        self.svg(path, klass="wide", caption="""
+            CyberTipline reports in millions filed by surveyed platforms as well
+            as the total number received by NCMEC.
+        """)
+
+        self.h3("Making Sense of Δ%")
+        self.chart(
+            alt.Chart(
+                self._platform_diffs.with_columns(
+                    pl.col("pct_diff").mul(100)
+                )
+            ).mark_bar().encode(
+                alt.X("pct_diff:Q", bin=alt.Bin(step=10)),
+                alt.Y("count()"),
+            ).properties(
+                width=500,
+            ),
+            caption="Histogram of percent differences",
+        )
+
+        self.emit_mean_difference_plots()
+
+        if self._with_icc:
+            self.h3("Intraclass Correlation Coefficient")
+            self.emit_icc()
+
+        self.h3("Sign of Differences")
+        self.emit_sign_test()
+
+        self.h3("Reddit vs Other Platforms")
+        self.emit_reddit_vs_others()
+
     def emit_mean_difference_plots(self) -> None:
-        self._runr(self._diffs.with_columns(
+        self._runr(self._platform_diffs.with_columns(
             pl.col("pct_diff").mul(100)
         ), """
 library(tidyverse)
@@ -1280,9 +595,21 @@ plot.grid <- wrap_plots(
 ggsave("figure/comparable-reports.svg", plot.grid, width=11, height=8)
 emit_text()
         """)
+
+        # Crop height
+        path = Path("figure/comparable-reports.svg")
+        svg = path.read_text(encoding="utf8").replace(
+            "height='576.00pt'", "height='430.00pt'", count=1
+        )
+        path.write_text(svg, encoding="utf8")
+
         self.svg(
-            Path("figure/comparable-reports.svg"),
-            "Percentage Differences vs Mean Differences"
+            path,
+            caption="""
+                Mean difference plots for each platform individually and for all
+                platforms together. The latter plot omits the top-three outliers
+                and uses a log-scale as x-axis.
+            """,
         )
 
     def emit_icc(self) -> None:
@@ -1293,7 +620,7 @@ emit_text()
         """)
 
         print("This may take a while...")
-        diffs = self._diffs.sort(
+        diffs = self._platform_diffs.sort(
             "pct_diff", descending=True
         ).tail(-2)
 
@@ -1345,7 +672,7 @@ for (family in c("nbinom1", "nbinom2")) {{
             Fisher's exact test.</p>
         """)
 
-        counts = self._diffs.select(
+        counts = self._platform_diffs.select(
             pl.when(
                 pl.col("diff").eq(0)
             ).then(
@@ -1394,7 +721,7 @@ emit_text({test}(dt.contab{extra}))
         self._runr(counts, with_contab("chisq.test", "correct=TRUE"))
 
     def emit_sign_test(self) -> None:
-        self._runr(self._diffs.unpivot(
+        self._runr(self._platform_diffs.unpivot(
             on=["provider", "ncmec"],
             variable_name="source",
             value_name="reports",
@@ -1407,6 +734,261 @@ data.sign <- sign_test(data, formula = reports ~ source)
 # Thankfully, printing the object works.
 emit_text(data.sign)
 """)
+
+    # ==================================================================================
+    # Characterizing Growth
+    # ==================================================================================
+
+    def characterize_growth(self) -> None:
+        self.h2("How Has CyberTipline Report Volume Changed Over Time?")
+
+        # FIXME
+        self.h3("CyberTipline: Yearly Report Counts")
+        wide_frame = self.assemble_report_counts()
+
+        long_frame = wide_frame.unpivot(
+            on=[
+                "reports",
+                "people", "internet_users", "social_accounts",
+                "reports_per_social"
+            ],
+            index="year",
+        ).with_columns(
+            pl.col("variable").replace_strict({
+                "reports": "All Reports",
+                "meta_reports": "Meta’s Reports",
+                "people": "People",
+                "internet_users": "Internet Users",
+                "social_accounts": "Social Accounts",
+                "reports_per_social": "Reports per 1k Social Accounts",
+            }),
+        )
+
+        self.chart(plot_yearly_reports(long_frame))
+
+
+        wide_frame = self.assemble_report_counts()
+
+        self.h3("Comparing Regression Models")
+        self.html("""
+            <p>While linear models are not usually recommended for count data,
+            we nonetheless use them for modeling the growth in CyberTipline
+            reports because (1) report counts are large, in the millions, (2)
+            thanks to the massive discontinuity in growth in 2024, we have no
+            need for projecting into the future, and (3) linear models have a
+            straight-forward interpretation.</p>
+        """)
+
+        residuals, coefficients = self.emit_linear_models(wide_frame)
+
+        self.table("linear-coefficients", apply_table_style(
+            gt.GT(coefficients).tab_header(
+                title="Linear Coefficients",
+                subtitle="For Decade of Growth",
+            ).fmt_number(
+                columns=["Intercept"],
+                decimals=1,
+                use_seps=True,
+                sep_mark=",",
+            ).fmt_number(
+                columns=["Slope"],
+                decimals=4,
+                use_seps=True,
+                sep_mark=",",
+            )
+        ))
+
+        self.table("residuals", apply_table_style(
+            gt.GT(residuals).tab_header(
+                title="Standard Residuals",
+                subtitle="For Decade of Growth",
+            ).tab_spanner(
+                label="Social Accounts",
+                columns=["social_predicted", "social_residuals"],
+            ).tab_spanner(
+                label="Year",
+                columns=["year_predicted", "year_residuals"],
+            ).cols_label({
+                "year": "Year",
+                "social_predicted": "Predicted",
+                "social_residuals": "Residuals",
+                "year_predicted": "Predicted",
+                "year_residuals": "Residuals",
+            }).fmt_number(
+                columns=["social_predicted", "year_predicted"],
+                decimals=1,
+            ).fmt_number(
+                columns=["social_residuals", "year_residuals"],
+                decimals=2,
+                force_sign=True,
+            )
+        ))
+
+        self.emit_reports_over_years(
+            wide_frame.join(
+                residuals,
+                on="year",
+                how="left",
+            )
+        )
+
+        self.emit_count_models()
+
+    def assemble_report_counts(self) -> pl.DataFrame:
+        return pl.read_csv("data/ocse-reports-per-year.csv").join(
+            pl.read_csv("data/populations-simple.csv").select(
+                pl.col("year"),
+                pl.col("population").alias("people"),
+            ),
+            on="year",
+            how="left",
+        ).join(
+            pl.read_csv("data/internet-users-un.csv"),
+            on="year",
+            how="left",
+        ).join(
+            pl.read_csv("data/social-accounts.csv").select(
+                pl.col("year"),
+                pl.col("million_accounts").mul(1_000_000).alias("social_accounts"),
+            ),
+            on="year",
+            how="left",
+        ).select(
+            pl.col("year", "reports", "people"),
+            pl.col("internet_users_pct").mul(
+                pl.col("people")
+            ).truediv(100).alias("internet_users"),
+            pl.col("social_accounts"),
+            pl.col("reports").mul(1_000).truediv(
+                pl.col("social_accounts")
+            ).alias("reports_per_social"),
+        )
+
+    def emit_linear_models(self, wide_frame: pl.DataFrame) -> tuple[pl.DataFrame, pl.DataFrame]:
+        decade = wide_frame.filter(
+            pl.col("year").le(2023)
+        ).select(
+            pl.exclude("meta_reports")
+        )
+
+        self.html("""
+            <p>Determine suitable model and its independent variable. First, try
+            exponential model. Second, try linear model with year, people,
+            internet users, social accounts, and social accounts + year as
+            candidates for independent variable.</p>
+        """)
+
+        residuals, coefficients = self._runr(decade, """
+library(tidyverse)
+library(segmented)
+data <- read.csv(text = "{CSV_DATA}")
+
+emit_rule("1998-2023", weight = 2)
+
+emit_rule("Log(Reports) ~ Year")
+exp_fit <- lm(log(reports) ~ year, data = data)
+emit_text(summary(exp_fit))
+
+emit_rule("Segmented(Reports) ~ Year")
+lin_fit <- lm(reports ~ year, data = data)
+seg_fit <- segmented(lin_fit)
+emit_text(summary(seg_fit))
+emit_text(slope(seg_fit))
+
+emit_rule("2014-2023", weight = 2)
+data <- data |> filter(between(year, 2013, 2023))
+
+emit_rule("Log(Reports) ~ Year")
+data.year.em <- lm(log(reports) ~ year, data=data)
+emit_text(summary(data.year.em))
+
+emit_rule("Reports ~ Year")
+data.year.lm <- lm(reports ~ year, data=data)
+data$year_residuals <- rstandard(data.year.lm)
+data$year_predicted <- predict(data.year.lm)
+emit_text(summary(data.year.lm))
+
+emit_rule("Reports ~ People")
+data.people.lm <- lm(reports ~ people, data=data)
+emit_text(summary(data.people.lm))
+
+emit_rule("Reports ~ Internet Users")
+data.inet.lm <- lm(reports ~ internet_users, data=data)
+emit_text(summary(data.inet.lm))
+
+emit_rule("Reports ~ Social Accounts")
+data.social.lm <- lm(reports ~ social_accounts, data=data)
+data$social_residuals <- rstandard(data.social.lm)
+data$social_predicted <- predict(data.social.lm)
+
+emit_text(summary(data.social.lm))
+emit_rule(weight = 0)
+emit_text(data$social_residuals)
+emit_data(data[c("year", "social_residuals", "social_predicted", "year_residuals", "year_predicted")])
+
+emit_rule("Reports ~ Social Accounts + Year")
+data.year.social.lm <- lm(reports ~ social_accounts + year, data=data)
+emit_text(summary(data.year.social.lm))
+
+emit_rule("Reports per Social Account ~ Year")
+data.reports.social.lm <- lm(reports_per_social ~ year, data=data)
+emit_text(summary(data.reports.social.lm))
+
+emit_data(
+    c("Independent Variable", "Dependent Variable", "Intercept", "Slope"),
+    c("Year", "Reports", data.year.lm$coefficients[1:2]),
+    c("Social Accounts", "Reports", data.social.lm$coefficients[1:2]),
+    c("Year", "Reports per Social Accounts", data.reports.social.lm$coefficients[1:2])
+)
+""")
+
+        return residuals, coefficients.with_columns(
+            pl.col("Slope").cast(pl.Float64)
+        )
+
+    def emit_count_models(self) -> None:
+        frame = pl.read_csv("data/ocse-reports-per-year.csv").filter(
+            pl.col("year").ge(2014).and_(pl.col("year").lt(2024))
+        ).join(
+            pl.read_csv("data/social-accounts.csv"),
+            on="year",
+            how="left",
+        )
+
+        self.h3("Poisson Regression")
+        self._runr(frame, """
+data <- read.csv(text="{CSV_DATA}")
+
+data.poisson <- glm(reports ~ year, family = "poisson", data = data)
+emit_text(data.poisson)
+emit_text(confint(data.poisson))
+emit_text(exp(confint(data.poisson)))
+
+svg("figure/mod-poisson.svg")
+par(mfrow = c(3, 2))
+plot(data.poisson, which = 1:6)
+dev.off()
+        """)
+
+        self.svg("figure/mod-poisson.svg")
+
+        self.h3("Negative Binomial Regression")
+        self._runr(frame, """
+library(MASS)
+data <- read.csv(text="{CSV_DATA}")
+data.nbinom <- glm.nb(reports ~ year, data = data)
+
+emit_text(data.nbinom)
+emit_text(confint(data.nbinom))
+emit_text(exp(confint(data.nbinom)))
+
+svg("figure/mod-nbinom.svg")
+par(mfrow = c(3, 2))
+plot(data.nbinom, which = 1:6)
+dev.off()
+        """)
+
+        self.svg("figure/mod-nbinom.svg")
 
     def emit_reports_over_years(self, frame: pl.DataFrame) -> None:
         base = alt.Chart(frame.with_columns(
@@ -1499,89 +1081,788 @@ emit_text(data.sign)
         fig.save(path)
         self.svg(path)
 
-    def emit_regression_models(self) -> None:
-        frame = pl.read_csv("data/ocse-reports-per-year.csv").filter(
-            pl.col("year").ge(2014).and_(pl.col("year").lt(2024))
+    # ==================================================================================
+    # Identifying Potential Growth Factors
+    # ==================================================================================
+
+    def break_down_crimes(self) -> None:
+        self.h2("What Factors Drive the Growth in CyberTipline Reports?")
+
+        self.html("""
+            <p>The overall volume of CyberTipline reports is dominated by two
+            factors:</p>
+
+            <ol class=tight>
+            <li>Almost all reports are about CSAM.</li>
+            <li>Meta filed the vast majority of reports.</li>
+            </ol>
+        """)
+
+        report_contents = self.emit_dominant_shares()
+        self.emit_other_growth_factors(report_contents)
+
+        self.h3("Meta’s CyberTipline Reports")
+        self.html(""""
+            <p>Meta is responsible for the vast majority of all CyberTipline
+            reports, suggesting that an analysis of Meta's disclosures by
+            themselves may yield reasonably accurate insights.</p>
+        """)
+
+        frame = tabulate(["reports"], preserve_brands=True).filter(
+            pl.col("source").eq("NCMEC").and_(
+                pl.col("target").is_in([
+                    "Meta",
+                    "Facebook", "Instagram", "Meta AI", "Threads", "WhatsApp",
+                    "Total",
+                ])
+            )
+        ).select(
+            pl.col("year", "target", "value")
+        ).pivot(
+            on="target",
+            index="year",
+        ).select(
+            pl.col("year").alias("Year"),
+            pl.col("Total"),
+            pl.col("Meta").truediv(pl.col("Total")).alias("meta_pct_total"),
+            pl.col("Meta", "Facebook", "Instagram", "Threads"),
+            pl.col("Meta AI").alias("meta_ai"),
+            pl.col("WhatsApp"),
+            pl.col("WhatsApp").truediv(pl.col("Meta")).alias("whatsapp_pct_meta"),
+        )
+
+        self.table("meta-reports", apply_table_style(
+            gt.GT(frame).tab_header(
+                title="Meta’s Reports",
+            ).cols_label(
+                meta_pct_total=gt.html("Meta/<br>Total"),
+                meta_ai=gt.html("Meta<br>AI"),
+                whatsapp_pct_meta=gt.html("WhatsApp/<br>Meta"),
+            ).tab_style(
+                style=gt.style.fill(color="#ffffb3"),
+                locations=gt.loc.body(columns=[
+                    "meta_pct_total", "whatsapp_pct_meta"
+                ]),
+            ).fmt_percent(
+                columns=["meta_pct_total", "whatsapp_pct_meta"],
+                decimals=1,
+            ).fmt_integer(
+                columns=[
+                    "Total", "Meta",
+                    "Facebook", "Instagram", "Threads", "meta_ai", "WhatsApp"
+                ],
+            )
+        ))
+
+        self.h3("Meta’s Reversals as a Proxy for Accuracy")
+        self.html("""
+            <p>The firm explicitly states that ”restoring a post doesn't
+            necessarily mean a mistake was made.” For example, the content
+            pointed to by links may change, making the link acceptable again.
+            Furthermore, reversals are recorded during the reporting period the
+            content was restored, not the period the content was actioned.
+            Finally, Meta uses pieces as the underlying unit for actioning and
+            restoring content; but pieces and CyberTipline reports are only
+            loosely related to each other.</p>
+
+            <p>Having said all that, Meta is responsible for the vast majority
+            of all CyberTipline reports, only dropping below 80% in 2024. The
+            firm also does not publish any data on accuracy. So we make do with
+            what's available.</p>
+        """)
+
+        frame = tabulate(["pieces", "reversals"]).filter(
+            pl.col("source").eq("Meta")
+        ).pivot(
+            on="variable",
+            index=_INDEX,
+        ).select(
+            pl.col("year", "reversals", "pieces"),
+            pl.col("reversals").truediv(pl.col("pieces")).alias("pct_reversals")
+        )
+
+        self.table("meta-reversals", apply_table_style(
+            gt.GT(
+                frame
+            ).tab_header(
+                title="Meta’s Rate of Reversal",
+            ).cols_label(
+                year="Year",
+                reversals="Reversals",
+                pieces="Pieces",
+                pct_reversals="Rate",
+            ).fmt_integer(
+                columns=["reversals", "pieces"],
+            ).fmt_percent(
+                columns=["pct_reversals"],
+                decimals=2,
+            )
+        ))
+
+    def emit_dominant_shares(self) -> pl.DataFrame:
+        report_contents = pl.read_csv("data/ocse-report-contents.csv").with_columns(
+            pl.col("quantity").str.replace_all(",", "").cast(pl.Int64),
+        )
+
+        prohibitions = report_contents.filter(
+            pl.col("category").eq("kind of exploitation"),
+        ).pivot(
+            on="label",
+            index="year",
+            values="quantity",
+        ).rename({
+            "year": "Year",
+            "child pornography": "CSAM",
+            "misleading words/images online": "Misleading Content",
+            "online enticement of children": "Entice­ment",
+            "child sex trafficking": "Traf­ficking",
+            "obscene material sent to a child": "Obscene Material",
+            "misleading domain name": "Domain Names",
+            "child sexual molestation": "Moles­tation",
+            "child sex tourism": "Sex Tourism",
+        }).with_columns(
+            pl.sum_horizontal(
+                pl.exclude("Year")
+            ).alias("Total"),
+        )
+
+        prohibitions_pct = prohibitions.with_columns(
+            pl.exclude("Year", "Total").truediv(
+                pl.col("Total")
+            ),
+        )
+
+        self.table("reports-by-prohibition", apply_table_style(
+            gt.GT(prohibitions_pct).tab_header(
+                title="Reports by Prohibition",
+            ).fmt_integer(
+                columns="Total",
+            ).fmt_percent(
+                columns=pl.exclude("Year", "Total", "CSAM"),
+                decimals=3,
+            ).fmt_percent(
+                columns="CSAM",
+                decimals=1,
+            )
+        ))
+
+        frame = prohibitions.select(
+            "Year", "Total", "CSAM"
         ).join(
-            pl.read_csv("data/social-accounts.csv"),
-            on="year",
+            self._platform_data.filter(
+                pl.col("source").eq("NCMEC").and_(
+                    pl.col("target").eq("Meta")
+                )
+            ).select(
+                pl.col("year").alias("Year"),
+                pl.col("value").alias("Meta"),
+            ),
+            on="Year",
             how="left",
         )
 
-        self.h3("Poisson Regression")
-        self._runr(frame, """
-data <- read.csv(text="{CSV_DATA}")
+        self.table("dominant-shares", apply_table_style(
+            gt.GT(frame.with_columns(
+                pl.exclude("Year", "Total").truediv(
+                    pl.col("Total")
+                ),
+            )).tab_header(
+                title="Dominant Shares",
+            ).fmt_integer(
+                columns="Total",
+            ).fmt_percent(
+                columns=pl.exclude("Year", "Total"),
+                decimals=1,
+            )
+        ))
 
-data.poisson <- glm(reports ~ year, family = "poisson", data = data)
-emit_text(data.poisson)
-emit_text(confint(data.poisson))
-emit_text(exp(confint(data.poisson)))
+        ymin, ymax = frame.select(
+            pl.col("Year").min().alias("min"),
+            pl.col("Year").max().alias("max"),
+        ).row(0)
 
-svg("figure/mod-poisson.svg")
-par(mfrow = c(3, 2))
-plot(data.poisson, which = 1:6)
-dev.off()
+        fig = alt.Chart(
+            frame.unpivot(
+                index="Year",
+                variable_name="variable",
+                value_name="reports"
+            ).with_columns(
+                pl.col("Year").cast(pl.String),
+                pl.col("reports").truediv(1_000_000)
+            )
+        ).mark_bar().encode(
+            alt.X("Year:T").title("Year").axis(
+                labelAngle=45,
+                titleFontWeight="normal",
+                titleFontStyle="italic",
+                tickCount=ymax - ymin + 1,
+            ),
+            alt.Y("reports:Q").title("Reports (Millions)").stack(None).axis(
+                titleFontWeight="normal",
+                titleFontStyle="italic",
+            ),
+            alt.Color("variable:N").title(None)
+            .scale(
+                range=[Palette.RED, Palette.DARK_GRAY, Palette.GRAY],
+                domain=["Total", "CSAM", "Meta"],
+            ),
+        ).configure_bar(
+            continuousBandSize=15,
+        ).properties(
+            height=100,
+            width=160,
+        )
+
+        path = "figure/dominant-shares.svg"
+        fig.save(path)
+        self.svg(path, style="max-width: 40rch;", caption="""
+            The dominant shares amongst CyberTipline reports: Reports about
+            CSAM and reports file by Meta.
         """)
 
-        self.svg("figure/mod-poisson.svg")
+        return report_contents
 
-        self.h3("Negative Binomial Regression")
-        self._runr(frame, """
-library(MASS)
-data <- read.csv(text="{CSV_DATA}")
-data.nbinom <- glm.nb(reports ~ year, data = data)
+    def emit_other_growth_factors(self, report_contents: pl.DataFrame) -> None:
+        unique_or_similar = report_contents.filter(
+            pl.col("category").eq("reports"),
+        ).pivot(
+            on="label",
+            index="year",
+            values="quantity",
+        ).rename({
+            "year": "Year",
+            "total": "Filed",
+            "with unique photos/videos": "Unique",
+            "with similar photos/videos": "Similar",
+        }).with_columns(
+            pl.col("Unique", "Similar").truediv("Filed"),
+        )
 
-emit_text(data.nbinom)
-emit_text(confint(data.nbinom))
-emit_text(exp(confint(data.nbinom)))
+        self.table("unique-and-similar-pieces", apply_table_style(
+            gt.GT(unique_or_similar).tab_header(
+                title="Reports by Attachments",
+                subtitle="Accounting for Deduplication",
+            ).fmt_integer(
+                columns="Filed",
+            ).fmt_percent(
+                columns=["Unique", "Similar"],
+                decimals=1,
+            )
+        ))
 
-svg("figure/mod-nbinom.svg")
-par(mfrow = c(3, 2))
-plot(data.nbinom, which = 1:6)
-dev.off()
+        frame = pl.read_csv("data/ocse-report-recipients.csv").with_columns(
+            pl.col("reports").str.replace_all(",", "").cast(pl.Int64),
+        ).group_by(
+            pl.col("year", "level_of_detail"),
+        ).agg(
+            pl.col("reports").sum(),
+        ).pivot(
+            on="level_of_detail",
+            index="year",
+            values="reports",
+        ).with_columns(
+            pl.sum_horizontal(
+                pl.col("actionable", "informational")
+            ).alias("Counted"),
+        ).select(
+            pl.col("year").alias("Year"),
+            pl.col("actionable", "informational").truediv(
+                pl.col("Counted")
+            ),
+            pl.col("Counted"),
+        ).join(
+            unique_or_similar.select(pl.col("Year", "Filed")),
+            on="Year",
+        ).sort(
+            "Year",
+        ).with_columns(
+            pl.col("Counted").truediv("Filed").alias("Inflationary Factor"),
+        )
+
+        self.table("report-quality", apply_table_style(
+            gt.GT(frame).tab_header(
+                title="Report Quality",
+            ).cols_label(
+                actionable="Actionable",
+                informational="Informational",
+            ).fmt_integer(
+                columns=["Counted", "Filed"],
+            ).fmt_percent(
+                columns=["actionable", "informational"],
+                decimals=1,
+            ).fmt_number(
+                columns="Inflationary Factor",
+                decimals=3,
+            )
+        ))
+
+    # ==================================================================================
+    # Characterizing the Impact of Sexting Minors
+    # ==================================================================================
+
+    def characterize_sexting_minors(self) -> None:
+        self.h2("What Is the Role of Sexting Minors?")
+
+        self.h3("Countries and Their Crime Statistics")
+        self.html(f"""
+            <p>The following <strong>13 countries</strong> and <strong>one
+            supranational organization</strong> do not appear to publish
+            the necessary statistics:</p>
+
+            <ul class=tight>
+            <li>Brazil
+            <li>Canada
+            <li>Czech Republic
+            <li>European Union
+            <li>France
+            <li>India
+            <li>Japan
+            <li>Mexico
+            <li>Phillipines
+            <li>Poland
+            <li>Singapore
+            <li>Thailand
+            <li>United Arab Emirates
+            <li>United Kingdom
+            </ul>
+
+            <p>Meanwhile the following <strong>7 countries</strong> do
+            publish simultaneous break-downs of crimes by age and sex:</p>
+
+            <ul class=tight>
+            <li>Australia (1 year only)
+            <li>Finland
+            <li>Germany
+            <li>Italy
+            <li>New Zealand
+            <li>Spain
+            <li>United States
+            </ul>
+
+            <p>In fact, several countries include additional information:</p>
+
+            <ul class=tight>
+            <li>Finland: coarse nationality of offenders
+            <li>Germany: producers v consumers
+            <li>Italy: Italians vs foreigners
+            <li>New Zealand: ethnicity, producers v consumers
+            <li>United States: ethnicity, producers v consumers
+            </ul>
+
+            <p>Of course, since it is case-based, the United States'
+            National Incident-Based Reporting System (NIBRS) goes even
+            further.</p>
+
+            <hr>
+
+            <table class=mytable>
+            <caption>Important Ages in Surveyed Countries</caption>
+            <thead>
+            <tr><th scope=col></th>
+                <th scope=col>Age of Criminal</th>
+                <th scope=col>Age of Sexual</th>
+                <th scope=col>Age of</th></tr>
+            <tr><th scope=col>Country</th>
+                <th scope=col>Responsibility</th>
+                <th scope=col>Consent</th>
+                <th scope=col>Majority</th></tr>
+            </thead>
+            <tbody>
+            <tr><th scope=row>Australia</th> <td>10 (VIC: 12, ACT: 14)</td> <td>16 (SA &amp; Tas: 17)</td> <td>18</td></tr>
+            <tr><th scope=row>Finland</th> <td>15</td> <td>16</td> <td>18</td></tr>
+            <tr><th scope=row>Germany</th> <td>14</td> <td>14</td> <td>18</td></tr>
+            <tr><th scope=row>Italy</th> <td>14</td> <td>14</td> <td>18</td></tr>
+            <tr><th scope=row>New Zealand</th> <td>10</td> <td>16</td> <td>20</td></tr>
+            <tr><th scope=row>Spain</th> <td>14</td> <td>16</td> <td>18</td></tr>
+            <tr><th scope=row>United States</th> <td>0–12 (federal: 11)</td> <td>16–18</td> <td>18</td></tr>
+            </tbody>
+            </table>
+
+            <p>24 US states do not have a minimum age of criminal
+            responsibility.</p>
         """)
 
-        self.svg("figure/mod-nbinom.svg")
+        self.emit_country_age_buckets()
+        self.emit_country_report_shares_and_offender_rates()
 
-    DETAIL_YEARS = (2021, 2024)
+        # ------------------------------------------------------------------------------
+        self.h3("Offenders by Age and Sex")
+        self.emit_age_vs_sex()
+
+        # ------------------------------------------------------------------------------
+        self.h3("Offenders by Age and Activity (Producer/Consumer)")
+        self.emit_age_vs_activity()
+
+        # ------------------------------------------------------------------------------
+        self.h3("Offenders and Outcomes")
+        self.emit_outcomes()
+
+        # ------------------------------------------------------------------------------
+        self.h3("Germany: Breakdown of CyberTipline Reports and Offenders for 2024")
+        self.svg("figure/de-report-flow-2024.svg", klass="extra-wide")
+        self.svg("figure/de-offender-flow-2024.svg", klass="extra-wide")
+
+        # ------------------------------------------------------------------------------
+        self.h3("Germany: Cross-Sectional Age-Crime Curves")
+        self.html("""
+            <p>To avoid denominator bias, here are the age-crime curves for
+            the combination of child (0–13) and youth (14–17) pornography in
+            Germany. The BKA's population statistics do not include children
+            0–7; hence, curves start at 8-years-old.</p>
+        """)
+        self.emit_de_age_crime_curves()
+
+        # ------------------------------------------------------------------------------
+        self.h3("Germany: Adjudication and Conviction Rates")
+        self.emit_de_adjudication_and_conviction_rates()
+
+        # ------------------------------------------------------------------------------
+        self.h3("Notes")
+
+        self.h4("Accounting for Unsolved Incidents")
+        incidents = de.ingest_incidents().filter(
+            pl.col("id").is_in(de.PORN_IDS)
+        )
+
+        min_yearly, max_yearly = incidents.group_by(
+            Id.YEAR,
+        ).agg(
+            pl.col("incidents", "solved", "suspects").sum()
+        ).with_columns(
+            pl.col("suspects").truediv(pl.col("solved")).alias("suspects_per_incident"),
+        ).select(
+            pl.col("suspects_per_incident").min().alias("minimum"),
+            pl.col("suspects_per_incident").max().alias("maximum"),
+        ).row(0)
+
+        global_mean = incidents.select(
+            pl.col("incidents", "solved", "suspects").sum()
+        ).select(
+            pl.col("suspects").truediv("solved")
+        ).item()
+
+        self.html(f"""
+            <p>For Germany and the United States, crime statistics include
+            unsolved incidents and hence offenders with unknown age and sex.
+            NIBRS includes such offenders by default, in the absence of further
+            knowledge assuming one unknown offender per incident.</p>
+
+            <p>For Germany, we backfill those offenders based on the same
+            assumption. The number of offenders per <em>solved</em> incident
+            ranges from {min_yearly:.3f} to {max_yearly:.3f}, with a global mean
+            of {global_mean:.3f}. While backfilled offenders have an unknown age
+            and sex, German crime statistics reflect the law's distinction
+            between consumption and production of child/youth porn, thus
+            enabling us to associate even unknown offenders with their activity
+            (consumer/producer) and (very rough) victim age.</p>
+        """)
+
+        self.h4("Sources")
+        self.html("""
+            <p>The per-country data sources are:</p>
+            <ul>
+
+            <li><strong>Australia</strong>: <a
+            href="https://www.aic.gov.au">Australian Institute of Criminology</a>,
+            notably <a href="https://www.aic.gov.au/publications/sr/sr51">sr 51</a>
+
+            <li><strong>Finland</strong>: Statistics Finland's <a
+            href="https://pxdata.stat.fi/PxWeb/pxweb/en/StatFin/StatFin__rpk/statfin_rpk_pxt_13kr.px/">StatFin
+            table 13kr</a> with the "Persons suspected of solved offences by the
+            International Classification of Crime for Statistical Purposes (ICCS),
+            year of solving, age, sex and nationality, 2006-2025."
+
+            <li><strong>Germany</strong>: <a
+            href="https://www.bka.de/DE/AktuelleInformationen/StatistikenLagebilder/PolizeilicheKriminalstatistik/pks_node.html">Police
+            crime statistics</a> published by the Bundeskriminalamt (BKA),
+            notably tables on suspects and incidents. Those statistics are
+            supplemented with statistics about prosecutions covering the <a
+            href="https://www.statistischebibliothek.de/mir/receive/DESerie_mods_00000107">years
+            up to and including 2021</a> and <a
+            href="https://www.statistischebibliothek.de/mir/receive/DESerie_mods_00008081">years
+            from 2022 onward</a>, published by Germany's federal statistics
+            agency. We normalize offender frequencies by using the BKA's
+            statistics about the <a
+            href="https://www.bka.de/SharedDocs/Downloads/DE/Publikationen/PolizeilicheKriminalstatistik/2025/Sonst_Tabellen/01-BU-BV-TVBZ-ins-ab-2009_xls.xlsx?__blob=publicationFile&v=4">total
+            resident population</a>, which are based on data published by the
+            federal statistics agency.
+
+            <li><strong>Italy</strong>: Istat's table on <a
+            href="https://esploradati.istat.it/databrowser/#/en/dw/categories/IT1,Z0840JUS,1.0/JUS_CRIMINAL/DCCV_AUTVITTPS/IT1,73_230_DF_DCCV_AUTVITTPS_1,1.0">alleged
+            offenders reported by the police forces to the judicial authority</a>
+            organized by gender, age, and citizenship.
+
+            <li><strong>New Zealand</strong>: <a
+            href="https://www.police.govt.nz/about-us/publications-statistics/data-and-statistics/policedatanz">policedata.nz</a>,
+            notably <a
+            href="https://www.police.govt.nz/about-us/publications-statistics/data-and-statistics/policedatanz/proceedings-offender-demographics">proceedings
+            (offender demographics)</a>
+
+            <li><strong>Spain</strong>: The Ministerio del Interior's <a
+            href="https://estadisticasdecriminalidad.ses.mir.es/publico/portalestadistico/en/datos.html?type=jaxi&title=Arrests%20/%20Investigated&path=/Datos3/">annual
+            series on crime</a>, arrests/investigated
+
+            <li><strong>United States</strong>: The FBI's <a
+            href="https://cde.ucr.cjis.gov/LATEST/webapp/#/pages/downloads#nibrs-downloads">National
+            Incident-Based Reporting System (NIBRS)</a>
+
+            </ul>
+
+            <p>It is nearly impossible to access Germany's police statistics
+            from outside the EU, with requests simply timing out due to a likely
+            network misconfiguration by that country's federal police agency.</p>
+
+            <p>US statisticstics are <em>not</em> representative of the entire
+            country, with NIBRS' coverage of the US population growing from 35.6% in
+            2014 to 86.4% in 2024 according to the FBI's <a
+            href="https://cde.ucr.cjis.gov/LATEST/webapp/#/pages/explorer/crime/crime-trend">Crime
+            Data Explorer</a>.</p>
+        """)
+
+    DETAIL_YEARS = (2023, 2025)
     THUMB_YEARS = (2014, 2025)
     THUMB_GAP = 20
     THUMB_WIDTH = 3_000
 
-    def filter_years(
-        self, distributions: dict[str, pl.DataFrame], first: int, last: int
-    ) -> dict[str, pl.DataFrame]:
-        filtered = {}
-        for key in distributions:
-            filtered[key] = distributions[key].filter(
-                pl.col("data_year").ge(first).and_(pl.col("data_year").le(last))
+    def filter_years[D: (pl.DataFrame, dict[str, pl.DataFrame])](
+        self,
+        distributions: D,
+        first: int,
+        last: int,
+    ) -> D:
+        filter = pl.col("data_year").ge(first).and_(pl.col("data_year").le(last))
+
+        if isinstance(distributions, pl.DataFrame):
+            return distributions.filter(filter)
+
+        return { k: f.filter(filter) for k, f in distributions.items() }
+
+    def emit_country_age_buckets(self) -> None:
+        data = pl.read_csv("data/age-groupings.csv")
+
+        rule_data = data.group_by(
+            "country", "liability",
+            maintain_order=True
+        ).agg(
+            pl.col("start_age").min()
+        ).with_columns(
+            pl.col("start_age").shift(-1, fill_value=100).over(
+                pl.col("country")
+            ).alias("stop_age")
+        )
+        tick_data = data.filter(
+            pl.col("start_age").lt(100)
+        )
+
+        x = alt.X("start_age:Q").scale(domain=(0, 100)).axis(
+            tickCount=11,
+            title="Age",
+            titleFontWeight="normal",
+            titleFontStyle="italic",
+            titleFontSize=11,
+            titlePadding=5,
+        )
+        y = alt.Y("country:N").axis(ticks=False, domain=False, labelPadding=5).title(None)
+        color = alt.Color("liability:N").scale(
+            domain=("none", "limited", "full-or-limited", "full"),
+            range=(Palette.RED, Palette.GREEN, Palette.BLUE, Palette.GRAY),
+        ).legend(None)
+
+        fig = (
+            alt.Chart(rule_data).mark_rule(
+                strokeWidth=3
+            ).encode(
+                x, alt.X2("stop_age:Q"), y, color
             )
-        return filtered
-
-    def emit_age_distributions_old(self, with_chi2: bool = False) -> None:
-        distributions = crimestat.load_all_age_distributions(with_activity=False, verbose=True)
-        full_data = pl.concat(
-            self.filter_years(distributions, *self.THUMB_YEARS).values()
+            +
+            alt.Chart(tick_data).mark_tick(
+                thickness=1.5,
+                size=12,
+            ).encode(
+                x, y, color
+            )
+        ).properties(
+            width=270,
+            height=120,
         )
 
+        path = "figure/age-groupings.svg"
+        fig.save(path)
 
-        # Understanding the surprisingly high prevalence of 58-year-old
-        # offenders without a known sex
-        self.h4("United States: 58-Year-Old CSAM Offenders Without Known Sex")
+        self.svg(path, style="max-width: 50rch;", caption="""
+            Age brackets used in crime statistics. Minors below the age of
+            criminal responsibility are shown in red, all other minors are shown
+            in green, and adults in gray. For Germany, young adults aged 18–20
+            are shown in blue, as they may be prosecuted as youths or adults.
+        """)
 
-        detail_data = self.filter_years(distributions, *self.DETAIL_YEARS)
-        fig = plot_sex_by_age_detailed(
-            detail_data["us_csam_offenders"], "US", "CSAM", "Offender"
+    def emit_country_report_shares_and_offender_rates(self) -> None:
+        frame = pl.read_csv("data/ocse-reports-per-country.csv").with_columns(
+            pl.exclude("country", "iso3").str.replace_all(",", "").cast(pl.Int64)
+        ).filter(
+            pl.col("country").is_in([
+                *_COUNTRIES,
+                "No Country Listed",
+                "Total",
+            ])
         )
+
+        full_years = pl.selectors.expand_selector(
+            frame, pl.selectors.matches(r"^20\d\d$")
+        )
+        split_years = [c[3:] for c in pl.selectors.expand_selector(
+            frame, pl.selectors.starts_with("ref")
+        )]
+
+        frame = frame.with_columns(
+            pl.col(f"ref{y}").add(pl.col(f"info{y}")).alias(y) for y in split_years
+        ).select(
+            pl.col("country", *full_years, *split_years)
+        ).transpose(
+            include_header=True,
+            header_name="Year",
+            column_names="country",
+        )
+
+        frame = frame.select(
+            pl.col("Year"),
+            pl.col("Australia").truediv(pl.col("Total")).alias("AU"),
+            pl.col("Finland").truediv(pl.col("Total")).alias("FI"),
+            pl.col("Germany").truediv(pl.col("Total")).alias("DE"),
+            pl.col("Italy").truediv(pl.col("Total")).alias("IT"),
+            pl.col("New Zealand").truediv(pl.col("Total")).alias("NZ"),
+            pl.col("Spain").truediv(pl.col("Total")).alias("ES"),
+            pl.col("United States").truediv(pl.col("Total")).alias("US"),
+            pl.col("Germany").add(
+                pl.col("United States")
+            ).truediv(pl.col("Total")).alias("DE+US"),
+        )
+
+        self.table("per-country-report-share", apply_table_style(
+            gt.GT(frame).tab_header(
+                title="Per-Country Share of CyberTipline Reports",
+            ).fmt_percent(
+                columns=["AU", "DE", "ES", "FI", "IT", "NZ", "US", "DE+US"]
+            )
+        ))
+
+        # ------------------------------------------------------------------------------
+
+        self.html(""""
+            <p>To compare comparable quantities, we compare the number of
+            <em>known</em> offenders normalized by the total population. By
+            definition, this rate is lower than the number of incidents
+            normalized by the population, i.e., police-recorded crime rates.</p>
+        """)
+
+        frame = self._crime_data.filter(
+            (
+                pl.col("age").is_not_null().or_(
+                    pl.col("sex").is_not_null()
+                )
+            ).and_(
+                pl.col("country").ne("United States").or_(
+                    pl.col("role").ne("Arrestee")
+                )
+            )
+        ).with_columns(
+            pl.col("country").cast(pl.String),
+        ).group_by(
+            "country", "material", "role", "metric", "metric_order", "data_year",
+            maintain_order=True,
+        ).agg(
+            pl.col("count").sum()
+        ).join(
+            pl.read_csv(
+                "data/populations.csv",
+                columns=["Location", "Time", "Value"],
+            ).with_columns(
+                pl.col("Location").replace({
+                    "United States of America": "United States",
+                })
+            ),
+            left_on=["country", "data_year"],
+            right_on=["Location", "Time"],
+            how="left",
+        ).rename({
+            "count": "offenders",
+            "Value": "population",
+        }).with_columns(
+            pl.when(
+                pl.col("country").ne("United States")
+            ).then(
+                pl.col("country")
+            ).otherwise(
+                pl.format("United States ({})", pl.col("material"))
+            ).alias("label"),
+            pl.col("offenders").truediv(pl.col("population")).mul(1_000).alias("rate"),
+        )
+
+        self.table("per-country-crime-rate", apply_table_style(
+            gt.GT(
+                frame.pivot(
+                    "label",
+                    index="data_year",
+                    values="rate",
+                )
+            ).tab_header(
+                title="Known Offenders per 1,000 Capita by Year and Country",
+            ).cols_label(
+                data_year="Year",
+            ).fmt_number(
+                columns=pl.exclude("data_year"),
+                decimals=3,
+            )
+        ))
+
+        fig = alt.Chart(
+            frame.filter(
+                pl.col("label").ne("Australia")
+            )
+        ).mark_line().encode(
+            alt.X("data_year:O").title("Year").axis(labelAngle=-45),
+            alt.Y("rate:Q").title("Known Offenders per 1,000 Capita"),
+            alt.Color("label:N").title(None),
+        )
+        path = "figure/offenders-per-capita-by-country.svg"
+        fig.save(path)
+        self.svg(path, caption="""
+            Known offenders per 1,000 capita by year and country.
+        """)
+
+    def emit_age_vs_sex(self) -> None:
+        # All distributions
+        self.h4("Offender Demographics")
+        fig = plot_sex_by_age_grid(
+            self._crime_data.filter(pl.col("role").ne("Arrestee")),
+            with_title=False,
+        )
+        path = "figure/age-sex-pyramids.svg"
+        fig.save(path)
+        self.svg(path, klass="extra-wide", caption="""
+            Offender counts by age and sex per year and country. For Germany and
+            the United States, each chart is annotated with the estimated number
+            of unknown offenders.
+        """)
+
+        # ------------------------------------------------------------------------------
+        self.h4("Sidebar: 58-Year-Old Offenders with Unknown Sex in US")
+        detail_data = self.filter_years(
+            self._crime_distributions["us_csam_offenders"],
+            *self.DETAIL_YEARS
+        )
+        fig = plot_sex_by_age_detailed(detail_data, "US", "CSAM", "Offender")
         path = "figure/us-age-sex-detail.svg"
         fig.save(path)
-        self.svg(path)
+        self.svg(path, caption="""
+            Enlarged offender demographics for US, 2023–2025.
+        """)
 
-        agencies, age_ranges = analyze_offender_anomalies()
+        offenders, agencies, age_ranges = analyze_offender_anomalies()
 
-        agency_count = agencies.select(
-            pl.col("count").sum()
-        ).item()
+        offender_count = len(offenders)
+        agency_count = len(agencies)
+
         top_agency = agencies.select(
             pl.col("agency").first()
         ).item()
@@ -1590,22 +1871,18 @@ dev.off()
         ).item()
 
         self.html(f"""
-            </div>
+            <p>Across the studied year range, <strong>{agency_count:,} US law
+            enforcement agencies have reported {offender_count:,} 58-year-old
+            offenders with unknown sex</strong>. The top agency is
+            <strong>{top_agency}</strong>, which is responsible for
+            {top_share:.1f}% of all such reports.</p>
 
-            <p>In the above, enlarged age distributions for CSAM offenders in
-            the United States, the number of 58-year-old offenders with unknown
-            sex is rather noticeable. Over a span of four years, there are
-            {agency_count:,} of them. When looking at the reporting police
-            departments, the agency recording the most is {top_agency} with
-            {top_share:.1f}%. Besides that one agency, the distribution is
-            heavy-tailed, with a total of {len(agencies):,} different
-            departments.</p>
-
-            <p>A closer look at the complete offender table reveals that these
-            agencies did not code the age of an unknown offender as unavailable.
-            Instead, they abused an age range covering (almost) all adult years,
-            even though age ranges should cover at most 10 years. The different
-            ranges are shown below.</p>
+            <p>Closer inspection of the reports reveals the underlying pattern:
+            These law enforcement agencies did not code the age of an unknown
+            offender as unavailable. Instead, they abused an age range covering
+            (almost) all adult ages. NIBRS does require that age ranges cover at
+            most 10 years but, clearly, the FBI is not enforcing this
+            invariant.</p>
         """)
 
         self.table("age-ranges", apply_table_style(gt.GT(age_ranges).tab_header(
@@ -1619,12 +1896,147 @@ dev.off()
             columns=["min_age", "max_age", "trunc_mean_age", "count"],
         )))
 
-        self.html("<div class=extra-wide>")
+        # ------------------------------------------------------------------------------
+        self.h4("Fractional Offender Demographics")
+        offenders_by_age_sex = self._crime_data.filter(
+            pl.col("role").ne("Arrestee")
+        )
 
-        # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-        self.h3("Perpetrators by Country, Year, Activity, and Age Group")
-        self.html("<div class=extra-wide>\n")
+        frame, _ = make_mosaic_frame(
+            offenders_by_age_sex,
+            x_axis="age_group",
+            y_axis="sex",
+            index={
+                "age_group": ["Minor", None, "Adult"],
+                "sex": ["Female", None, "Male"],
+            },
+            highlights={
+                "Minor": {
+                    "Male": Palette.LIGHT_BLUE,
+                    "Female": Palette.PINK,
+                },
+            },
+            use_minor=True,
+            include_null=True,
+            show_counts=True,
+            show_percent=True,
+        )
 
+        fig = plot_mosaic_grid(
+            frame,
+            x_label="Age Group",
+            y_label="Sex",
+            with_title=False,
+        )
+        path = "figure/age-sex-mosaics.svg"
+        fig.save(path)
+        self.svg(path, klass="extra-wide", caption="""
+            Offender shares by age group and sex per year and country. This
+            figure includes offenders with unknown age <em>or</em> sex as faint
+            rectangles as well as the estimated number of offenders with unknown
+            age <em>and</em> sex as white space (for Germany and the United
+            States only).
+        """)
+
+        # ------------------------------------------------------------------------------
+        self.h4("(Refutation of) Independence of Age and Sex")
+        # Mosaics II: Highlight large residuals
+        frame, odds_ratios = make_mosaic_frame(
+            offenders_by_age_sex,
+            x_axis="age_group",
+            y_axis="sex",
+            index={"age_group": ["Minor", "Adult"]},
+            use_residuals=True,
+            use_minor=True,
+            include_null=False,
+            show_counts=True,
+        )
+
+        frame = test_chi2_independence(
+            frame,
+            x_axis="age_group",
+            y_axis="sex",
+            x_order="x_order",
+            y_order="y_order",
+        )
+
+        fig = plot_mosaic_grid(
+            frame,
+            x_label="Age Group",
+            y_label="Sex",
+            with_title=False,
+        )
+        path = "figure/age-sex-residual-mosaics.svg"
+        fig.save(path)
+        self.svg(path, klass="extra-wide", caption="""
+            Offender shares by age group and sex per year and country, annotated
+            with results of χ² test for independence. Red and blue shading
+            reflects the negative and positive, respectively, magnitude of the
+            standardized Pearson residuals <var>r</var>, with gray for
+            <math>
+                <mrow>
+                    <mi>|</mi>
+                    <mi>r</mi>
+                    <mi>|</mi>
+                    <mo>&lt;</mo>
+                    <mn>2</mn>
+                </mrow>
+            </math>, light red or blue for
+            <math>
+            <mrow>
+                <mn>2</mn>
+                <mo>≤</mo>
+                <mi>|</mi>
+                <mi>r</mi>
+                <mi>|</mi>
+                <mo>&lt;</mo>
+                <mn>4</mn>
+            </mrow>
+            </math>,
+            and strong red or blue otherwise.
+        """)
+
+        assert odds_ratios is not None
+        fig = plot_odds_ratio_grid(
+            odds_ratios,
+            column_count=4,
+            with_title=False,
+        )
+        path = "figure/age-sex-odds-ratios-v2.svg"
+        fig.save(path)
+        self.svg(path, klass="wide", caption="""
+            Odds ratios for age group and sex per year and country with 95%
+            confidence intervals. Entries that do <em>not</em> cross an odds
+            ratio of 1.0 are highlighted in purple.
+        """)
+
+        cdfs = compute_age_cdfs(self._crime_data)
+        fig = plot_cdf_grid(cdfs)
+        path = "figure/age-sex-cdfs.svg"
+        fig.save(path)
+        self.svg(path, klass="wide", caption="""
+            Range of yearly cumulative offender distributions by sex ands
+            country. Shaded bands reflect the envelop of all cumulative
+            distributions, as determined by their minimum and maximum values.
+        """)
+
+        # ------------------------------------------------------------------------------
+        latex = self.emit_contingency_tables(
+            self._crime_data,
+            x_axis="age_group",
+            y_axis="sex",
+            index={
+                "age_group": ["Minor", None, "Adult"],
+                "sex": ["Male", None, "Female"],
+            },
+            include_null=True,
+            use_minor=True,
+        )
+
+        Path("figure/age-sex-data.tex").write_text(latex, encoding="utf8")
+
+    def emit_age_vs_activity(self) -> None:
+        self.h4("Offender Shares")
         activity_data = pl.concat(
             self.filter_years(
                  crimestat.load_all_age_distributions(with_activity=True, verbose=True),
@@ -1635,7 +2047,6 @@ dev.off()
                 "Germany CSAM Offenders",
                 "New Zealand CSAM Offenders",
                 "United States CSAM Offenders",
-                "United States CSAM Arrestees",
             ])
         )
 
@@ -1666,21 +2077,26 @@ dev.off()
         )
         path = "figure/age-activity-mosaics.svg"
         fig.save(path)
-        self.svg(path)
+        self.svg(path, klass="extra-wide", caption="""
+            Offender shares by age group and activity, with consumers on top and
+            shaded yellow and producers on bottom and shaded red. For Germany
+            and the United States, offenders with unknown age and activity are
+            included as white space in center.
+        """)
 
-        frame, _ = make_mosaic_frame(
-            activity_data.filter(
-                pl.col("role").eq("Offender"),
-            ),
+        # ------------------------------------------------------------------------------
+        self.h4("(Refutation of) Independence of Age and Activity")
+        frame, odds_ratios = make_mosaic_frame(
+            activity_data,
             x_axis="age_group",
             y_axis="activity",
             index={
-                "age_group": ["Minor", None, "Adult"],
-                "activity": ["Producer", None, "Consumer"],
+                "age_group": ["Minor", "Adult"],
+                "activity": ["Producer", "Consumer"],
             },
             use_residuals=True,
             use_minor=True,
-            include_null=True,
+            include_null=False,
             show_counts=True,
         )
 
@@ -1700,27 +2116,51 @@ dev.off()
         )
         path = "figure/age-activity-residual-mosaics.svg"
         fig.save(path)
-        self.svg(path)
+        self.svg(path, klass="extra-wide", caption="""
+            Offender shares by age group and activity, with consumers on top and
+            producers on bottom. Charts are annotated with results of χ² test
+            for independence. Red and blue shading reflects the negative and
+            positive, respectively, magnitude of the standardized Pearson
+            residuals <var>r</var>, with gray for
+            <math>
+                <mrow>
+                    <mi>|</mi>
+                    <mi>r</mi>
+                    <mi>|</mi>
+                    <mo>&lt;</mo>
+                    <mn>2</mn>
+                </mrow>
+            </math>, light red or blue for
+            <math>
+            <mrow>
+                <mn>2</mn>
+                <mo>≤</mo>
+                <mi>|</mi>
+                <mi>r</mi>
+                <mi>|</mi>
+                <mo>&lt;</mo>
+                <mn>4</mn>
+            </mrow>
+            </math>,
+            and strong red or blue otherwise.
+        """)
 
+        assert odds_ratios is not None
         fig = plot_odds_ratio_grid(
-            compute_odds_ratios(
-                activity_data.with_columns(
-                    pl.col("activity_order").mul(-1)
-                ),
-                "age_group",
-                "activity",
-                x_order="age_group_order",
-                y_order="activity_order",
-                use_minor=True,
-            ),
+            odds_ratios,
             second_variable="Activity",
+            column_count=4,
+            with_title=False,
         )
         path = "figure/age-activity-odds-ratios.svg"
         fig.save(path)
-        self.svg(path)
-        self.html("</div>\n")
+        self.svg(path, klass="wide", caption="""
+            Odds ratios for age group and activity per year and country with 95%
+            confidence intervals. Entries that do <em>not</em> cross an odds
+            ratio of 1.0 are highlighted in purple.
+        """)
 
-        self.html("<div class=wide>\n")
+        # ------------------------------------------------------------------------------
         self.emit_contingency_tables(
             activity_data,
             x_axis="age_group",
@@ -1732,31 +2172,18 @@ dev.off()
             include_null=True,
             use_minor=True,
         )
-        self.html("</div>\n")
 
-        # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-        self.h3("Outcomes in Germany and the US")
+    def emit_outcomes(self) -> None:
         self.html("""
-            <p><strong>Independent of country</strong>, this section partitions
-            offenders into three age groups based on Germany's ages of criminal
-            responsibility and majority:</p>
-
-            <dl>
-            <dt>Children</dt>
-            <dd>younger than 14</dd>
-            <dt>Juveniles</dt>
-            <dd>at least 14 and younger than 18</dd>
-            <dt>Adults</dt>
-            <dd>at least 18</dd>
-            </dl>
-
-            <p>When combining tables, the default outcome for offenders, even
-            for those with null attributes, is <em>No Sanction</em> (and not
-            null).</p>
+            <p>For Germany, we rely on the judiciary's statistics for
+            characterizing outcomes. For the United States, NIBRS includes
+            information on arrests. Children aged 0–13 cannot be prosecuted in
+            Germany. For uniformity of analysis, we apply that same grouping to
+            US statistics.</p>
         """)
 
         de_outcomes = de.combine_offenders_and_outcomes(
-            full_data, de.ingest_outcomes()
+            self._crime_data, de.ingest_outcomes()
         ).filter(
             # TODO: Remove when outcomes data for 2025 in Germany becomes available
             pl.col("data_year").le(2024)
@@ -1784,7 +2211,7 @@ dev.off()
             include_null=False,
         )
 
-        us_outcomes = combine_offenders_and_arrestees(full_data)
+        us_outcomes = combine_offenders_and_arrestees(self._crime_data)
         us_highlights: dict[str | None, str] = {
             "No Sanction": Palette.GREEN,
             "Arrest": Palette.ORANGE,
@@ -1826,7 +2253,6 @@ dev.off()
         fig.save(path)
         self.svg(path)
 
-        self.html("<div class=wide>\n")
         self.emit_contingency_tables(
             de_outcomes,
             x_axis="age_group",
@@ -1847,20 +2273,6 @@ dev.off()
             },
             include_null=True,
         )
-        self.html("</div>\n")
-
-        # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-        self.h3("Cross-Sectional Age-Crime-Curves for Germany and the U.S.")
-        self.html("""
-            <p>The age-crime-curves for Germany show offenders per 100,000
-            capita for men and women based on the "<a
-            href="https://www.bka.de/SharedDocs/Downloads/DE/Publikationen/PolizeilicheKriminalstatistik/2025/Sonst_Tabellen/01-BU-BV-TVBZ-ins-ab-2009_xls.xlsx?__blob=publicationFile&v=4">Wohnbevölkerung
-            insgesamt</a>," that is, total resident population, as republished
-            by federal police. Since these statistics start at age 8, the
-            corresponding age-crime-curves also omit ages 0 through 7. By
-            definition, they also omit unresolved incidents and their
-            offenders.</p>
-        """)
 
     def emit_contingency_tables(
         self,
@@ -1967,7 +2379,7 @@ dev.off()
                     else:
                         raise ValueError(f"outcome with unsupported metric {metric}")
                 markup.append(
-                    f'<div class="contingency-tables {classes}">\n'
+                    f'<div class="wide contingency-tables {classes}">\n'
                 )
 
             # Build table
@@ -2008,259 +2420,14 @@ dev.off()
         self.html("".join(markup))
         return "".join(latex)
 
-    def emit_age_buckets(self) -> None:
-        data = pl.read_csv("data/age-groupings.csv")
+    def emit_de_age_crime_curves(self) -> None:
+        age_dist = de.de_age_distribution().collect()
+        reduced_age_dist = de.restrict_offenders(
+            de.de_age_distribution(with_material=True)
+        ).collect()
 
-        rule_data = data.group_by(
-            "country", "liability",
-            maintain_order=True
-        ).agg(
-            pl.col("start_age").min()
-        ).with_columns(
-            pl.col("start_age").shift(-1, fill_value=100).over(
-                pl.col("country")
-            ).alias("stop_age")
-        )
-        tick_data = data.filter(
-            pl.col("start_age").lt(100)
-        )
-
-        x = alt.X("start_age:Q").scale(domain=(0, 100)).axis(
-            tickCount=11,
-            title="Age",
-            titleFontWeight="normal",
-            titleFontStyle="italic",
-            titleFontSize=11,
-            titlePadding=5,
-        )
-        y = alt.Y("country:N").axis(ticks=False, domain=False, labelPadding=5).title(None)
-        color = alt.Color("liability:N").scale(
-            domain=("none", "limited", "full-or-limited", "full"),
-            range=(Palette.RED, Palette.GREEN, Palette.BLUE, Palette.GRAY),
-        ).legend(None)
-
-        fig = (
-            alt.Chart(rule_data).mark_rule(
-                strokeWidth=3
-            ).encode(
-                x, alt.X2("stop_age:Q"), y, color
-            )
-            +
-            alt.Chart(tick_data).mark_tick(
-                thickness=1.5,
-                size=12,
-            ).encode(
-                x, y, color
-            )
-        ).properties(
-            width=270,
-            height=120,
-        )
-
-        path = "figure/age-groupings.svg"
-        fig.save(path)
-
-        self.svg(path, style="max-width: 50rch;", caption="""
-            Age brackets used in crime statistics. Minors below the age of
-            criminal responsibility are shown in red, all other minors are shown
-            in green, and adults in gray. For Germany, young adults aged 18–20
-            are shown in blue, as they may be prosecuted as youths or adults.
-        """)
-
-    def emit_report_share_per_country(self) -> None:
-        frame = pl.read_csv("data/ocse-reports-per-country.csv").with_columns(
-            pl.exclude("country", "iso3").str.replace_all(",", "").cast(pl.Int64)
-        ).filter(
-            pl.col("country").is_in([
-                *_COUNTRIES,
-                "No Country Listed",
-                "Total",
-            ])
-        )
-
-        full_years = pl.selectors.expand_selector(
-            frame, pl.selectors.matches(r"^20\d\d$")
-        )
-        split_years = [c[3:] for c in pl.selectors.expand_selector(
-            frame, pl.selectors.starts_with("ref")
-        )]
-
-        frame = frame.with_columns(
-            pl.col(f"ref{y}").add(pl.col(f"info{y}")).alias(y) for y in split_years
-        ).select(
-            pl.col("country", *full_years, *split_years)
-        ).transpose(
-            include_header=True,
-            header_name="Year",
-            column_names="country",
-        )
-
-        frame = frame.select(
-            pl.col("Year"),
-            pl.col("Germany").truediv(pl.col("Total")).alias("DE"),
-            pl.col("United States").truediv(pl.col("Total")).alias("US"),
-            pl.col("Germany").add(
-                pl.col("United States")
-            ).truediv(pl.col("Total")).alias("DE+US"),
-            pl.col("Australia").add(
-                pl.col("Finland")
-            ).add(
-                pl.col("Germany")
-            ).add(
-                pl.col("New Zealand")
-            ).add(
-                pl.col("United States")
-            ).truediv(pl.col("Total")).alias("AU+DE+FI+NZ+US"),
-            pl.col("Australia").add(
-                pl.col("Finland")
-            ).add(
-                pl.col("Germany")
-            ).add(
-                pl.col("Italy")
-            ).add(
-                pl.col("New Zealand")
-            ).add(
-                pl.col("Spain")
-            ).add(
-                pl.col("United States")
-            ).truediv(pl.col("Total")).alias("AU+DE+ES+FI+IT+NZ+US"),
-        )
-
-        self.table("per-country-report-share", apply_table_style(
-            gt.GT(frame).tab_header(
-                title="Share of CyberTipline Reports",
-            ).fmt_percent(
-                columns=["DE", "US", "DE+US", "AU+DE+FI+NZ+US", "AU+DE+ES+FI+IT+NZ+US"]
-            )
-        ))
-
-    def emit_age_distributions(self) -> None:
-        distributions = crimestat.load_all_age_distributions(with_activity=False, verbose=True)
-        full_data = pl.concat(
-            self.filter_years(distributions, *self.THUMB_YEARS).values()
-        )
-
-        # All distributions
-        self.h4("Frequency Charts")
-        fig = plot_sex_by_age_grid(
-            full_data.filter(pl.col("role").ne("Arrestee")),
-            with_title=False,
-        )
-        path = "figure/age-sex-pyramids.svg"
-        fig.save(path)
-        self.svg(path, klass="extra-wide", caption="""
-            CSAM offenders by age and sex per year and country.
-        """)
-
-        offenders_by_age_sex = full_data.filter(
-            pl.col("role").ne("Arrestee")
-        )
-
-        frame, _ = make_mosaic_frame(
-            offenders_by_age_sex,
-            x_axis="age_group",
-            y_axis="sex",
-            index={
-                "age_group": ["Minor", None, "Adult"],
-                "sex": ["Female", None, "Male"],
-            },
-            highlights={
-                "Minor": {
-                    "Male": Palette.LIGHT_BLUE,
-                    "Female": Palette.PINK,
-                },
-            },
-            use_minor=True,
-            include_null=True,
-            show_counts=True,
-            show_percent=True,
-        )
-
-        self.h4("Mosaic Charts With Entire Offender Population")
-        fig = plot_mosaic_grid(
-            frame,
-            x_label="Age Group",
-            y_label="Sex",
-            with_title=False,
-        )
-        path = "figure/age-sex-mosaics.svg"
-        fig.save(path)
-        self.svg(path, klass="extra-wide", caption="""
-            Mosaic chart for CSAM offenders by age and sex per year and country.
-            For Germany and the United States, offenders with unknown age and/or
-            sex are included, assuming one offender per unsolved incident.
-        """)
-
-        self.h4("Mosaic Charts With χ² Test for Independence")
-        # Mosaics II: Highlight large residuals
-        frame, odds_ratios = make_mosaic_frame(
-            offenders_by_age_sex,
-            x_axis="age_group",
-            y_axis="sex",
-            index={"age_group": ["Minor", "Adult"]},
-            use_residuals=True,
-            use_minor=True,
-            include_null=False,
-            show_counts=True,
-        )
-
-        frame = test_chi2_independence(
-            frame,
-            x_axis="age_group",
-            y_axis="sex",
-            x_order="x_order",
-            y_order="y_order",
-        )
-
-        fig = plot_mosaic_grid(
-            frame,
-            x_label="Age Group",
-            y_label="Sex",
-            with_title=False,
-        )
-        path = "figure/age-sex-residual-mosaics.svg"
-        fig.save(path)
-        self.svg(path, klass="extra-wide", caption="""
-
-        """)
-
-        self.h4("Odds Ratios for Age and Sex")
-        assert odds_ratios is not None
-        fig = plot_odds_ratio_grid(
-            odds_ratios,
-            column_count=4,
-            with_title=False,
-        )
-        path = "figure/age-sex-odds-ratios-v2.svg"
-        fig.save(path)
-        self.svg(path, klass="wide")
-
-        self.h4("Range of Cumulative Offender Distributions")
-        cdfs = compute_age_cdfs(full_data)
-        fig = plot_cdf_grid(cdfs)
-        path = "figure/age-sex-cdfs.svg"
-        fig.save(path)
-        self.svg(path, klass="wide")
-
-        self.html("<div class=wide>\n")
-        latex = self.emit_contingency_tables(
-            full_data,
-            x_axis="age_group",
-            y_axis="sex",
-            index={
-                "age_group": ["Minor", None, "Adult"],
-                "sex": ["Male", None, "Female"],
-            },
-            include_null=True,
-            use_minor=True,
-        )
-
-        self.html("</div>\n")
-
-        Path("figure/age-sex-data.tex").write_text(latex, encoding="utf8")
-
-    def emit_age_crime_curves_de(self) -> None:
-        de_curves = de.age_crime_curves(de.de_age_distribution().collect())
+        de_curves = de.age_crime_curves(age_dist)
+        de_reduced_curves = de.age_crime_curves(reduced_age_dist)
 
         fig = plot_age_crime_curves(
             de_curves,
@@ -2280,10 +2447,47 @@ dev.off()
             "Germany: Normalized Age Distributions (All Offenders)"
         )
 
-        de_reduced_curves = de.age_crime_curves(
-            de.restrict_offenders(
-                de.de_age_distribution(with_material=True).collect()
+        self.h4("Share of Minors Suspected of Youth Pornography")
+
+        def prepare(frame: pl.DataFrame) -> pl.DataFrame:
+            assert 1 == frame.select(
+                pl.col("metric").n_unique()
+            ).item()
+
+            return frame.filter(
+                pl.col("age").lt(18)
+            ).group_by(
+                "data_year", "sex",
+                maintain_order=True,
+            ).agg(
+                pl.col("count").sum()
             )
+
+        frame = prepare(age_dist).join(
+            prepare(reduced_age_dist).rename({
+                "count": "reduced"
+            }),
+            on=["data_year", "sex"],
+            how="left",
+        ).with_columns(
+            pl.col("count").sub(
+                pl.col("reduced")
+            ).truediv(
+                pl.col("count")
+            ).alias("reduction")
+        ).pivot(
+            "sex",
+            index="data_year",
+            values="reduction",
+        )
+
+        self.html(f"<pre><code>{frame.describe()}</code></pre>")
+
+        self.table(
+            "minors-youth-porn-fraction",
+            apply_table_style(gt.GT(frame).fmt_percent(
+                ["Male", "Female"]
+            ))
         )
 
         de_combined_curves = pl.concat([
@@ -2470,7 +2674,7 @@ dev.off()
             )
         )
 
-    def emit_adjudication_and_conviction_rates(self) -> None:
+    def emit_de_adjudication_and_conviction_rates(self) -> None:
         frame = de.combine_offenders_and_outcomes(
             de.de_age_distribution().collect(),
             de.ingest_outcomes(),
@@ -2629,20 +2833,12 @@ dev.off()
     ) -> list[pl.DataFrame]:
         text_sections, data_sections = _do_run_r(frame, template)
 
-        skip_hr = not _IS_DEBUG
-        for text_section in text_sections:
-            if text_section.strip() == "":
-                continue
-
-            if not skip_hr:
-                _print_heading(weight="light")
-            skip_hr = False
-            print(text_section)
-
-            if is_html:
-                self.html(text_section)
-            else:
-                self.html(f"<pre><code>\n{text_section}\n</code></pre>\n")
+        text = "".join(text_sections)
+        if is_html:
+            self.html(text)
+        else:
+            text = _R_SQUARED.sub(r"<mark>\g<0></mark>", text)
+            self.html(f"<pre><code>\n{text}</code></pre>")
 
         return data_sections
 
@@ -2824,6 +3020,10 @@ figure, table, .gt_table {
     margin-block: 2.25rem;
 }
 
+table.contingency {
+    margin-block: 0;
+}
+
 figure svg {
     margin-left: auto;
     margin-right: auto;
@@ -2857,7 +3057,7 @@ ul, ol, dl {
     padding-inline-start: 1.5em;
 
     ul, ol, dl {
-        padding-inline-start: 3em;
+        padding-inline-start: 2.25em;
     }
 }
 
@@ -3159,6 +3359,7 @@ emit_rule <- function(title = "", weight = 1) {
     }
 
     emit_text(paste0(
+        "\\n",
         paste(replicate(4, dash), collapse=""),
         title,
         paste(replicate(100 - 4 - title.length, dash), collapse="")
@@ -3192,6 +3393,8 @@ _MARKER_REGEX = re.compile(
 )
 _WIDTH, _ = shutil.get_terminal_size()
 _IS_DEBUG = bool(os.getenv("DEBUG"))
+
+_R_SQUARED = re.compile(r"Adjusted R-squared:[ ]+[01][.][0-9]+")
 
 def _do_run_r(data: pl.DataFrame, template: str) -> tuple[list[str], list[pl.DataFrame]]:
     if len(data) == 1:
@@ -3239,7 +3442,7 @@ def _do_run_r(data: pl.DataFrame, template: str) -> tuple[list[str], list[pl.Dat
                 f"output section starts with {label} but ends with {label_too}"
             )
 
-        fragment = fragment.strip() + "\n"
+        #fragment = fragment.strip() + "\n"
         if label == "TEXT":
             text_sections.append(fragment)
         elif label == "DATA":
@@ -3541,11 +3744,6 @@ def get_options() -> Any:
         help="analyze crime statistics",
     )
     parser.add_argument(
-        "--with-chi2",
-        action="store_true",
-        help="perform χ² test of independence for age and sex",
-    )
-    parser.add_argument(
         "--all",
         action="store_true",
         dest="with_all_options",
@@ -3557,7 +3755,6 @@ def get_options() -> Any:
         options.with_reports = True
         options.with_platforms = True
         options.with_crimes = True
-        options.with_chi2 = True
     delattr(options, "with_all_options")
     return options
 

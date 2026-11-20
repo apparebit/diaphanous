@@ -1,4 +1,4 @@
-<svg height="200" width="1000" xmlns="http://www.w3.org/2000/svg">
+<svg height="200" width="1000" viewBox="0 0 1000 200" xmlns="http://www.w3.org/2000/svg">
 <title>Your Diagram Title</title>
 <!-- Generated with SankeyMATIC: 11/2/2026, 9:20:13 PM -->
 <rect height="200" width="1000" fill="#ffffff"></rect>

@@ -1074,24 +1074,7 @@ def plot_odds_ratio_grid(
 
         country, material, role = labels
         material_role = f"{material} {role}s"
-
-        min_ci, max_ci = group.select(
-            pl.col("lower_ci").min().alias("min_ci"),
-            pl.col("upper_ci").max().alias("max_ci"),
-        ).row(0)
-
         base = alt.Chart(group)
-
-        if min_ci < 1.0 < max_ci:
-            independence_rule = [base.mark_rule(
-                strokeWidth=2.5,
-                strokeDash=(8, 4),
-            ).encode(
-                alt.XDatum(1),
-            )]
-        else:
-            independence_rule = []
-
         chart = alt.layer(
             base.mark_point(
                 filled=True,
@@ -1122,7 +1105,12 @@ def plot_odds_ratio_grid(
                 alt.Y("data_year:N"),
                 alt.Text("odds_label:N"),
             ),
-            *independence_rule,
+            base.mark_rule(
+                strokeWidth=2.5,
+                strokeDash=(8, 4),
+            ).encode(
+                alt.XDatum(1),
+            ),
             title=alt.Title(
                 country,
                 subtitle=material_role,
